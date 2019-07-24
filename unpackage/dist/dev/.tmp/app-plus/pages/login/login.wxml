@@ -1,0 +1,1 @@
+<view class="uni-padding-wrap uni-common-pb"><button data-event-opts="{{[['tap',[['goMian',['$event']]]]]}}" bindtap="__e">登录</button></view>

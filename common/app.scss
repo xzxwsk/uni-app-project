@@ -1,0 +1,23 @@
+uni-tabbar {
+	.uni-tabbar{box-shadow: 0 0 15px 0 rgba(0,0,0,0.1);
+		.uni-tabbar-border{
+			background-color: #e9ebee !important;
+		}
+	}
+}
+.status_bar {
+	height: var(--status-bar-height);
+	width: 100%;
+}
+.uni-page-head-transparent{
+	.uni-page-head-btn{
+		justify-content: center;
+	}
+}
+.swiper-item{
+	height: 100%;
+}
+
+.index{
+	height: 1500px;
+}

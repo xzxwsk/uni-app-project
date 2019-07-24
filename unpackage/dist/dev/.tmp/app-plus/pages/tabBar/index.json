@@ -1,0 +1,20 @@
+{
+  "bounce": "vertical",
+  "titleNView": {
+    "type": "transparent",
+    "searchInput": {
+      "placeholder": "春季踏青郊游必备"
+    },
+    "buttons": [
+      {
+        "float": "left",
+        "type": "menu"
+      },
+      {
+        "float": "right",
+        "type": "share"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

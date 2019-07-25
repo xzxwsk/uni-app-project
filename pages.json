@@ -4,6 +4,7 @@
 		{
 			"path": "pages/tabBar/index",
 			"style": {
+				"enablePullDownRefresh": true,
 				"app-plus": {
 					"bounce": "vertical",
 					"titleNView": {
@@ -24,9 +25,16 @@
 		}, {
 			"path": "pages/tabBar/cartList",
 			"style": {
+				"navigationBarTitleText": "购物车",
 				"app-plus": {
-					"bounce": "vertical",
-					"titleNView": false
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue534",
+							"fontSrc": "/static/uni.ttf",
+							"fontSize": "22px",
+							"color": "#999999"
+						}]
+					}
 				}
 			}
 		}, {
@@ -1174,7 +1182,7 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/tabBar/extUI/extUI",
+				"pagePath": "pages/tabBar/cartList",
 				"iconPath": "static/images/bar_04.png",
 				"selectedIconPath": "static/images/bar_09.png",
 				"text": "购物车"

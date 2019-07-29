@@ -11,7 +11,5 @@
       }
     ]
   },
-  "usingComponents": {
-    "u-link": "/components/uLink"
-  }
+  "usingComponents": {}
 }

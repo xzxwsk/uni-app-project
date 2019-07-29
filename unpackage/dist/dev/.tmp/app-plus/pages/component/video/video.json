@@ -1,6 +1,4 @@
 {
   "navigationBarTitleText": "video",
-  "usingComponents": {
-    "page-head": "/components/page-head"
-  }
+  "usingComponents": {}
 }

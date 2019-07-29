@@ -28,7 +28,10 @@
 				"navigationBarTitleText": "购物车",
 				"app-plus": {
 					"titleNView": {
-						
+						"buttons": [{
+							"text": "修改",
+							"color": "#999999"
+						}]
 					}
 				}
 			}

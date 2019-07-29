@@ -205,7 +205,7 @@
     "autoclose": false
   },
   "appname": "my-uni-app-project2",
-  "compilerVersion": "2.1.4",
+  "compilerVersion": "2.1.3",
   "usingComponents": {
     "page-head": "/components/page-head",
     "page-foot": "/components/page-foot",

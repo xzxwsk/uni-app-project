@@ -1,5 +1,12 @@
 {
   "navigationBarTitleText": "购物车",
-  "titleNView": {},
+  "titleNView": {
+    "buttons": [
+      {
+        "text": "修改",
+        "color": "#999999"
+      }
+    ]
+  },
   "usingComponents": {}
 }

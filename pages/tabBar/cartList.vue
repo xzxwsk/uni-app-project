@@ -42,6 +42,7 @@
 	export default {
 		data() {
 			return {
+				title: '修改',
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				allSelect: false,
@@ -97,16 +98,35 @@
 				text: '12'
 			});
 			// #ifdef APP-PLUS
-			let webView = this.$mp.page.$getAppWebview();
-			webView.setTitleNViewButtonStyle(0, {  
-				text: 'hello',  
-			});  
+			// let webView = this.$mp.page.$getAppWebview();
+			// webView.setTitleNViewButtonStyle(0, {  
+			// 	text: 'hello',  
+			// });  
 			// #endif 
 			
 			// this.cartLs = [];
 			// uni.showTabBarRedDot({
 			// 	index: 2
 			// });
+		},
+		onNavigationBarButtonTap(e) {  
+			console.log("点击了自定义按钮: " + JSON.stringify(e));
+			let webView = this.$mp.page.$getAppWebview();
+			if(this.title === '修改') {
+				webView.setTitleNViewButtonStyle(0, {  
+					text: '删除' 
+				});
+				this.title = '删除';
+			} else {
+				webView.setTitleNViewButtonStyle(0, {  
+					text: '修改' 
+				});
+				this.title = '修改';
+			}
+			// let pages = getCurrentPages(); 
+			// let page = pages[pages.length - 1]; 
+			// let currentWebview = page.$getAppWebview()
+			// currentWebview.setTitleNViewButtonStyle(0, {text:"删除"});
 		},
 		methods: {
 			imageError(e) {

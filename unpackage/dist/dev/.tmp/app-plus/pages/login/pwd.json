@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "找回密码",
+  "bounce": "vertical",
+  "usingComponents": {
+    "input-box": "/components/input-box/input-box"
+  }
+}

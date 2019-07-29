@@ -1,28 +1,62 @@
 <template>
 	<view class="uni-padding-wrap uni-common-pb">
-		<view class="user">			
-			<view>
-				<view>不带校验</view>
-				<input-box></input-box>
-				<input-box leftText="用户名:"></input-box>
-				<input-box rightText="发送验证码"></input-box>
-				<view>带校验</view>
-				<input-box ref="input1" :verification="['isNull','isPhoneNum']" :verificationTip="['手机号码不能为空','请输入正确的手机号']" placeholder="请输入手机号码" maBtm="10" maxLength="11"></input-box>
-				<input-box ref="input2" type="password" :verification="['isNull','isChineseEnlishAndNumber']" :verificationTip="['密码不能为空','']"  placeholder="请输入密码" maBtm="10"></input-box>
-				<button @click="onerification">校验</button>
-			</view>			
+		<view class="user">
+			<view class="uni-list">
+				<view
+					class="uni-list-cell"
+					hover-class="uni-list-cell-hover"
+					v-for="(item, key) in pages"
+					:key="key"
+					:url="item.url"
+					@click="goDetailPage(item.url)"
+				>
+					<view class="uni-list-cell-navigate uni-navigate-right">
+						<view class="menu_txt">
+							<view class="title">
+								<view :class="'uni-icon ' + (item.icon ? ('uni-icon-' + item.icon) : '')"></view>
+								<text class="txt">{{ item.name }}</text>
+							</view>
+							<text v-if="item.subName" class="title sub_txt">{{ item.subName }}</text>
+						</view>
+					</view>
+				</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	// http://ext.dcloud.net.cn/plugin?id=449
-	import inputBox from '@/components/input-box/input-box';
 	export default {
-		components: {inputBox},
 		data() {
-			return {}
+			return {
+				imgSrcHead: '/static/images/avatar_member.gif',
+				modeHead: 'widthFix',
+				imgSrc: '/static/images/member_bg.png',
+				mode: 'widthFix',
+				pages: [
+					{
+						name: '我的订单',
+						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
+						url: 'order/myOrder',
+						icon: 'paperplane'
+					},
+					{
+						name: '我的提货单',
+						url: 'order/myOrder',
+						icon: 'location-filled'
+					},
+					{
+						name: '下属的订单',
+						url: 'order/myOrder',
+						icon: 'map'
+					},
+					{
+						name: '下属的提货单',
+						url: 'order/myOrder',
+						icon: 'gear'
+					}
+				]
+			}
 		},
 		methods: {
 			imageError(e) {
@@ -33,18 +67,6 @@
 					url: '/pages/' + url
 				});
 			},
-			onerification(){
-				if(this.$refs.input1.getValue() && this.$refs.input2.getValue()){
-					uni.showToast({
-						icon: 'none',
-						title: '校验通过',
-						// #ifdef MP-WEIXIN
-						duration: 2000,
-						// #endif
-						// mask: true
-					});
-				}
-			}
 		}
 	}
 </script>

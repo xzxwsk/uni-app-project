@@ -54,6 +54,10 @@
 						url: 'login/login'
 					},
 					{
+						name: '收货地址',
+						url: 'addr/addr'
+					},
+					{
 						name: '资金账户',
 						url: 'login/login'
 					},

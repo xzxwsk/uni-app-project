@@ -5,6 +5,7 @@
 				<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
 			</view>
 			<view class="txt"><text>亲，您的购物车还没有宝贝哦~</text></view>
+			<view class="txt a"><navigator open-type="switchTab" animation-type="pop-in" animation-duration="300" url="./index">去逛逛</navigator></view>
 		</view>
 		<view class="ls">
 			

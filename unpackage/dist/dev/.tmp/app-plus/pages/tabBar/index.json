@@ -1,4 +1,5 @@
 {
+  "enablePullDownRefresh": true,
   "bounce": "vertical",
   "titleNView": {
     "type": "transparent",

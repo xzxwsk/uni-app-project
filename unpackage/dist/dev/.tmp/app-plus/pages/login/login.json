@@ -2,5 +2,7 @@
   "navigationBarTitleText": "登录",
   "bounce": "vertical",
   "titleNView": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "input-box": "/components/input-box/input-box"
+  }
 }

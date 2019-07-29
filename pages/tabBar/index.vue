@@ -72,6 +72,9 @@
 		        uni.stopPullDownRefresh();
 		    }, 2000);
 		},
+		onNavigationBarSearchInputChanged (e) {
+			console.log(e);
+		},
 		onReachBottom() {
 		    this.loadData();
 		},

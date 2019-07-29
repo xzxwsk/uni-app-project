@@ -28,27 +28,27 @@
 				"navigationBarTitleText": "购物车",
 				"app-plus": {
 					"titleNView": {
-						"buttons": [{
-							"text": "\ue534",
-							"fontSrc": "/static/uni.ttf",
-							"fontSize": "22px",
-							"color": "#999999"
-						}]
+						
+					}
+				}
+			}
+		}, {
+			"path": "pages/order/myOrder",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"app-plus": {
+					"titleNView": {
+						
 					}
 				}
 			}
 		}, {
 			"path": "pages/tabBar/order",
 			"style": {
-				"navigationBarTitleText": "我的订单",
+				"navigationBarTitleText": "订单/提货单/退货单",
 				"app-plus": {
 					"titleNView": {
-						"buttons": [{
-							"text": "\ue534",
-							"fontSrc": "/static/uni.ttf",
-							"fontSize": "22px",
-							"color": "#999999"
-						}]
+						
 					}
 				}
 			}
@@ -130,6 +130,38 @@
 				"app-plus": {
 					"bounce": "vertical",
 					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/login/pwd",
+			"style": {
+				"navigationBarTitleText": "找回密码",
+				"app-plus": {
+					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/login/reg",
+			"style": {
+				"navigationBarTitleText": "注册",
+				"app-plus": {
+					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/addr/addr",
+			"style": {
+				"navigationBarTitleText": "收货地址",
+				"app-plus": {
+					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/addr/addAddr",
+			"style": {
+				"navigationBarTitleText": "添加地址",
+				"app-plus": {
+					"bounce": "vertical"
 				}
 			}
 		}, {

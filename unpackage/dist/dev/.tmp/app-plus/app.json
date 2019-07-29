@@ -2,12 +2,18 @@
   "pages": [
     "pages/tabBar/index",
     "pages/tabBar/cartList",
+    "pages/order/myOrder",
+    "pages/tabBar/order",
     "pages/tabBar/user",
     "pages/tabBar/component/component",
     "pages/tabBar/API/API",
     "pages/tabBar/template/template",
     "pages/tabBar/extUI/extUI",
     "pages/login/login",
+    "pages/login/pwd",
+    "pages/login/reg",
+    "pages/addr/addr",
+    "pages/addr/addAddr",
     "pages/component/view/view",
     "pages/component/scroll-view/scroll-view",
     "pages/component/swiper/swiper",
@@ -143,7 +149,6 @@
     "pages/API/ibeacon/ibeacon",
     "pages/API/vibrate/vibrate"
   ],
-  "subPackages": [],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "Hello uniapp",
@@ -165,10 +170,16 @@
         "text": "首页"
       },
       {
-        "pagePath": "pages/tabBar/extUI/extUI",
+        "pagePath": "pages/tabBar/cartList",
         "iconPath": "static/images/bar_04.png",
         "selectedIconPath": "static/images/bar_09.png",
         "text": "购物车"
+      },
+      {
+        "pagePath": "pages/tabBar/order",
+        "iconPath": "static/images/bar_04.png",
+        "selectedIconPath": "static/images/bar_09.png",
+        "text": "订单/提货单"
       },
       {
         "pagePath": "pages/tabBar/user",
@@ -194,7 +205,7 @@
     "autoclose": false
   },
   "appname": "my-uni-app-project2",
-  "compilerVersion": "2.1.2",
+  "compilerVersion": "2.1.4",
   "usingComponents": {
     "page-head": "/components/page-head",
     "page-foot": "/components/page-foot",

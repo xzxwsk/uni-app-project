@@ -1,1 +1,1 @@
-<view class="uni-padding-wrap uni-common-pb">购物车</view>
+<view class="uni-padding-wrap uni-common-pb cart_ls"><view class="no-data"><view class="no-img cart"><image style="width:100%;" mode="{{mode}}" src="{{imgSrc}}" data-event-opts="{{[['error',[['imageError',['$event']]]]]}}" binderror="__e"></image></view><view class="txt"><text>亲，您的购物车还没有宝贝哦~</text></view><view class="txt a"><navigator open-type="switchTab" animation-type="pop-in" animation-duration="300" url="./index">去逛逛</navigator></view></view><view class="ls"></view></view>

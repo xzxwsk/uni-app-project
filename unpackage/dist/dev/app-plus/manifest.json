@@ -119,7 +119,7 @@
       }
     },
     "uni-app": {
-      "compilerVersion": "2.1.2",
+      "compilerVersion": "2.1.4",
       "control": "v8",
       "nvueCompiler": "uni-app",
       "nvue": {

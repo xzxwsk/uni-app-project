@@ -190,6 +190,7 @@
 			// #endif
 			uni.getSystemInfo({
 				success (res) {
+					return;
 					uni.showModal({
 						title: '系统信息',
 						content: 'model: ' + res.model + '\n'

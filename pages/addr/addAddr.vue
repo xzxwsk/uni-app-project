@@ -24,7 +24,7 @@
 				<view class="input-row border">
 					<text class="title">设为默认：</text>
 					<view class="input_box">
-						<radio @tap="checkboxChange" value="男" :value="isDefault.isDefault" :checked="isDefault.checked" />
+						<radio @tap="checkboxChange" :value="isDefault.isDefault" :checked="isDefault.checked" />
 					</view>
 				</view>
 			</view>

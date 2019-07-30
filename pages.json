@@ -30,8 +30,30 @@
 					"titleNView": {
 						"buttons": [{
 							"text": "修改",
-							"color": "#999999"
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
 						}]
+					}
+				}
+			}
+		}, {
+			"path": "pages/order/createOrder",
+			"style": {
+				"navigationBarTitleText": "填写订单",
+				"app-plus": {
+					"titleNView": {
+						
+					}
+				}
+			}
+		}, {
+			"path": "pages/order/orderDetail",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"app-plus": {
+					"titleNView": {
+						
 					}
 				}
 			}

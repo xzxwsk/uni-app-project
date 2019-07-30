@@ -28,11 +28,18 @@
 						</view>
 					</view>
 				</view>
-			</scroll-view>		
+			</scroll-view>
 			<view class="result">
 				<label class="radio"><radio :checked="allSelect" />全选</label>
-				<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
-				<button class="btn" type="primary">去结算</button>
+				<block v-if="titleBtn === '修改'">
+					<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
+					<button class="btn" type="warn" @tap.stop="toPay">去结算</button>
+				</block>
+				<block v-else>
+					<view class="count b"></view>
+					<button class="btn" type="default">加入收藏</button>
+					<button class="btn" type="warn">删除</button>
+				</block>
 			</view>
 		</block>
 	</view>
@@ -42,7 +49,7 @@
 	export default {
 		data() {
 			return {
-				title: '修改',
+				titleBtn: '修改',
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				allSelect: false,
@@ -111,18 +118,20 @@
 		},
 		onNavigationBarButtonTap(e) {  
 			console.log("点击了自定义按钮: " + JSON.stringify(e));
+			// #ifdef APP-PLUS
 			let webView = this.$mp.page.$getAppWebview();
-			if(this.title === '修改') {
+			if(this.titleBtn === '修改') {
 				webView.setTitleNViewButtonStyle(0, {  
 					text: '删除' 
 				});
-				this.title = '删除';
+				this.titleBtn = '删除';
 			} else {
 				webView.setTitleNViewButtonStyle(0, {  
 					text: '修改' 
 				});
-				this.title = '修改';
+				this.titleBtn = '修改';
 			}
+			// #endif 
 			// let pages = getCurrentPages(); 
 			// let page = pages[pages.length - 1]; 
 			// let currentWebview = page.$getAppWebview()
@@ -153,6 +162,11 @@
 			hoverClassEnd(index) {
 				console.log('hoverClassEnd');
 				this.$set(this.cartLs[index], 'hoverClass', '');
+			},
+			toPay() {
+				uni.navigateTo({
+					url: '../order/createOrder'
+				});
 			}
 		}
 	}

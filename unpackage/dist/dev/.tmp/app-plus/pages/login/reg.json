@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "注册",
-  "bounce": "vertical",
-  "usingComponents": {
-    "input-box": "/components/input-box/input-box",
-    "m-input": "/components/m-input"
-  }
-}

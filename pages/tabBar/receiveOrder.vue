@@ -35,18 +35,18 @@
 				mode: 'widthFix',
 				pages: [
 					{
-						name: '订单',
+						name: '我收到的订单',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
 						url: 'order/myOrder',
 						icon: 'paperplane'
 					},
 					{
-						name: '付款单',
+						name: '我收到的付款单',
 						url: 'order/myOrder',
 						icon: 'location-filled'
 					},
 					{
-						name: '退款单',
+						name: '我收到的退款单',
 						url: 'order/myOrder',
 						icon: 'map'
 					}

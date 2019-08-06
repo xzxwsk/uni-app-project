@@ -1,0 +1,9 @@
+{
+	"id":"329",
+	"name":"PopUp",
+	"desc":"弹出层",
+	"url":"popup",
+	"edition":"1.1.2",
+	"path":"https://ext.dcloud.net.cn/plugin?id=329",
+	"update_log":"- 新增 显示弹窗属性\n- 修复 h5 取消导航栏，顶部空白问题"
+}

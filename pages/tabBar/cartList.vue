@@ -146,7 +146,9 @@
 				this.$set(this.cartLs[index], 'selected', !this.cartLs[index]['selected']);
 			},
 			goDetail(index) {
-				console.log('goDetail: ', index);
+				uni.navigateTo({
+					url: '../product/productDetail'
+				});
 			},
 			unEvent() {},
 			reduce(index) {

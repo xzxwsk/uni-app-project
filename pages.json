@@ -70,10 +70,36 @@
 		}, {
 			"path": "pages/tabBar/order",
 			"style": {
-				"navigationBarTitleText": "订单/提货单/退货单",
+				"navigationBarTitleText": "我的单据",
 				"app-plus": {
 					"titleNView": {
 						
+					}
+				}
+			}
+		}, {
+			"path": "pages/tabBar/receiveOrder",
+			"style": {
+				"navigationBarTitleText": "我收到的单据",
+				"app-plus": {
+					"titleNView": {
+						
+					}
+				}
+			}
+		}, {
+			"path": "pages/product/productDetail",
+			"style": {
+				"navigationBarTitleText": "",
+				"app-plus": {
+					"titleNView": {
+						"type": "default",
+						"buttons": [{
+							"text": "\ue402",
+							"fontSrc": "/static/uni.ttf",
+							"fontSize": "22px",
+							"color": "#999999"
+						}]
 					}
 				}
 			}
@@ -160,7 +186,7 @@
 		}, {
 			"path": "pages/login/pwd",
 			"style": {
-				"navigationBarTitleText": "找回密码",
+				"navigationBarTitleText": "修改密码",
 				"app-plus": {
 					"bounce": "vertical"
 				}
@@ -171,6 +197,54 @@
 				"navigationBarTitleText": "注册",
 				"app-plus": {
 					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/user/myInfo",
+			"style": {
+				"navigationBarTitleText": "我的资料",
+				"app-plus": {
+					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/user/baseInfo",
+			"style": {
+				"navigationBarTitleText": "基本信息",
+				"app-plus": {
+					"bounce": "vertical",
+					"titleNView": {
+						"buttons": [{
+							"text": "修改",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		}, {
+			"path": "pages/user/bonus",
+			"style": {
+				"navigationBarTitleText": "我的奖金查询",
+				"app-plus": {
+					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/user/mySubordinateInfo",
+			"style": {
+				"navigationBarTitleText": "我的下属资料",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/paymentGoodsDetail",
+			"style": {
+				"navigationBarTitleText": "货款收支明细",
+				"app-plus": {
+					"bounce": "none"
 				}
 			}
 		}, {
@@ -1261,7 +1335,12 @@
 				"pagePath": "pages/tabBar/order",
 				"iconPath": "static/images/bar_04.png",
 				"selectedIconPath": "static/images/bar_09.png",
-				"text": "订单/提货单"
+				"text": "我的单据"
+			},{
+				"pagePath": "pages/tabBar/receiveOrder",
+				"iconPath": "static/images/bar_04.png",
+				"selectedIconPath": "static/images/bar_09.png",
+				"text": "收到的单据"
 			}, {
 				"pagePath": "pages/tabBar/user",
 				"iconPath": "static/images/bar_05.png",

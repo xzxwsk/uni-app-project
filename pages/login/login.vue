@@ -1,7 +1,10 @@
 <template>
 	<view>
-		<view class="uni-padding-wrap uni-common-pb">
-			<button class="b" @tap="goMian">登录</button>
+		<view class="status_bar">
+		    <!-- 这里是状态栏 -->
+		</view>
+		<view class="uni-padding-wrap uni-common-pb login_top">
+			<view class="return_btn" @tap="goMian"><text class="uni-icon uni-icon-home"></text></view> <button class="b login_title">登录</button>
 		</view>
 		<view class="content">
 			<view class="input-group">
@@ -40,6 +43,7 @@
 	import {mapState, mapMutations} from 'vuex';
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
+	import util from '@/common/util.js';
 	export default {
 		components: {
 		    inputBox
@@ -77,7 +81,7 @@
 		methods: {
 			goMian() {
 				uni.switchTab({
-					url: '/pages/tabBar/template/template'
+					url: '/pages/tabBar/user'
 				});
 			},
 			initPosition() {
@@ -147,7 +151,7 @@
 				console.log('重新发送验证码')
 			},
 			bindLogin() {
-				console.log(this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue());
+				console.log('this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue()：', this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue());
 				if(this.$refs.input1.getValue() && this.$refs.input2.getValue() && this.$refs.input3.getValue()){
                     uni.showToast({
                         icon: 'none',
@@ -157,7 +161,17 @@
                         // #endif
                         // mask: true
                     });
-                }
+                } else {
+					util.goTab({
+						url: '../tabBar/user?logined=true',
+						success: function(e) {
+							let page = getCurrentPages().pop();
+							console.log('page: ', page);
+							if (page == undefined || page == null) return;
+							page.login();
+						},
+					});
+				}
 			},
 			getSystemInfo() {
 				uni.getSystemInfo({

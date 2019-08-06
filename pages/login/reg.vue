@@ -15,7 +15,7 @@
             </view>
         </view>
         <view class="btn-row">
-            <button type="primary" class="primary" @tap="register">注册</button>
+            <button type="warn" class="primary" @tap="register">注册</button>
         </view>
     </view>
 </template>

@@ -21,6 +21,9 @@
 					</view>
 				</view>
 			</view>
+			<view class="logout_btn">
+				<button type="warn">退出当前帐户</button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -33,22 +36,32 @@
 				modeHead: 'widthFix',
 				imgSrc: '/static/images/member_bg.png',
 				mode: 'widthFix',
-				pages: [
+				pages: [					
 					{
-						name: '订单',
-						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
-						url: 'order/myOrder',
+						name: '关于我们',
+						url: 'about/about',
 						icon: 'paperplane'
 					},
 					{
-						name: '付款单',
-						url: 'order/myOrder',
+						name: '收货地址',
+						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
+						url: 'addr/addr',
 						icon: 'location-filled'
 					},
 					{
-						name: '退款单',
-						url: 'order/myOrder',
-						icon: 'map'
+						name: '密码修改',
+						url: 'login/pwd',
+						icon: 'paperplane'
+					},
+					{
+						name: '手机绑定',
+						url: 'about/about',
+						icon: 'paperplane'
+					},
+					{
+						name: '清除缓存',
+						url: 'about/about',
+						icon: 'paperplane'
 					}
 				]
 			}

@@ -2,13 +2,21 @@
     <view class="content">
         <view class="input-group">
             <view class="input-row">
-                <text class="title">邮箱：</text>
-                <input-box type="text" focus clearable v-model="email" placeholder="请输入邮箱"></input-box>
+                <text class="title">原密码：</text>
+                <input-box type="password" focus clearable v-model="oldPsw" placeholder="请输入原密码"></input-box>
             </view>
+			<view class="input-row">
+			    <text class="title">新密码：</text>
+			    <input-box type="password" focus clearable v-model="newPsw" placeholder="请输入新密码"></input-box>
+			</view>
+			<view class="input-row">
+			    <text class="title">确认新密码：</text>
+			    <input-box type="password" focus clearable v-model="newConfirmPsw" placeholder="请确认新密码"></input-box>
+			</view>
         </view>
 
         <view class="btn-row">
-            <button type="primary" class="primary" @tap="findPassword">提交</button>
+            <button type="warn" class="primary" @tap="confirmPassword">提交</button>
         </view>
     </view>
 </template>
@@ -24,7 +32,9 @@
         },
         data() {
             return {
-                email: ''
+                oldPsw: '',
+				newPsw: '',
+				newConfirmPsw: ''
             }
         },
         methods: {
@@ -44,7 +54,10 @@
                     title: '已发送重置邮件至注册邮箱，请注意查收。',
                     duration: 3000
                 });
-            }
+            },
+			confirmPassword() {
+				
+			}
         }
     }
 </script>

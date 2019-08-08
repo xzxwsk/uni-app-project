@@ -3,7 +3,7 @@
 		<view class="uni-list-cell-navigate uni-navigate-right">
 			<view class="menu_txt">
 				<text class="title">{{ addr.name + ' ' + addr.phone }}</text>
-				<text class="title sub_txt">{{ addr.detail }}</text>
+				<text class="title sub_txt" @click="selectAddr">{{ addr.detail }}</text>
 			</view>
 		</view>
 		<view class="uni-list">
@@ -15,6 +15,7 @@
 					<view class="uni-media-list-body">
 						<view>
 							<view class="uni-media-list-text-top">{{value.title}}</view>
+							<view class="uni-media-list-text-top sub_txt">计量单位: {{value.num}}</view>
 							<view class="uni-media-list-text-top sub_txt">数量: {{value.num}}件</view>
 						</view>
 						<view class="uni-media-list-text-bottom uni-ellipsis price">￥{{value.price}}</view>
@@ -23,6 +24,18 @@
 			</view>
 		</view>
 		<view class="uni-list count">
+			<view class="uni-list-cell">
+				<view class="uni-list-cell-navigate">
+					<text class="item-title"><text>订单编号</text></text>
+					<text class="item-content"><text>Adfd82dfdfds</text></text>
+				</view>
+			</view>
+			<view class="uni-list-cell">
+				<view class="uni-list-cell-navigate">
+					<text class="item-title"><text>订货日期</text></text>
+					<text class="item-content"><text>2018-05-21</text></text>
+				</view>
+			</view>
 			<view class="uni-list-cell">
 				<view class="uni-list-cell-navigate">
 					<text class="item-title"><text>商品金额</text></text>
@@ -38,7 +51,7 @@
 		</view>
 		<view class="result">
 			<view class="count b"><text class="price">￥{{(count+freight).toFixed(2)}}</text></view>
-			<button class="btn" type="warn">立即付款</button>
+			<button class="btn" type="warn">生成订单</button>
 		</view>
 	</view>
 </template>
@@ -46,7 +59,7 @@
 <script>
 	const tpl = [{
 		selected: false,
-		img: '/static/img/H_二品峨眉毛峰_9X10_1.jpg',
+		img: '/static/img/H_9X10_1.jpg',
 		title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
 		price: 130.00,
 		num: 1,
@@ -67,7 +80,7 @@
 		hoverClass: ''
 	},{
 		selected: false,
-		img: '/static/img/H_二品峨眉毛峰_9X10_1.jpg',
+		img: '/static/img/H_9X10_1.jpg',
 		title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
 		price: 130.00,
 		num: 1,
@@ -87,6 +100,7 @@
 		num: 1,
 		hoverClass: ''
 	}];
+	import util from '@/common/util.js';
 	export default {
 		components: {
 			
@@ -110,7 +124,12 @@
 				this.showImg = true;
 			}, 400)
 		},
-		methods: {			
+		methods: {
+			selectAddr() {
+				util.goUrl({
+					url: '../addr/addr'
+				})
+			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			}

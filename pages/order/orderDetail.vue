@@ -21,7 +21,9 @@
 							<view class="uni-media-list-body">
 								<view>
 									<view class="uni-media-list-text-top">{{value.title}}</view>
+									<view class="uni-media-list-text-top sub_txt">计量单位: {{value.num}}</view>
 									<view class="uni-media-list-text-top sub_txt">数量: {{value.num}}件</view>
+									<view class="uni-media-list-text-top sub_txt">商品编号: {{value.num}}</view>
 								</view>
 								<view class="uni-media-list-text-bottom uni-ellipsis price">￥{{value.price}}</view>
 							</view>
@@ -57,7 +59,7 @@
 					</view>
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">
-							<text class="item-title"><text>创建时间</text></text>
+							<text class="item-title"><text>订货日期</text></text>
 							<text class="item-content"><text>{{createOrder}}</text></text>
 						</view>
 					</view>
@@ -75,7 +77,7 @@
 <script>
 	const tpl = [{
 		selected: false,
-		img: '/static/img/H_二品峨眉毛峰_9X10_1.jpg',
+		img: '/static/img/H_9X10_1.jpg',
 		title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
 		price: 130.00,
 		num: 1,
@@ -96,7 +98,7 @@
 		hoverClass: ''
 	},{
 		selected: false,
-		img: '/static/img/H_二品峨眉毛峰_9X10_1.jpg',
+		img: '/static/img/H_9X10_1.jpg',
 		title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
 		price: 130.00,
 		num: 1,

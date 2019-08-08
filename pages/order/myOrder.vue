@@ -8,8 +8,8 @@
 				 </view>
 			</scroll-view>
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
-				<swiper-item v-for="(tab, index1) in newsitems" :key="index1">
-					<block v-if="!tab.data.length">
+				<swiper-item>
+					<block v-if="false">
 						<view class="no-data">
 							<view class="no-img cart">
 								<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
@@ -17,28 +17,48 @@
 							<view class="txt"><text>亲，还没有相关订单哦~</text></view>
 						</view>
 					</block>
-					<block v-else>
-						<scroll-view class="list" scroll-y @scrolltolower="loadMore(index1)">
-							<block v-for="(newsitem,index2) in tab.data" :key="index2">
-								<view class="uni-product-list">
-									<view class="uni-product" v-for="(product,index) in newsitem" :key="index">
-										<view class="image-view">
-											<image v-if="renderImage" class="uni-product-image" :src="product.image"></image>
+					<view class="list" v-else>
+						<view class="search_box">
+							<input-box placeholder="请输入搜索关键字"></input-box>
+							<customDatePicker
+								fields="month"
+								:start="startDate"
+								:end="endDate"
+								:value="dateValue"
+								@change="bindDateChange"
+							></customDatePicker>
+							<button class="btn" type="warn" @click="query">查询</button>
+						</view>
+						<scroll-view class="box" scroll-y @scrolltolower="loadMore">
+							<view>
+								<view class="ls_item" v-for="(item, index) in ls" :key="index">
+									<view class="ls_item_top">
+										<view class="img">
+											<image :src="item.src" style="width: 100%;" mode="widthFix"></image>
 										</view>
-										<view class="uni-product-title">{{product.title}}</view>
-										<view class="uni-product-price">
-											<text class="uni-product-price-favour">￥{{product.originalPrice}}</text>
-											<text class="uni-product-price-original">￥{{product.favourPrice}}</text>
-											<text class="uni-product-tip">{{product.tip}}</text>
+										<text class="title">{{item.title}}</text>
+										<view class="status">
+											<text>{{item.status}}</text>
+											<text class="price">￥{{item.price}}</text>
 										</view>
 									</view>
+									<view class="ls_item_center">
+										<text class="count">共{{item.count}}件商品</text>
+										<text>合计：￥{{item.price * item.count}}</text>
+									</view>
+									<view class="ls_item_bottom">
+										<button class="btn">关闭</button>
+										<button class="btn">收货确认</button>
+										<button class="btn">退货</button>
+										<button class="btn">撤销退货</button>
+									</view>
 								</view>
-							</block>
-							<view class="uni-tab-bar-loading">
-								{{tab.loadingText}}
+							</view>
+							<view v-if="isScroll" class="uni-tab-bar-loading">
+								{{loadingText}}
 							</view>
 						</scroll-view>
-					</block>
+					</view>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -46,55 +66,32 @@
 </template>
 
 <script>
-	const tpl = {
-		data0: [
-			{
-				image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product1.jpg',
-				title: 'Apple iPhone X 256GB 深空灰色 移动联通电信4G手机',
-				originalPrice: 9999,
-				favourPrice: 8888,
-				tip: '自营'
-			},
-			{
-				image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product2.jpg',
-				title: 'Apple iPad 平板电脑 2018年新款9.7英寸',
-				originalPrice: 3499,
-				favourPrice: 3399,
-				tip: '优惠'
-			},
-			{
-				image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product3.jpg',
-				title: 'Apple MacBook Pro 13.3英寸笔记本电脑（2017款Core i5处理器/8GB内存/256GB硬盘 MupxT2CH/A）',
-				originalPrice: 12999,
-				favourPrice: 10688,
-				tip: '秒杀'
-			},
-			{
-				image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product4.jpg',
-				title: 'Kindle Paperwhite电纸书阅读器 电子书墨水屏 6英寸wifi 黑色',
-				originalPrice: 999,
-				favourPrice: 958,
-				tip: '秒杀'
-			},
-			{
-				image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product5.jpg',
-				title: '微软（Microsoft）新Surface Pro 二合一平板电脑笔记本 12.3英寸（i5 8G内存 256G存储）',
-				originalPrice: 8888,
-				favourPrice: 8288,
-				tip: '优惠'
-			},
-			{
-				image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product6.jpg',
-				title: 'Apple Watch Series 3智能手表（GPS款 42毫米 深空灰色铝金属表壳 黑色运动型表带 MQL12CH/A）',
-				originalPrice: 2899,
-				favourPrice: 2799,
-				tip: '自营'
-			}
-		]
-	};
+	// http://ext.dcloud.net.cn/plugin?id=449
+	import inputBox from '@/components/input-box/input-box';
+	// https://ext.dcloud.net.cn/plugin?id=220
+	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
+	const list = [{
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已发货',
+		count: 1,
+		price: 16.28
+	},{
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已发货',
+		count: 1,
+		price: 16.28
+	},{
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已发货',
+		count: 1,
+		price: 16.28
+	}];
 	export default {
 		components: {
-			
+			inputBox, customDatePicker
 		},
 		data() {
 			return {
@@ -109,15 +106,30 @@
 					name: '全部',
 					id: 'all'
 				}, {
-					name: '未确认',
+					name: '未发货',
 					id: 'guanzhu'
 				}, {
-					name: '确认收款',
+					name: '已发货',
 					id: 'tuijian'
 				}, {
-					name: '取消',
+					name: '已收货确认',
 					id: 'tiyu'
-				}]
+				}, {
+					name: '退货中',
+					id: 'tiyu1'
+				}, {
+					name: '已退货确认',
+					id: 'tiyu2'
+				}, {
+					name: '已关闭',
+					id: 'tiyu3'
+				}],
+				isScroll: false,
+				loadingText: '加载更多...',
+				dateValue: '',
+				startDate: '2010-01',
+				endDate: '2199-12',
+				ls: list
 			}
 		},
 		onLoad() {
@@ -133,17 +145,16 @@
 				});
 			},
 			loadMore(e) {
-				setTimeout(() => {
-					this.addData(e);
-				}, 1200);
+				this.isScroll = true;
+			},
+			bindDateChange(value) {
+				console.log('bindDateChange: ', value);
+				this.dateValue = value;
 			},
 			addData(e) {
 				if (this.newsitems[e].data.length > 30) {
 					this.newsitems[e].loadingText = '没有更多了';
 					return;
-				}
-				for (let i = 1; i <= 10; i++) {
-					this.newsitems[e].data.push(tpl['data' + Math.floor(Math.random() * 5)]);
 				}
 			},
 			async changeTab(e) {
@@ -209,8 +220,7 @@
 					};
 					if (i < 1) {
 						for (let j = 1; j <= 4; j++) {
-							aryItem.data.push(tpl['data0']);
-							// aryItem.data = [];
+							aryItem.data = [];
 						}
 					}
 					ary.push(aryItem);

@@ -10,18 +10,18 @@
 		<block v-else>
 			<scroll-view scroll-y="true" style="width: 100%; height: 100%;">
 				<view class="uni-list">
-					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @tap="goDetail(index)" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
+					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @click="goDetail(index)" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
 						<view class="uni-media-list">
-							<radio class="radio" @touchstart.stop="unEvent" @tap.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
+							<radio class="radio" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
 							<image class="uni-media-list-logo" mode="aspectFit" :src="item.img" @error="imageError"></image>
 							<view class="uni-media-list-body">
 								<view class="uni-media-list-text-top">{{ item.title }}</view>
 								<view class="uni-media-list-text-bottom">
 									<text class="price">${{ item.price.toFixed(2) }}</text>
-									<view class="num" @touchstart.stop="unEvent" @tap.stop="unEvent">
-										<button class="btn" @tap.stop="reduce(index)">-</button>
-										<input class="ipt" type="number" v-model="item.num"></input>
-										<button class="btn" @tap.stop="add(index)">+</button>
+									<view class="num">
+										<button class="btn" @click.stop="reduce(index)">-</button>
+										<input class="ipt" @click.stop="unEvent" type="number" v-model="item.num"></input>
+										<button class="btn" @click.stop="add(index)">+</button>
 									</view>
 								</view>
 							</view>
@@ -30,10 +30,11 @@
 				</view>
 			</scroll-view>
 			<view class="result">
-				<label class="radio"><radio :checked="allSelect" />全选</label>
+				<label class="radio"><radio :checked="allSelect" @click="onAllSelect" />全选</label>
 				<block v-if="titleBtn === '修改'">
 					<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
-					<button class="btn" type="warn" @tap.stop="toPay">去结算</button>
+					<button class="btn">继续购物</button>
+					<button class="btn" type="warn" @click="toPay">去结算</button>
 				</block>
 				<block v-else>
 					<view class="count b"></view>
@@ -56,7 +57,7 @@
 				countPrice: 0,
 				cartLs: [{
 					selected: false,
-					img: '/static/img/H_二品峨眉毛峰_9X10_1.jpg',
+					img: '/static/img/H_9X10_1.jpg',
 					title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
 					price: 130.00,
 					num: 1,
@@ -77,7 +78,7 @@
 					hoverClass: ''
 				},{
 					selected: false,
-					img: '/static/img/H_二品峨眉毛峰_9X10_1.jpg',
+					img: '/static/img/H_9X10_1.jpg',
 					title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
 					price: 130.00,
 					num: 1,
@@ -155,6 +156,7 @@
 				this.$set(this.cartLs[index], 'num', Number(this.cartLs[index]['num'])-1);
 			},
 			add(index) {
+				console.log('add: ', index);
 				this.$set(this.cartLs[index], 'num', Number(this.cartLs[index]['num'])+1);
 			},
 			hoverClass(index) {
@@ -164,6 +166,26 @@
 			hoverClassEnd(index) {
 				console.log('hoverClassEnd');
 				this.$set(this.cartLs[index], 'hoverClass', '');
+			},
+			onAllSelect() {
+				this.allSelect = !this.allSelect;
+				this.cartLs.forEach(item => {
+					item.selected = this.allSelect;
+				});
+				// #ifdef APP-PLUS
+				let webView = this.$mp.page.$getAppWebview();
+				if(this.allSelect) {
+					webView.setTitleNViewButtonStyle(0, {  
+						text: '删除' 
+					});
+					this.titleBtn = '删除';
+				} else {
+					webView.setTitleNViewButtonStyle(0, {  
+						text: '修改' 
+					});
+					this.titleBtn = '修改';
+				}
+				// #endif 
 			},
 			toPay() {
 				uni.navigateTo({

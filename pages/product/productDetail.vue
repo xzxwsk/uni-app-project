@@ -1,7 +1,7 @@
 <template>
 	<view class="product_detail">
 		<view class="top" ref="top">
-			<text :class="'txt' + (tabCur===0 ? ' cur' : '')" @tap="goTop">商品</text><text :class="'txt' + (tabCur===1 ? ' cur' : '')" @tap="goDetail">详情</text>
+			<text :class="'txt' + (tabCur===0 ? ' cur' : '')" @click="goTop">商品</text><text :class="'txt' + (tabCur===1 ? ' cur' : '')" @click="goDetail">详情</text>
 		</view>
 		<view class="center">
 			<scroll-view scroll-y="true" :scroll-top="scrollTop" style="width: 100%; height: 100%;" @scroll="scroll" scroll-with-animation>
@@ -21,7 +21,7 @@
 				</view>
 				<view class="uni-list">
 					<view class="uni-list-cell">
-						<view class="uni-list-cell-navigate uni-navigate-right" @tap="openPopup">
+						<view class="uni-list-cell-navigate uni-navigate-right" @click="openPopup">
 							<view class="menu_txt">
 								<text class="title">计量单位</text>
 								<text class="title sub_txt">54 * 4g/袋（共54袋）,1件</text>
@@ -49,7 +49,7 @@
 		
 		<uni-popup ref="popup" type="bottom">
 			<view class="pop">
-				<button class="uni-icon uni-icon-closeempty close_btn" @tap="closePopup"></button>
+				<button class="uni-icon uni-icon-closeempty close_btn" @click="closePopup"></button>
 				<view class="con">
 					<view class="img">
 						<image :src="img" style="width: 300upx; height: 300upx;" mode="widthFix" />
@@ -60,20 +60,20 @@
 					</view>
 					<view class="title">计量单位</view>
 					<view class="ls">
-						<view class="item" @tap="selectItemFun(index)" v-for="(item, index) in modeLs" :key="index" :class="selectItem === index ? 'cur': ''">
+						<view class="item" @click="selectItemFun(index)" v-for="(item, index) in modeLs" :key="index" :class="selectItem === index ? 'cur': ''">
 							{{item}}
 						</view>
 					</view>
 					<view class="num_box">
 						<view class="title">数量</view>
 						<view class="num">
-							<button class="btn" @tap="reduce">-</button>
+							<button class="btn" @click="reduce">-</button>
 							<input class="ipt" type="number" v-model="num"></input>
-							<button class="btn" @tap="add">+</button>
+							<button class="btn" @click="add">+</button>
 						</view>
 					</view>
 				</view>
-				<button type="warn" @tap="closePopup">确定</button>
+				<button type="warn" @click="closePopup">确定</button>
 			</view>
 		</uni-popup>
 	</view>
@@ -102,11 +102,11 @@
 				interval: 50000,
 				duration: 500,
 				mode: 'scaleToFit',
-				imgLs: ['/static/img/飘雪1号内容图_2X1_6.jpg',
-					'/static/img/飘雪1号内容图_2X1_2.jpg',
-					'/static/img/飘雪1号内容图_2X1_1.jpg',
-					'/static/img/飘雪1号内容图_2X1_5.jpg'],
-				img: '/static/img/飘雪1号内容图_2X1_6.jpg',
+				imgLs: ['/static/img/2X1_6.jpg',
+					'/static/img/2X1_2.jpg',
+					'/static/img/2X1_1.jpg',
+					'/static/img/2X1_5.jpg'],
+				img: '/static/img/2X1_6.jpg',
 				modeLs: ['54 * 4g/袋（共54袋）', '125 * 4g/袋（共500g）', '24 * 4g/袋（共24袋）'],
 				selectItem: 0,
 				num: 1
@@ -121,10 +121,10 @@
 			query.select('#detail').boundingClientRect();
 			query.selectViewport().scrollOffset();
 			query.exec(function(res){
-				console.log(res);
+				console.log('query res: ', res);
 				me.loca1 = res[0].top;
 			});
-			this.topHeight = this.$refs.top.$el.clientHeight;
+			this.topHeight = 42;
 		},
 		methods: {
 			goTop() {

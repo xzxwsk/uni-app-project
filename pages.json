@@ -42,9 +42,7 @@
 			"style": {
 				"navigationBarTitleText": "填写订单",
 				"app-plus": {
-					"titleNView": {
-						
-					}
+					"bounce": "none"
 				}
 			}
 		}, {
@@ -52,9 +50,7 @@
 			"style": {
 				"navigationBarTitleText": "订单详情",
 				"app-plus": {
-					"titleNView": {
-						
-					}
+					"bounce": "none"
 				}
 			}
 		}, {

@@ -83,6 +83,14 @@
 				}
 			}
 		}, {
+			"path": "pages/order/createPayOrder",
+			"style": {
+				"navigationBarTitleText": "新增付款单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/order/myReceivePayOrder",
 			"style": {
 				"navigationBarTitleText": "我收到的付款单",

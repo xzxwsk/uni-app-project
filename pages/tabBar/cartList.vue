@@ -12,7 +12,7 @@
 				<view class="uni-list">
 					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @click="goDetail(index)" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
 						<view class="uni-media-list">
-							<radio class="radio" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
+							<radio class="radio" color="#f23030" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
 							<image class="uni-media-list-logo" mode="aspectFit" :src="item.img" @error="imageError"></image>
 							<view class="uni-media-list-body">
 								<view class="uni-media-list-text-top">{{ item.title }}</view>
@@ -30,7 +30,7 @@
 				</view>
 			</scroll-view>
 			<view class="result">
-				<label class="radio"><radio :checked="allSelect" @click="onAllSelect" />全选</label>
+				<label class="radio"><radio color="#f23030" :checked="allSelect" @click="onAllSelect" />全选</label>
 				<block v-if="titleBtn === '修改'">
 					<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
 					<button class="btn">继续购物</button>

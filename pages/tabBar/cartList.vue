@@ -101,10 +101,6 @@
 			}
 		},
 		onLoad() {
-			uni.setTabBarBadge({
-				index: 2,
-				text: '12'
-			});
 			// #ifdef APP-PLUS
 			// let webView = this.$mp.page.$getAppWebview();
 			// webView.setTitleNViewButtonStyle(0, {  

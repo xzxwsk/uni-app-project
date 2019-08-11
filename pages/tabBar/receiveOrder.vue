@@ -37,12 +37,12 @@
 					{
 						name: '我收到的订单',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
-						url: 'order/myOrder',
+						url: 'order/myReceiveOrder',
 						icon: 'paperplane'
 					},
 					{
 						name: '我收到的付款单',
-						url: 'order/myOrder',
+						url: 'order/myReceivePayOrder',
 						icon: 'location-filled'
 					},
 					{

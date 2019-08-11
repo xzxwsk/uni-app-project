@@ -11,7 +11,8 @@
 				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="会员编号"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="姓名"></input-box>
 							<customDatePicker
 								fields="month"
 								:start="startDate"
@@ -43,14 +44,16 @@
 										</view>
 									</view>
 									<view class="ls_item_center">
+										<text class="count">会员编号：df348209834</text>
+										<text class="count">姓名：dfidsafkdsafld</text>
+									</view>
+									<view class="ls_item_center">
 										<text class="count">共{{item.count}}件商品</text>
 										<text>合计：￥{{item.price * item.count}}</text>
 									</view>
 									<view class="ls_item_bottom">
-										<button class="btn">关闭</button>
-										<button class="btn">收货确认</button>
-										<button class="btn">退货</button>
-										<button class="btn">撤销退货</button>
+										<button class="btn">发货</button>
+										<button class="btn">退货确认</button>
 									</view>
 								</view>
 							</view>

@@ -66,6 +66,18 @@ let dateUtils = {
 	}
 };
 
+let random = function(minNum,maxNum){ 
+    switch(arguments.length){ 
+        case 1: 
+            return parseInt(Math.random()*minNum+1, 10); 
+			break; 
+        case 2: 
+            return parseInt(Math.random()*(maxNum-minNum+1)+minNum, 10); 
+			break; 
+        default: 
+            return 0;
+    }
+};
 let goUrl = function(prompt) {
 	uni.navigateTo(prompt);
 };
@@ -92,5 +104,6 @@ module.exports = {
 	goTab: goTab,
 	dialog: dialog,
 	showLoading: showLoading,
-	hideLoading: hideLoading
+	hideLoading: hideLoading,
+	random: random
 }

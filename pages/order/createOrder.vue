@@ -51,7 +51,7 @@
 		</view>
 		<view class="result">
 			<view class="count b"><text class="price">￥{{(count+freight).toFixed(2)}}</text></view>
-			<button class="btn" type="warn">生成订单</button>
+			<button class="btn" type="warn" @click="goMyOrder">生成订单</button>
 		</view>
 	</view>
 </template>
@@ -128,7 +128,12 @@
 			selectAddr() {
 				util.goUrl({
 					url: '../addr/addr'
-				})
+				});
+			},
+			goMyOrder() {
+				util.goUrl({
+					url: './myOrder'
+				});
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

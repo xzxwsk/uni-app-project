@@ -6,10 +6,10 @@
 		<view class="uni-padding-wrap">
             <view class="page-section swiper">
                 <view class="page-section-spacing">
-                    <swiper class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
+                    <swiper style="height: 350upx;" class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
                         <swiper-item v-for="(item, index) in imgLs" :key="index">
                             <view class="swiper-item">
-								<image style="width: 100%;" :mode="mode" :src="item" @error="imageError"></image>
+								<image style="width: 100%;" :mode="mode" :src="item" @click="goDetail" @error="imageError"></image>
 							</view>
                         </swiper-item>                        
                     </swiper>
@@ -17,7 +17,7 @@
             </view>
         </view>
 		<view class="uni-product-list">
-			<view class="uni-product" v-for="(product,index) in productList" :key="index">
+			<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail">
 				<view class="image-view">
 					<image v-if="renderImage" class="uni-product-image" :src="product.image"></image>
 				</view>
@@ -34,11 +34,17 @@
 				<view v-html="sysInfo"></view>
 			</view>
 		</view>
+		<share-menu ref="shareMenu"></share-menu>
 	</view>
 </template>
 
 <script>
+	import util from '@/common/util.js';
+	import shareMenu from '@/components/share-menu/index';
 	export default {
+		components: {
+			shareMenu
+		},
 		data() {
 			return {
 				sysInfo: '',
@@ -48,7 +54,7 @@
 				autoplay: true,
 				interval: 50000,
 				duration: 500,
-				mode: 'scaleToFill',
+				mode: 'widthFix',
 				imgLs: ['/static/img/09b56be258853ac27ec6ecc946453b65.jpg',
 					'/static/img/56da50eddd39e1089c0724e40443c850.png',
 					'/static/img/18092294969201596540241d96bc0592.jpg',
@@ -61,22 +67,45 @@
 		onLoad() {
 			this.getSystemInfo();
 			this.loadData();
+			uni.setTabBarBadge({
+				index: 2,
+				text: '12'
+			});
 			setTimeout(()=> {
 			    this.renderImage = true;
 			}, 300);
 		},
 		onPullDownRefresh() {
+			// 下拉刷新
 		    this.loadData('refresh');
 		    // 实际开发中通常是网络请求，加载完数据后就停止。这里仅做演示，加延迟为了体现出效果。
 		    setTimeout(() => {
 		        uni.stopPullDownRefresh();
 		    }, 2000);
 		},
-		onNavigationBarSearchInputChanged (e) {
+		onReachBottom() {
+			// 上拉加载更多
+		    this.loadData();
+		},
+		onNavigationBarSearchInputChanged(e) {
+			// 输入框改变
 			console.log(e);
 		},
-		onReachBottom() {
-		    this.loadData();
+		onNavigationBarSearchInputConfirmed(e) {
+			// 点击搜索按钮
+			console.log(JSON.stringify(e));
+			util.dialog({
+				title: '搜索结果',
+				showCancel: false,
+				content: e.text
+			});
+		},
+		onNavigationBarButtonTap(e) {
+			// 点击分享按钮
+			console.log(JSON.stringify(e));
+			// #ifdef APP-PLUS
+			this.$refs.shareMenu.showShareMenu();
+			// #endif
 		},
 		methods: {
 			getSystemInfo() {
@@ -98,6 +127,11 @@
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
+			},
+			goDetail() {
+				util.goUrl({
+					url: '../product/productDetail'
+				})
 			},
 			loadData(action = 'add') {
 			    const data = [

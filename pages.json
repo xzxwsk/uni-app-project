@@ -13,9 +13,6 @@
 							"placeholder": "春季踏青郊游必备"
 						},
 						"buttons": [{
-							"float": "left",
-							"type": "menu"
-						},{
 							"float": "right",
 							"type": "share"
 						}]
@@ -58,9 +55,39 @@
 			"style": {
 				"navigationBarTitleText": "我的订单",
 				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/order/myReceiveOrder",
+			"style": {
+				"navigationBarTitleText": "我收到的订单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/order/payOrder",
+			"style": {
+				"navigationBarTitleText": "付款单",
+				"app-plus": {
+					"bounce": "none",
 					"titleNView": {
-						
+						"buttons": [{
+							"text": "新增",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
 					}
+				}
+			}
+		}, {
+			"path": "pages/order/myReceivePayOrder",
+			"style": {
+				"navigationBarTitleText": "我收到的付款单",
+				"app-plus": {
+					"bounce": "none"
 				}
 			}
 		}, {

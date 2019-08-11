@@ -1,5 +1,5 @@
 <template>
-	<view class="order">			
+	<view class="pay_order">			
 		<view class="uni-tab-bar">
 			<scroll-view id="tab-bar" class="uni-swiper-tab" scroll-x :scroll-left="scrollLeft">
 				<view class="tab_head">
@@ -26,31 +26,29 @@
 								<view class="no-img cart">
 									<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
 								</view>
-								<view class="txt"><text>亲，还没有相关订单哦~</text></view>
+								<view class="txt"><text>亲，还没有相关付款单哦~</text></view>
 							</view>
 						</block>
 						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
 							<view>
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
-										<view class="img">
-											<image v-if="itemLs.renderImage" :src="item.src" style="width: 100%;" mode="widthFix"></image>
-										</view>
-										<text class="title">{{item.title}}</text>
+										<text class="title">日期: 2012-12-05<br/>款项性质: 大</text>
 										<view class="status">
 											<text>{{item.status}}</text>
 											<text class="price">￥{{item.price}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count">共{{item.count}}件商品</text>
-										<text>合计：￥{{item.price * item.count}}</text>
+										<text class="count">自己帐户：微信</text>
+										<text class="count">对方帐户：xxxx</text>
+									</view>
+									<view class="ls_item_center">
+										<text class="count">付款方式：微信</text>
+										<text>备注：xxxx</text>
 									</view>
 									<view class="ls_item_bottom">
-										<button class="btn">关闭</button>
-										<button class="btn">收货确认</button>
-										<button class="btn">退货</button>
-										<button class="btn">撤销退货</button>
+										<button class="btn">取消</button>
 									</view>
 								</view>
 							</view>
@@ -74,19 +72,19 @@
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已发货',
+		status: '未收款',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已发货',
+		status: '已收款',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已发货',
+		status: '取消',
 		count: 1,
 		price: 16.28
 	}];
@@ -106,23 +104,14 @@
 					name: '全部',
 					id: 'all'
 				}, {
-					name: '未发货',
+					name: '未收款',
 					id: 'guanzhu'
 				}, {
-					name: '已发货',
+					name: '已收款',
 					id: 'tuijian'
 				}, {
-					name: '已收货确认',
+					name: '取消',
 					id: 'tiyu'
-				}, {
-					name: '退货中',
-					id: 'tiyu1'
-				}, {
-					name: '已退货确认',
-					id: 'tiyu2'
-				}, {
-					name: '已关闭',
-					id: 'tiyu3'
 				}],
 				isScroll: false,
 				loadingText: '加载更多...',

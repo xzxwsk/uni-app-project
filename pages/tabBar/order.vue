@@ -42,7 +42,7 @@
 					},
 					{
 						name: '付款单',
-						url: 'order/myOrder',
+						url: 'order/payOrder',
 						icon: 'location-filled'
 					},
 					{

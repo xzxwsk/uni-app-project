@@ -43,8 +43,8 @@
 			</scroll-view>
 		</view>
 		<view class="result">
-			<button class="btn btn_yellow">加入购物车</button>
-			<button class="btn" type="warn">立即付款</button>
+			<button class="btn btn_yellow" @click="goCartLs">加入购物车</button>
+			<button class="btn" type="warn" @click="goCreateOrder">立即付款</button>
 		</view>
 		
 		<uni-popup ref="popup" type="bottom">
@@ -81,6 +81,7 @@
 
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
+	import util from '@/common/util.js';
 	export default {
 		components: {
 			uniPopup
@@ -127,6 +128,16 @@
 			this.topHeight = 42;
 		},
 		methods: {
+			goCartLs() {
+				util.goTab({
+					url: '../tabBar/cartList'
+				});
+			},
+			goCreateOrder() {
+				util.goUrl({
+					url: '../order/createOrder'
+				});
+			},
 			goTop() {
 				let me = this;
 				this.tabCur = 0;

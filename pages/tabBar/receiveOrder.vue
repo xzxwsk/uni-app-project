@@ -47,8 +47,13 @@
 					},
 					{
 						name: '我收到的退款单',
-						url: 'order/myOrder',
+						url: 'order/myReceiveRefundOrder',
 						icon: 'map'
+					},
+					{
+						name: '我收到的离职单',
+						url: 'order/myReceiveQuitOrder',
+						icon: 'location-filled'
 					}
 				]
 			}

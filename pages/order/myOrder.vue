@@ -8,7 +8,7 @@
 				 </view>
 			</scroll-view>
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
-				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
+				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
 							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
@@ -33,9 +33,9 @@
 							<view>
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
-										<view class="img">
+										<!-- <view class="img">
 											<image v-if="itemLs.renderImage" :src="item.src" style="width: 100%;" mode="widthFix"></image>
-										</view>
+										</view> -->
 										<text class="title">{{item.title}}</text>
 										<view class="status">
 											<text>{{item.status}}</text>
@@ -74,19 +74,55 @@
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已发货',
+		status: '未发货',
 		count: 1,
 		price: 16.28
-	},{
+	}, {
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '未发货',
+		count: 1,
+		price: 16.28
+	}, {
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '已发货',
 		count: 1,
 		price: 16.28
-	},{
+	}, {
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '已发货',
+		count: 1,
+		price: 16.28
+	}, {
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已发货',
+		count: 1,
+		price: 16.28
+	}, {
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已收货确认',
+		count: 1,
+		price: 16.28
+	}, {
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '退货中',
+		count: 1,
+		price: 16.28
+	}, {
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已退货确认',
+		count: 1,
+		price: 16.28
+	}, {
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已关闭',
 		count: 1,
 		price: 16.28
 	}];
@@ -101,7 +137,7 @@
 				scrollLeft: 0,
 				tabIndex: 0,
 				dataArr: [],
-				renderImage: false,
+				displayDataArr: [],
 				tabBars: [{
 					name: '全部',
 					id: 'all'
@@ -124,17 +160,14 @@
 					name: '已关闭',
 					id: 'tiyu3'
 				}],
-				isScroll: false,
-				loadingText: '加载更多...',
-				dateValue: '',
-				searchKey: '',
 				startDate: '2010-01',
-				endDate: '2199-12',
-				ls: list
+				endDate: '2199-12'
 			}
 		},
 		onLoad() {
 			this.dataArr = this.randomfn();
+			this.displayDataArr = this.dataArr.slice(0, this.dataArr.length);
+			console.log(this.dataArr);
 			setTimeout(()=> {
 			    this.dataArr[0].renderImage = true;
 			}, 300);
@@ -149,6 +182,22 @@
 			},
 			query() {
 				console.log(this.dataArr[this.tabIndex].searchKey, this.dataArr[this.tabIndex].dateValue);
+				let len = this.dataArr[this.tabIndex].data.length;
+				let tempArr = this.dataArr[this.tabIndex].data.slice(0, len);
+				this.displayDataArr[this.tabIndex].data = tempArr.filter(item => {
+					let flag = false;
+					if(this.dataArr[this.tabIndex].searchKey === ''){
+						flag = true;
+					} else {
+						for(let key in item) {
+							if(Object.prototype.toString.call(item[key]) === '[object String]' && item[key].indexOf(this.dataArr[this.tabIndex].searchKey) != -1) {
+								flag = true;
+							}
+						}
+					}
+					
+					return flag;
+				})
 			},
 			loadMore(e) {
 				this.dataArr[this.tabIndex].isScroll = true;
@@ -159,12 +208,12 @@
 			},
 			addData(e) {
 				this.dataArr[e].isLoading = true;
-				this.dataArr[e].data = list.slice(0, util.random(4));
+				this.dataArr[e].loadingText = '没有更多了';
 				setTimeout(()=> {
 				    this.dataArr[e].renderImage = true;
 				}, 300);
 				// if (this.dataArr[e].data.length > 30) {
-				// 	this.dataArr[e].loadingText = '没有更多了';
+					// this.dataArr[e].loadingText = '没有更多了';
 				// 	return;
 				// }
 			},
@@ -233,7 +282,13 @@
 					};
 					if (i < 1) {
 						aryItem.isLoading = true;
-						aryItem.data = list.slice(0, util.random(4));
+						aryItem.loadingText = '没有更多了';
+						// aryItem.data = list.slice(0, util.random(4));
+						aryItem.data = list;
+					} else {
+						aryItem.data = list.filter(item => {
+							return item.status === this.tabBars[i].name;
+						});
 					}
 					ary.push(aryItem);
 				}

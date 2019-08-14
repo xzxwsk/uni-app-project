@@ -47,7 +47,7 @@
 					},
 					{
 						name: '退款单',
-						url: 'order/myOrder',
+						url: 'order/refundOrder',
 						icon: 'map'
 					}
 				]

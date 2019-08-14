@@ -43,7 +43,7 @@
 				</view>
 				我的奖金查询
 			</view>
-			<view class="btn">
+			<view class="btn" @click="stock">
 				<view>
 					<view class="uni-icon uni-icon-paperplane"></view>
 				</view>
@@ -90,15 +90,15 @@
 					{
 						name: '会员入职单',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
-						url: 'login/login'
+						url: 'user/entryOrder'
 					},
 					{
 						name: '会员离职单',
-						url: 'login/login'
+						url: 'user/quitOrder'
 					},
 					{
 						name: '处罚申请单',
-						url: 'login/login'
+						url: 'user/punishOrder'
 					}
 				]
 			}
@@ -138,6 +138,12 @@
 				// 奖金查询
 				util.goUrl({
 					url: '/pages/user/bonus'
+				})
+			},
+			stock() {
+				// 库存查询
+				util.goUrl({
+					url: '/pages/user/stock'
 				})
 			},
 			subordinateInfo() {

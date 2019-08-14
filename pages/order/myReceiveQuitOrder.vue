@@ -11,7 +11,8 @@
 				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="会员编号"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="姓名"></input-box>
 							<customDatePicker
 								fields="month"
 								:start="startDate"
@@ -26,7 +27,7 @@
 								<view class="no-img cart">
 									<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
 								</view>
-								<view class="txt"><text>亲，还没有相关付款单哦~</text></view>
+								<view class="txt"><text>亲，还没有相关离职单哦~</text></view>
 							</view>
 						</block>
 						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
@@ -34,23 +35,22 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<text class="title">
-											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">款项性质:</text>大</text>
+											<text class="gray">日期:</text>2012-12-05</text>
+											<text class="gray">离职原因:</text>大大大大大</text>
 										<view class="status">
 											<text>{{item.status}}</text>
-											<text class="price">￥{{item.price}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count"><text class="gray">自己帐户:</text>微信</text>
-										<text class="count"><text class="gray">对方帐户:</text>xxxx</text>
+										<text class="count"><text class="gray">会员编号:</text>df348209834</text>
+										<text class="count"><text class="gray">姓名:</text>dfidsafkdsafld</text>
 									</view>
 									<view class="ls_item_center">
-										<text><text class="gray">付款方式:</text>微信</text>
+										<text><text class="gray">退款方式:</text>微信</text>
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">取消</button>
+										<button class="btn">核准</button>
 									</view>
 								</view>
 							</view>
@@ -74,19 +74,19 @@
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '未收款',
+		status: '退款中',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已收款',
+		status: '已退款',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '取消',
+		status: '已确认收款',
 		count: 1,
 		price: 16.28
 	}];
@@ -106,13 +106,16 @@
 					name: '全部',
 					id: 'all'
 				}, {
-					name: '未收款',
+					name: '申请',
 					id: 'guanzhu'
 				}, {
-					name: '已收款',
+					name: '已退货款',
+					id: 'guanzhu1'
+				}, {
+					name: '已审核',
 					id: 'tuijian'
 				}, {
-					name: '取消',
+					name: '已确认收款',
 					id: 'tiyu'
 				}],
 				isScroll: false,
@@ -129,11 +132,6 @@
 			setTimeout(()=> {
 			    this.dataArr[0].renderImage = true;
 			}, 300);
-		},		
-		onNavigationBarButtonTap(e) {
-			util.goUrl({
-				url: './createPayOrder'
-			})
 		},
 		methods: {
 			goDetail(index) {
@@ -230,7 +228,7 @@
 					};
 					if (i < 1) {
 						aryItem.isLoading = true;
-						aryItem.data = list.slice(0, util.random(4));
+						aryItem.data = list.slice(0, util.random(list.length));
 					}
 					ary.push(aryItem);
 				}

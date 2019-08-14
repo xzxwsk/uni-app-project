@@ -35,22 +35,13 @@
 									<view class="ls_item_top">
 										<text class="title">
 											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">款项性质:</text>大</text>
+											<text class="gray">处罚类别:</text>大<br/>
+											<text class="gray">会员编号:</text>dsdffdgdfs<br/>
+											<text class="gray">会员姓名:</text>卡咔砂
+										</text>
 										<view class="status">
 											<text>{{item.status}}</text>
-											<text class="price">￥{{item.price}}</text>
 										</view>
-									</view>
-									<view class="ls_item_center">
-										<text class="count"><text class="gray">自己帐户:</text>微信</text>
-										<text class="count"><text class="gray">对方帐户:</text>xxxx</text>
-									</view>
-									<view class="ls_item_center">
-										<text><text class="gray">付款方式:</text>微信</text>
-										<text class="count"><text class="gray">备注:</text>xxxx</text>
-									</view>
-									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">取消</button>
 									</view>
 								</view>
 							</view>
@@ -74,19 +65,19 @@
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '未收款',
+		status: '申请',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已收款',
+		status: '已审核',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '取消',
+		status: '已审核',
 		count: 1,
 		price: 16.28
 	}];
@@ -106,14 +97,11 @@
 					name: '全部',
 					id: 'all'
 				}, {
-					name: '未收款',
+					name: '申请',
 					id: 'guanzhu'
 				}, {
-					name: '已收款',
+					name: '已审核',
 					id: 'tuijian'
-				}, {
-					name: '取消',
-					id: 'tiyu'
 				}],
 				isScroll: false,
 				loadingText: '加载更多...',
@@ -132,7 +120,7 @@
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
-				url: './createPayOrder'
+				url: './createPunishOrder'
 			})
 		},
 		methods: {

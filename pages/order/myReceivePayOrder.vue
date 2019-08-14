@@ -52,8 +52,8 @@
 										<text><text class="gray">付款方式:</text>微信</text>
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
-									<view class="ls_item_bottom">
-										<button class="btn">取消</button>
+									<view class="ls_item_bottom" v-show="tabIndex === 1">
+										<button class="btn">收款确认</button>
 									</view>
 								</view>
 							</view>
@@ -173,10 +173,11 @@
 				})
 			},
 			async changeTab(e) {
-				let index = e.target.current;
-				if (!index) {
+				let index;
+				if (!e.target.hasOwnProperty('current')) {
 					return;
 				}
+				index = e.target.current;
                 this.tabIndex = index;
 				if (!this.dataArr[index].isLoading) {
 					this.addData(index)

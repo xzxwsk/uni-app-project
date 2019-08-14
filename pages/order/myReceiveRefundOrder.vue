@@ -11,7 +11,8 @@
 				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="会员编号"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="姓名"></input-box>
 							<customDatePicker
 								fields="month"
 								:start="startDate"
@@ -35,22 +36,24 @@
 									<view class="ls_item_top">
 										<text class="title">
 											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">款项性质:</text>大</text>
+											<text class="gray">款项性质:</text>大<br/>
+											<text class="gray">自己帐户:</text>大大大大大<br/>
+											<text class="gray">对方帐户: </text>大大规模那么</text>
 										<view class="status">
 											<text>{{item.status}}</text>
 											<text class="price">￥{{item.price}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count"><text class="gray">自己帐户:</text>微信</text>
-										<text class="count"><text class="gray">对方帐户:</text>xxxx</text>
+										<text class="count"><text class="gray">会员编号:</text>df348209834</text>
+										<text class="count"><text class="gray">姓名:</text>dfidsafkdsafld</text>
 									</view>
 									<view class="ls_item_center">
 										<text><text class="gray">付款方式:</text>微信</text>
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">取消</button>
+										<button class="btn">退款确认</button>
 									</view>
 								</view>
 							</view>
@@ -106,10 +109,10 @@
 					name: '全部',
 					id: 'all'
 				}, {
-					name: '未收款',
+					name: '退款中',
 					id: 'guanzhu'
 				}, {
-					name: '已收款',
+					name: '已退款',
 					id: 'tuijian'
 				}, {
 					name: '取消',
@@ -129,11 +132,6 @@
 			setTimeout(()=> {
 			    this.dataArr[0].renderImage = true;
 			}, 300);
-		},		
-		onNavigationBarButtonTap(e) {
-			util.goUrl({
-				url: './createPayOrder'
-			})
 		},
 		methods: {
 			goDetail(index) {

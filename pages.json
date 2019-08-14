@@ -99,6 +99,118 @@
 				}
 			}
 		}, {
+			"path": "pages/order/refundOrder",
+			"style": {
+				"navigationBarTitleText": "退款单",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "新增",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		}, {
+			"path": "pages/order/createRefundOrder",
+			"style": {
+				"navigationBarTitleText": "新增退款单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/order/myReceiveRefundOrder",
+			"style": {
+				"navigationBarTitleText": "我收到的退款单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/order/myReceiveQuitOrder",
+			"style": {
+				"navigationBarTitleText": "我收到的离职单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/entryOrder",
+			"style": {
+				"navigationBarTitleText": "会员入职单",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "新增",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		}, {
+			"path": "pages/user/createEntryOrder",
+			"style": {
+				"navigationBarTitleText": "新增会员入职单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/quitOrder",
+			"style": {
+				"navigationBarTitleText": "会员离职单",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "新增",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		}, {
+			"path": "pages/user/createQuitOrder",
+			"style": {
+				"navigationBarTitleText": "新增会员离职单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/punishOrder",
+			"style": {
+				"navigationBarTitleText": "处罚申请单",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "新增",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		}, {
+			"path": "pages/user/createPunishOrder",
+			"style": {
+				"navigationBarTitleText": "新增处罚申请单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/tabBar/order",
 			"style": {
 				"navigationBarTitleText": "我的单据",
@@ -258,6 +370,14 @@
 			"path": "pages/user/bonus",
 			"style": {
 				"navigationBarTitleText": "我的奖金查询",
+				"app-plus": {
+					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/user/stock",
+			"style": {
+				"navigationBarTitleText": "我的库存查询",
 				"app-plus": {
 					"bounce": "vertical"
 				}

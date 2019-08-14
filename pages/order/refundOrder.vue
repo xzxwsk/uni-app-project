@@ -50,7 +50,7 @@
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">取消</button>
+										<button class="btn">确认退款</button>
 									</view>
 								</view>
 							</view>
@@ -106,10 +106,10 @@
 					name: '全部',
 					id: 'all'
 				}, {
-					name: '未收款',
+					name: '退款中',
 					id: 'guanzhu'
 				}, {
-					name: '已收款',
+					name: '已退款',
 					id: 'tuijian'
 				}, {
 					name: '取消',
@@ -132,7 +132,7 @@
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
-				url: './createPayOrder'
+				url: './createRefundOrder'
 			})
 		},
 		methods: {

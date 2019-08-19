@@ -166,10 +166,9 @@
 		},
 		onLoad() {
 			this.dataArr = this.randomfn();
-			this.displayDataArr = this.dataArr.slice(0, this.dataArr.length);
-			console.log(this.dataArr);
+			this.displayDataArr = util.deepCopy(this.dataArr);
 			setTimeout(()=> {
-			    this.dataArr[0].renderImage = true;
+			    this.displayDataArr[0].renderImage = true;
 			}, 300);
 		},
 		methods: {
@@ -181,36 +180,47 @@
 				});
 			},
 			query() {
-				console.log(this.dataArr[this.tabIndex].searchKey, this.dataArr[this.tabIndex].dateValue);
-				let len = this.dataArr[this.tabIndex].data.length;
-				let tempArr = this.dataArr[this.tabIndex].data.slice(0, len);
-				this.displayDataArr[this.tabIndex].data = tempArr.filter(item => {
+				let searchKey = this.displayDataArr[this.tabIndex].searchKey;
+				console.log(this.displayDataArr[this.tabIndex].searchKey, this.displayDataArr[this.tabIndex].dateValue);
+				// let tempArr = [];
+				this.displayDataArr[this.tabIndex].data = [];
+				// this.dataArr[this.tabIndex].data.forEach(item => {
+				// 	if(item.title.indexOf(searchKey) != -1){
+				// 		tempArr.push(item);
+				// 	}
+				// });
+				// this.displayDataArr[this.tabIndex].data = tempArr;
+				this.displayDataArr[this.tabIndex].data = this.dataArr[this.tabIndex].data.filter(item => {
 					let flag = false;
-					if(this.dataArr[this.tabIndex].searchKey === ''){
+					if(searchKey === ''){
 						flag = true;
 					} else {
-						for(let key in item) {
-							if(Object.prototype.toString.call(item[key]) === '[object String]' && item[key].indexOf(this.dataArr[this.tabIndex].searchKey) != -1) {
+						for(let key in item){
+							if(Object.prototype.toString.call(item[key]) === '[object String]' && item[key].indexOf(searchKey) != -1){
+							// if(key==='title' && item[key].indexOf(searchKey)!=-1){
 								flag = true;
 							}
 						}
 					}
 					
 					return flag;
-				})
+				});
 			},
 			loadMore(e) {
-				this.dataArr[this.tabIndex].isScroll = true;
+				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
 			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
-				this.dataArr[this.tabIndex].dateValue = value;
+				console.log('bindDateChange: ', value, this.tabIndex);
+				this.displayDataArr[this.tabIndex].dateValue = value;
 			},
 			addData(e) {
-				this.dataArr[e].isLoading = true;
-				this.dataArr[e].loadingText = '没有更多了';
+				this.displayDataArr[e].isLoading = true;
+				this.displayDataArr[e].loadingText = '没有更多了';
+				if(this.displayDataArr[e].dateValue === ''){
+					this.displayDataArr[e].dateValue = this.displayDataArr[0].dateValue;
+				}
 				setTimeout(()=> {
-				    this.dataArr[e].renderImage = true;
+				    this.displayDataArr[e].renderImage = true;
 				}, 300);
 				// if (this.dataArr[e].data.length > 30) {
 					// this.dataArr[e].loadingText = '没有更多了';
@@ -233,7 +243,7 @@
 					return;
 				}
                 this.tabIndex = index;
-				if (!this.dataArr[index].isLoading) {
+				if (!this.displayDataArr[index].isLoading) {
 					this.addData(index)
 				}
 				let tabBar = await this.getElSize("tab-bar"),
@@ -256,7 +266,7 @@
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
-				if (!this.dataArr[tabIndex].isLoading) {
+				if (!this.displayDataArr[tabIndex].isLoading) {
 					this.addData(tabIndex)
 				}
 				if (this.tabIndex === tabIndex) {

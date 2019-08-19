@@ -3,7 +3,7 @@
 		<view class="top">
 			<view class="login_box">
 				<view class="login_con">
-					<view class="head_img"><image style="width: 100%; height: 100%;" :mode="modeHead" :src="imgSrcHead" @error="imageError"></image></view>
+					<view class="head_img"><image style="width: 100%; height: 100%;" :mode="modeHead" :src="imgSrcHead" @error="imageError" @click="updateHeadImg"></image></view>
 					<view class="txt" v-if="logined">
 						<view class="user_info">
 							<view class="user_name">wsk</view>
@@ -16,7 +16,7 @@
 							<text class="word">登录</text>
 						</navigator>
 						<text class="split">/</text>
-						<navigator url="../login/login" hover-class="navigator-hover">
+						<navigator url="../login/reg" hover-class="navigator-hover">
 							<text class="word">注册</text>
 						</navigator>
 					</view>
@@ -78,22 +78,24 @@
 
 <script>
 	import util from '@/common/util.js';
+	import imgSrcHead from "@/static/images/avatar_member.gif";
+	import imgSrc from "@/static/images/member_bg.png";
 	export default {
 		data() {
 			return {
 				logined: true,
-				imgSrcHead: '/static/images/avatar_member.gif',
+				imgSrcHead: imgSrcHead,
 				modeHead: 'widthFix',
-				imgSrc: '/static/images/member_bg.png',
+				imgSrc: imgSrc,
 				mode: 'widthFix',
 				pages: [
 					{
-						name: '会员入职单',
+						name: '经销商加盟单',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
 						url: 'user/entryOrder'
 					},
 					{
-						name: '会员离职单',
+						name: '经销商注销单',
 						url: 'user/quitOrder'
 					},
 					{
@@ -109,6 +111,19 @@
 		methods: {
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
+			},
+			updateHeadImg() {
+				this.chooseImage();
+			},
+			async chooseImage() {
+				uni.chooseImage({
+					sourceType: ['album'],
+					sizeType: ['compressed'],
+					count: 1,
+					success: res => {
+						this.imgSrcHead = res.tempFilePaths[0];
+					}
+				});
 			},
 			goDetailPage(url) {
 				util.goUrl({

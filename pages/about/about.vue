@@ -1,6 +1,7 @@
 <template>
 	<view class="about">
-		<view class="content">
+		<view style="height: 90%; align-items: center; justify-content: center;">关于我们</view>
+		<!-- <view class="content">
 			<view class="qrcode">
 				<image src="https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/app_download.png" @longtap="save"></image>
 				<text class="tip">扫码体验uni-app</text>
@@ -23,9 +24,9 @@
 				</view>
 			</view>
 			<!-- #ifdef APP-PLUS -->
-			<button type="primary" @click="share">分享</button>
+			<!--<button type="primary" @click="share">分享</button>
 			<!-- #endif -->
-		</view>
+		<!--</view> -->
 		<!-- #ifdef APP-PLUS -->
 		<view class="version">
 			当前版本：{{version}}

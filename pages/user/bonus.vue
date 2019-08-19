@@ -40,27 +40,27 @@
 	
 	const tableList = [{
                         id: 0,
-                        name: '张三',
-                        age: '19',
-                        hobby: '游泳'
+                        name: '201908',
+                        age: '直推',
+                        hobby: '324'
                     },
                     {
                         id: 1,
-                        name: '李四',
-                        age: '21',
-                        hobby: '绘画'
+                        name: '201908',
+                        age: '团队',
+                        hobby: '3432'
                     },
                     {
                         id: 2,
-                        name: '王二',
-                        age: '29',
-                        hobby: '滑板'
+                        name: '201908',
+                        age: '直推',
+                        hobby: '3242'
                     },
                     {
                         id: 3,
-                        name: '码字',
-                        age: '20',
-                        hobby: '蹦极'
+                        name: '201908',
+                        age: '团队',
+                        hobby: '132'
                     }
                 ]
 

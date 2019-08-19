@@ -75,6 +75,11 @@ uni-tabbar {
 .index{
 	height: 1500px;
 }
+.index_page{
+	.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; width: 330upx;
+		.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}
+	}
+}
 .cart_ls{position: relative; display: flex; flex-direction: column; justify-content: center; width: 100%; height: 100%; text-align: center;
 	.uni-list{margin: 0 2% 160upx; width: 96%; background: transparent;
 		&:before{content: none;}
@@ -121,7 +126,9 @@ uni-tabbar {
 		.title{display: flex; flex-direction: row; color: #777; margin:0 10upx 0 0;}
 		.sub_txt{display: block; font-size: 36upx; font-weight: bold; color: #333;}
 	}
-	.detail{min-height: 1500upx; text-align: center;}
+	.detail{min-height: 1500upx; text-align: center;
+		.title{font-size: 30upx;}
+	}
 	.result{position: absolute; bottom: 0; left: 0; z-index: 2; width: 100%; height: 100upx; background: #fff; display: flex; flex-direction: row; justify-content: flex-end; box-shadow: 0px 1px 3px 1px #ddd;
 		.btn{margin: 10upx 20upx 10upx 0; font-size: 30upx; height: 80upx; line-height: 80upx;}
 		.btn_yellow{background: linear-gradient(to right, rgb(255, 126, 0), rgb(255, 188, 0)); color: #fff;}
@@ -156,19 +163,19 @@ uni-tabbar {
 	.no-data{display: flex; flex-direction: column; justify-content: center; height: calc(100% - 150upx); text-align: center;}
 	.list{
 		.box{padding: 10px 0; height: calc(100% - 160upx); background: #f5f5f5;
-			.ls_item{display: flex; flex-direction: column; margin: 0 10px 10px; padding: 10px 0; background: #fff;
+			.ls_item{display: flex; flex-direction: column; margin: 0 15upx 10px; padding: 10px 0; background: #fff;
 				.ls_item_top{display: flex; flex-direction: row;
-					.img{margin: 0 10px; width: 35%;}
-					.title{flex: 1;}
-					.status{display: flex; flex-direction: column; align-items: flex-end; margin: 0 10px; color: rgb(255, 80, 0);}
+					.img{margin: 0 15upx; width: 35%;}
+					.title{flex: 1; margin: 0 15upx;}
+					.status{display: flex; flex-direction: column; align-items: flex-end; margin: 0 15upx; color: rgb(255, 80, 0);}
 				}
-				.ls_item_center{margin: 0 0 5px; padding: 0 10px 0 0; text-align: right; color: #333;
-					.count{margin: 0 10px 0 0; color: #666;
+				.ls_item_center{margin: 0 0 5px; padding: 0 15upx 0 0; text-align: right; color: #333;
+					.count{margin: 0 15upx 0 0; color: #666;
 						&:last-child{margin: 0;}
 					}
 				}
 				.ls_item_bottom{display: flex; flex-direction: row; justify-content: flex-end; border-top: 1px rgb(248, 248, 248) solid; padding: 10px 0 0;
-					.btn{margin: 0 10px 0 0; height: 30px; line-height: 30px; font-size: 30upx;}
+					.btn{margin: 0 15upx 0 0; height: 30px; line-height: 30px; font-size: 30upx;}
 				}
 				&:last-child{margin-bottom: 0;}
 			}
@@ -242,18 +249,20 @@ uni-tabbar {
 	}
 }
 .pay_order{height: 100%; background: #fff;
+	.no-data{display: flex; flex-direction: column; justify-content: center; height: calc(100% - 150upx); text-align: center;}
 	.list{
 		.box{padding: 10px 0; height: calc(100% - 160upx); background: #f5f5f5;
-			.ls_item{display: flex; flex-direction: column; margin: 0 10px 10px; padding: 10px 0; background: #fff;
-				.count{margin: 0 0 0 10px;}
+			.ls_item{display: flex; flex-direction: column; margin: 0 15upx 10px; padding: 10px 0; background: #fff;
+				.count{margin: 0 0 0 15upx;}
 				.gray{margin: 0 5px 0 0; color: #666;}
+				.mgl10{margin: 0 0 0 20upx;}
 				.ls_item_top{display: flex; flex-direction: row;
 					.title{flex: 1; margin: 0 0 0 15upx;}
-					.status{display: flex; flex-direction: column; align-items: flex-end; margin: 0 10px; color: rgb(255, 80, 0);}
+					.status{display: flex; flex-direction: column; align-items: flex-end; margin: 0 15upx; color: rgb(255, 80, 0);}
 				}
-				.ls_item_center{margin: 0 0 5px; padding: 0 10px 0 0; text-align: right; color: #333;}
+				.ls_item_center{margin: 0 0 5px; padding: 0 15upx 0 0; text-align: right; color: #333;}
 				.ls_item_bottom{display: flex; flex-direction: row; justify-content: flex-end; border-top: 1px rgb(248, 248, 248) solid; padding: 10px 0 0;
-					.btn{margin: 0 10px 0 0; height: 30px; line-height: 30px; font-size: 30upx;}
+					.btn{margin: 0 15upx 0 0; height: 30px; line-height: 30px; font-size: 30upx;}
 				}
 				&:last-child{margin-bottom: 0;}
 			}
@@ -261,8 +270,13 @@ uni-tabbar {
 	}
 }
 .create_pay_order{
+	.search_box{flex: 1; margin: 0 20upx 0 0;}
+	.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 	.input-box-all{flex: 1;}
-	.txt{margin: 0 10px;}
+	.txt{margin: 0 15upx;}
+	.box{height: calc(100vh - 200upx); overflow-y: hidden;
+		.protocal{margin: 0 0 0 200upx;}
+	}
 	.result{position: absolute; bottom: 0; left: 0; z-index: 2; width: 100%; height: 100upx; background: #fff; box-shadow: 0px 1px 3px 1px #ddd;
 		.btn{margin: 10upx 20upx; font-size: 30upx; height: 80upx; line-height: 80upx; font-size: 32upx; font-weight: bold;}
 	}
@@ -280,12 +294,12 @@ uni-tabbar {
 				.head_img{margin: 0 0 0 50upx; width: 125upx; height: 125upx; overflow: hidden; border: 5upx solid #ce4165; border-radius: 100%;}
 				.txt{flex: 1; display: flex; flex-direction: row; padding: 0 0 0 20upx; font-size: 30upx; color: #fff;
 					.navigator-hover{border-radius: 10px;}
-					.word{display: block; padding: 5px 10px;}
+					.word{display: block; padding: 5px 15upx;}
 					.split{margin: 5px 10upx;}
-					.user_info{flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-content: center; padding: 0 0 0 20upx; font-size: 20upx; color: #fff;
-						.user_name{font-size: 30upx;}
+					.user_info{flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-content: center; padding: 0 0 0 20upx; font-size: 30upx; color: #fff;
+						.user_name{font-size: 40upx;}
 					}
-					.uni-icon{padding: 0 40upx; display: flex; flex-direction: column; justify-content: center;}
+					.uni-icon{padding: 0 40upx; display: flex; flex-direction: column; justify-content: center; font-size: 70upx;}
 				}
 			}
 		}
@@ -316,12 +330,38 @@ uni-tabbar {
 	.search_box{display: flex; flex-direction: row; align-items: center; padding: 30upx; background: #fff;
 		.rui-picker{flex: 1;}
 	}
+	.box{background: #fff;}
+}
+.stock{
+	.box{background: #fff;
+		.t-th{padding: 20upx 5upx;
+			.first_col{padding: 0 0 0 10upx;}
+		}
+	}
 }
 .my_subordinate_info{height: 100%; background: #fff;
 	.con{display: flex; flex-direction: column; justify-content: center; height: 100%;}
 }
 .addr_ls{display: flex; flex-direction: column; height: 100%;
-	.con{flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center}
+	.con{flex: 1; display: flex; flex-direction: column; justify-content: center; }
+	.ls{height: 100%;
+		.ls_item{margin:0 0 20upx; background: #fff;
+			.ls_item_top{display: flex; flex-direction: row; padding: 20upx 0 0 20upx;
+				.img{margin: 0 10px; width: 35%;}
+				.title{flex: 1;}
+				.status{display: flex; flex-direction: column; align-items: flex-end; margin: 0 10px; color: rgb(255, 80, 0);}
+			}
+			.ls_item_center{margin: 0 0 5px; padding: 0 10px 20upx 20upx; color: #333;
+				.count{margin: 0 10px 0 0; color: #666;
+					&:last-child{margin: 0;}
+				}
+			}
+			.ls_item_bottom{display: flex; flex-direction: row; justify-content: flex-end; border-top: 1px solid #eee; padding: 10px 0 20upx;
+				.btn{margin: 0 10px 0 0; height: 30px; line-height: 30px; font-size: 30upx;}
+			}
+			&:last-child{margin-bottom: 0;}
+		}
+	}
 	.add_btn{margin: 10px 5%;}
 }
 .add_addr{display: flex; flex-direction: column; height: 100%;

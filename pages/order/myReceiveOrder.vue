@@ -1,5 +1,5 @@
 <template>
-	<view class="order">			
+	<view class="order">
 		<view class="uni-tab-bar">
 			<scroll-view id="tab-bar" class="uni-swiper-tab" scroll-x :scroll-left="scrollLeft">
 				<view class="tab_head">
@@ -8,11 +8,11 @@
 				 </view>
 			</scroll-view>
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
-				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
+				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="会员编号"></input-box>
-							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="姓名"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKeyNo" placeholder="经销商编号"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box>
 							<customDatePicker
 								fields="month"
 								:start="startDate"
@@ -34,9 +34,9 @@
 							<view>
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
-										<view class="img">
+										<!-- <view class="img">
 											<image v-if="itemLs.renderImage" :src="item.src" style="width: 100%;" mode="widthFix"></image>
-										</view>
+										</view> -->
 										<text class="title">{{item.title}}</text>
 										<view class="status">
 											<text>{{item.status}}</text>
@@ -45,7 +45,7 @@
 									</view>
 									<view class="ls_item_center">
 										<text class="count">会员编号：df348209834</text>
-										<text class="count">姓名：dfidsafkdsafld</text>
+										<text class="count">姓名：dfidsa</text>
 									</view>
 									<view class="ls_item_center">
 										<text class="count">共{{item.count}}件商品</text>
@@ -77,7 +77,7 @@
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已发货',
+		status: '未发货',
 		count: 1,
 		price: 16.28
 	},{
@@ -89,7 +89,25 @@
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已发货',
+		status: '已收货确认',
+		count: 1,
+		price: 16.28
+	},{
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '退货中',
+		count: 1,
+		price: 16.28
+	},{
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已确认退货',
+		count: 1,
+		price: 16.28
+	},{
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已关闭',
 		count: 1,
 		price: 16.28
 	}];
@@ -104,7 +122,7 @@
 				scrollLeft: 0,
 				tabIndex: 0,
 				dataArr: [],
-				renderImage: false,
+				displayDataArr: [],
 				tabBars: [{
 					name: '全部',
 					id: 'all'
@@ -127,20 +145,13 @@
 					name: '已关闭',
 					id: 'tiyu3'
 				}],
-				isScroll: false,
-				loadingText: '加载更多...',
-				dateValue: '',
-				searchKey: '',
 				startDate: '2010-01',
-				endDate: '2199-12',
-				ls: list
+				endDate: '2199-12'
 			}
 		},
 		onLoad() {
 			this.dataArr = this.randomfn();
-			setTimeout(()=> {
-			    this.dataArr[0].renderImage = true;
-			}, 300);
+			this.displayDataArr = util.deepCopy(this.dataArr);
 		},
 		methods: {
 			goDetail(index) {
@@ -151,25 +162,32 @@
 				});
 			},
 			query() {
-				console.log(this.dataArr[this.tabIndex].searchKey, this.dataArr[this.tabIndex].dateValue);
+				let searchKeyNo = this.displayDataArr[this.tabIndex].searchKeyNo;
+				let searchKeyName = this.displayDataArr[this.tabIndex].searchKeyName;
+				let tempArr = [];
+				this.displayDataArr[this.tabIndex].data = [];
+				this.dataArr[this.tabIndex].data.forEach(item => {
+					if(searchKeyNo==='' && searchKeyName==='') {
+						tempArr.push(item);
+					} else if((searchKeyNo!='' && item.title.indexOf(searchKeyNo) != -1) || (searchKeyName!='' && item.title.indexOf(searchKeyName) != -1)) {
+						tempArr.push(item);
+					}
+				});
+				this.displayDataArr[this.tabIndex].data = tempArr;
 			},
 			loadMore(e) {
-				this.dataArr[this.tabIndex].isScroll = true;
+				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
 			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
-				this.dataArr[this.tabIndex].dateValue = value;
+				console.log('bindDateChange: ', value, this.tabIndex);
+				this.displayDataArr[this.tabIndex].dateValue = value;
 			},
 			addData(e) {
-				this.dataArr[e].isLoading = true;
-				this.dataArr[e].data = list.slice(0, util.random(4));
-				setTimeout(()=> {
-				    this.dataArr[e].renderImage = true;
-				}, 300);
-				// if (this.dataArr[e].data.length > 30) {
-				// 	this.dataArr[e].loadingText = '没有更多了';
-				// 	return;
-				// }
+				this.displayDataArr[e].isLoading = true;
+				this.displayDataArr[e].loadingText = '没有更多了';
+				if(this.displayDataArr[e].dateValue === ''){
+					this.displayDataArr[e].dateValue = this.displayDataArr[0].dateValue;
+				}
 			},
 			getElSize(id) { //得到元素的size
 				return new Promise((res, rej) => {
@@ -187,7 +205,7 @@
 					return;
 				}
                 this.tabIndex = index;
-				if (!this.dataArr[index].isLoading) {
+				if (!this.displayDataArr[index].isLoading) {
 					this.addData(index)
 				}
 				let tabBar = await this.getElSize("tab-bar"),
@@ -210,7 +228,7 @@
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
-				if (!this.dataArr[tabIndex].isLoading) {
+				if (!this.displayDataArr[tabIndex].isLoading) {
 					this.addData(tabIndex)
 				}
 				if (this.tabIndex === tabIndex) {
@@ -227,7 +245,8 @@
 				for (let i = 0, length = this.tabBars.length; i < length; i++) {
 					let aryItem = {
 						isLoading: false,
-						searchKey: '',
+						searchKeyNo: '',
+						searchKeyName: '',
 						dateValue: '',
 						data: [],
 						isScroll: false,
@@ -236,7 +255,12 @@
 					};
 					if (i < 1) {
 						aryItem.isLoading = true;
-						aryItem.data = list.slice(0, util.random(4));
+						aryItem.loadingText = '没有更多了';
+						aryItem.data = list;
+					} else {
+						aryItem.data = list.filter(item => {
+							return item.status === this.tabBars[i].name;
+						});
 					}
 					ary.push(aryItem);
 				}

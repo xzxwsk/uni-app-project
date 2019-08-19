@@ -14,7 +14,6 @@ function formatTime(time) {
 		return n[1] ? n : '0' + n
 	}).join(':')
 }
-
 function formatLocation(longitude, latitude) {
 	if (typeof longitude === 'string' && typeof latitude === 'string') {
 		longitude = parseFloat(longitude)
@@ -78,32 +77,154 @@ let random = function(minNum,maxNum){
             return 0;
     }
 };
+let getType = function(obj){
+   //tostring会返回对应不同的标签的构造函数
+   var toString = Object.prototype.toString;
+   var map = {
+	  '[object Boolean]'  : 'boolean', 
+	  '[object Number]'   : 'number', 
+	  '[object String]'   : 'string', 
+	  '[object Function]' : 'function', 
+	  '[object Array]'    : 'array', 
+	  '[object Date]'     : 'date', 
+	  '[object RegExp]'   : 'regExp', 
+	  '[object Undefined]': 'undefined',
+	  '[object Null]'     : 'null', 
+	  '[object Object]'   : 'object'
+  };
+  if(obj instanceof Element) {
+	   return 'element';
+  }
+  return map[toString.call(obj)];
+};
+let deepCopy = function(data) {
+    var type = getType(data);
+    var obj;
+    if(type === 'array'){
+	    obj = [];
+    } else if(type === 'object'){
+	    obj = {};
+    } else {
+	    //不再具有下一层次
+	    return data;
+    }
+    if(type === 'array'){
+	    for(var i = 0, len = data.length; i < len; i++){
+		    obj.push(deepCopy(data[i]));
+	    }
+    } else if(type === 'object'){
+	    for(var key in data){
+		    obj[key] = deepCopy(data[key]);
+	    }
+    }
+    return obj;
+};
+let extend = function(destination,source) {
+    if(typeof destination == "object"){//destination是一个json对象
+        if(typeof source == "object"){//source是一个json对象
+            //把source中的每一个key,value值赋值给destination
+            for(let i in source){
+                destination[i] = source[i];
+            }
+        }
+    }
+    
+    if(typeof destination == "function"){
+        if(typeof source == "object"){
+            for(var i in source){
+                destination.prototype[i] = source[i];
+            }
+        }
+        if(typeof source == "function"){
+            destination.prototype = source.prototype;
+        }
+    }
+    return destination;
+};
 let goUrl = function(prompt) {
-	uni.navigateTo(prompt);
+	let option = {
+		url: '',
+		animationType: 'pop-in',
+		animationDuration: 300,
+		success: function() {},
+		fail: function() {},
+		complete: function() {}
+	};
+	extend(option, prompt);
+	uni.navigateTo(option);
 };
 let goTab = function(prompt) {
-	uni.switchTab(prompt);
+	let option = {
+		url: '',
+		success: function() {},
+		fail: function() {},
+		complete: function() {}
+	};
+	extend(option, prompt);
+	uni.switchTab(option);
 };
 let dialog = function(prompt) {
-	uni.showModal(prompt)
+	let option = {
+		title: '提示',
+		content: '',
+		showCancel: true,
+		cancelText: '取消',
+		cancelColor: '#000',
+		confirmText: '确定',
+		confirmColor: '#e64340',
+		success: function() {},
+		fail: function() {},
+		complete: function() {}
+	};
+	extend(option, prompt);
+	uni.showModal(option)
 };
-let showLoading = function(text) {
-	uni.showLoading({
-		title: text
-	});
+let showLoading = function(prompt) {
+	let option = {
+		title: '提示信息',
+		mask: false,
+		success: function() {},
+		fail: function() {},
+		complete: function() {}
+	};
+	extend(option, prompt);
+	uni.showLoading(option);
 };
 let hideLoading = function(text) {
 	uni.hideLoading();
+};
+let showToast = function(prompt) {
+	let option = {
+		title: '提示信息',
+		icon: 'none', // success loading none
+		image: '',
+		mask: false,
+		duration: 1500,
+		position: '', // top center bottom
+		success: function() {},
+		fail: function() {},
+		complete: function() {}
+	};
+	extend(option, prompt);
+	uni.showToast(option);
+};
+let hideToast = function(text) {
+	uni.hideToast();
 };
 
 module.exports = {
 	formatTime: formatTime,
 	formatLocation: formatLocation,
 	dateUtils: dateUtils,
+	getType: getType,
+	deepCopy: deepCopy,
+	extend: extend,
 	goUrl: goUrl,
 	goTab: goTab,
 	dialog: dialog,
 	showLoading: showLoading,
 	hideLoading: hideLoading,
+	showToast: showToast,
+	hideToast: hideToast,
 	random: random
 }

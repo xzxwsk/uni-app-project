@@ -10,7 +10,7 @@
 			<view class="input-group">
 				<view class="input-row border">
 					<text class="title">账号：</text>
-					<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['帐号不能为空']" class="input-box" clearable focus v-model="account" placeholder="请输入账号"></input-box>
+					<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['帐号不能为空']" class="input-box" clearable focus v-model="account" placeholder="请输入经销商编号或身份证号"></input-box>
 				</view>
 				<view class="input-row">
 					<text class="title">密码：</text>
@@ -25,11 +25,11 @@
 			<view class="btn-row">
 				<button type="warn" @tap="bindLogin">登录</button>
 			</view>
-			<view class="action-row">
+			<!-- <view class="action-row">
 				<navigator url="./reg">注册账号</navigator>
 				<text class="split">|</text>
 				<navigator url="./pwd">忘记密码</navigator>
-			</view>
+			</view> -->
 			<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
 				<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
 					<image :src="provider.image" @tap="oauth(provider.value)"></image>

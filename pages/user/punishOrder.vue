@@ -36,8 +36,8 @@
 										<text class="title">
 											<text class="gray">日期:</text>2012-12-05<br/>
 											<text class="gray">处罚类别:</text>大<br/>
-											<text class="gray">会员编号:</text>dsdffdgdfs<br/>
-											<text class="gray">会员姓名:</text>卡咔砂
+											<text class="gray">经销商编号:</text>dsdffdgdfs<br/>
+											<text class="gray">经销商姓名:</text>卡咔砂
 										</text>
 										<view class="status">
 											<text>{{item.status}}</text>

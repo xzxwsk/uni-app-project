@@ -1,13 +1,17 @@
 <template>
 	<view class="create_pay_order">
 		<view class="input-group">
+			<view class="input-row">
+				<text class="title"><text class="price">*</text>会员编号：</text>
+				<input-box v-model="userNo" placeholder="请输入收款会员编号"></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title"><text class="price">*</text>会员姓名：</text>
+				<input-box v-model="userName" placeholder="请输入收款会员姓名"></input-box>
+			</view>
 			<view class="input-row border">
 				<text class="title">款项性质：</text>
-				<radio-group class="uni-flex" name="nature" @change="changeMoneyNature">
-					<label><radio value="0" checked color="#f23030" />货款</label>
-					<label><radio value="1" color="#f23030" />保证金</label>
-					<label><radio value="2" color="#f23030" />代交保证金</label>
-				</radio-group>
+				<text class="txt">货款</text>
 			</view>
 			<view class="input-row">
 				<text class="title">付款方式：</text>
@@ -32,7 +36,7 @@
 			</view>
 		</view>
 		<view class="result">
-			<button class="btn" type="warn" @click="saveOrder">保存</button>
+			<button class="btn" type="warn" @click="saveOrder">核准</button>
 		</view>
 	</view>
 </template>
@@ -49,12 +53,12 @@
 		},
 		data() {
 			return {
-				moneyNature: '0',
-				amount: '',
+				userNo: '',
+				userName: '',
 				moneyType: '1',
 				account: '',
-				placeholder: '请输入收款人微信帐号',
-				placeholder2: '请输入收款人微信帐号'
+				amount: '',
+				placeholder: '请输入付款人微信帐号'
 			}
 		},
 		onLoad() {
@@ -71,14 +75,11 @@
 				console.log(e.target.value);
 				this.moneyType = e.target.value;
 				if (e.target.value === '0') {
-					this.placeholder = '请输入付款人微信帐号';
-					this.placeholder2 = '请输入收款人微信帐号';
+					this.placeholder = '请输入付款人微信帐号'
 				} else if (e.target.value === '1') {
-					this.placeholder = '请输入付款人支付宝帐号';
-					this.placeholder2 = '请输入收款人支付宝帐号';
+					this.placeholder = '请输入付款人支付宝帐号'
 				} else if (e.target.value === '2') {
-					this.placeholder = '请输入付款人银行帐号';
-					this.placeholder2 = '请输入收款人银行帐号';
+					this.placeholder = '请输入付款人银行帐号'
 				}
 			},
 			saveOrder() {

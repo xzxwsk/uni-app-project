@@ -15,15 +15,20 @@
 			</view>
 			<view class="input-row">
 				<text class="title">付款方式：</text>
-				<radio-group class="uni-flex" name="gender" @change="changeMoneyType">
-					<label><radio value="0" color="#f23030" checked />微信</label>
-					<label><radio value="1" color="#f23030" />支付宝</label>
-					<label><radio value="2" color="#f23030" />银行转账</label>
+				<radio-group class="pay_type" name="payType" @change="changeMoneyType">
+					<label class="label"><radio value="0" color="#f23030" checked />微信</label>
+					<label class="label"><radio value="1" color="#f23030" />支付宝</label>
+					<label class="label"><radio value="2" color="#f23030" />银行转账</label>
+					<label class="label"><radio value="3" color="#f23030" />现金</label>
 				</radio-group>
 			</view>
-			<view class="input-row">
+			<view class="input-row" v-if="moneyType != 3">
+				<text class="title">付款方帐号：</text>
+				<input-box v-model="amount" :placeholder="placeholder"></input-box>
+			</view>
+			<view class="input-row" v-if="moneyType != 3">
 				<text class="title">对方帐号：</text>
-				<input-box v-model="account" :placeholder="placeholder"></input-box>
+				<text>dkji34832947329</text>
 			</view>
 			<view class="input-row">
 				<text class="title">付款金额：</text>
@@ -53,7 +58,7 @@
 				moneyType: '1',
 				account: '',
 				amount: '',
-				placeholder: '请输入收款人微信帐号'
+				placeholder: '请输入付款人微信帐号'
 			}
 		},
 		onLoad() {
@@ -70,11 +75,11 @@
 				console.log(e.target.value);
 				this.moneyType = e.target.value;
 				if (e.target.value === '0') {
-					this.placeholder = '请输入收款人微信帐号'
+					this.placeholder = '请输入付款人微信帐号'
 				} else if (e.target.value === '1') {
-					this.placeholder = '请输入收款人支付宝帐号'
+					this.placeholder = '请输入付款人支付宝帐号'
 				} else if (e.target.value === '2') {
-					this.placeholder = '请输入收款人银行帐号'
+					this.placeholder = '请输入付款人银行帐号'
 				}
 			},
 			saveOrder() {

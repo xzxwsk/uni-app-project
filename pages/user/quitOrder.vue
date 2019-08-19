@@ -36,10 +36,10 @@
 										<text class="title">
 											<text class="gray">日期:</text>2012-12-05<br/>
 											<text class="gray">姓名:</text>大<br/>
-											<text class="gray">保证金:</text><text class="price">￥{{item.price}}</text><br/>
-											<text class="gray">会员编号:</text>df348209834<br/>
-											<text class="gray">会员姓名:</text>df348209834<br/>
-											<text class="gray">离职原因:</text>df348209834
+											<text class="gray">保证金:</text><text class="price">￥{{item.price}}</text> <text class="gray mgl10">退款方式:</text><text>{{item.payType}}</text><br/>
+											<text class="gray">经销商编号:</text>df348209834<br/>
+											<text class="gray">经销商姓名:</text>df348209834<br/>
+											<text class="gray">注销原因:</text>df348209834
 										</text>
 										<view class="status">
 											<text>{{item.status}}</text>
@@ -79,18 +79,21 @@
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '已退货款',
+		payType: '微信',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '已审核',
+		payType: '支付宝',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '已确认退款',
+		payType: '现金',
 		count: 1,
 		price: 16.28
 	}];
@@ -136,7 +139,7 @@
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
-				url: './createPayOrder'
+				url: './createQuitOrder'
 			})
 		},
 		methods: {
@@ -234,7 +237,7 @@
 					};
 					if (i < 1) {
 						aryItem.isLoading = true;
-						aryItem.data = list.slice(0, util.random(4));
+						aryItem.data = list.slice(0, util.random(1));
 					}
 					ary.push(aryItem);
 				}

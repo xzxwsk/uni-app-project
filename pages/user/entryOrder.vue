@@ -32,13 +32,13 @@
 							<view>
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
-										<text class="title">
-											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">姓名:</text>大<br/>
-											<text class="gray">保证金:</text><text class="price">￥{{item.price}}</text><br/>
-											<text class="gray">会员编号:</text>df348209834<br/>
-											<text class="gray">会员姓名:</text>df348209834
-										</text>
+										<view class="title">
+											<view><text class="gray">日期:</text>2012-12-05</view>
+											<view><text class="gray">姓名:</text>大</view>
+											<view><text class="gray">保证金:</text><text class="price">￥{{item.price}}</text></view>
+											<view><text class="gray">经销商编号:</text>df348209834</view>
+											<view><text class="gray">经销商姓名:</text>顾大有</view>
+										</view>
 										<view class="status">
 											<text>{{item.status}}</text>
 										</view>

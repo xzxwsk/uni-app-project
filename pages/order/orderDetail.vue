@@ -39,12 +39,6 @@
 					</view>
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">
-							<text class="item-title"><text>运费</text></text>
-							<text class="item-content"><text>￥{{freight.toFixed(2)}}</text></text>
-						</view>
-					</view>
-					<view class="uni-list-cell">
-						<view class="uni-list-cell-navigate">
 							<text class="item-title"><text class="b">实付款</text></text>
 							<text class="item-content"><text class="price">￥{{(count+freight).toFixed(2)}}</text></text>
 						</view>
@@ -69,7 +63,7 @@
 		</view>
 		<view class="result">
 			<button class="btn">取消订单</button>
-			<button class="btn" type="warn">立即付款</button>
+			<button class="btn" type="warn">确认订单</button>
 		</view>
 	</view>
 </template>
@@ -117,14 +111,15 @@
 		price: 139.00,
 		num: 1,
 		hoverClass: ''
-	}];
+	}];	
+	import bg from "@/static/images/cargo.png";
 	export default {
 		components: {
 			
 		},
 		data() {
 			return {
-				bg: '/static/images/cargo.png',
+				bg: bg,
 				state: '待支付',
 				addr: {
 					name: 'wsk',

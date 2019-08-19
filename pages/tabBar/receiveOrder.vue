@@ -51,7 +51,7 @@
 						icon: 'map'
 					},
 					{
-						name: '我收到的离职单',
+						name: '我收到的注销单',
 						url: 'order/myReceiveQuitOrder',
 						icon: 'location-filled'
 					}

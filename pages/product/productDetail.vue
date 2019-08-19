@@ -28,17 +28,9 @@
 							</view>
 						</view>
 					</view>
-					<view class="uni-list-cell">
-						<view class="uni-list-cell-navigate">
-							<view class="menu_txt">
-								<text class="title">单位积分</text>
-								<text class="title sub_txt">111</text>
-							</view>
-						</view>
-					</view>
 				</view>
 				<view class="detail" id="detail">
-					<view class="title">--宝贝详情--</view>
+					<view class="title">--商品详情--</view>
 				</view>
 			</scroll-view>
 		</view>

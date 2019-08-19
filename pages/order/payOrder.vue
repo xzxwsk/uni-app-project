@@ -8,7 +8,7 @@
 				 </view>
 			</scroll-view>
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
-				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
+				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
 							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
@@ -35,14 +35,14 @@
 									<view class="ls_item_top">
 										<text class="title">
 											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">款项性质:</text>大</text>
+											<text class="gray">款项性质:</text>{{item.nature}}</text>
 										<view class="status">
 											<text>{{item.status}}</text>
 											<text class="price">￥{{item.price}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count"><text class="gray">自己帐户:</text>微信</text>
+										<text class="count"><text class="gray">自己帐户:</text>dif92347</text>
 										<text class="count"><text class="gray">对方帐户:</text>xxxx</text>
 									</view>
 									<view class="ls_item_center">
@@ -75,18 +75,28 @@
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '未收款',
+		nature: '货款',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '已收款',
+		nature: '保证金',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '取消',
+		nature: '保证金',
+		count: 1,
+		price: 16.28
+	},{
+		src: '/static/img/H_023_180@200.JPG',
+		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		status: '已收款',
+		nature: '货款',
 		count: 1,
 		price: 16.28
 	}];
@@ -101,7 +111,7 @@
 				scrollLeft: 0,
 				tabIndex: 0,
 				dataArr: [],
-				renderImage: false,
+				displayDataArr: [],
 				tabBars: [{
 					name: '全部',
 					id: 'all'
@@ -115,21 +125,14 @@
 					name: '取消',
 					id: 'tiyu'
 				}],
-				isScroll: false,
-				loadingText: '加载更多...',
-				dateValue: '',
-				searchKey: '',
 				startDate: '2010-01',
-				endDate: '2199-12',
-				ls: list
+				endDate: '2199-12'
 			}
 		},
 		onLoad() {
 			this.dataArr = this.randomfn();
-			setTimeout(()=> {
-			    this.dataArr[0].renderImage = true;
-			}, 300);
-		},		
+			this.displayDataArr = util.deepCopy(this.dataArr);
+		},
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
 				url: './createPayOrder'
@@ -137,32 +140,32 @@
 		},
 		methods: {
 			goDetail(index) {
-				// 查看订单详情
 				console.log(index);
-				util.goUrl({
-					url: './orderDetail'
-				});
 			},
 			query() {
-				console.log(this.dataArr[this.tabIndex].searchKey, this.dataArr[this.tabIndex].dateValue);
+				let searchKey = this.displayDataArr[this.tabIndex].searchKey;
+				let tempArr = [];
+				console.log(this.displayDataArr[this.tabIndex].searchKey, this.displayDataArr[this.tabIndex].dateValue);
+				this.displayDataArr[this.tabIndex].data = [];
+				this.dataArr[this.tabIndex].data.forEach(item => {
+					if(item.title.indexOf(searchKey) != -1){
+						tempArr.push(item);
+					}
+				});
+				this.displayDataArr[this.tabIndex].data = tempArr;
 			},
 			loadMore(e) {
-				this.dataArr[this.tabIndex].isScroll = true;
+				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
 			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
-				this.dataArr[this.tabIndex].dateValue = value;
+				this.displayDataArr[this.tabIndex].dateValue = value;
 			},
 			addData(e) {
-				this.dataArr[e].isLoading = true;
-				this.dataArr[e].data = list.slice(0, util.random(4));
-				setTimeout(()=> {
-				    this.dataArr[e].renderImage = true;
-				}, 300);
-				// if (this.dataArr[e].data.length > 30) {
-				// 	this.dataArr[e].loadingText = '没有更多了';
-				// 	return;
-				// }
+				this.displayDataArr[e].isLoading = true;
+				this.displayDataArr[e].loadingText = '没有更多了';
+				if(this.displayDataArr[e].dateValue === ''){
+					this.displayDataArr[e].dateValue = this.displayDataArr[0].dateValue;
+				}
 			},
 			getElSize(id) { //得到元素的size
 				return new Promise((res, rej) => {
@@ -181,7 +184,7 @@
 				}
 				index = e.target.current;
                 this.tabIndex = index;
-				if (!this.dataArr[index].isLoading) {
+				if (!this.displayDataArr[index].isLoading) {
 					this.addData(index)
 				}
 				let tabBar = await this.getElSize("tab-bar"),
@@ -204,7 +207,7 @@
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
-				if (!this.dataArr[tabIndex].isLoading) {
+				if (!this.displayDataArr[tabIndex].isLoading) {
 					this.addData(tabIndex)
 				}
 				if (this.tabIndex === tabIndex) {
@@ -225,12 +228,16 @@
 						dateValue: '',
 						data: [],
 						isScroll: false,
-						loadingText: '加载更多...',
-						renderImage: false
+						loadingText: '加载更多...'
 					};
 					if (i < 1) {
 						aryItem.isLoading = true;
-						aryItem.data = list.slice(0, util.random(4));
+						aryItem.loadingText = '没有更多了';
+						aryItem.data = list;
+					} else {
+						aryItem.data = list.filter(item => {
+							return item.status === this.tabBars[i].name;
+						});
 					}
 					ary.push(aryItem);
 				}

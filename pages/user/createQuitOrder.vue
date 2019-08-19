@@ -1,32 +1,21 @@
 <template>
 	<view class="create_pay_order">
 		<view class="input-group">
-			<view class="input-row border">
-				<text class="title">款项性质：</text>
-				<radio-group class="uni-flex" name="gender" @change="changeMoneyNature">
-					<label><radio value="0" checked color="#f23030" />性质一</label>
-					<label><radio value="1" color="#f23030" />性质二</label>
-				</radio-group>
+			<view class="input-row">
+				<text class="title">经销商编号：</text>
+				<input-box placeholder="请输入经销商编号"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">付款方式：</text>
-				<radio-group class="uni-flex" name="gender" @change="changeMoneyType">
-					<label><radio value="0" color="#f23030" checked />微信</label>
-					<label><radio value="1" color="#f23030" />支付宝</label>
-					<label><radio value="2" color="#f23030" />银行转账</label>
-				</radio-group>
+				<text class="title">经销商姓名：</text>
+				<input-box placeholder="请输入经销商姓名"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">对方帐号：</text>
-				<input-box v-model="account" :placeholder="placeholder"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">付款金额：</text>
-				<input-box type="number" v-model="amount" placeholder="元"></input-box>
+				<text class="title">注销原因：</text>
+				<textarea v-model="reason" style="padding: 10px 11px; height: 60px;" placeholder="请输入注销原因"/>
 			</view>
 		</view>
 		<view class="result">
-			<button class="btn" type="warn" @click="saveOrder">保存</button>
+			<button class="btn" type="warn" @click="saveOrder">确认</button>
 		</view>
 	</view>
 </template>
@@ -43,34 +32,13 @@
 		},
 		data() {
 			return {
-				moneyNature: '0',
-				amount: '',
-				moneyType: '1',
-				account: '',
-				placeholder: '请输入收款人微信帐号'
+				reason: ''
 			}
 		},
 		onLoad() {
 			
 		},
 		methods: {
-			changeMoneyNature(e) {
-				// 款项性质
-				console.log(e.target.value);
-				this.moneyNature = e.target.value;
-			},
-			changeMoneyType(e) {
-				// 付款方式
-				console.log(e.target.value);
-				this.moneyType = e.target.value;
-				if (e.target.value === '0') {
-					this.placeholder = '请输入收款人微信帐号'
-				} else if (e.target.value === '1') {
-					this.placeholder = '请输入收款人支付宝帐号'
-				} else if (e.target.value === '2') {
-					this.placeholder = '请输入收款人银行帐号'
-				}
-			},
 			saveOrder() {
 				console.log(this.moneyNature, this.moneyType);
 			},

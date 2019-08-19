@@ -1,5 +1,5 @@
 <template>
-	<view class="page">
+	<view class="page index_page">
 		<view class="status_bar">
             <!-- 这里是状态栏 -->
         </view>
@@ -21,7 +21,7 @@
 				<view class="image-view">
 					<image v-if="renderImage" class="uni-product-image" :src="product.image"></image>
 				</view>
-				<view class="uni-product-title">{{product.title}}</view>
+				<view class="uni-product-title"><text>{{product.title}}</text><view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view></view>
 				<view class="uni-product-price">
 					<text class="uni-product-price-favour">￥{{product.originalPrice}}</text>
 					<text class="uni-product-price-original">￥{{product.favourPrice}}</text>
@@ -29,11 +29,11 @@
 				</view>
 			</view>
 		</view>
-		<view class="uni-padding-wrap uni-common-pb">
+		<!-- <view class="uni-padding-wrap uni-common-pb">
 			<view class="index">
 				<view v-html="sysInfo"></view>
 			</view>
-		</view>
+		</view> -->
 		<share-menu ref="shareMenu"></share-menu>
 	</view>
 </template>
@@ -131,6 +131,11 @@
 			goDetail() {
 				util.goUrl({
 					url: '../product/productDetail'
+				})
+			},
+			addCart(index) {
+				util.showToast({
+					title: '加入购物车成功'
 				})
 			},
 			loadData(action = 'add') {

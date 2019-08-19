@@ -1,26 +1,20 @@
 <template>
-    <view class="bonus">
-		<view class="search_box">
-			<text class="label">查询年月：</text>
-			<customDatePicker
-				fields="month"
-				:start="startDate"
-				:end="endDate"
-				:value="dateValue"
-				@change="bindDateChange"
-			></customDatePicker>
-		</view>
+    <view class="stock">
 		<view class="box">
 			<t-table border="0">
 				<t-tr font-size="14" color="#000" align="left">
-					<t-th align="left"><text class="first_col">年月</text></t-th>
-					<t-th align="left">库存类别</t-th>
-					<t-th align="left">库存</t-th>
+					<t-th align="left"><text class="first_col">商品编号</text></t-th>
+					<t-th align="left">商品名称</t-th>
+					<t-th align="left">规格</t-th>
+					<t-th align="left">计量单位</t-th>
+					<t-th align="left">库存数量</t-th>
 				</t-tr>
 				<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList" :key="item.id">
-					<t-td align="left"><text class="first_col">2018-08</text></t-td>
-					<t-td align="left">{{ item.hobby }}</t-td>
-					<t-td align="left">{{ item.age }}</t-td>
+					<t-td align="left"><text>24324111</text></t-td>
+					<t-td align="left">勤奋源</t-td>
+					<t-td align="left">规格</t-td>
+					<t-td align="left">个</t-td>
+					<t-td align="left">20</t-td>
 				</t-tr>
 			</t-table>
 		</view>

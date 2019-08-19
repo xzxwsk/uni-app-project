@@ -133,7 +133,15 @@
 		}, {
 			"path": "pages/order/myReceiveQuitOrder",
 			"style": {
-				"navigationBarTitleText": "我收到的离职单",
+				"navigationBarTitleText": "我收到的注销单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/order/approval",
+			"style": {
+				"navigationBarTitleText": "注销单核准",
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -141,7 +149,7 @@
 		}, {
 			"path": "pages/user/entryOrder",
 			"style": {
-				"navigationBarTitleText": "会员入职单",
+				"navigationBarTitleText": "经销商加盟单",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -157,7 +165,7 @@
 		}, {
 			"path": "pages/user/createEntryOrder",
 			"style": {
-				"navigationBarTitleText": "新增会员入职单",
+				"navigationBarTitleText": "新增经销商加盟单",
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -165,23 +173,15 @@
 		}, {
 			"path": "pages/user/quitOrder",
 			"style": {
-				"navigationBarTitleText": "会员离职单",
+				"navigationBarTitleText": "经销商注销单",
 				"app-plus": {
-					"bounce": "none",
-					"titleNView": {
-						"buttons": [{
-							"text": "新增",
-							"fontSize": "14px",
-							"color": "#333",
-							"width": "auto"
-						}]
-					}
+					"bounce": "none"
 				}
 			}
 		}, {
 			"path": "pages/user/createQuitOrder",
 			"style": {
-				"navigationBarTitleText": "新增会员离职单",
+				"navigationBarTitleText": "新增经销商注销单",
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -403,7 +403,15 @@
 			"style": {
 				"navigationBarTitleText": "收货地址",
 				"app-plus": {
-					"bounce": "vertical"
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "新增",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
 				}
 			}
 		}, {

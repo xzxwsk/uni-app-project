@@ -42,12 +42,6 @@
 					<text class="item-content"><text class="price">￥{{count.toFixed(2)}}</text></text>
 				</view>
 			</view>
-			<view class="uni-list-cell">
-				<view class="uni-list-cell-navigate">
-					<text class="item-title"><text>运费</text></text>
-					<text class="item-content"><text class="price">￥{{freight.toFixed(2)}}</text></text>
-				</view>
-			</view>
 		</view>
 		<view class="result">
 			<view class="count b"><text class="price">￥{{(count+freight).toFixed(2)}}</text></view>

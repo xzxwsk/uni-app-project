@@ -14,7 +14,7 @@
 					<t-td align="left"><text class="first_col">{{ item.name }}</text></t-td>
 					<t-td align="left">{{ item.age }}</t-td>
 					<t-td align="left">{{ item.hobby }}</t-td>
-					<t-td align="left">{{ item.hobby }}</t-td>
+					<t-td align="left">2134</t-td>
 					<t-td align="left">{{ item.hobby }}</t-td>
 					<t-td align="left"><text @click="refund(item.id)" class="a">退款</text></t-td>
 				</t-tr>
@@ -34,26 +34,26 @@
 	
 	const tableList = [{
                         id: 0,
-                        name: '张三',
-                        age: '19',
+                        name: '201801',
+                        age: '直推',
                         hobby: '游泳'
                     },
                     {
                         id: 1,
-                        name: '李四',
-                        age: '21',
+                        name: '201802',
+                        age: '团队',
                         hobby: '绘画'
                     },
                     {
                         id: 2,
-                        name: '王二',
-                        age: '29',
+                        name: '201803',
+                        age: '团队',
                         hobby: '滑板'
                     },
                     {
                         id: 3,
-                        name: '码字',
-                        age: '20',
+                        name: '201802',
+                        age: '直推',
                         hobby: '蹦极'
                     }
                 ]
@@ -71,6 +71,9 @@
 			refund(id) {
 				// 退款
 				console.log(id);
+				util.goUrl({
+					url: '../order/createRefundOrder'
+				})
 			}
         }
     }

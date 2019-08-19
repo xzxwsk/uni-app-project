@@ -8,11 +8,11 @@
 				 </view>
 			</scroll-view>
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
-				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
+				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="会员编号"></input-box>
-							<input-box style="width: 200upx;" v-model="itemLs.searchKey" placeholder="姓名"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKeyNo" placeholder="经销商编号"></input-box>
+							<input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box>
 							<customDatePicker
 								fields="month"
 								:start="startDate"
@@ -36,17 +36,17 @@
 									<view class="ls_item_top">
 										<text class="title">
 											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">款项性质:</text>大<br/>
-											<text class="gray">自己帐户:</text>大大大大大<br/>
-											<text class="gray">对方帐户: </text>大大规模那么</text>
+											<text class="gray">款项性质:</text>{{item.nature}}<br/>
+											<text class="gray">自己帐户:</text>dfgfd435345<br/>
+											<text class="gray">对方帐户: </text>35435cgdfs</text>
 										<view class="status">
 											<text>{{item.status}}</text>
 											<text class="price">￥{{item.price}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count"><text class="gray">会员编号:</text>df348209834</text>
-										<text class="count"><text class="gray">姓名:</text>dfidsafkdsafld</text>
+										<text class="count"><text class="gray">经销商编号:</text>df348209834</text>
+										<text class="count"><text class="gray">姓名:</text>dfidsaf</text>
 									</view>
 									<view class="ls_item_center">
 										<text><text class="gray">付款方式:</text>微信</text>
@@ -77,19 +77,22 @@
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '未收款',
+		status: '退款中',
+		nature: '货款',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已收款',
+		status: '已退款',
+		nature: '保证金',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '取消',
+		nature: '保证金',
 		count: 1,
 		price: 16.28
 	}];
@@ -104,6 +107,7 @@
 				scrollLeft: 0,
 				tabIndex: 0,
 				dataArr: [],
+				displayDataArr: [],
 				renderImage: false,
 				tabBars: [{
 					name: '全部',
@@ -128,39 +132,40 @@
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			setTimeout(()=> {
-			    this.dataArr[0].renderImage = true;
-			}, 300);
+			this.dataArr = this.randomfn();			
+			this.displayDataArr = util.deepCopy(this.dataArr);
 		},
 		methods: {
 			goDetail(index) {
-				// 查看订单详情
 				console.log(index);
-				util.goUrl({
-					url: './orderDetail'
-				});
 			},
 			query() {
-				console.log(this.dataArr[this.tabIndex].searchKey, this.dataArr[this.tabIndex].dateValue);
+				let searchKeyNo = this.displayDataArr[this.tabIndex].searchKeyNo;
+				let searchKeyName = this.displayDataArr[this.tabIndex].searchKeyName;
+				let tempArr = [];
+				this.displayDataArr[this.tabIndex].data = [];
+				this.dataArr[this.tabIndex].data.forEach(item => {
+					if(searchKeyNo==='' && searchKeyName==='') {
+						tempArr.push(item);
+					} else if((searchKeyNo!='' && item.title.indexOf(searchKeyNo) != -1) || (searchKeyName!='' && item.title.indexOf(searchKeyName) != -1)) {
+						tempArr.push(item);
+					}
+				});
+				this.displayDataArr[this.tabIndex].data = tempArr;
 			},
 			loadMore(e) {
-				this.dataArr[this.tabIndex].isScroll = true;
+				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
 			bindDateChange(value) {
 				console.log('bindDateChange: ', value);
-				this.dataArr[this.tabIndex].dateValue = value;
+				this.displayDataArr[this.tabIndex].dateValue = value;
 			},
 			addData(e) {
-				this.dataArr[e].isLoading = true;
-				this.dataArr[e].data = list.slice(0, util.random(4));
-				setTimeout(()=> {
-				    this.dataArr[e].renderImage = true;
-				}, 300);
-				// if (this.dataArr[e].data.length > 30) {
-				// 	this.dataArr[e].loadingText = '没有更多了';
-				// 	return;
-				// }
+				this.displayDataArr[e].isLoading = true;
+				this.displayDataArr[e].loadingText = '没有更多了';
+				if(this.displayDataArr[e].dateValue === ''){
+					this.displayDataArr[e].dateValue = this.displayDataArr[0].dateValue;
+				}
 			},
 			getElSize(id) { //得到元素的size
 				return new Promise((res, rej) => {
@@ -179,7 +184,7 @@
 				}
 				index = e.target.current;
                 this.tabIndex = index;
-				if (!this.dataArr[index].isLoading) {
+				if (!this.displayDataArr[index].isLoading) {
 					this.addData(index)
 				}
 				let tabBar = await this.getElSize("tab-bar"),
@@ -202,7 +207,7 @@
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
-				if (!this.dataArr[tabIndex].isLoading) {
+				if (!this.displayDataArr[tabIndex].isLoading) {
 					this.addData(tabIndex)
 				}
 				if (this.tabIndex === tabIndex) {
@@ -219,7 +224,8 @@
 				for (let i = 0, length = this.tabBars.length; i < length; i++) {
 					let aryItem = {
 						isLoading: false,
-						searchKey: '',
+						searchKeyNo: '',
+						searchKeyName: '',
 						dateValue: '',
 						data: [],
 						isScroll: false,
@@ -228,7 +234,12 @@
 					};
 					if (i < 1) {
 						aryItem.isLoading = true;
-						aryItem.data = list.slice(0, util.random(4));
+						aryItem.loadingText = '没有更多了';
+						aryItem.data = list;
+					} else {
+						aryItem.data = list.filter(item => {
+							return item.status === this.tabBars[i].name;
+						});
 					}
 					ary.push(aryItem);
 				}

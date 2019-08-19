@@ -2,12 +2,12 @@
 	<view class="create_pay_order">
 		<view class="input-group">
 			<view class="input-row">
-				<text class="title">会员编号：</text>
-				<input-box placeholder="会员编号"></input-box>
+				<text class="title">经销商编号：</text>
+				<input-box placeholder="经销商编号"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">会员姓名：</text>
-				<input-box placeholder="会员姓名"></input-box>
+				<text class="title">经销商姓名：</text>
+				<input-box placeholder="经销商姓名"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">处罚类别：</text>

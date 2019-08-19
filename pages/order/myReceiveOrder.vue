@@ -76,37 +76,37 @@
 	import util from '@/common/util.js';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '未发货',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已发货',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已收货确认',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '退货中',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已确认退货',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已关闭',
 		count: 1,
 		price: 16.28

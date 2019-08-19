@@ -1,67 +1,65 @@
 <template>
-	<view class="order">			
-		<view class="uni-tab-bar">
-			<scroll-view id="tab-bar" class="uni-swiper-tab" scroll-x :scroll-left="scrollLeft">
-				<view class="tab_head">
-					<view v-for="(tab,index) in tabBars" :key="tab.id" class="swiper-tab-list" :class="tabIndex==index ? 'active' : ''"
-					 :id="tab.id" :data-current="index" @click="tapTab">{{tab.name}}</view>
-				 </view>
-			</scroll-view>
-			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
-				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
-					<view class="list">
-						<view class="search_box">
-							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-							<customDatePicker
-								fields="month"
-								:start="startDate"
-								:end="endDate"
-								:value="itemLs.dateValue"
-								@change="bindDateChange"
-							></customDatePicker>
-							<button class="btn" type="warn" @click="query">查询</button>
-						</view>
-						<block v-if="itemLs.data.length<1">
-							<view class="no-data">
-								<view class="no-img cart">
-									<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
-								</view>
-								<view class="txt"><text>亲，还没有相关订单哦~</text></view>
-							</view>
-						</block>
-						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
-							<view>
-								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
-									<view class="ls_item_top">
-										<!-- <view class="img">
-											<image v-if="itemLs.renderImage" :src="item.src" style="width: 100%;" mode="widthFix"></image>
-										</view> -->
-										<text class="title">{{item.title}}</text>
-										<view class="status">
-											<text>{{item.status}}</text>
-											<text class="price">￥{{item.price}}</text>
-										</view>
-									</view>
-									<view class="ls_item_center">
-										<text class="count">共{{item.count}}件商品</text>
-										<text>合计：￥{{item.price * item.count}}</text>
-									</view>
-									<view class="ls_item_bottom">
-										<button class="btn">关闭</button>
-										<button class="btn">收货确认</button>
-										<button class="btn">退货</button>
-										<button class="btn">撤销退货</button>
-									</view>
-								</view>
-							</view>
-							<view v-if="itemLs.isScroll" class="uni-tab-bar-loading">
-								{{itemLs.loadingText}}
-							</view>
-						</scroll-view>
+	<view class="uni-tab-bar order">
+		<scroll-view id="tab-bar" class="uni-swiper-tab" scroll-x :scroll-left="scrollLeft">
+			<view class="tab_head">
+				<view v-for="(tab,index) in tabBars" :key="tab.id" class="swiper-tab-list" :class="tabIndex==index ? 'active' : ''"
+				 :id="tab.id" :data-current="index" @click="tapTab">{{tab.name}}</view>
+			 </view>
+		</scroll-view>
+		<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
+			<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
+				<view class="list">
+					<view class="search_box">
+						<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
+						<customDatePicker
+							fields="month"
+							:start="startDate"
+							:end="endDate"
+							:value="itemLs.dateValue"
+							@change="bindDateChange"
+						></customDatePicker>
+						<button class="btn" type="warn" @click="query">查询</button>
 					</view>
-				</swiper-item>
-			</swiper>
-		</view>
+					<block v-if="itemLs.data.length<1">
+						<view class="no-data">
+							<view class="no-img cart">
+								<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
+							</view>
+							<view class="txt"><text>亲，还没有相关订单哦~</text></view>
+						</view>
+					</block>
+					<scroll-view v-else class="box" scroll-y @scrolltolower="loadMore">
+						<view>
+							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
+								<view class="ls_item_top">
+									<!-- <view class="img">
+										<image v-if="itemLs.renderImage" :src="item.src" style="width: 100%;" mode="widthFix"></image>
+									</view> -->
+									<text class="title">{{item.title}}</text>
+									<view class="status">
+										<text>{{item.status}}</text>
+										<text class="price">￥{{item.price}}</text>
+									</view>
+								</view>
+								<view class="ls_item_center">
+									<text class="count">共{{item.count}}件商品</text>
+									<text>合计：￥{{item.price * item.count}}</text>
+								</view>
+								<view class="ls_item_bottom">
+									<button v-if="tabIndex===5" class="btn">关闭</button>
+									<button class="btn">收货确认</button>
+									<button class="btn">退货</button>
+									<button v-if="tabIndex===4" class="btn">撤销退货</button>
+								</view>
+							</view>
+						</view>
+						<view v-if="itemLs.isScroll" class="uni-tab-bar-loading">
+							{{itemLs.loadingText}}
+						</view>
+					</scroll-view>
+				</view>
+			</swiper-item>
+		</swiper>
 	</view>
 </template>
 
@@ -73,55 +71,55 @@
 	import util from '@/common/util.js';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '未发货',
 		count: 1,
 		price: 16.28
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '未发货',
 		count: 1,
 		price: 16.28
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已发货',
 		count: 1,
 		price: 16.28
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已发货',
 		count: 1,
 		price: 16.28
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已发货',
 		count: 1,
 		price: 16.28
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已收货确认',
 		count: 1,
 		price: 16.28
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '退货中',
 		count: 1,
 		price: 16.28
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已退货确认',
 		count: 1,
 		price: 16.28
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
+		title: '下单日期：2019-05-22',
 		status: '已关闭',
 		count: 1,
 		price: 16.28
@@ -164,7 +162,7 @@
 				endDate: '2199-12'
 			}
 		},
-		onLoad() {
+		onLoad(option) {
 			this.dataArr = this.randomfn();
 			this.displayDataArr = util.deepCopy(this.dataArr);
 			setTimeout(()=> {

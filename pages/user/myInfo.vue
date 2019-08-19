@@ -38,11 +38,6 @@
 				mode: 'widthFix',
 				pages: [					
 					{
-						name: '关于我们',
-						url: 'about/about',
-						icon: 'paperplane'
-					},
-					{
 						name: '收货地址',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
 						url: 'addr/addr',
@@ -51,11 +46,6 @@
 					{
 						name: '密码修改',
 						url: 'login/pwd',
-						icon: 'paperplane'
-					},
-					{
-						name: '手机绑定',
-						url: 'about/about',
 						icon: 'paperplane'
 					},
 					{

@@ -1,70 +1,40 @@
 <template>
-	<view class="pay_order">			
+	<view class="quit_order">			
 		<view class="uni-tab-bar">
-			<scroll-view id="tab-bar" class="uni-swiper-tab" scroll-x :scroll-left="scrollLeft">
-				<view class="tab_head">
-					<view v-for="(tab,index) in tabBars" :key="tab.id" class="swiper-tab-list" :class="tabIndex==index ? 'active' : ''"
-					 :id="tab.id" :data-current="index" @click="tapTab">{{tab.name}}</view>
-				 </view>
-			</scroll-view>
-			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
-				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
-					<view class="list">
-						<view class="search_box">
-							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-							<customDatePicker
-								fields="month"
-								:start="startDate"
-								:end="endDate"
-								:value="itemLs.dateValue"
-								@change="bindDateChange"
-							></customDatePicker>
-							<button class="btn" type="warn" @click="query">查询</button>
+			<view v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
+				<view class="list">
+					<block v-if="itemLs.data.length<1">
+						<view class="no-data">
+							<view class="no-img cart">
+								<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
+							</view>
+							<view class="txt"><text>亲，还没有相关付款单哦~</text></view>
 						</view>
-						<block v-if="itemLs.data.length<1">
-							<view class="no-data">
-								<view class="no-img cart">
-									<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
-								</view>
-								<view class="txt"><text>亲，还没有相关付款单哦~</text></view>
-							</view>
-						</block>
-						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
-							<view>
-								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
-									<view class="ls_item_top">
-										<text class="title">
-											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">姓名:</text>大<br/>
-											<text class="gray">保证金:</text><text class="price">￥{{item.price}}</text> <text class="gray mgl10">退款方式:</text><text>{{item.payType}}</text><br/>
-											<text class="gray">经销商编号:</text>df348209834<br/>
-											<text class="gray">经销商姓名:</text>df348209834<br/>
-											<text class="gray">注销原因:</text>df348209834
-										</text>
-										<view class="status">
-											<text>{{item.status}}</text>
-										</view>
-									</view>
-									<view class="ls_item_center" v-show="tabIndex === 2">
-										<text class="count"><text class="gray">自己帐户:</text>微信</text>
-										<text class="count"><text class="gray">对方帐户:</text>xxxx</text>
-									</view>
-									<view class="ls_item_center" v-show="tabIndex === 2">
-										<text><text class="gray">退款方式:</text>微信</text>
-										<text class="count"><text class="gray">备注:</text>xxxx</text>
-									</view>
-									<view class="ls_item_bottom" v-show="tabIndex === 2">
-										<button class="btn">确认退款</button>
+					</block>
+					<view v-else="" class="box">
+						<view>
+							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
+								<view class="ls_item_top">
+									<text class="title">
+										<text class="gray">日期:</text>2012-12-05<br/>
+										<text class="gray">姓名:</text>大<br/>
+										<text class="gray">保证金:</text><text class="price">￥{{item.price}}</text> <text class="gray mgl10">退款方式:</text><text>{{item.payType}}</text><br/>
+										<text class="gray">经销商编号:</text>df348209834<br/>
+										<text class="gray">经销商姓名:</text>df348209834<br/>
+										<text class="gray">注销原因:</text>df348209834
+									</text>
+									<view class="status">
+										<text>{{item.status}}</text>
 									</view>
 								</view>
+								<view class="ls_item_bottom">
+									<button class="btn">确认退款</button>
+								</view>
 							</view>
-							<view v-if="itemLs.isScroll" class="uni-tab-bar-loading">
-								{{itemLs.loadingText}}
-							</view>
-						</scroll-view>
+						</view>
 					</view>
-				</swiper-item>
-			</swiper>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -78,22 +48,8 @@
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已退货款',
-		payType: '微信',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '已审核',
-		payType: '支付宝',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已确认退款',
-		payType: '现金',
+		payType: '微信',
 		count: 1,
 		price: 16.28
 	}];
@@ -225,7 +181,7 @@
 			},
 			randomfn() {
 				let ary = [];
-				for (let i = 0, length = this.tabBars.length; i < length; i++) {
+				for (let i = 0, length = 1; i < length; i++) {
 					let aryItem = {
 						isLoading: false,
 						searchKey: '',

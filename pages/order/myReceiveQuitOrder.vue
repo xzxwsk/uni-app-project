@@ -53,7 +53,7 @@
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn" @click="bindApproval(index)">核准</button>
+										<button class="btn" @click="bindApproval(index)">退货款</button>
 									</view>
 								</view>
 							</view>

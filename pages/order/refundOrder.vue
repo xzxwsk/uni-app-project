@@ -50,7 +50,7 @@
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">确认退款</button>
+										<button class="btn">取消</button>
 									</view>
 								</view>
 							</view>
@@ -82,21 +82,21 @@
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '已退款',
-		payType: '保证金',
+		payType: '货款',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '取消',
-		payType: '代交保证金',
+		payType: '货款',
 		count: 1,
 		price: 16.28
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
 		status: '取消',
-		payType: '保证金',
+		payType: '货款',
 		count: 1,
 		price: 16.28
 	}];

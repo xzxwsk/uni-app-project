@@ -22,15 +22,19 @@
 							<view class="box">
 								<t-table border="0">
 									<t-tr font-size="14" color="#000" align="left">
-										<t-th align="left"><text class="first_col">编号</text></t-th>
+										<t-th align="left"><text class="first_col">年月</text></t-th>
+										<t-th align="left">编号</t-th>
 										<t-th align="left">姓名</t-th>
-										<t-th align="left">货款余额</t-th>
+										<t-th align="left">资金类别</t-th>
+										<t-th align="left">奖金</t-th>
 										<t-th align="left">操作</t-th>
 									</t-tr>
 									<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList" :key="item.id">
-										<t-td align="left"><text class="first_col">{{ item.name }}</text></t-td>
-										<t-td align="left">{{ item.age }}</t-td>
+										<t-td align="left"><text class="first_col">2019-05</text></t-td>
+										<t-td align="left">35434534</t-td>
+										<t-td align="left">张顺利</t-td>
 										<t-td align="left">{{ item.hobby }}</t-td>
+										<t-td align="left">345</t-td>
 										<t-td align="left"><text class="a" @click="paymentGoodsDetail(item.id)">收支明细</text></t-td>
 									</t-tr>
 								</t-table>
@@ -66,15 +70,20 @@
 								</view>
 								<t-table border="0">
 									<t-tr font-size="14" color="#000" align="left">
-										<t-th align="left"><text class="first_col">编号</text></t-th>
+										<t-th align="left"><text class="first_col">年月</text></t-th>
+										<t-th align="left">编号</t-th>
 										<t-th align="left">姓名</t-th>
-										<t-th align="left">货款余额</t-th>
+										<t-th align="left">资金类别</t-th>
+										<t-th align="left">奖金</t-th>
 										<t-th align="left">操作</t-th>
 									</t-tr>
 									<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList" :key="item.id">
-										<t-td align="left"><text class="first_col">{{ item.name }}</text></t-td>
-										<t-td align="left">{{ item.age }}</t-td>
+										<t-td align="left"><text class="first_col">2019-05</text></t-td>
+										
+										<t-td align="left">35434534</t-td>
+										<t-td align="left">张顺利</t-td>
 										<t-td align="left">{{ item.hobby }}</t-td>
+										<t-td align="left">345</t-td>
 										<t-td align="left"><text class="a" @click="paymentGoodsDetail(item.id)">收支明细</text></t-td>
 									</t-tr>
 								</t-table>
@@ -106,19 +115,19 @@
 	                    id: 0,
 	                    name: '001',
 	                    age: '张大大',
-	                    hobby: '123'
+	                    hobby: '直推'
 	                },
 	                {
 	                    id: 1,
 	                    name: '002',
 	                    age: '李明明',
-	                    hobby: '34'
+	                    hobby: '团队'
 	                },
 	                {
 	                    id: 2,
 	                    name: '003',
 	                    age: '李东',
-	                    hobby: '44'
+	                    hobby: '团队'
 	                }
 	            ]
 		tableList.forEach(function(item, index){

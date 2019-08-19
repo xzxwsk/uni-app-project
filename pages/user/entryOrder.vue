@@ -8,7 +8,7 @@
 				 </view>
 			</scroll-view>
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
-				<swiper-item v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
+				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
 							<customDatePicker
@@ -42,6 +42,9 @@
 										<view class="status">
 											<text>{{item.status}}</text>
 										</view>
+									</view>
+									<view class="ls_item_bottom" v-show="tabIndex === 1">
+										<button class="btn">删除</button><button class="btn">修改</button>
 									</view>
 								</view>
 							</view>
@@ -77,7 +80,7 @@
 	},{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '取消',
+		status: '已审核',
 		count: 1,
 		price: 16.28
 	}];
@@ -92,7 +95,7 @@
 				scrollLeft: 0,
 				tabIndex: 0,
 				dataArr: [],
-				renderImage: false,
+				displayDataArr: [],
 				tabBars: [{
 					name: '全部',
 					id: 'all'
@@ -103,20 +106,13 @@
 					name: '已审核',
 					id: 'tuijian'
 				}],
-				isScroll: false,
-				loadingText: '加载更多...',
-				dateValue: '',
-				searchKey: '',
 				startDate: '2010-01',
-				endDate: '2199-12',
-				ls: list
+				endDate: '2199-12'
 			}
 		},
 		onLoad() {
 			this.dataArr = this.randomfn();
-			setTimeout(()=> {
-			    this.dataArr[0].renderImage = true;
-			}, 300);
+			this.displayDataArr = util.deepCopy(this.dataArr);
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
@@ -132,25 +128,30 @@
 				});
 			},
 			query() {
-				console.log(this.dataArr[this.tabIndex].searchKey, this.dataArr[this.tabIndex].dateValue);
+				let searchKey = this.displayDataArr[this.tabIndex].searchKey;
+				let tempArr = [];
+				console.log(this.displayDataArr[this.tabIndex].searchKey, this.displayDataArr[this.tabIndex].dateValue);
+				this.displayDataArr[this.tabIndex].data = [];
+				this.dataArr[this.tabIndex].data.forEach(item => {
+					if(item.title.indexOf(searchKey) != -1){
+						tempArr.push(item);
+					}
+				});
+				this.displayDataArr[this.tabIndex].data = tempArr;
 			},
 			loadMore(e) {
-				this.dataArr[this.tabIndex].isScroll = true;
+				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
 			bindDateChange(value) {
 				console.log('bindDateChange: ', value);
-				this.dataArr[this.tabIndex].dateValue = value;
+				this.displayDataArr[this.tabIndex].dateValue = value;
 			},
 			addData(e) {
-				this.dataArr[e].isLoading = true;
-				this.dataArr[e].data = list.slice(0, util.random(4));
-				setTimeout(()=> {
-				    this.dataArr[e].renderImage = true;
-				}, 300);
-				// if (this.dataArr[e].data.length > 30) {
-				// 	this.dataArr[e].loadingText = '没有更多了';
-				// 	return;
-				// }
+				this.displayDataArr[e].isLoading = true;
+				this.displayDataArr[e].loadingText = '没有更多了';
+				if(this.displayDataArr[e].dateValue === ''){
+					this.displayDataArr[e].dateValue = this.displayDataArr[0].dateValue;
+				}
 			},
 			getElSize(id) { //得到元素的size
 				return new Promise((res, rej) => {
@@ -169,7 +170,7 @@
 				}
 				index = e.target.current;
                 this.tabIndex = index;
-				if (!this.dataArr[index].isLoading) {
+				if (!this.displayDataArr[index].isLoading) {
 					this.addData(index)
 				}
 				let tabBar = await this.getElSize("tab-bar"),
@@ -192,7 +193,7 @@
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
-				if (!this.dataArr[tabIndex].isLoading) {
+				if (!this.displayDataArr[tabIndex].isLoading) {
 					this.addData(tabIndex)
 				}
 				if (this.tabIndex === tabIndex) {
@@ -218,7 +219,12 @@
 					};
 					if (i < 1) {
 						aryItem.isLoading = true;
-						aryItem.data = list.slice(0, util.random(4));
+						aryItem.loadingText = '没有更多了';
+						aryItem.data = list;
+					} else {
+						aryItem.data = list.filter(item => {
+							return item.status === this.tabBars[i].name;
+						});
 					}
 					ary.push(aryItem);
 				}

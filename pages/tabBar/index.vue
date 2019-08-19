@@ -23,9 +23,9 @@
 				</view>
 				<view class="uni-product-title"><text>{{product.title}}</text><view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view></view>
 				<view class="uni-product-price">
-					<text class="uni-product-price-favour">￥{{product.originalPrice}}</text>
+					<!-- <text class="uni-product-price-favour">￥{{product.originalPrice}}</text> -->
 					<text class="uni-product-price-original">￥{{product.favourPrice}}</text>
-					<text class="uni-product-tip">{{product.tip}}</text>
+					<!-- <text class="uni-product-tip">{{product.tip}}</text> -->
 				</view>
 			</view>
 		</view>

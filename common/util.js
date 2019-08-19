@@ -78,24 +78,28 @@ let random = function(minNum,maxNum){
     }
 };
 let getType = function(obj){
-   //tostring会返回对应不同的标签的构造函数
-   var toString = Object.prototype.toString;
-   var map = {
-	  '[object Boolean]'  : 'boolean', 
-	  '[object Number]'   : 'number', 
-	  '[object String]'   : 'string', 
-	  '[object Function]' : 'function', 
-	  '[object Array]'    : 'array', 
-	  '[object Date]'     : 'date', 
-	  '[object RegExp]'   : 'regExp', 
-	  '[object Undefined]': 'undefined',
-	  '[object Null]'     : 'null', 
-	  '[object Object]'   : 'object'
-  };
-  if(obj instanceof Element) {
-	   return 'element';
-  }
-  return map[toString.call(obj)];
+    //tostring会返回对应不同的标签的构造函数
+	let type = Object.prototype.toString.call(obj);
+    let map = {
+	    '[object Boolean]'  : 'boolean', 
+	    '[object Number]'   : 'number', 
+	    '[object String]'   : 'string', 
+	    '[object Function]' : 'function', 
+	    '[object Array]'    : 'array', 
+	    '[object Date]'     : 'date', 
+	    '[object RegExp]'   : 'regExp', 
+	    '[object Undefined]': 'undefined',
+	    '[object Null]'     : 'null', 
+	    '[object Object]'   : 'object'
+    };
+	let isElement = false;
+	if (typeof Element != 'undefined') {
+		isElement = obj instanceof Element;
+	}
+    if(isElement) {
+	    return 'element';
+    }
+    return map[type];
 };
 let deepCopy = function(data) {
     var type = getType(data);

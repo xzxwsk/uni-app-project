@@ -21,8 +21,7 @@
 							<view class="uni-media-list-body">
 								<view>
 									<view class="uni-media-list-text-top">{{value.title}}</view>
-									<view class="uni-media-list-text-top sub_txt">计量单位: {{value.num}}</view>
-									<view class="uni-media-list-text-top sub_txt">数量: {{value.num}}件</view>
+									<view class="uni-media-list-text-top sub_txt">计量单位: {{value.num}} &nbsp; &nbsp; 数量: {{value.num}}件</view>
 									<view class="uni-media-list-text-top sub_txt">商品编号: {{value.num}}</view>
 								</view>
 								<view class="uni-media-list-text-bottom uni-ellipsis price">￥{{value.price}}</view>
@@ -31,16 +30,16 @@
 					</view>
 				</view>
 				<view class="uni-list count">
-					<view class="uni-list-cell">
+					<!-- <view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">
 							<text class="item-title"><text>商品金额</text></text>
 							<text class="item-content"><text>￥{{count.toFixed(2)}}</text></text>
 						</view>
-					</view>
+					</view> -->
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">
-							<text class="item-title"><text class="b">实付款</text></text>
-							<text class="item-content"><text class="price">￥{{(count+freight).toFixed(2)}}</text></text>
+							<text class="item-title"><text class="b">合计金额</text></text>
+							<text class="item-content"><text class="price">￥{{(count).toFixed(2)}}</text></text>
 						</view>
 					</view>
 				</view>
@@ -63,7 +62,7 @@
 		</view>
 		<view class="result">
 			<button class="btn">取消订单</button>
-			<button class="btn" type="warn">确认订单</button>
+			<button class="btn" type="warn">确认收货</button>
 		</view>
 	</view>
 </template>
@@ -120,7 +119,7 @@
 		data() {
 			return {
 				bg: bg,
-				state: '待支付',
+				state: '待确认收货',
 				addr: {
 					name: 'wsk',
 					phone: '17341303920',
@@ -128,7 +127,7 @@
 				},
 				showImg: false,
 				orderLs: [],
-				count: 111,
+				count: 278,
 				freight: 212,
 				orderNo: '2019073000000002',
 				createOrder: '2019-07-30 10:59:03'

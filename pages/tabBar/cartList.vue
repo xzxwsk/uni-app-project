@@ -31,7 +31,7 @@
 			</scroll-view>
 			<view class="result">
 				<label class="radio"><radio color="#f23030" :checked="allSelect" @click="onAllSelect" />全选</label>
-				<block v-if="titleBtn === '修改'">
+				<block v-if="titleBtn === '删除'">
 					<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
 					<button class="btn">继续购物</button>
 					<button class="btn" type="warn" @click="toPay">去结算</button>
@@ -50,7 +50,7 @@
 	export default {
 		data() {
 			return {
-				titleBtn: '修改',
+				titleBtn: '删除',
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				allSelect: false,
@@ -117,16 +117,16 @@
 			console.log("点击了自定义按钮: " + JSON.stringify(e));
 			// #ifdef APP-PLUS
 			let webView = this.$mp.page.$getAppWebview();
-			if(this.titleBtn === '修改') {
+			if(this.titleBtn === '删除') {
+				webView.setTitleNViewButtonStyle(0, {  
+					text: '完成' 
+				});
+				this.titleBtn = '完成';
+			} else {
 				webView.setTitleNViewButtonStyle(0, {  
 					text: '删除' 
 				});
 				this.titleBtn = '删除';
-			} else {
-				webView.setTitleNViewButtonStyle(0, {  
-					text: '修改' 
-				});
-				this.titleBtn = '修改';
 			}
 			// #endif 
 			// let pages = getCurrentPages(); 
@@ -172,14 +172,14 @@
 				let webView = this.$mp.page.$getAppWebview();
 				if(this.allSelect) {
 					webView.setTitleNViewButtonStyle(0, {  
+						text: '完成' 
+					});
+					this.titleBtn = '完成';
+				} else {
+					webView.setTitleNViewButtonStyle(0, {  
 						text: '删除' 
 					});
 					this.titleBtn = '删除';
-				} else {
-					webView.setTitleNViewButtonStyle(0, {  
-						text: '修改' 
-					});
-					this.titleBtn = '修改';
 				}
 				// #endif 
 			},

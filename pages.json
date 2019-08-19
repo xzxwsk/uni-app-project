@@ -26,7 +26,7 @@
 				"app-plus": {
 					"titleNView": {
 						"buttons": [{
-							"text": "修改",
+							"text": "删除",
 							"fontSize": "14px",
 							"color": "#333",
 							"width": "auto"
@@ -175,7 +175,15 @@
 			"style": {
 				"navigationBarTitleText": "经销商注销单",
 				"app-plus": {
-					"bounce": "none"
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "新增",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
 				}
 			}
 		}, {

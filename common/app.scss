@@ -61,8 +61,8 @@ uni-tabbar {
 }
 .search_box{display: flex; flex-direction: row; align-items: center; padding: 30upx 0; background: #fff;
 	.input-box-all{flex: 1; padding: 0 0 0 15upx !important;}
-	.input-box{ padding: 0 10px; height: 10vw; border: 1upx solid #aaa; border-radius: 3px;}
-	.rui-picker{flex: 1; margin: 0 0 0 20upx; border: 1upx solid #aaa !important;}
+	.input-box{ padding: 0 10px; height: 10vw; border: 1px solid #aaa; border-radius: 3px;}
+	.date_picker{flex: 1; margin: 0 0 0 20upx; line-height: 10vw; white-space: nowrap;}
 	.btn{margin: 0 15upx; white-space: nowrap; width: 170upx; height: 10vw; line-height: 10vw; font-size: 35upx; }
 }
 .no-data{text-align: center;
@@ -70,7 +70,6 @@ uni-tabbar {
 	.txt{color: #848689;}
 }
 .first_col{padding: 0 0 0 30upx;}
-.rui-picker{white-space: nowrap;}
 
 .index{
 	height: 1500px;
@@ -348,9 +347,7 @@ uni-tabbar {
 	.primary{margin: 0 0 20upx;}
 }
 .bonus{
-	.search_box{display: flex; flex-direction: row; align-items: center; padding: 30upx; background: #fff;
-		.rui-picker{flex: 1;}
-	}
+	.search_box{padding: 30upx; background: #fff;}
 	.box{background: #fff;}
 }
 .stock{

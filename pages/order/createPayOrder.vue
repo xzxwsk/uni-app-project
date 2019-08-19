@@ -40,12 +40,10 @@
 <script>
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
-	// https://ext.dcloud.net.cn/plugin?id=220
-	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
 	export default {
 		components: {
-			inputBox, customDatePicker
+			inputBox
 		},
 		data() {
 			return {

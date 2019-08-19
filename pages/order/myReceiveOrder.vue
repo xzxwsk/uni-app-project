@@ -13,7 +13,7 @@
 						<view class="search_box">
 							<input-box style="width: 200upx;" v-model="itemLs.searchKeyNo" placeholder="经销商编号"></input-box>
 							<input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box>
-							<customDatePicker
+							<customDatePicker class="date_picker"
 								fields="month"
 								:start="startDate"
 								:end="endDate"

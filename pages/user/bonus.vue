@@ -2,7 +2,7 @@
     <view class="bonus">
 		<view class="search_box">
 			<text class="label">查询年月：</text>
-			<customDatePicker
+			<customDatePicker class="date_picker"
 				fields="month"
 				:start="startDate"
 				:end="endDate"

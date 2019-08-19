@@ -59,7 +59,7 @@
 							<view class="box">
 								<view class="search_box">
 									<input-box ref="input1" type="text" clearable focus v-model="userNo" placeholder="请输入会员编号"></input-box>
-									<customDatePicker
+									<customDatePicker class="date_picker"
 										fields="month"
 										:start="startDate"
 										:end="endDate"

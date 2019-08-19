@@ -29,8 +29,6 @@
     import tTh from '@/components/t-table/t-th.vue';
     import tTr from '@/components/t-table/t-tr.vue';
     import tTd from '@/components/t-table/t-td.vue';
-	// https://ext.dcloud.net.cn/plugin?id=220
-	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	
 	const tableList = [{
                         id: 0,
@@ -60,7 +58,7 @@
 
     export default {
         components: {
-            tTable, tTh, tTr, tTd, customDatePicker
+            tTable, tTh, tTr, tTd
         },
         data() {
             return {

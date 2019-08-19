@@ -11,7 +11,7 @@
 				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<customDatePicker
+							<customDatePicker class="date_picker"
 								fields="month"
 								:start="startDate"
 								:end="endDate"

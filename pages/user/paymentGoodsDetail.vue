@@ -16,7 +16,7 @@
 					<t-td align="left">{{ item.hobby }}</t-td>
 					<t-td align="left">2134</t-td>
 					<t-td align="left">{{ item.hobby }}</t-td>
-					<t-td align="left"><text @click="refund(item.id)" class="a">退款</text></t-td>
+					<t-td align="left"><view @click="refund(item.id)" class="a">退款</view></t-td>
 				</t-tr>
 			</t-table>
 		</view>

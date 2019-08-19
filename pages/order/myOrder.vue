@@ -11,7 +11,7 @@
 				<view class="list">
 					<view class="search_box">
 						<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-						<customDatePicker
+						<customDatePicker class="date_picker"
 							fields="month"
 							:start="startDate"
 							:end="endDate"

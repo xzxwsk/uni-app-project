@@ -12,7 +12,7 @@
 					<view class="list">
 						<view class="search_box">
 							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-							<customDatePicker
+							<customDatePicker class="date_picker"
 								fields="month"
 								:start="startDate"
 								:end="endDate"
@@ -33,12 +33,12 @@
 							<view>
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
-										<text class="title">
-											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">处罚类别:</text>大<br/>
-											<text class="gray">经销商编号:</text>dsdffdgdfs<br/>
-											<text class="gray">经销商姓名:</text>卡咔砂
-										</text>
+										<view class="title">
+											<view><text class="gray">日期:</text>2012-12-05</view>
+											<view><text class="gray">处罚类别:</text>大</view>
+											<view><text class="gray">经销商编号:</text>dsdffdgdfs</view>
+											<view><text class="gray">经销商姓名:</text>卡咔砂</view>
+										</view>
 										<view class="status">
 											<text>{{item.status}}</text>
 										</view>

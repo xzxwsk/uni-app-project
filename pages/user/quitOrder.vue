@@ -15,14 +15,14 @@
 						<view>
 							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 								<view class="ls_item_top">
-									<text class="title">
-										<text class="gray">日期:</text>2012-12-05<br/>
-										<text class="gray">姓名:</text>大<br/>
-										<text class="gray">保证金:</text><text class="price">￥{{item.price}}</text> <text class="gray mgl10">退款方式:</text><text>{{item.payType}}</text><br/>
-										<text class="gray">经销商编号:</text>df348209834<br/>
-										<text class="gray">经销商姓名:</text>df348209834<br/>
-										<text class="gray">注销原因:</text>df348209834
-									</text>
+									<view class="title">
+										<view><text class="gray">日期:</text>2012-12-05</view>
+										<view><text class="gray">姓名:</text>大</view>
+										<view><text class="gray">保证金:</text><text class="price">￥{{item.price}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{item.payType}}</text></view>
+										<view><text class="gray">经销商编号:</text>df348209834</view>
+										<view><text class="gray">经销商姓名:</text>df348209834</view>
+										<view><text class="gray">注销原因:</text>df348209834</view>
+									</view>
 									<view class="status">
 										<text>{{item.status}}</text>
 									</view>
@@ -42,8 +42,6 @@
 <script>
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
-	// https://ext.dcloud.net.cn/plugin?id=220
-	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
@@ -55,7 +53,7 @@
 	}];
 	export default {
 		components: {
-			inputBox, customDatePicker
+			inputBox
 		},
 		data() {
 			return {

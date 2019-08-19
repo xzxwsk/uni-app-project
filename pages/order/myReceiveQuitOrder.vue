@@ -13,7 +13,7 @@
 						<view class="search_box">
 							<input-box style="width: 200upx;" v-model="itemLs.searchKeyNo" placeholder="经销商编号"></input-box>
 							<input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box>
-							<customDatePicker
+							<customDatePicker class="date_picker"
 								fields="month"
 								:start="startDate"
 								:end="endDate"
@@ -42,11 +42,11 @@
 										</view>
 									</view>
 									<view class="ls_item_top">
-										<text class="title">
-											<text class="gray">经销商编号:</text>df348209834<br/>
-											<text class="gray">姓名:</text>dfidsafkd<br/>
-											<text class="gray">注销原因:</text>dfidsdfdsgasafkd<br/>
-										</text>
+										<view class="title">
+											<view><text class="gray">经销商编号:</text>df348209834</view>
+											<view><text class="gray">姓名:</text>dfidsafkd</view>
+											<view><text class="gray">注销原因:</text>dfidsdfdsgasafkd</view>
+										</view>
 									</view>
 									<view class="ls_item_center">
 										<text><text class="gray">退款方式:</text>微信</text>

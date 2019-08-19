@@ -73,9 +73,7 @@
                 "speech" : {
                     "ifly" : {}
                 },
-                "push" : {
-                    "unipush" : {}
-                }
+                "push" : {}
             },
             "orientation" : [ "portrait-primary" ]
         }

@@ -13,7 +13,7 @@
 						<view class="search_box">
 							<input-box style="width: 200upx;" v-model="itemLs.searchKeyNo" placeholder="经销商编号"></input-box>
 							<input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box>
-							<customDatePicker
+							<customDatePicker class="date_picker"
 								fields="month"
 								:start="startDate"
 								:end="endDate"
@@ -34,11 +34,12 @@
 							<view>
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
-										<text class="title">
-											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">款项性质:</text>{{item.nature}}<br/>
-											<text class="gray">自己帐户:</text>dfgfd435345<br/>
-											<text class="gray">对方帐户: </text>35435cgdfs</text>
+										<view class="title">
+											<view><text class="gray">日期:</text>2012-12-05</view>
+											<view><text class="gray">款项性质:</text>{{item.nature}}</view>
+											<view><text class="gray">自己帐户:</text>dfgfd435345</view>
+											<view><text class="gray">对方帐户: </text>35435cgdfs</view>
+										</view>
 										<view class="status">
 											<text>{{item.status}}</text>
 											<text class="price">￥{{item.price}}</text>

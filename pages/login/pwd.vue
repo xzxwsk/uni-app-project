@@ -1,5 +1,5 @@
 <template>
-    <view class="content">
+    <view class="user">
         <view class="input-group">
             <view class="input-row">
                 <text class="title">原密码：</text>
@@ -15,8 +15,8 @@
 			</view>
         </view>
 
-        <view class="btn-row">
-            <button type="warn" class="primary" @tap="confirmPassword">提交</button>
+        <view class="btn-row logout_btn">
+            <button type="warn" class="btn" @tap="confirmPassword">提交</button>
         </view>
     </view>
 </template>

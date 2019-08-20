@@ -22,7 +22,7 @@
 				</view>
 			</view>
 			<view class="logout_btn">
-				<button type="warn">退出当前帐户</button>
+				<button type="warn" class="btn">退出当前帐户</button>
 			</view>
 		</view>
 	</view>

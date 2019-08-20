@@ -35,7 +35,7 @@
 										<t-td align="left">张顺利</t-td>
 										<t-td align="left">{{ item.hobby }}</t-td>
 										<t-td align="left">345</t-td>
-										<t-td align="left"><text class="a" @click="paymentGoodsDetail(item.id)">收支明细</text></t-td>
+										<t-td align="left"><view @click="paymentGoodsDetail(item.id)" class="a">收支明细</view></t-td>
 									</t-tr>
 								</t-table>
 							</view>
@@ -84,7 +84,7 @@
 										<t-td align="left">张顺利</t-td>
 										<t-td align="left">{{ item.hobby }}</t-td>
 										<t-td align="left">345</t-td>
-										<t-td align="left"><text class="a" @click="paymentGoodsDetail(item.id)">收支明细</text></t-td>
+										<t-td align="left"><view @click="paymentGoodsDetail(item.id)" class="a">收支明细</view></t-td>
 									</t-tr>
 								</t-table>
 							</view>

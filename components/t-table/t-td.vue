@@ -66,6 +66,6 @@
 		text-align: center;
 		color: #555c60;
 		font-size: 28upx;
-
+		word-break:break-all; word-wrap: break-word;
 	}
 </style>

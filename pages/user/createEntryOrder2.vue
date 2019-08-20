@@ -2,69 +2,58 @@
 	<view class="create_pay_order">
 		<view class="input-group">
 			<view class="input-row">
-				<text class="title">单据编号：</text>
-				<input-box disabled inputValue="sdfuserNodfgd" :clearShow="false"></input-box>
+				<text class="title">身份证号：</text>
+				<input-box placeholder="身份证号"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">单据日期：</text>
-				<input-box disabled inputValue="2018-08-12" :clearShow="false"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">单据状态：</text>
-				<radio-group class="uni-flex" name="status" @change="changeStatus">
-					<label><radio value="0" checked color="#f23030" />申请</label>
-					<label><radio value="1" color="#f23030" />已审核</label>
-				</radio-group>
-			</view>
-			<view class="input-row">
-				<text class="title">经销商编号：</text>
-				<input-box disabled inputValue="sdfuserNodfgd" :clearShow="false"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">姓名：</text>
-				<input-box placeholder="姓名"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">生日：</text>
-				<customDatePicker class="search_box"
-					fields="day"
-					:start="startDate"
-					:end="endDate"
-					:value="birthdayValue"						
-				></customDatePicker>
-			</view>
-			<view class="input-row">
-				<text class="title">性别：</text>
-				<radio-group class="uni-flex" name="gender" @change="changeMoneyNature">
-					<label><radio value="0" checked color="#f23030" />男</label>
-					<label><radio value="1" color="#f23030" />女</label>
-				</radio-group>
-			</view>
-			<view class="input-row">
-				<text class="title">婚否：</text>
-				<radio-group class="uni-flex" name="marriage" @change="changeMarriage">
-					<label><radio value="0" checked color="#f23030" />是</label>
-					<label><radio value="1" color="#f23030" />否</label>
-				</radio-group>
-			</view>
-			<view class="input-row">
-				<text class="title">学历：</text>
-				<input-box placeholder="学历"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">籍贯：</text>
-				<view class="input_box" @tap="selectArea">
-					<input class="ipt" type="text" disabled v-model="area" placeholder="请选择籍贯地址"></input>
-					<view class="uni-icon uni-icon-arrowright"></view>
+				<text class="title">身份证正面照：</text>
+				<view class="uni-uploader-body">
+					<view class="uni-uploader__files">
+						<view class="uni-uploader__file" v-if="frontImg != ''">
+							<image class="uni-uploader__img" :src="frontImg" :data-src="frontImg" @tap="previewImage"></image>
+						</view>
+						<view class="uni-uploader__input-box">
+							<view class="uni-uploader__input" @tap="chooseImage"></view>
+						</view>
+					</view>
 				</view>
 			</view>
 			<view class="input-row">
-				<text class="title">家庭地址：</text>
-				<input-box placeholder="详细地址"></input-box>
+				<text class="title">身份证反面照：</text>
+				<view class="uni-uploader-body">
+					<view class="uni-uploader__files">
+						<view class="uni-uploader__file" v-if="backImg != ''">
+							<image class="uni-uploader__img" :src="backImg" :data-src="backImg" @tap="previewImage"></image>
+						</view>
+						<view class="uni-uploader__input-box">
+							<view class="uni-uploader__input" @tap="chooseImage2"></view>
+						</view>
+					</view>
+				</view>
 			</view>
 			<view class="input-row">
-				<text class="title">邮编：</text>
-				<input-box placeholder="邮编"></input-box>
+				<text class="title">手机：</text>
+				<input-box placeholder="手机"></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">EMAIL：</text>
+				<input-box placeholder="EMAIL"></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">紧急联系人：</text>
+				<input-box placeholder="紧急联系人"></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">联系人电话：</text>
+				<input-box placeholder="联系人电话"></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">密码：</text>
+				<input-box type="password" displayable v-model="password" placeholder="请输入密码"></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">确认密码：</text>
+				<input-box type="password" displayable v-model="password" placeholder="请再次输入密码"></input-box>
 			</view>
 		</view>
 		<mpvue-picker :themeColor="themeColor" ref="mpvuePicker" :pickerValueDefault="pickerValueDefault"
@@ -89,7 +78,6 @@
 		data() {
 			return {
 				dateValue: '',
-				birthdayValue: '',
 				startDate: '1900-01',
 				endDate: '2199-12',
 				protocal: false,
@@ -106,7 +94,7 @@
 		},
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
-				url: './createEntryOrder2'
+				url: './createEntryOrder3'
 			});
 		},
 		methods: {

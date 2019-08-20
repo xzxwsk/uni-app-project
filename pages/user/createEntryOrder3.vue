@@ -1,71 +1,38 @@
 <template>
 	<view class="create_pay_order">
-		<view class="input-group">
-			<view class="input-row">
-				<text class="title">单据编号：</text>
-				<input-box disabled inputValue="sdfuserNodfgd" :clearShow="false"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">单据日期：</text>
-				<input-box disabled inputValue="2018-08-12" :clearShow="false"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">单据状态：</text>
-				<radio-group class="uni-flex" name="status" @change="changeStatus">
-					<label><radio value="0" checked color="#f23030" />申请</label>
-					<label><radio value="1" color="#f23030" />已审核</label>
-				</radio-group>
-			</view>
-			<view class="input-row">
-				<text class="title">经销商编号：</text>
-				<input-box disabled inputValue="sdfuserNodfgd" :clearShow="false"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">姓名：</text>
-				<input-box placeholder="姓名"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">生日：</text>
-				<customDatePicker class="search_box"
-					fields="day"
-					:start="startDate"
-					:end="endDate"
-					:value="birthdayValue"						
-				></customDatePicker>
-			</view>
-			<view class="input-row">
-				<text class="title">性别：</text>
-				<radio-group class="uni-flex" name="gender" @change="changeMoneyNature">
-					<label><radio value="0" checked color="#f23030" />男</label>
-					<label><radio value="1" color="#f23030" />女</label>
-				</radio-group>
-			</view>
-			<view class="input-row">
-				<text class="title">婚否：</text>
-				<radio-group class="uni-flex" name="marriage" @change="changeMarriage">
-					<label><radio value="0" checked color="#f23030" />是</label>
-					<label><radio value="1" color="#f23030" />否</label>
-				</radio-group>
-			</view>
-			<view class="input-row">
-				<text class="title">学历：</text>
-				<input-box placeholder="学历"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">籍贯：</text>
-				<view class="input_box" @tap="selectArea">
-					<input class="ipt" type="text" disabled v-model="area" placeholder="请选择籍贯地址"></input>
-					<view class="uni-icon uni-icon-arrowright"></view>
+		<view class="box">
+			<view class="input-group">
+				<view class="input-row">
+					<text class="title">开户银行：</text>
+					<input-box placeholder="开户银行"></input-box>
+				</view>
+				<view class="input-row">
+					<text class="title">银行帐号：</text>
+					<input-box placeholder="银行帐号"></input-box>
+				</view>
+				<view class="input-row">
+					<text class="title">户名：</text>
+					<input-box placeholder="户名"></input-box>
+				</view>
+				<view class="input-row">
+					<text class="title">支付宝帐号：</text>
+					<input-box placeholder="支付宝帐号"></input-box>
+				</view>
+				<view class="input-row">
+					<text class="title">微信帐号：</text>
+					<input-box placeholder="微信帐号"></input-box>
+				</view>
+				<view class="input-row">
+					<text class="title">备注：</text>
+					<input-box placeholder="备注信息"></input-box>
+				</view>
+				<view class="input-row">
+					<radio class="protocal" value="0" @click="bindProtocal" color="#f23030" :checked="protocal" /><label @click="bindToProtocal">同意许可条款</label>
 				</view>
 			</view>
-			<view class="input-row">
-				<text class="title">家庭地址：</text>
-				<input-box placeholder="详细地址"></input-box>
-			</view>
-			<view class="input-row">
-				<text class="title">邮编：</text>
-				<input-box placeholder="邮编"></input-box>
-			</view>
+		</view>
+		<view class="result">
+			<button class="btn" type="warn" @click="saveOrder">保存</button>
 		</view>
 		<mpvue-picker :themeColor="themeColor" ref="mpvuePicker" :pickerValueDefault="pickerValueDefault"
 		 @onCancel="onCancel" @onConfirm="onConfirm"></mpvue-picker>
@@ -89,7 +56,6 @@
 		data() {
 			return {
 				dateValue: '',
-				birthdayValue: '',
 				startDate: '1900-01',
 				endDate: '2199-12',
 				protocal: false,
@@ -103,11 +69,6 @@
 		},
 		onLoad() {
 			
-		},
-		onNavigationBarButtonTap(e) {
-			util.goUrl({
-				url: './createEntryOrder2'
-			});
 		},
 		methods: {
 			bindDateChange(value) {

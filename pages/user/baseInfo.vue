@@ -30,7 +30,7 @@
 					<view class="input-row border">
 						<text class="title">学历：</text>
 						<text class="info">大专</text>
-						<text class="title">邮箱：</text>
+						<text class="title">邮编：</text>
 						<text class="info">611000</text>
 					</view>
 					<view class="input-row border">
@@ -91,9 +91,9 @@
 						<text class="title">密码：</text>
 						<input-box type="password" displayable v-model="password" placeholder="请输入密码"></input-box>
 					</view>
-					<view class="input-row">
-						<text class="title">邮箱：</text>
-						<input-box type="text" clearable v-model="email" placeholder="请输入邮箱"></input-box>
+					<view class="input-row border">
+						<text class="title">确认密码：</text>
+						<input-box type="password" displayable v-model="password" placeholder="请再次输入密码"></input-box>
 					</view>
 				</view>
 			</scroll-view>

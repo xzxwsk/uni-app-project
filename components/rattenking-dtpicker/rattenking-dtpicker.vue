@@ -207,6 +207,8 @@
 
 <style>
 	.rui-picker{
+	  flex: 1;
+	  min-width: 90px;
 	  height: 10vw;
 	  font-size: 4vw;
 	  color: #000;

@@ -167,6 +167,46 @@
 			"style": {
 				"navigationBarTitleText": "新增经销商加盟单",
 				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "下一步",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		}, {
+			"path": "pages/user/createEntryOrder2",
+			"style": {
+				"navigationBarTitleText": "新增经销商加盟单",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "下一步",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}			
+				}
+			}
+		}, {
+			"path": "pages/user/createEntryOrder3",
+			"style": {
+				"navigationBarTitleText": "新增经销商加盟单",
+				"app-plus": {
+					"bounce": "none"					
+				}
+			}
+		}, {
+			"path": "pages/user/protocal",
+			"style": {
+				"navigationBarTitleText": "许可协议",
+				"app-plus": {
 					"bounce": "none"
 				}
 			}

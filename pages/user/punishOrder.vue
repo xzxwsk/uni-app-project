@@ -12,13 +12,15 @@
 					<view class="list">
 						<view class="search_box">
 							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-							<customDatePicker class="date_picker"
-								fields="month"
-								:start="startDate"
-								:end="endDate"
-								:value="itemLs.dateValue"
-								@change="bindDateChange"
-							></customDatePicker>
+							<view class="date_picker">
+								<customDatePicker
+									fields="month"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.dateValue"
+									@change="bindDateChange"
+								></customDatePicker>
+							</view>
 							<button class="btn" type="warn" @click="query">查询</button>
 						</view>
 						<block v-if="itemLs.data.length<1">

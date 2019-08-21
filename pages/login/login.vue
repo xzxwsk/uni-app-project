@@ -4,7 +4,7 @@
 		    <!-- 这里是状态栏 -->
 		</view>
 		<view class="uni-padding-wrap uni-common-pb login_top">
-			<view class="return_btn" @tap="goMian"><text class="uni-icon uni-icon-home"></text></view> <button class="b login_title">登录</button>
+			<view class="return_btn" @tap="goMain"><text class="uni-icon uni-icon-home"></text></view> <button class="b login_title">登录</button>
 		</view>
 		<view class="content">
 			<view class="input-group">
@@ -40,7 +40,7 @@
 </template>
 <script>
 	import service from '../../service.js';
-	import {mapState, mapMutations} from 'vuex';
+	import {mapMutations} from 'vuex';
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
@@ -79,8 +79,9 @@
 			}
 		},
 		methods: {
-			goMian() {
-				uni.switchTab({
+			...mapMutations(['login']),
+			goMain() {
+				util.goTab({
 					url: '/pages/tabBar/user'
 				});
 			},
@@ -152,24 +153,29 @@
 			},
 			bindLogin() {
 				console.log('this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue()：', this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue());
+				const data = {
+				    account: this.$refs.input1.getValue(),
+				    password: this.$refs.input2.getValue()
+				}
 				if(this.$refs.input1.getValue() && this.$refs.input2.getValue() && this.$refs.input3.getValue()){
-                    uni.showToast({
-                        icon: 'none',
-                        title: '校验通过',
-                        // #ifdef MP-WEIXIN
-                        duration: 2000,
-                        // #endif
-                        // mask: true
-                    });
-                } else {
+					this.login(data.account);
 					util.goTab({
 						url: '../tabBar/user?logined=true',
-						success: function(e) {
-							let page = getCurrentPages().pop();
-							console.log('page: ', page);
-							if (page == undefined || page == null) return;
-							page.login();
+						success: (e) => {
+							// let page = getCurrentPages().pop();
+							// console.log('page: ', page);
+							// if (page == undefined || page == null) return;
+							// page.login();
 						},
+					});
+                } else {
+					uni.showToast({
+					    icon: 'none',
+					    title: '校验不通过',
+					    // #ifdef MP-WEIXIN
+					    duration: 2000,
+					    // #endif
+					    // mask: true
 					});
 				}
 			},

@@ -25,6 +25,7 @@
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
     import mInput from '../../components/m-input.vue';
+	import {mapMutations} from 'vuex';
 
     export default {
         components: {
@@ -38,6 +39,7 @@
             }
         },
         methods: {
+			...mapMutations(['login']),
             register() {
                 /**
                  * 客户端对账号信息进行一些必要的校验。
@@ -75,13 +77,14 @@
                 uni.showToast({
                     title: '注册成功',
 					duration: 2000,
-					success: function() {
+					success: () => {
 						console.log('success');
+						this.login(data.account);
 						setTimeout(function() {
 							uni.navigateBack({
 							    delta: 1
 							});
-						}, 2000);
+						}, 1000);
 					}
                 });                
             }

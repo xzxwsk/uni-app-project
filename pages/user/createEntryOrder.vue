@@ -10,19 +10,12 @@
 				<input-box disabled inputValue="2018-08-12" :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">单据状态：</text>
-				<radio-group class="uni-flex" name="status" @change="changeStatus">
-					<label><radio value="0" checked color="#f23030" />申请</label>
-					<label><radio value="1" color="#f23030" />已审核</label>
-				</radio-group>
-			</view>
-			<view class="input-row">
 				<text class="title">经销商编号：</text>
 				<input-box disabled inputValue="sdfuserNodfgd" :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">姓名：</text>
-				<input-box placeholder="姓名"></input-box>
+				<input-box placeholder="请输入姓名"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">生日：</text>
@@ -49,7 +42,7 @@
 			</view>
 			<view class="input-row">
 				<text class="title">学历：</text>
-				<input-box placeholder="学历"></input-box>
+				<input-box placeholder="请输入学历"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">籍贯：</text>
@@ -60,7 +53,7 @@
 			</view>
 			<view class="input-row">
 				<text class="title">家庭地址：</text>
-				<input-box placeholder="详细地址"></input-box>
+				<input-box placeholder="请输入详细地址"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">邮编：</text>

@@ -27,7 +27,7 @@
 					<input-box placeholder="备注信息"></input-box>
 				</view>
 				<view class="input-row">
-					<radio class="protocal" value="0" @click="bindProtocal" color="#f23030" :checked="protocal" /><label @click="bindToProtocal">同意许可条款</label>
+					<radio class="protocal" value="0" @click="bindProtocal" color="#f23030" :checked="protocal" /><label @click="bindToProtocal" class="a">同意许可条款</label>
 				</view>
 			</view>
 		</view>

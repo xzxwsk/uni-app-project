@@ -4,9 +4,9 @@
 			<view class="login_box">
 				<view class="login_con">
 					<view class="head_img"><image style="width: 100%; height: 100%;" :mode="modeHead" :src="imgSrcHead" @error="imageError" @click="updateHeadImg"></image></view>
-					<view class="txt" v-if="logined">
+					<view class="txt" v-if="hasLogin">
 						<view class="user_info">
-							<view class="user_name">wsk</view>
+							<view class="user_name">{{loginProvider}}</view>
 							<text>备注</text>
 						</view>
 						<view class="uni-icon uni-icon-gear" @click="goMyInfo"></view>
@@ -80,10 +80,11 @@
 	import util from '@/common/util.js';
 	import imgSrcHead from "@/static/images/avatar_member.gif";
 	import imgSrc from "@/static/images/member_bg.png";
+	import {mapState} from 'vuex';
 	export default {
+		computed: mapState(['hasLogin', 'loginProvider']),
 		data() {
 			return {
-				logined: true,
 				imgSrcHead: imgSrcHead,
 				modeHead: 'widthFix',
 				imgSrc: imgSrc,
@@ -111,6 +112,9 @@
 		methods: {
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
+			},
+			login() {
+				console.log('login');
 			},
 			updateHeadImg() {
 				this.chooseImage();
@@ -166,9 +170,6 @@
 				util.goUrl({
 					url: '/pages/user/mySubordinateInfo'
 				})
-			},
-			login() {
-				this.logined = true;
 			}
 		}
 	}

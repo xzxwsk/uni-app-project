@@ -22,13 +22,15 @@
 				</view>
 			</view>
 			<view class="logout_btn">
-				<button type="warn" class="btn">退出当前帐户</button>
+				<button type="warn" class="btn" @tap="bindLogout">退出当前帐户</button>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -57,6 +59,7 @@
 			}
 		},
 		methods: {
+			...mapMutations(['logout']),
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
@@ -65,6 +68,15 @@
 					url: '/pages/' + url
 				});
 			},
+			bindLogout() {
+			    this.logout();
+				// uni.reLaunch({
+				//     url: '../login/login'
+				// });
+				util.goTab({
+					url: '../tabBar/user'
+				});
+			}
 		}
 	}
 </script>

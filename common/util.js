@@ -304,7 +304,10 @@ let ajax = async function(prompt) {
 				}
 				dialog({
 					title: '错误信息',
-					content: err + '\n' + JSON.stringify(_prompt),
+					content: err + '\n' + 'get: \n' + JSON.stringify({
+						method: _prompt.method,
+						params: _prompt.params
+					}),
 					showCancel: false
 				});
 			});
@@ -312,13 +315,17 @@ let ajax = async function(prompt) {
 			postAjax(_prompt)
 			.then(data => resolve(data))
 			.catch(err => {
+				console.log('err: ', err);
 				let type = getType(err);
 				if (!(type === 'number' || type === 'string')) {
 					err = JSON.stringify(err);
 				}
 				dialog({
 					title: '错误信息',
-					content: err + '\n' + JSON.stringify(_prompt),
+					content: err + '\n' + 'post: \n' + JSON.stringify({
+						method: _prompt.method,
+						params: _prompt.params
+					}),
 					showCancel: false
 				});
 			});

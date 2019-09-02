@@ -76,12 +76,6 @@
 			this.initPosition();
 			this.initProvider();
 		},
-		onShareAppMessage() {
-			return {
-				title: '欢迎体验uni-app',
-				path: '/pages/tabBar/template/template'
-			}
-		},
 		methods: {
 			...mapMutations(['login']),
 			goMain() {

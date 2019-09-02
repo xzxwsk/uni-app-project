@@ -1,3 +1,5 @@
+const baseUrl = 'http://118.31.54.76/qcdm/';
+
 function formatTime(time) {
 	if (typeof time !== 'number' || time < 0) {
 		return time
@@ -216,6 +218,114 @@ let hideToast = function(text) {
 	uni.hideToast();
 };
 
+let setStorageSync = function(prompt) {
+	uni.setStorageSync(prompt.key, prompt.data);
+};
+let getStorageSync = function(key) {
+	uni.getStorageSync(key);
+};
+let clearStorageSync = function() {
+	uni.clearStorageSync();
+};
+
+let getAjax = async function(prompt) {
+	return await new Promise((resolve, reject) => {
+		uni.request({
+			url: baseUrl + prompt.method,
+			data: prompt.params,
+			header: {},
+			method: 'GET',
+			dataType: prompt.dataType || 'json',
+			responseType: prompt.responseType || 'text',
+			success: function(res) {
+				// console.log({
+				// 	data: res.data,
+				// 	statusCode: res.statusCode,
+				// 	header: res.header,
+				// });
+				if (res.statusCode !== 200) {
+					reject('网络错误');
+				}
+				resolve(res);
+			},
+			fail: function(err) {
+				reject(err);
+			},
+			complete: function() {}
+		});
+	});
+};
+let postAjax = async function(prompt) {
+	return await new Promise((resolve, reject) => {
+		uni.request({
+			url: baseUrl + 'json.rpc/webapi',
+			data: JSON.stringify(prompt),
+			header: {},
+			method: 'POST',
+			dataType: prompt.dataType || 'json',
+			responseType: prompt.responseType || 'text',
+			success: function(res) {
+				// console.log({
+				// 	data: res.data,
+				// 	statusCode: res.statusCode,
+				// 	header: res.header,
+				// });
+				if (res.statusCode !== 200) {
+					reject('网络错误');
+				}
+				resolve(res);
+			},
+			fail: function(err) {
+				reject(err);
+			},
+			complete: function() {}
+		});
+	});
+};
+let ajax = async function(prompt) {
+	let _prompt = {
+		jsonrpc: '2.0',
+		method: '',
+		params: {},
+		id: 1,
+		tags: {
+			usertoken: ''
+		}
+	};
+	extend(_prompt, prompt);
+	return await new Promise((resolve, reject) => {
+		if(prompt.get) {
+			getAjax(_prompt)
+			.then(data => resolve(data))
+			.catch(err => {
+				let type = getType(err);
+				if (!(type === 'number' || type === 'string')) {
+					err = JSON.stringify(err);
+				}
+				dialog({
+					title: '错误信息',
+					content: err + '\n' + JSON.stringify(_prompt),
+					showCancel: false
+				});
+			});
+		} else {
+			postAjax(_prompt)
+			.then(data => resolve(data))
+			.catch(err => {
+				let type = getType(err);
+				if (!(type === 'number' || type === 'string')) {
+					err = JSON.stringify(err);
+				}
+				dialog({
+					title: '错误信息',
+					content: err + '\n' + JSON.stringify(_prompt),
+					showCancel: false
+				});
+			});
+		}
+	});
+}
+
 module.exports = {
 	formatTime: formatTime,
 	formatLocation: formatLocation,
@@ -230,5 +340,9 @@ module.exports = {
 	hideLoading: hideLoading,
 	showToast: showToast,
 	hideToast: hideToast,
-	random: random
+	random: random,
+	setStorageSync: setStorageSync,
+	getStorageSync: getStorageSync,
+	clearStorageSync: clearStorageSync,
+	ajax: ajax
 }

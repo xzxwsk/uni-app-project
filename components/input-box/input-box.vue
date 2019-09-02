@@ -116,7 +116,7 @@
 			};
 	    },
 		mounted() {
-			console.log(inputVerification)
+			// console.log(inputVerification)
 		},
 		methods: {
 			  /**

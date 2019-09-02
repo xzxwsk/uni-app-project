@@ -41,7 +41,8 @@ uni-tabbar {
 	.input_box{flex: 1; display: flex; flex-direction: row; justify-content: flex-start; align-items: center; padding: 0 11px;
 		.ipt{flex: 1;}
 	}
-	.voliCode{position: absolute; right: 200upx; top: 26upx; z-index: 2; width: 120upx;}
+	.voli_code_ipt{flex: 1; margin: 0 20upx 0 0;}
+	.voli_code_img{position: absolute; right: 200upx; top: 26upx; z-index: 2; width: 150upx; font-size: 0;}
 	.right_txt{margin: 0 0 0 30upx !important;}
 }
 .btn-row{margin: 30upx 5% 0;}
@@ -317,7 +318,7 @@ uni-tabbar {
 				.head_img{margin: 0 0 0 50upx; width: 125upx; height: 125upx; overflow: hidden; border: 5upx solid #ce4165; border-radius: 100%;}
 				.txt{flex: 1; display: flex; flex-direction: row; padding: 0 0 0 20upx; font-size: 30upx; color: #fff;
 					.navigator-hover{border-radius: 10px;}
-					.word{display: block; padding: 5px 15upx;}
+					.word{display: block; padding: 5px 15upx; font-size: 30upx;}
 					.split{margin: 5px 10upx;}
 					.user_info{flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-content: center; padding: 0 0 0 20upx; font-size: 30upx; color: #fff;
 						.user_name{font-size: 40upx;}

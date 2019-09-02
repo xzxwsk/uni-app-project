@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view class="login_page">
 		<view class="status_bar">
 		    <!-- 这里是状态栏 -->
 		</view>
@@ -18,8 +18,8 @@
 				</view>
 				<view class="input-row">
 					<text class="title">验证码：</text>
-					<input-box ref="input3" type="text" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
-					<view class="voliCode"><image style="width: 100%;" mode="widthFix" :src="voliCodeSrc"></image></view>
+					<input-box class="voli_code_ipt" ref="input3" type="text" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
+					<view class="voli_code_img"><image style="width: 100%;" mode="widthFix" :src="voliCodeSrc"></image></view>
 				</view>
 			</view>
 			<view class="btn-row">
@@ -44,6 +44,7 @@
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
+	import voliCodeImg from '@/static/img/makecaptcha.jpg';
 	export default {
 		components: {
 		    inputBox
@@ -55,17 +56,20 @@
 				account: '',
 				password: '',
 				voliCode: '',
-				voliCodeSrc: '../../static/img/makecaptcha.jpg',
+				voliCodeSrc: voliCodeImg,
 				positionTop: 0
 			}
 		},
 		onLoad() {
+			console.log('onLoad');
+			this.resetVoliCode();
 			// #ifdef APP-PLUS
 			plus.nativeUI.showWaiting('加载中……');
 			// this.getSystemInfo();
 			// #endif
 		},
 		onReady() {
+			console.log('onReady');
 			// #ifdef APP-PLUS
 			plus.nativeUI.closeWaiting();
 			// #endif
@@ -149,7 +153,26 @@
 				}
 			},
 			resetVoliCode() {
-				console.log('重新发送验证码')
+				console.log('重新发送验证码');
+				// util.ajax({
+				// 	method: 'SYS.UserDAL.GetVerifyCode'
+				// }).then(res => {
+				// 	console.log(res);
+				// 	this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
+				// });
+				util.ajax({
+					get: true,
+					responseType: 'arraybuffer',
+					method: 'images/verifycode',
+				}).then(res => {
+					console.log(res);
+					var buffer = new Buffer(res.data.byteLength);
+					var view = new Uint8Array(res.data);
+					for (var i = 0, len = buffer.length; i < len; ++i) {
+						buffer[i] = view[i];
+					}
+					this.voliCodeSrc = 'data:image/jpeg;base64,' + buffer.toString("base64");
+				});
 			},
 			bindLogin() {
 				console.log('this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue()：', this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue());

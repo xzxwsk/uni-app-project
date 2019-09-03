@@ -40,7 +40,7 @@
 </template>
 <script>
 	import service from '../../service.js';
-	import {mapMutations} from 'vuex';
+	import {mapState, mapMutations} from 'vuex';
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
@@ -49,6 +49,7 @@
 		components: {
 		    inputBox
 		},
+		computed: mapState(['sessionId', 'openid']),
 		data() {
 			return {
 				providerList: [],
@@ -62,7 +63,7 @@
 		},
 		onLoad() {
 			console.log('onLoad');
-			this.resetVoliCode();
+			this.getSessionId();
 			// #ifdef APP-PLUS
 			plus.nativeUI.showWaiting('加载中……');
 			// this.getSystemInfo();
@@ -73,11 +74,11 @@
 			// #ifdef APP-PLUS
 			plus.nativeUI.closeWaiting();
 			// #endif
-			this.initPosition();
-			this.initProvider();
+			// this.initPosition();
+			// this.initProvider();
 		},
 		methods: {
-			...mapMutations(['login', 'setOpenid']),
+			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),
 			goMain() {
 				util.goTab({
 					url: '/pages/tabBar/user'
@@ -136,22 +137,37 @@
 			},
 			toMain(userName) {
 				this.login(userName);
+				this.goMain();
 				/**
 				 * 强制登录时使用reLaunch方式跳转过来
 				 * 返回首页也使用reLaunch方式
 				 */
-				if (this.forcedLogin) {
-					uni.reLaunch({
-						url: '../main/main',
-					});
-				} else {
-					uni.navigateBack();
-				}
+				// if (this.forcedLogin) {
+				// 	uni.reLaunch({
+				// 		url: '../main/main',
+				// 	});
+				// } else {
+				// 	uni.navigateBack();
+				// }
+			},
+			async getSessionId() {
+				await util.ajax({
+					method: 'SYS.UserDAL.GetSessionId'
+				}).then(res => {
+					console.log('GetSessionId: ', res);
+					this.setSessionId(res.data.result);
+				});
+				this.resetVoliCode();
 			},
 			resetVoliCode() {
 				console.log('重新发送验证码');
+				console.log('sessionId: ', this.sessionId);
 				util.ajax({
-					method: 'SYS.UserDAL.GetVerifyCodeBase64'
+					method: 'SYS.UserDAL.GetVerifyCodeBase64',
+					tags: {
+						usertoken: '',
+						sessionid: this.sessionId
+					}
 				}).then(res => {
 					console.log(res);
 					this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
@@ -170,7 +186,8 @@
 				// 	this.voliCodeSrc = 'data:image/jpeg;base64,' + buffer.toString("base64");
 				// });
 			},
-			bindLogin() {
+			async bindLogin() {
+				let me = this;
 				console.log('this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue()：', this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue());
 				const data = {
 				    account: this.$refs.input1.getValue(),
@@ -178,7 +195,8 @@
 				    voliCode: this.$refs.input3.getValue()
 				}
 				if(this.$refs.input1.getValue() && this.$refs.input2.getValue() && this.$refs.input3.getValue()){
-					util.ajax({
+					util.showLoading();
+					await util.ajax({
 						method: 'SYS.UserDAL.Login',
 						params: {
 							UserName: data.account,
@@ -190,11 +208,28 @@
 								EncyptType: 0,
 								ForceLogin: false
 							}
+						},
+						tags: {
+							usertoken: '',
+							sessionid: this.sessionId
 						}
 					}).then(res => {
 						console.log(res);
 						this.setOpenid(res.data.result);
-					})
+					});
+					console.log('openid: ', this.openid);
+					await util.ajax({
+						method: 'SYS.UserDAL.GetDealerByToken',
+						params: {},
+						tags: {
+							usertoken: me.openid
+						}
+					}).then(res => {
+						console.log('经销商信息：', res);
+						me.setUserInfo(res.data.result);
+						me.toMain(res.data.result.DealerName);
+					});
+					console.log('登录成功');
 					// this.login(data.account);
 					// util.goTab({
 					// 	url: '../tabBar/user?logined=true',

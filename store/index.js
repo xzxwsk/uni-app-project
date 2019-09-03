@@ -6,8 +6,10 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
-		loginProvider: "",
-		openid: null
+		loginProvider: '',
+		sessionId: null,
+		openid: null,
+		userInfo: {}
 	},
 	mutations: {
 		login(state, provider) {
@@ -18,8 +20,14 @@ const store = new Vuex.Store({
 			state.hasLogin = false
 			state.openid = null
 		},
+		setSessionId(state, sessionId) {
+			state.sessionId = sessionId
+		},
 		setOpenid(state, openid) {
 			state.openid = openid
+		},
+		setUserInfo(state, userInfo) {
+			state.userInfo = userInfo
 		}
 	},
 	actions: {

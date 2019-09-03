@@ -187,7 +187,7 @@ let dialog = function(prompt) {
 };
 let showLoading = function(prompt) {
 	let option = {
-		title: '提示信息',
+		title: '加载中...',
 		mask: false,
 		success: function() {},
 		fail: function() {},
@@ -283,7 +283,9 @@ let postAjax = function(prompt) {
 			fail: function(err) {
 				reject(err);
 			},
-			complete: function() {}
+			complete: function() {
+				hideLoading();
+			}
 		});
 	});
 };

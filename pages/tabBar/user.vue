@@ -7,7 +7,7 @@
 					<view class="txt" v-if="hasLogin">
 						<view class="user_info">
 							<view class="user_name">{{loginProvider}}</view>
-							<text>备注</text>
+							<text>{{userInfo.Remark}}</text>
 						</view>
 						<view class="uni-icon uni-icon-gear" @click="goMyInfo"></view>
 					</view>
@@ -82,7 +82,7 @@
 	import imgSrc from "@/static/images/member_bg.png";
 	import {mapState} from 'vuex';
 	export default {
-		computed: mapState(['hasLogin', 'loginProvider']),
+		computed: mapState(['hasLogin', 'loginProvider', 'userInfo']),
 		data() {
 			return {
 				imgSrcHead: imgSrcHead,

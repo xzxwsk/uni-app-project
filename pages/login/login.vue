@@ -56,7 +56,7 @@
 				account: '',
 				password: '',
 				voliCode: '',
-				voliCodeSrc: voliCodeImg,
+				voliCodeSrc: '',
 				positionTop: 0
 			}
 		},
@@ -77,7 +77,7 @@
 			this.initProvider();
 		},
 		methods: {
-			...mapMutations(['login']),
+			...mapMutations(['login', 'setOpenid']),
 			goMain() {
 				util.goTab({
 					url: '/pages/tabBar/user'
@@ -89,12 +89,14 @@
 			     * 反向使用 top 进行定位，可以避免此问题。
 			     */
 			    this.positionTop = uni.getSystemInfoSync().windowHeight - 100;
+				console.log('initPosition: ', this.positionTop);
 			},
 			initProvider() {
 			    const filters = ['weixin', 'qq', 'sinaweibo'];
 			    uni.getProvider({
 			        service: 'oauth',
-			        success: (res) => {
+			        success: res => {
+						console.log('initProvider: ', res)
 			            if (res.provider && res.provider.length) {
 			                for (let i = 0; i < res.provider.length; i++) {
 			                    if (~filters.indexOf(res.provider[i])) {
@@ -148,43 +150,61 @@
 			},
 			resetVoliCode() {
 				console.log('重新发送验证码');
-				// util.ajax({
-				// 	method: 'SYS.UserDAL.GetVerifyCode'
-				// }).then(res => {
-				// 	console.log(res);
-				// 	this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
-				// });
 				util.ajax({
-					get: true,
-					responseType: 'arraybuffer',
-					method: 'images/verifycode',
+					method: 'SYS.UserDAL.GetVerifyCodeBase64'
 				}).then(res => {
 					console.log(res);
-					var buffer = new Buffer(res.data.byteLength);
-					var view = new Uint8Array(res.data);
-					for (var i = 0, len = buffer.length; i < len; ++i) {
-						buffer[i] = view[i];
-					}
-					this.voliCodeSrc = 'data:image/jpeg;base64,' + buffer.toString("base64");
+					this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
 				});
+				// util.ajax({
+				// 	get: true,
+				// 	responseType: 'arraybuffer',
+				// 	method: 'images/verifycode',
+				// }).then(res => {
+				// 	console.log(res);
+				// 	var buffer = new Buffer(res.data.byteLength);
+				// 	var view = new Uint8Array(res.data);
+				// 	for (var i = 0, len = buffer.length; i < len; ++i) {
+				// 		buffer[i] = view[i];
+				// 	}
+				// 	this.voliCodeSrc = 'data:image/jpeg;base64,' + buffer.toString("base64");
+				// });
 			},
 			bindLogin() {
 				console.log('this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue()：', this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue());
 				const data = {
 				    account: this.$refs.input1.getValue(),
-				    password: this.$refs.input2.getValue()
+				    password: this.$refs.input2.getValue(),
+				    voliCode: this.$refs.input3.getValue()
 				}
 				if(this.$refs.input1.getValue() && this.$refs.input2.getValue() && this.$refs.input3.getValue()){
-					this.login(data.account);
-					util.goTab({
-						url: '../tabBar/user?logined=true',
-						success: (e) => {
+					util.ajax({
+						method: 'SYS.UserDAL.Login',
+						params: {
+							UserName: data.account,
+							LoginInfo: {
+								Password: data.password,
+								VerifyCode: data.voliCode,
+								ClientType: 1,
+								ClientVersion: '1.0.0.1',
+								EncyptType: 0,
+								ForceLogin: false
+							}
+						}
+					}).then(res => {
+						console.log(res);
+						this.setOpenid(res.data.result);
+					})
+					// this.login(data.account);
+					// util.goTab({
+					// 	url: '../tabBar/user?logined=true',
+					// 	success: (e) => {
 							// let page = getCurrentPages().pop();
 							// console.log('page: ', page);
 							// if (page == undefined || page == null) return;
 							// page.login();
-						},
-					});
+					// 	}
+					// });
                 } else {
 					uni.showToast({
 					    icon: 'none',

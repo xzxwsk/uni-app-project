@@ -1,5 +1,5 @@
 {
-    "name" : "my-uni-app-project2",
+    "name" : "qianchangyewu",
     "appid" : "__UNI__F960A47",
     "description" : "应用描述",
     "versionName" : "1.0.0",
@@ -73,7 +73,9 @@
                 "speech" : {
                     "ifly" : {}
                 },
-                "push" : {}
+                "push" : {
+                    "unipush" : {}
+                }
             },
             "orientation" : [ "portrait-primary" ]
         }

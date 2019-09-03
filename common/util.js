@@ -228,8 +228,8 @@ let clearStorageSync = function() {
 	uni.clearStorageSync();
 };
 
-let getAjax = async function(prompt) {
-	return await new Promise((resolve, reject) => {
+let getAjax = function(prompt) {
+	return new Promise((resolve, reject) => {
 		uni.request({
 			url: baseUrl + prompt.method,
 			data: prompt.params,
@@ -245,6 +245,7 @@ let getAjax = async function(prompt) {
 				// });
 				if (res.statusCode !== 200) {
 					reject('网络错误');
+					return;
 				}
 				resolve(res);
 			},
@@ -255,8 +256,8 @@ let getAjax = async function(prompt) {
 		});
 	});
 };
-let postAjax = async function(prompt) {
-	return await new Promise((resolve, reject) => {
+let postAjax = function(prompt) {
+	return new Promise((resolve, reject) => {
 		uni.request({
 			url: baseUrl + 'json.rpc/webapi',
 			data: JSON.stringify(prompt),
@@ -272,6 +273,10 @@ let postAjax = async function(prompt) {
 				// });
 				if (res.statusCode !== 200) {
 					reject('网络错误');
+					return;
+				} else if (res.data.hasOwnProperty('error')) {
+					reject(res.data.error.message);
+					return;
 				}
 				resolve(res);
 			},
@@ -282,6 +287,28 @@ let postAjax = async function(prompt) {
 		});
 	});
 };
+
+let ajaxReturn = function(err, _prompt) {
+	let type = getType(err);
+	if (!(type === 'number' || type === 'string')) {
+		err = JSON.stringify(err);
+	}
+	dialog({
+		title: '错误信息',
+		content: err,
+		cancelText: '确定',
+		confirmText: '查看详情',
+		success: function(data) {
+			if(data.confirm) {
+				dialog({
+					title: '错误详情',
+					content: JSON.stringify(_prompt),
+					showCancel: false
+				});
+			}
+		}
+	});
+}
 let ajax = async function(prompt) {
 	let _prompt = {
 		jsonrpc: '2.0',
@@ -298,29 +325,13 @@ let ajax = async function(prompt) {
 			getAjax(_prompt)
 			.then(data => resolve(data))
 			.catch(err => {
-				let type = getType(err);
-				if (!(type === 'number' || type === 'string')) {
-					err = JSON.stringify(err);
-				}
-				dialog({
-					title: '错误信息',
-					content: err + '\n' + JSON.stringify(_prompt),
-					showCancel: false
-				});
+				ajaxReturn(err, _prompt);
 			});
 		} else {
 			postAjax(_prompt)
 			.then(data => resolve(data))
 			.catch(err => {
-				let type = getType(err);
-				if (!(type === 'number' || type === 'string')) {
-					err = JSON.stringify(err);
-				}
-				dialog({
-					title: '错误信息',
-					content: err + '\n' + JSON.stringify(_prompt),
-					showCancel: false
-				});
+				ajaxReturn(err, _prompt);
 			});
 		}
 	});

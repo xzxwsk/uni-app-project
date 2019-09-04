@@ -229,6 +229,11 @@
 						}
 					}).then(res => {
 						console.log('经销商信息：', res);
+						util.setStorageSync({
+							key: 'userinfo',
+							data: res.data.result
+						});
+						console.log('getStorageSync: ', util.getStorageSync('userinfo'));
 						me.setUserInfo(res.data.result);
 						me.toMain(res.data.result.DealerName);
 					});

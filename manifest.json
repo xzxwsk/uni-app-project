@@ -20,7 +20,6 @@
             "Payment" : {},
             "Push" : {},
             "Share" : {},
-            "Speech" : {},
             "VideoPlayer" : {}
         },
         /* 应用发布信息 */
@@ -70,9 +69,7 @@
             },
             /* SDK配置 */
             "sdkConfigs" : {
-                "speech" : {
-                    "ifly" : {}
-                },
+                "speech" : {},
                 "push" : {
                     "unipush" : {}
                 }
@@ -84,27 +81,29 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx2c5341c5340a76df",
+        "appid" : "",
         "setting" : {
             "urlCheck" : false,
-            "es6" : true,
-            "minified" : true
+            "es6" : false,
+            "minified" : false
         },
-        "usingComponents" : true,
-        "permission" : {
-            "scope.userLocation" : {
-                "desc" : "演示定位能力"
-            }
-        }
+        "usingComponents" : false,
+        "permission" : {}
     },
     "mp-alipay" : {
-        "usingComponents" : true
+        "usingComponents" : false
     },
     "mp-baidu" : {
-        "usingComponents" : true
+        "usingComponents" : false,
+        "setting" : {
+            "urlCheck" : false
+        }
     },
     "mp-toutiao" : {
-        "usingComponents" : true
+        "usingComponents" : false,
+        "setting" : {
+            "urlCheck" : false
+        }
     },
     "h5" : {
         "template" : "template.h5.html",
@@ -113,11 +112,7 @@
             "base" : "/h5/"
         },
         "sdkConfigs" : {
-            "maps" : {
-                "qqmap" : {
-                    "key" : ""
-                }
-            }
+            "maps" : {}
         }
     }
 }

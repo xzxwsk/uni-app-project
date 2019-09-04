@@ -41,10 +41,12 @@
 <script>
 	import util from '@/common/util.js';
 	import shareMenu from '@/components/share-menu/index';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
 			shareMenu
 		},
+		computed: mapState(['openid']),
 		data() {
 			return {
 				sysInfo: '',
@@ -61,12 +63,14 @@
 					'/static/img/c1b03c41d7eeec63eece551efdeb03af.jpg',
 					'/static/img/f3cd12cb76ff1be193dbc091b56fde2b.jpg'],
 				productList: [],
+				recordsTotal: 0,
+				pageIndex: 1,
 				renderImage: false
 			}
 		},
 		onLoad() {
+			console.log('onLoad');
 			this.getSystemInfo();
-			this.loadData();
 			uni.setTabBarBadge({
 				index: 2,
 				text: '12'
@@ -93,12 +97,12 @@
 		},
 		onNavigationBarSearchInputConfirmed(e) {
 			// 点击搜索按钮
-			console.log(JSON.stringify(e));
-			util.dialog({
-				title: '搜索结果',
-				showCancel: false,
-				content: e.text
-			});
+			// console.log(JSON.stringify(e));
+			// util.dialog({
+			// 	title: '搜索结果',
+			// 	showCancel: false,
+			// 	content: e.text
+			// });
 		},
 		onNavigationBarButtonTap(e) {
 			// 点击分享按钮
@@ -106,6 +110,9 @@
 			// #ifdef APP-PLUS
 			this.$refs.shareMenu.showShareMenu();
 			// #endif
+		},
+		mounted() {
+			this.loadData();
 		},
 		methods: {
 			getSystemInfo() {
@@ -138,7 +145,26 @@
 					title: '加入购物车成功'
 				})
 			},
-			loadData(action = 'add') {
+			async loadData(key = '', pageIndex = 1, action = 'add') {
+				await util.ajax({
+					method: 'Basic.ProductDAL.QueryList',
+					params: {
+						filter: {
+							KeyWord: key,
+							PageIndex: pageIndex
+						}
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					console.log('商品列表: ', res);
+					this.recordsTotal = res.data.result.recordsTotal;				
+					if (action === 'refresh') {
+						this.productList = [];
+					}
+					this.productList = this.productList.concat(res.data.result.data);
+				})
 			    const data = [
 			        {
 			            image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product1.jpg',
@@ -183,10 +209,6 @@
 			            tip: '自营'
 			        }
 			    ];
-			
-			    if (action === 'refresh') {
-			        this.productList = [];
-			    }
 			
 			    data.forEach(item => {
 			        this.productList.push(item);

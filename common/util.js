@@ -66,6 +66,47 @@ let dateUtils = {
 		return new Date(a[0], a[1] - 1, a[2], a[3], a[4], a[5]);
 	}
 };
+let formatDate = function (dateStr, formatStr) {
+	var fmt = null;
+	if (!dateStr) {
+		return '';
+	}
+	var date = new Date(dateStr);
+	var reg = {
+		"M+": date.getMonth() + 1,                   //月份
+		"d+": date.getDate(),                        //日
+		"h+": date.getHours(),                       //小时
+		"m+": date.getMinutes(),                     //分
+		"s+": date.getSeconds(),                     //秒
+		"q+": Math.floor((date.getMonth() + 3) / 3), //季度
+		"S": date.getMilliseconds(),                 //毫秒
+		'w+': date.getDay()                          //周几
+	};
+	var arr = [], arr1 = [], arr2 = [];
+	if(dateStr.indexOf('T') != -1) {
+		arr = dateStr.split('T');
+		arr1 = arr[0].split('-');
+		arr2 = arr[1].split('.');
+		arr2 = arr2[0].split(':');
+		reg["M+"] = arr1[1];                        //月份
+		reg["d+"] = arr1[2];                        //日
+		reg["h+"] = arr2[0];                        //小时
+		reg["m+"] = arr2[1];                        //分
+		reg["s+"] = arr2[2];                        //秒
+	}
+	if (/(y+)/.test(formatStr)) {
+		fmt = formatStr.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+	}
+	for (var k in reg) {
+		if (!fmt) {
+			fmt = formatStr;
+		}
+		if (new RegExp("(" + k + ")").test(fmt)) {
+			fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (reg[k]) : (("00" + reg[k]).substr(("" + reg[k]).length)));
+		}
+	}
+	return fmt;
+}
 
 let random = function(minNum,maxNum){ 
     switch(arguments.length){ 
@@ -159,6 +200,16 @@ let goUrl = function(prompt) {
 	extend(option, prompt);
 	uni.navigateTo(option);
 };
+let redirectUrl = function(prompt) {
+	let option = {
+		url: '',
+		success: function() {},
+		fail: function() {},
+		complete: function() {}
+	};
+	extend(option, prompt);
+	uni.reLaunch(option);
+};
 let goTab = function(prompt) {
 	let option = {
 		url: '',
@@ -244,7 +295,10 @@ let getAjax = function(prompt) {
 				// 	header: res.header,
 				// });
 				if (res.statusCode !== 200) {
-					reject('网络错误');
+					reject({
+						message: '网络错误',
+						data: '网络错误'
+					});
 					return;
 				}
 				resolve(res);
@@ -272,10 +326,13 @@ let postAjax = function(prompt) {
 				// 	header: res.header,
 				// });
 				if (res.statusCode !== 200) {
-					reject('网络错误');
+					reject({
+						message: '网络错误',
+						data: '网络错误'
+					});
 					return;
 				} else if (res.data.hasOwnProperty('error')) {
-					reject(res.data.error.message);
+					reject(res.data.error);
 					return;
 				}
 				resolve(res);
@@ -291,20 +348,21 @@ let postAjax = function(prompt) {
 };
 
 let ajaxReturn = function(err, _prompt) {
-	let type = getType(err);
-	if (!(type === 'number' || type === 'string')) {
-		err = JSON.stringify(err);
-	}
+	// let type = getType(err);
+	// if (!(type === 'number' || type === 'string')) {
+	// 	err = JSON.stringify(err);
+	// }
+	console.log('err: ', err);
 	dialog({
 		title: '错误信息',
-		content: err,
+		content: err.message,
 		cancelText: '确定',
 		confirmText: '查看详情',
 		success: function(data) {
 			if(data.confirm) {
 				dialog({
 					title: '错误详情',
-					content: JSON.stringify(_prompt),
+					content: err.data + '\n' + JSON.stringify(_prompt),
 					showCancel: false
 				});
 			}
@@ -343,10 +401,12 @@ module.exports = {
 	formatTime: formatTime,
 	formatLocation: formatLocation,
 	dateUtils: dateUtils,
+	formatDate: formatDate,
 	getType: getType,
 	deepCopy: deepCopy,
 	extend: extend,
 	goUrl: goUrl,
+	redirectUrl: redirectUrl,
 	goTab: goTab,
 	dialog: dialog,
 	showLoading: showLoading,

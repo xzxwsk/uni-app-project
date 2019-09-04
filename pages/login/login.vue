@@ -10,11 +10,11 @@
 			<view class="input-group">
 				<view class="input-row border">
 					<text class="title">账号：</text>
-					<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['帐号不能为空']" class="input-box" clearable focus v-model="account" placeholder="请输入经销商编号或身份证号"></input-box>
+					<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['帐号不能为空']" class="input-box" clearable focus :inputValue="account" v-model="account" placeholder="请输入经销商编号或身份证号"></input-box>
 				</view>
 				<view class="input-row">
 					<text class="title">密码：</text>
-					<input-box ref="input2" type="password" :verification="['isNull','isChineseEnlishAndNumber']" :verificationTip="['密码不能为空','密码只能输入中文、数字和字母']" displayable v-model="password" placeholder="请输入密码"></input-box>
+					<input-box ref="input2" type="password" :verification="['isNull','isChineseEnlishAndNumber']" :verificationTip="['密码不能为空','密码只能输入中文、数字和字母']" displayable :inputValue="password" v-model="password" placeholder="请输入密码"></input-box>
 				</view>
 				<view class="input-row">
 					<text class="title">验证码：</text>
@@ -54,8 +54,8 @@
 			return {
 				providerList: [],
 				hasProvider: false,
-				account: '',
-				password: '',
+				account: 'A0000002',
+				password: '1234',
 				voliCode: '',
 				voliCodeSrc: '',
 				positionTop: 0
@@ -76,6 +76,9 @@
 			// #endif
 			// this.initPosition();
 			// this.initProvider();
+		},
+		mounted() {
+			console.log('mounted', this.account, this.password);
 		},
 		methods: {
 			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),

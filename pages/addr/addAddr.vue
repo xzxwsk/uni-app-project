@@ -8,7 +8,7 @@
 				</view>
 				<view class="input-row border">
 					<text class="title">手机号码：</text>
-					<input-box ref="phone" type="text" :verification="['isNull']" :verificationTip="['手机号码不能为空']" class="input-box" clearable focus v-model="phone" placeholder="请输入手机号码"></input-box>
+					<input-box ref="phone" type="text" :verification="['isNull']" :verificationTip="['手机号码不能为空']" class="input-box" clearable v-model="phone" placeholder="请输入手机号码"></input-box>
 				</view>
 				<view class="input-row border">
 					<text class="title">所在地区：</text>
@@ -48,11 +48,14 @@
 		components: {
 			inputBox, mpvuePicker
 		},
-		computed: mapState(['hasLogin', 'openid', 'userInfo']),
+		computed: {
+			...mapState(['hasLogin', 'openid', 'userInfo'])
+		},
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
+				dealerId: '',
 				person: '',
 				phone: '',
 				area: '',
@@ -84,15 +87,28 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
-			edit(id) {
-				util.ajax({
-					method: 'Basic.DealerAddressDAL.Create',
-					params: {},
+			async edit(id) {
+				let me = this;
+				await util.ajax({
+					method: 'Basic.DealerAddressDAL.GetById',
+					params: {
+						RecordId: id
+					},
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
-					
+					me.dealerId = res.data.result.DealerId;
+					me.area = res.data.result.Province + '-' + res.data.result.City + '-' + res.data.result.District;
+					me.detailAddr = res.data.result.AddrDetail;
+					me.person = res.data.result.PersonName;
+					me.phone = res.data.result.Mobile;
+					this.$refs.person.setValue(res.data.result.PersonName);
+					this.$refs.phone.setValue(res.data.result.Mobile);
+					me.isDefault = {
+						value: res.data.result.IsDefault ? 1 : 0,
+						checked: res.data.result.IsDefault
+					};
 				});
 			},
 			saveAddr() {
@@ -100,15 +116,17 @@
 				if (this.hasLogin) {
 					if(this.$refs.person.getValue() && this.$refs.phone.getValue()){
 						let method = 'Basic.DealerAddressDAL.Create';
+						let dealerId = this.userInfo.DealerId;
 						if (this.addrId !== '') {
 							method = 'Basic.DealerAddressDAL.Update'
+							dealerId = this.dealerId;
 						}
 						util.ajax({
 							method: method,
 							params: {
 								Data: {
-									Id: '',
-									DealerId: this.userInfo.DealerId,
+									Id: this.addrId,
+									DealerId: dealerId,
 									Country: '中国',
 									Province: arr[0],
 									City: arr[1],
@@ -127,7 +145,7 @@
 						}).then(res => {
 							console.log('添加地址：', res.data.result);
 							util.showToast({
-								title: '添加成功',
+								title: (this.addrId !== '' ? '修改' : '添加') + '成功',
 								success() {
 									setTimeout(() => {
 										uni.navigateBack();

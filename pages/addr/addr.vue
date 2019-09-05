@@ -49,7 +49,6 @@
 		},
 		onLoad() {
 			this.isLoaded = true;
-			
 		},
 		onNavigationBarButtonTap(e) {
 			this.addAddr();

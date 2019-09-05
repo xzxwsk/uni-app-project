@@ -391,12 +391,20 @@ let ajax = async function(prompt) {
 			getAjax(_prompt)
 			.then(data => resolve(data))
 			.catch(err => {
+				if (err.hasOwnProperty('errMsg')) {
+					err.message = '网络超时',
+					err.data = err.errMsg;
+				}
 				ajaxReturn(err, _prompt);
 			});
 		} else {
 			postAjax(_prompt)
 			.then(data => resolve(data))
 			.catch(err => {
+				if (err.hasOwnProperty('errMsg')) {
+					err.message = '网络超时',
+					err.data = err.errMsg;
+				}
 				ajaxReturn(err, _prompt);
 			});
 		}

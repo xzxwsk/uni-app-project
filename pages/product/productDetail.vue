@@ -15,22 +15,23 @@
 					</swiper>
 				</view>
 				<view class="intro">
-					<view class="price"><text class="sub">￥</text>148<text class="sub">.00</text></view>
-					<view class="title">飘雪·五品·027</view>
-					<view>茶芽和茉莉花的组合，正如职场女性和工作的完美融合，一杯茉莉花茶，让您在工作彰显自信的风采！</view>
+					<view class="price"><text class="sub">￥</text>{{detail.FactPrice}}<text class="sub">.00</text><text>{{detail.Qty}}</text></view>
+					<view class="title">{{detail.Name}}</view>
+					<view>{{detail.Remark}}</view>
 				</view>
 				<view class="uni-list">
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate uni-navigate-right" @click="openPopup">
 							<view class="menu_txt">
 								<text class="title">计量单位</text>
-								<text class="title sub_txt">54 * 4g/袋（共54袋）,1件</text>
+								<text class="title sub_txt">{{detail.Spec}}/{{detail.Unit}} （{{detail.TypeName}}）</text>
 							</view>
 						</view>
 					</view>
 				</view>
 				<view class="detail" id="detail">
 					<view class="title">--商品详情--</view>
+					<view>{{detail.Description}}</view>
 				</view>
 			</scroll-view>
 		</view>
@@ -74,12 +75,15 @@
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
 			uniPopup
 		},
+		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
+				detail: {},
 				tabCur: 0,
 				topHeight: 0,
 				scrollTop: 0,
@@ -105,22 +109,53 @@
 				num: 1
 			}
 		},
-		onLoad() {
-			
+		onLoad(option) {
+			this.getDetail(option.id)
 		},
 		mounted() {
-			let me = this;
-			const query = uni.createSelectorQuery();
-			query.select('#detail').boundingClientRect();
-			query.selectViewport().scrollOffset();
-			query.exec(function(res){
-				console.log('query res: ', res);
-				me.loca1 = res[0].top;
-			});
-			this.topHeight = 42;
+			
 		},
 		methods: {
-			goCartLs() {
+			getDetail(id) {
+				this.imgLs = [];
+				util.ajax({
+					method: 'Basic.ProductDAL.GetById',
+					params: {
+						RecordId: id
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.imgLs.push(res.data.result.BigImageBase64 !== null ? ('data:image/jpeg;base64,' + item.BigImageBase64) : '/static/images/no_data_f.png');
+					this.detail = res.data.result;
+					this.$nextTick(() => {
+						let me = this;
+						const query = uni.createSelectorQuery();
+						query.select('#detail').boundingClientRect();
+						query.selectViewport().scrollOffset();
+						query.exec(function(offset){
+							console.log(offset);
+							me.loca1 = offset[0].top;
+						});
+						this.topHeight = 42;
+					})
+				});
+			},
+			async goCartLs() {
+				// 加入购物车
+				await util.ajax({
+					method: 'Businese.CartDAL.AddToCart',
+					params: {
+						ProductId: this.detail.RecordId,
+						Qty: this.detail.Qty
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					
+				});
 				util.goTab({
 					url: '../tabBar/cartList'
 				});

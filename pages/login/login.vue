@@ -78,7 +78,6 @@
 			// this.initProvider();
 			document.onkeydown = e => {  
 			    //webview不需要兼容ie  
-			    console.log(e.keyCode)
 				if (e.keyCode === 13) {
 					this.bindLogin();
 				}
@@ -176,7 +175,7 @@
 						sessionid: this.sessionId
 					}
 				}).then(res => {
-					console.log(res);
+					console.log('获取验证码： ', res);
 					this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
 				});
 				// util.ajax({
@@ -221,7 +220,7 @@
 							sessionid: this.sessionId
 						}
 					}).then(res => {
-						console.log(res);
+						console.log('登录返回： ', res);
 						this.setOpenid(res.data.result);
 					});
 					console.log('openid: ', this.openid);

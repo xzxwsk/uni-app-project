@@ -157,6 +157,9 @@
 			    // 双向绑定到父组件（双向绑定，不能弹出提示）
 			    this.$emit('input', this.value);
 			},
+			setValue(val) {
+				this.value = val;
+			},
 			/**
 			 * @param 获取带校验的输入框的值
 			 */

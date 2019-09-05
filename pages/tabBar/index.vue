@@ -9,7 +9,7 @@
                     <swiper style="height: 350upx;" class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
                         <swiper-item v-for="(item, index) in imgLs" :key="index">
                             <view class="swiper-item">
-								<image style="width: 100%;" :mode="mode" :src="item" @click="goDetail" @error="imageError"></image>
+								<image style="width: 100%;" :mode="mode" :src="item" @click="goDetail(index)" @error="imageError"></image>
 							</view>
                         </swiper-item>                        
                     </swiper>
@@ -17,7 +17,7 @@
             </view>
         </view>
 		<view class="uni-product-list">
-			<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail">
+			<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail(index)">
 				<view class="image-view">
 					<image v-if="renderImage" class="uni-product-image" :src="product.image"></image>
 				</view>
@@ -140,10 +140,12 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
-			goDetail() {
-				util.goUrl({
-					url: '../product/productDetail'
-				})
+			goDetail(index) {
+				if (this.productList[index].id) {
+					util.goUrl({
+						url: '../product/productDetail?id=' + this.productList[index].id
+					});
+				}
 			},
 			addCart(index) {
 				util.showToast({
@@ -226,10 +228,18 @@
 			            tip: '自营'
 			        }
 			    ];
-			
-			    data.forEach(item => {
-			        this.productList.push(item);
-			    });
+				if (this.productList.length < 1) {
+					data.forEach(item => {
+						this.productList.push(item);
+					});
+				}
+				this.imgLs = this.productList.map(item => {
+					let img = item.image;
+					if (item.BigImageBase64) {
+						img = 'data:image/jpeg;base64,' + item.BigImageBase64;
+					}
+					return img;
+				});
 			}
 		}
 	}

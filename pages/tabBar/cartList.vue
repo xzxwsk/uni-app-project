@@ -47,7 +47,10 @@
 </template>
 
 <script>
+	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
+		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
 				titleBtn: '删除',
@@ -113,6 +116,9 @@
 			// 	index: 2
 			// });
 		},
+		onShow() {
+			this.getLs();
+		},
 		onNavigationBarButtonTap(e) {  
 			console.log("点击了自定义按钮: " + JSON.stringify(e));
 			// #ifdef APP-PLUS
@@ -135,6 +141,28 @@
 			// currentWebview.setTitleNViewButtonStyle(0, {text:"删除"});
 		},
 		methods: {
+			getLs() {
+				console.log('购物车列表');
+				util.ajax({
+					method: 'Businese.CartDAL.GetUserCart',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					console.log('购物车列表：', res);
+					let ls = res.data.result.map((item, index) => {
+						return {
+							selected: index === 0,
+							img: '/static/img/H_9X10_1.jpg',
+							title: item.ProductName + ' ' + item.Spec + '/' + item.UnitName, // Spec, 规格   UnitName, 计量单位
+							price: item.Price,
+							num: item.Qty,
+							hoverClass: ''
+						}
+					});
+					this.cartLs = ls;
+				});
+			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},

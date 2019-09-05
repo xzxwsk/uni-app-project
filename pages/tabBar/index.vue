@@ -21,7 +21,12 @@
 				<view class="image-view">
 					<image v-if="renderImage" class="uni-product-image" :src="product.image"></image>
 				</view>
-				<view class="uni-product-title"><text>{{product.title}}</text><view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view></view>
+				<view class="uni-product-title">
+					<view>
+						<view>{{product.title}}</view>
+						<text>{{product.remark}}</text>
+					</view>
+					<view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view></view>
 				<view class="uni-product-price">
 					<!-- <text class="uni-product-price-favour">￥{{product.originalPrice}}</text> -->
 					<text class="uni-product-price-original">￥{{product.favourPrice}}</text>
@@ -46,7 +51,7 @@
 		components: {
 			shareMenu
 		},
-		computed: mapState(['openid']),
+		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
 				sysInfo: '',
@@ -78,6 +83,9 @@
 			setTimeout(()=> {
 			    this.renderImage = true;
 			}, 300);
+		},
+		onShow() {
+			this.loadData();
 		},
 		onPullDownRefresh() {
 			// 下拉刷新
@@ -111,9 +119,6 @@
 			this.$refs.shareMenu.showShareMenu();
 			// #endif
 		},
-		mounted() {
-			this.loadData();
-		},
 		methods: {
 			getSystemInfo() {
 				let me = this;
@@ -146,25 +151,37 @@
 				})
 			},
 			async loadData(key = '', pageIndex = 1, action = 'add') {
-				await util.ajax({
-					method: 'Basic.ProductDAL.QueryList',
-					params: {
-						filter: {
-							KeyWord: key,
-							PageIndex: pageIndex
+				if (this.hasLogin) {
+					await util.ajax({
+						method: 'Basic.ProductDAL.QueryList',
+						params: {
+							filter: {
+								KeyWord: key,
+								PageIndex: pageIndex
+							}
+						},
+						tags: {
+							usertoken: this.openid
 						}
-					},
-					tags: {
-						usertoken: this.openid
-					}
-				}).then(res => {
-					console.log('商品列表: ', res);
-					this.recordsTotal = res.data.result.recordsTotal;				
-					if (action === 'refresh') {
-						this.productList = [];
-					}
-					this.productList = this.productList.concat(res.data.result.data);
-				})
+					}).then(res => {
+						console.log('商品列表: ', res);
+						let ls = res.data.result.data.map(item => {
+							return {
+								id: item.RecordId,
+								image: item.SmallImageBase64 !== null ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : '/static/images/no_data_f.png',
+								title: item.Name + ' ' + item.Spec + '/' + item.Unit, // Spec, 规格   Unit, 计量单位,
+								originalPrice: item.Price,
+								favourPrice: item.FactPrice, // 实际单价， 折扣后单价
+								remark: item.Remark
+							}
+						});
+						this.recordsTotal = res.data.result.recordsTotal;				
+						if (action === 'refresh') {
+							this.productList = [];
+						}
+						this.productList = this.productList.concat(ls);
+					})
+				}
 			    const data = [
 			        {
 			            image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product1.jpg',

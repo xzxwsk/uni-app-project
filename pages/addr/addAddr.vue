@@ -4,11 +4,11 @@
 			<view class="input-group">
 				<view class="input-row border">
 					<text class="title">收货人：</text>
-					<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['收货人不能为空']" class="input-box" clearable focus v-model="person" placeholder="请输入收货人"></input-box>
+					<input-box ref="person" type="text" :verification="['isNull']" :verificationTip="['收货人不能为空']" class="input-box" clearable focus v-model="person" placeholder="请输入收货人"></input-box>
 				</view>
 				<view class="input-row border">
 					<text class="title">手机号码：</text>
-					<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['手机号码不能为空']" class="input-box" clearable focus v-model="phone" placeholder="请输入手机号码"></input-box>
+					<input-box ref="phone" type="text" :verification="['isNull']" :verificationTip="['手机号码不能为空']" class="input-box" clearable focus v-model="phone" placeholder="请输入手机号码"></input-box>
 				</view>
 				<view class="input-row border">
 					<text class="title">所在地区：</text>
@@ -42,10 +42,13 @@
 	import inputBox from '@/components/input-box/input-box';
 	import mpvuePicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue';
 	import cityData from '@/common/city.data-3.js';
+	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
 			inputBox, mpvuePicker
 		},
+		computed: mapState(['hasLogin', 'openid', 'userInfo']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
@@ -61,11 +64,16 @@
 				isDefault: {
 					value: 1,
 					checked: true
-				}
+				},
+				addrId: ''
 			}
 		},
-		onReady() {
-			
+		onLoad(option) {
+			console.log('option: ', option);
+			if(option.hasOwnProperty('id')) {
+				this.addrId = option.id;
+				this.edit(option.id);
+			}
 		},
 		onUnload() {
 			if (this.$refs.mpvuePicker.showPicker) {
@@ -76,8 +84,63 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
+			edit(id) {
+				util.ajax({
+					method: 'Basic.DealerAddressDAL.Create',
+					params: {},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					
+				});
+			},
 			saveAddr() {
-				console.log(this.area);
+				let arr = this.area.split('-');
+				if (this.hasLogin) {
+					if(this.$refs.person.getValue() && this.$refs.phone.getValue()){
+						let method = 'Basic.DealerAddressDAL.Create';
+						if (this.addrId !== '') {
+							method = 'Basic.DealerAddressDAL.Update'
+						}
+						util.ajax({
+							method: method,
+							params: {
+								Data: {
+									Id: '',
+									DealerId: this.userInfo.DealerId,
+									Country: '中国',
+									Province: arr[0],
+									City: arr[1],
+									District: arr[2],
+									AddrDetail: this.detailAddr,
+									Address: this.area + ' ' + this.detailAddr,
+									PersonName: this.person,
+									Mobile: this.phone,
+									IsDefault: this.isDefault.value,
+									IdValues: ['']
+								}
+							},
+							tags: {
+								usertoken: this.openid
+							}
+						}).then(res => {
+							console.log('添加地址：', res.data.result);
+							util.showToast({
+								title: '添加成功',
+								success() {
+									setTimeout(() => {
+										uni.navigateBack();
+									}, 1000);
+								}
+							});
+						});
+					}
+				} else {
+					util.redirectUrl({
+						url: '../login/login'
+					});
+				}
 			},
 			selectArea() {
 				this.pickerValueArray = cityData;
@@ -94,7 +157,6 @@
 				this.area = e.label;
 			},
 			checkboxChange: function (e) {
-                var values = e.detail.value;
 				var item = this.isDefault;
 				
 				if(item.value) {

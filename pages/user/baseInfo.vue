@@ -120,7 +120,7 @@
             inputBox, mInput, uniCalendar
         },
 		computed: {
-			...mapState(['userInfo']),
+			...mapState(['hasLogin', 'userInfo']),
 			birthDayStr() {
 				return util.formatDate(this.userInfo.BirthDay, 'yyyy-MM-dd');
 			},
@@ -183,7 +183,7 @@
 		},
 		mounted() {
 			console.log('baseInfo mounted', this.userInfo);
-			if(!this.userInfo.hasOwnProperty('DealerId')) {
+			if(!this.hasLogin) {
 				util.redirectUrl({
 					url: '../login/login'
 				});

@@ -32,7 +32,10 @@
 </template>
 
 <script>
+	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
+		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
@@ -41,50 +44,87 @@
 				addrLs: []
 			}
 		},
+		onShow() {
+			this.getLs();
+		},
 		onLoad() {
 			this.isLoaded = true;
-			this.addrLs = [{
-				name: '呆满足',
-				phone: '13322221111',
-				area: '四川 成都市 锦江区',
-				detail: 'sdfjsdfgafd',
-				isDefault: true
-			}, {
-				name: '呆满足',
-				phone: '13322221111',
-				area: '四川 成都市 锦江区',
-				detail: 'sdfjsdfgafd',
-				isDefault: false
-			}, {
-				name: '呆满足',
-				phone: '13322221111',
-				area: '四川 成都市 锦江区',
-				detail: 'sdfjsdfgafd',
-				isDefault: false
-			}, {
-				name: '呆满足',
-				phone: '13322221111',
-				area: '四川 成都市 锦江区',
-				detail: 'sdfjsdfgafd',
-				isDefault: false
-			}, {
-				name: '呆满足',
-				phone: '13322221111',
-				area: '四川 成都市 锦江区',
-				detail: 'sdfjsdfgafd',
-				isDefault: false
-			}, {
-				name: '呆满足',
-				phone: '13322221111',
-				area: '四川 成都市 锦江区',
-				detail: 'sdfjsdfgafd',
-				isDefault: false
-			}];
+			
 		},
 		onNavigationBarButtonTap(e) {
 			this.addAddr();
 		},
 		methods: {
+			getLs(pageIndex = 1) {
+				if (!this.hasLogin) {
+					util.redirectUrl({
+						url: '../login/login'
+					});
+				};
+				util.ajax({
+					method: 'Basic.DealerAddressDAL.QueryList',
+					params: {
+						filter: {
+							PageIndex: pageIndex,
+							PageSize: 20
+						}
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					let ls = res.data.result.data.map(item => {
+						return {
+							id: item.Id,
+							name: item.PersonName,
+							phone: item.Mobile,
+							isDefault: item.IsDefault,
+							area: item.Country + ' ' + item.Province + ' ' + item.City + ' ' + item.District,
+							detail: item.AddrDetail
+						}
+					});
+					this.addrLs = ls;
+					// if (ls.length < 1) {
+					// 	this.addrLs = [{
+					// 		name: '呆满足',
+					// 		phone: '13322221111',
+					// 		area: '四川 成都市 锦江区',
+					// 		detail: 'sdfjsdfgafd',
+					// 		isDefault: true
+					// 	}, {
+					// 		name: '呆满足',
+					// 		phone: '13322221111',
+					// 		area: '四川 成都市 锦江区',
+					// 		detail: 'sdfjsdfgafd',
+					// 		isDefault: false
+					// 	}, {
+					// 		name: '呆满足',
+					// 		phone: '13322221111',
+					// 		area: '四川 成都市 锦江区',
+					// 		detail: 'sdfjsdfgafd',
+					// 		isDefault: false
+					// 	}, {
+					// 		name: '呆满足',
+					// 		phone: '13322221111',
+					// 		area: '四川 成都市 锦江区',
+					// 		detail: 'sdfjsdfgafd',
+					// 		isDefault: false
+					// 	}, {
+					// 		name: '呆满足',
+					// 		phone: '13322221111',
+					// 		area: '四川 成都市 锦江区',
+					// 		detail: 'sdfjsdfgafd',
+					// 		isDefault: false
+					// 	}, {
+					// 		name: '呆满足',
+					// 		phone: '13322221111',
+					// 		area: '四川 成都市 锦江区',
+					// 		detail: 'sdfjsdfgafd',
+					// 		isDefault: false
+					// 	}];
+					// }
+				});
+			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
@@ -94,12 +134,34 @@
 				});
 			},
 			edit(index) {
-				uni.navigateTo({
-					url: './addAddr'
+				util.goUrl({
+					url: '../addr/addAddr?id=' + this.addrLs[index].id
 				});
 			},
 			del(index) {
-				this.addrLs.splice(index, 1);
+				let me = this;
+				util.dialog({
+					content: '您确定要删除本地址吗？',
+					success(data) {
+						if (data.confirm) {
+							util.ajax({
+								method: 'Basic.DealerAddressDAL.Delete',
+								params: {
+									Data: me.addrLs[index]
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								console.log('删除地址：', res);
+								util.showToast({
+									title: '删除成功'
+								});
+								me.getLs();
+							});
+						}
+					}
+				});
 			}
 		}
 	}

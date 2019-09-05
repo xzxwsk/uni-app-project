@@ -113,9 +113,6 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
-			login() {
-				console.log('login');
-			},
 			updateHeadImg() {
 				this.chooseImage();
 			},

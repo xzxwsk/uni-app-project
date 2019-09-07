@@ -89,8 +89,8 @@
 				pickerValueDefault: [],
 			}
 		},
-		onLoad() {
-			
+		onLoad(option) {
+			console.log('option: ', option);
 		},
 		onNavigationBarButtonTap(e) {
 			util.goUrl({

@@ -3,6 +3,14 @@
 		<view class="con">
 			<scroll-view scroll-y="true" style="width: 100%; height: 100%;" scroll-with-animation>
 				<view class="input-group">
+					<view class="input-row border" v-if="this.title === '确定'">
+						<text class="title">密码：</text>
+						<input-box type="password" ref="password" :verification="['isNull']" :verificationTip="['密码不能为空']" v-model="password" placeholder="请输入密码"></input-box>
+					</view>
+					<view class="input-row border" v-if="this.title === '确定'">
+						<text class="title">确认密码：</text>
+						<input-box type="password" v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
+					</view>
 					<view class="input-row border">
 						<text class="title">编号：</text>
 						<text class="info">{{userInfo.DealerNo}}</text>
@@ -15,7 +23,13 @@
 					</view>
 					<view class="input-row border">
 						<text class="title">生日：</text>
-						<text :class="'info' + (title === '确定' ? ' input_box' : '')">	
+						<customDatePicker class="search_box" v-if="title === '确定'"
+							fields="day"
+							:start="startDate"
+							:end="endDate"
+							:value="birthDayStr"
+						></customDatePicker>
+						<text class="info" v-else>
 							<text @click="selectCalendar">{{birthDayStr}}</text>
 						</text>
 						<text class="title">性别：</text>
@@ -87,14 +101,6 @@
 						<text class="title">备注：</text>
 						<text class="info">{{userInfo.Remark}}</text>
 					</view>
-					<view class="input-row border" v-if="this.title === '确定'">
-						<text class="title">密码：</text>
-						<input-box type="password" ref="password" :verification="['isNull']" :verificationTip="['密码不能为空']" v-model="password" placeholder="请输入密码"></input-box>
-					</view>
-					<view class="input-row border" v-if="this.title === '确定'">
-						<text class="title">确认密码：</text>
-						<input-box type="password" v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
-					</view>
 				</view>
 			</scroll-view>
 		</view>
@@ -109,15 +115,17 @@
     import service from '@/service.js';
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
-	// https://ext.dcloud.net.cn/plugin?id=56
+	// https://ext.dcloud.net.cn/plugin?id=56 日历控制
 	import uniCalendar from "@/components/uni-calendar/uni-calendar"
+	// https://ext.dcloud.net.cn/plugin?id=220 日期选择
+	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
     import mInput from '@/components/m-input.vue';
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
 
     export default {
         components: {
-            inputBox, mInput, uniCalendar
+            inputBox, mInput, uniCalendar, customDatePicker
         },
 		computed: {
 			...mapState(['hasLogin', 'userInfo']),
@@ -143,6 +151,8 @@
         data() {
             return {
 				title: '修改',
+				startDate: '1900-01-01',
+				endDate: '2999-12-31',
 				password: '',
 				confirmPassword: ''
             }

@@ -85,7 +85,8 @@
 			}, 300);
 		},
 		onShow() {
-			this.loadData();
+			console.log('onShow');
+			this.loadData('refresh');
 		},
 		onPullDownRefresh() {
 			// 下拉刷新
@@ -148,42 +149,52 @@
 				}
 			},
 			addCart(index) {
-				util.showToast({
-					title: '加入购物车成功'
-				})
+				// 加入购物车
+				util.ajax({
+					method: 'Businese.CartDAL.AddToCart',
+					params: {
+						ProductId: this.productList[index].id,
+						Qty: 1
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '加入购物车成功'
+					});
+				});
 			},
 			async loadData(key = '', pageIndex = 1, action = 'add') {
-				if (this.hasLogin) {
-					await util.ajax({
-						method: 'Basic.ProductDAL.QueryList',
-						params: {
-							filter: {
-								KeyWord: key,
-								PageIndex: pageIndex
-							}
-						},
-						tags: {
-							usertoken: this.openid
+				await util.ajax({
+					method: 'Basic.ProductDAL.QueryList',
+					params: {
+						filter: {
+							KeyWord: key,
+							PageIndex: pageIndex
 						}
-					}).then(res => {
-						console.log('商品列表: ', res);
-						let ls = res.data.result.data.map(item => {
-							return {
-								id: item.RecordId,
-								image: item.SmallImageBase64 !== null ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : '/static/images/no_data_f.png',
-								title: item.Name + ' ' + item.Spec + '/' + item.Unit, // Spec, 规格   Unit, 计量单位,
-								originalPrice: item.Price,
-								favourPrice: item.FactPrice, // 实际单价， 折扣后单价
-								remark: item.Remark
-							}
-						});
-						this.recordsTotal = res.data.result.recordsTotal;				
-						if (action === 'refresh') {
-							this.productList = [];
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					console.log('商品列表: ', res);
+					let ls = res.data.result.data.map(item => {
+						return {
+							id: item.RecordId,
+							image: item.SmallImageBase64 !== null ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : '/static/images/no_data_f.png',
+							title: item.Name + ' ' + item.Spec + '/' + item.Unit, // Spec, 规格   Unit, 计量单位,
+							originalPrice: item.Price,
+							favourPrice: item.FactPrice, // 实际单价， 折扣后单价
+							remark: item.Remark
 						}
-						this.productList = this.productList.concat(ls);
-					})
-				}
+					});
+					this.recordsTotal = res.data.result.recordsTotal;				
+					if (action === 'refresh') {
+						this.productList = [];
+					}
+					this.productList = this.productList.concat(ls);
+				});
 			    const data = [
 			        {
 			            image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product1.jpg',

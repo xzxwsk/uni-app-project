@@ -66,12 +66,41 @@ let dateUtils = {
 		return new Date(a[0], a[1] - 1, a[2], a[3], a[4], a[5]);
 	}
 };
+let getType = function(obj){
+    //tostring会返回对应不同的标签的构造函数
+	let type = Object.prototype.toString.call(obj);
+    let map = {
+	    '[object Boolean]'  : 'boolean', 
+	    '[object Number]'   : 'number', 
+	    '[object String]'   : 'string', 
+	    '[object Function]' : 'function', 
+	    '[object Array]'    : 'array', 
+	    '[object Date]'     : 'date', 
+	    '[object RegExp]'   : 'regExp', 
+	    '[object Undefined]': 'undefined',
+	    '[object Null]'     : 'null', 
+	    '[object Object]'   : 'object'
+    };
+	let isElement = false;
+	if (typeof Element != 'undefined') {
+		isElement = obj instanceof Element;
+	}
+    if(isElement) {
+	    return 'element';
+    }
+    return map[type];
+};
 let formatDate = function (dateStr, formatStr) {
 	var fmt = null;
 	if (!dateStr) {
 		return '';
 	}
-	var date = new Date(dateStr);
+	var date = dateStr;
+	if (getType(dateStr) === 'date') {
+		
+	} else {
+		date = new Date(dateStr);
+	}
 	var reg = {
 		"M+": date.getMonth() + 1,                   //月份
 		"d+": date.getDate(),                        //日
@@ -83,16 +112,18 @@ let formatDate = function (dateStr, formatStr) {
 		'w+': date.getDay()                          //周几
 	};
 	var arr = [], arr1 = [], arr2 = [];
-	if(dateStr.indexOf('T') != -1) {
-		arr = dateStr.split('T');
-		arr1 = arr[0].split('-');
-		arr2 = arr[1].split('.');
-		arr2 = arr2[0].split(':');
-		reg["M+"] = arr1[1];                        //月份
-		reg["d+"] = arr1[2];                        //日
-		reg["h+"] = arr2[0];                        //小时
-		reg["m+"] = arr2[1];                        //分
-		reg["s+"] = arr2[2];                        //秒
+	if(getType(dateStr) === 'string') {
+		if(dateStr.indexOf('T') != -1) {
+			arr = dateStr.split('T');
+			arr1 = arr[0].split('-');
+			arr2 = arr[1].split('.');
+			arr2 = arr2[0].split(':');
+			reg["M+"] = arr1[1];                        //月份
+			reg["d+"] = arr1[2];                        //日
+			reg["h+"] = arr2[0];                        //小时
+			reg["m+"] = arr2[1];                        //分
+			reg["s+"] = arr2[2];                        //秒
+		}
 	}
 	if (/(y+)/.test(formatStr)) {
 		fmt = formatStr.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
@@ -119,30 +150,6 @@ let random = function(minNum,maxNum){
         default: 
             return 0;
     }
-};
-let getType = function(obj){
-    //tostring会返回对应不同的标签的构造函数
-	let type = Object.prototype.toString.call(obj);
-    let map = {
-	    '[object Boolean]'  : 'boolean', 
-	    '[object Number]'   : 'number', 
-	    '[object String]'   : 'string', 
-	    '[object Function]' : 'function', 
-	    '[object Array]'    : 'array', 
-	    '[object Date]'     : 'date', 
-	    '[object RegExp]'   : 'regExp', 
-	    '[object Undefined]': 'undefined',
-	    '[object Null]'     : 'null', 
-	    '[object Object]'   : 'object'
-    };
-	let isElement = false;
-	if (typeof Element != 'undefined') {
-		isElement = obj instanceof Element;
-	}
-    if(isElement) {
-	    return 'element';
-    }
-    return map[type];
 };
 let deepCopy = function(data) {
     var type = getType(data);
@@ -346,7 +353,7 @@ let postAjax = function(prompt) {
 			fail: function(err) {
 				reject(err);
 			},
-			complete: function() {
+			complete: function(data) {
 				hideLoading();
 			}
 		});

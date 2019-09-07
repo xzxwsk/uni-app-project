@@ -249,7 +249,7 @@
                 } else {
 					uni.showToast({
 					    icon: 'none',
-					    title: '校验不通过',
+					    title: '请正确填写完整',
 					    // #ifdef MP-WEIXIN
 					    duration: 2000,
 					    // #endif

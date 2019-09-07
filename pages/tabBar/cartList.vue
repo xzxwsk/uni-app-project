@@ -12,7 +12,7 @@
 				<view class="uni-list">
 					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @click="goDetail(index)" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
 						<view class="uni-media-list">
-							<radio class="radio" color="#f23030" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
+							<radio class="radio" v-show="titleBtn==='完成'" color="#f23030" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
 							<image class="uni-media-list-logo" mode="aspectFit" :src="item.img" @error="imageError"></image>
 							<view class="uni-media-list-body">
 								<view class="uni-media-list-text-top">{{ item.title }}</view>
@@ -33,7 +33,7 @@
 				<label class="radio"><radio color="#f23030" :checked="allSelect" @click="onAllSelect" />全选</label>
 				<block v-if="titleBtn === '删除'">
 					<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
-					<button class="btn">继续购物</button>
+					<button class="btn" @click="toIndex">继续购物</button>
 					<button class="btn" type="warn" @click="toPay">去结算</button>
 				</block>
 				<block v-else>
@@ -58,7 +58,8 @@
 				mode: 'widthFix',
 				allSelect: false,
 				countPrice: 0,
-				cartLs: [{
+				getCartLs: [], // 保存取出来的源列表
+				cartLs: [{ // 显示列表
 					selected: false,
 					img: '/static/img/H_9X10_1.jpg',
 					title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
@@ -119,16 +120,45 @@
 		onShow() {
 			this.getLs();
 		},
-		onNavigationBarButtonTap(e) {  
-			console.log("点击了自定义按钮: " + JSON.stringify(e));
+		onNavigationBarButtonTap(e) {
+			if(this.titleBtn === '删除') {
+				// 选择状态
+				this.titleBtn = '完成';
+			} else {
+				// 已选择
+				this.titleBtn = '删除';
+				// if (this.allSelect) {
+				// 	// 全选状态 清空
+				// 	util.ajax({
+				// 		method: 'Businese.CartDAL.ClearCart',
+				// 		params: {},
+				// 		tags: {
+				// 			usertoken: this.openid
+				// 		}
+				// 	}).then(res => {
+				// 		util.showToast({
+				// 			title: '清空成功'
+				// 		});
+				// 		this.cartLs = [];
+				// 	});
+				// 	return;
+				// }
+				// 批量删除选中
+				let selectedArr = this.getSelectedArr();
+				if (selectedArr.length > 0) {
+					this.deleteLs(selectedArr);
+				}
+			}
 			// #ifdef APP-PLUS
 			let webView = this.$mp.page.$getAppWebview();
 			if(this.titleBtn === '删除') {
+				// 选择状态
 				webView.setTitleNViewButtonStyle(0, {  
 					text: '完成' 
 				});
 				this.titleBtn = '完成';
 			} else {
+				// 已选择
 				webView.setTitleNViewButtonStyle(0, {  
 					text: '删除' 
 				});
@@ -142,7 +172,6 @@
 		},
 		methods: {
 			getLs() {
-				console.log('购物车列表');
 				util.ajax({
 					method: 'Businese.CartDAL.GetUserCart',
 					tags: {
@@ -150,9 +179,11 @@
 					}
 				}).then(res => {
 					console.log('购物车列表：', res);
+					this.getCartLs = res.data.result;
 					let ls = res.data.result.map((item, index) => {
 						return {
-							selected: index === 0,
+							id: item.Id,
+							selected: false,
 							img: '/static/img/H_9X10_1.jpg',
 							title: item.ProductName + ' ' + item.Spec + '/' + item.UnitName, // Spec, 规格   UnitName, 计量单位
 							price: item.Price,
@@ -169,6 +200,24 @@
 			checkboxChange(index) {
 				console.log('checkboxChange: ', index);
 				this.$set(this.cartLs[index], 'selected', !this.cartLs[index]['selected']);
+				this.$nextTick(() => {
+					let selectedArr = this.getSelectedArr();
+					if(this.cartLs.length > 0 && selectedArr.length === this.cartLs.length) {
+						this.allSelect = true;
+					} else {
+						this.allSelect = false;
+					}
+				});
+			},
+			getSelectedArr() {
+				let me = this;
+				// 获取选中列表
+				return this.cartLs.map((item, index) => {
+					if(item.selected) {
+						return me.getCartLs[index];
+					}
+					return false;
+				});
 			},
 			goDetail(index) {
 				uni.navigateTo({
@@ -192,6 +241,10 @@
 				this.$set(this.cartLs[index], 'hoverClass', '');
 			},
 			onAllSelect() {
+				if (this.cartLs.length < 1) {
+					// 列表为空
+					return;
+				}
 				this.allSelect = !this.allSelect;
 				this.cartLs.forEach(item => {
 					item.selected = this.allSelect;
@@ -211,9 +264,37 @@
 				}
 				// #endif 
 			},
+			toIndex() {
+				util.goTab({
+					url: './index'
+				});
+			},
 			toPay() {
-				uni.navigateTo({
+				util.goUrl({
 					url: '../order/createOrder'
+				});
+			},
+			deleteLs(arr) {
+				// 批量删除选中
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.CartDAL.RemoveCartItem',
+						params: {
+							Item: item
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				Promise.all(promiseArray)
+				.then(values => {
+					console.log('删除购物车列表：', values);
+					util.showToast({
+						title: '删除成功'
+					});
+					this.getLs();
 				});
 			}
 		}

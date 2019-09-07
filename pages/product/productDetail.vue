@@ -15,16 +15,29 @@
 					</swiper>
 				</view>
 				<view class="intro">
-					<view class="price"><text class="sub">￥</text>{{detail.FactPrice}}<text class="sub">.00</text><text>{{detail.Qty}}</text></view>
+					<view class="price"><text class="sub">￥</text>{{detail.FactPrice}}<text class="sub">.00</text></view>
 					<view class="title">{{detail.Name}}</view>
 					<view>{{detail.Remark}}</view>
 				</view>
 				<view class="uni-list">
 					<view class="uni-list-cell">
-						<view class="uni-list-cell-navigate uni-navigate-right" @click="openPopup">
+						<!-- <view class="uni-list-cell-navigate uni-navigate-right" @click="openPopup"> -->
+						<view class="uni-list-cell-navigate" @click="openPopup">
 							<view class="menu_txt">
 								<text class="title">计量单位</text>
 								<text class="title sub_txt">{{detail.Spec}}/{{detail.Unit}} （{{detail.TypeName}}）</text>
+							</view>
+						</view>
+					</view>
+					<view class="uni-list-cell">
+						<view class="uni-list-cell-navigate">
+							<view class="menu_txt num_box">
+								<view class="title">数量</view>
+								<view class="title num">
+									<button class="btn" @click="reduce">-</button>
+									<input class="ipt" type="number" v-model="num"></input>
+									<button class="btn" @click="add">+</button>
+								</view>
 							</view>
 						</view>
 					</view>
@@ -66,7 +79,7 @@
 						</view>
 					</view>
 				</view>
-				<button type="warn" @click="closePopup">确定</button>
+				<button type="warn" @click="closePopup('confirm')">确定</button>
 			</view>
 		</uni-popup>
 	</view>
@@ -106,7 +119,8 @@
 				img: '/static/img/2X1_6.jpg',
 				modeLs: ['54 * 4g/袋（共54袋）', '125 * 4g/袋（共500g）', '24 * 4g/袋（共24袋）'],
 				selectItem: 0,
-				num: 1
+				num: 1,
+				clickType: ''
 			}
 		},
 		onLoad(option) {
@@ -148,17 +162,17 @@
 					method: 'Businese.CartDAL.AddToCart',
 					params: {
 						ProductId: this.detail.RecordId,
-						Qty: this.detail.Qty
+						Qty: this.num
 					},
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
-					
+					util.showToast({
+						title: '加入购物车成功'
+					});
 				});
-				util.goTab({
-					url: '../tabBar/cartList'
-				});
+				
 			},
 			goCreateOrder() {
 				util.goUrl({
@@ -199,13 +213,27 @@
 			openPopup(){
 				this.$refs.popup.open()
 			},
-			closePopup(){
+			closePopup(str){
 				this.$refs.popup.close()
+				if (str === 'confirm') {
+					// 点击确定
+					if (this.clickType === 'addCart') {
+						// 加入购物车
+						this.goCartLs();
+					} else if (this.clickType === 'pay') {
+						// 立即付款
+						
+					}
+				}
 			},
 			selectItemFun(index) {
 				this.selectItem = index;
 			},
 			reduce() {
+				if (Number(this.num)-1 < 1) {
+					this.num = 1;
+					return;
+				}
 				this.num = Number(this.num)-1;
 			},
 			add() {

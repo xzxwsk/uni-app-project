@@ -4,27 +4,27 @@
 			<view class="input-group">
 				<view class="input-row">
 					<text class="title">开户银行：</text>
-					<input-box placeholder="开户银行"></input-box>
+					<input-box v-model="billObj.Bank" placeholder="开户银行"></input-box>
 				</view>
 				<view class="input-row">
 					<text class="title">银行帐号：</text>
-					<input-box placeholder="银行帐号"></input-box>
+					<input-box v-model="billObj.AccountNo" placeholder="银行帐号"></input-box>
 				</view>
 				<view class="input-row">
 					<text class="title">户名：</text>
-					<input-box placeholder="户名"></input-box>
+					<input-box v-model="billObj.AccountName" placeholder="户名"></input-box>
 				</view>
 				<view class="input-row">
 					<text class="title">支付宝帐号：</text>
-					<input-box placeholder="支付宝帐号"></input-box>
+					<input-box v-model="billObj.AlipayAccNo" placeholder="支付宝帐号"></input-box>
 				</view>
 				<view class="input-row">
 					<text class="title">微信帐号：</text>
-					<input-box placeholder="微信帐号"></input-box>
+					<input-box v-model="billObj.MicromsgNo" placeholder="微信帐号"></input-box>
 				</view>
 				<view class="input-row">
 					<text class="title">备注：</text>
-					<input-box placeholder="备注信息"></input-box>
+					<input-box v-model="billObj.Remark" placeholder="备注信息"></input-box>
 				</view>
 				<view class="input-row">
 					<radio class="protocal" value="0" @click="bindProtocal" color="#f23030" :checked="protocal" /><label @click="bindToProtocal" class="a">同意许可条款</label>
@@ -32,43 +32,81 @@
 			</view>
 		</view>
 		<view class="result">
-			<button class="btn" type="warn" @click="saveOrder">保存</button>
+			<button class="btn" type="warn" :disabled="!protocal" @click="saveOrder">保存</button>
 		</view>
-		<mpvue-picker :themeColor="themeColor" ref="mpvuePicker" :pickerValueDefault="pickerValueDefault"
-		 @onCancel="onCancel" @onConfirm="onConfirm"></mpvue-picker>
 	</view>
 </template>
 
 <script>
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
-	// https://ext.dcloud.net.cn/plugin?id=220
-	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
-	import frontImg from '@/static/img/H_027_1.jpg';
-	import backImg from '@/static/img/H_9X10_1.jpg';
-	import mpvuePicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue';
-	import cityData from '@/common/city.data-3.js';
 	export default {
 		components: {
-			inputBox, customDatePicker, mpvuePicker
+			inputBox
 		},
 		data() {
 			return {
-				dateValue: '',
-				startDate: '1900-01',
-				endDate: '2199-12',
 				protocal: false,
-				frontImg: frontImg,
-				backImg: backImg,
-				pickerValueArray: [],
-				mode: '',
-				deepLength: 0,
-				pickerValueDefault: [],
+				billObj: {
+					"RecordId": '',
+					"BillCode": '',
+					"BillDate": '',
+					"AboveDealerId": '',
+					"DealerNo": "",
+					"DealerName": '',
+					"BirthDay": '',
+					"NativePlace": '',
+					"IDCardNo": '',
+					"Sex": 0,
+					"HasMarried": false,
+					"SpouseName": '',
+					"SpouseIDCard": '',
+					"EducationLevel": '',
+					"HomeAddress": '',
+					"PostCode": '',
+					"Tel": '',
+					"Email": '',
+					"Mobile": '',
+					"LinkMan": '',
+					"LinkManTel": '',
+					"Relationship": '',
+					"Bank": '',
+					"AccountNo": '',
+					"AccountName": '',
+					"AlipayAccNo": '',
+					"MicromsgNo": '',
+					"Password": '',
+					"Remark": '',
+					"DealerId": '',
+					"State": 0,
+					"Creator": '',
+					"CreatorName": '',
+					"CreateTime": '',
+					"LastModifier": '',
+					"LastModifierName": '',
+					"LastModifyTime": '',
+					"Auditor": '',
+					"AuditorName": '',
+					"AuditTime": '',
+					"StateChanged": false,
+					"TimeStamp": '',
+					"IDCardNo_FrontImage": '',
+					"IDCardNo_BackImage": '',
+					"ChangeType": 0,
+					"IdValues": [
+						''
+					],
+					"iState": 0
+				}
 			}
 		},
-		onLoad() {
-			
+		onLoad(option) {
+			for(let key in this.billObj) {
+				if (key !== 'IdValues') {
+					this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
+				}
+			}
 		},
 		methods: {
 			bindDateChange(value) {
@@ -85,60 +123,29 @@
 					url: './protocal'
 				});
 			},
-			selectArea() {
-				this.pickerValueArray = cityData;
-				this.mode = 'multiLinkageSelector';
-				this.deepLength = 3;
-				this.pickerValueDefault = [22, 0, 1];
-				this.$refs.mpvuePicker.show();
-			},
-			changeStatus() {
-				//单据状态
-			},
-			changeMarriage() {
-				// 婚否
-			},
-			previewImage(e) {
-				var current = e.target.dataset.src
-				uni.previewImage({
-					current: current,
-					urls: [this.frontImg]
-				})
-			},
-			async chooseImage() {
-				uni.chooseImage({
-					sourceType: ['album', 'camera'],
-					sizeType: ['compressed'],
-					count: 1,
-					success: res => {
-						console.log(res);
-						this.frontImg = res.tempFilePaths[0];
-					}
-				});
-			},			
-			previewImage2(e) {
-				var current = e.target.dataset.src
-				uni.previewImage({
-					current: current,
-					urls: [this.backImg]
-				})
-			},
-			async chooseImage2() {
-				uni.chooseImage({
-					sourceType: ['album', 'camera'],
-					sizeType: ['compressed'],
-					count: 1,
-					success: res => {
-						console.log(res);
-						this.backImg = res.tempFilePaths[0];
-					}
-				});
-			},
 			saveOrder() {
-				
-			},
-			imageError(e) {
-				console.log('image发生error事件，携带值为' + e.detail.errMsg)
+				console.log(this.billObj);
+				util.showLoading();
+				util.ajax({
+					method: 'Businese.BillJoinDAL.Create',
+					params: {
+						Bill: this.billObj
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '创建成功',
+						success() {
+							setTimeout(() => {
+								util.goUrl({
+									url: '../user/entryOrder'
+								});
+							}, 1000);
+						}
+					});
+				});
 			}
 		}
 	}

@@ -33,11 +33,11 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<view class="title">
-											<view><text class="gray">日期:</text>2012-12-05</view>
-											<view><text class="gray">姓名:</text>大</view>
+											<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
+											<view><text class="gray">姓名:</text>{{item.DealerName}}</view>
 											<view><text class="gray">保证金:</text><text class="price">￥{{item.price}}</text></view>
-											<view><text class="gray">经销商编号:</text>df348209834</view>
-											<view><text class="gray">经销商姓名:</text>顾大有</view>
+											<view><text class="gray">经销商编号:</text>{{item.DealerNo}}</view>
+											<view><text class="gray">经销商姓名:</text>{{item.DealerName}}</view>
 										</view>
 										<view class="status">
 											<text>{{item.status}}</text>
@@ -65,6 +65,7 @@
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
@@ -88,12 +89,14 @@
 		components: {
 			inputBox, customDatePicker
 		},
+		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				scrollLeft: 0,
 				tabIndex: 0,
+				allData: [], // 保存全部
 				dataArr: [],
 				displayDataArr: [],
 				tabBars: [{
@@ -111,8 +114,7 @@
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
+			this.init();
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
@@ -120,6 +122,66 @@
 			})
 		},
 		methods: {
+			init() {
+				this.getAllData([0, 1, 2]);
+			},
+			async getAllData(arr) {
+				// 获取全部状态的数据
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.BillJoinDAL.QueryMyList',
+						params: {
+							Filter: {
+								StartDate: '',
+								EndDate: '',
+								BillNoLike: '',
+								State: item,
+								PageIndex: 1,
+								PageSize: 20
+							}
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				console.log(promiseArray);
+				await Promise.all(promiseArray)
+				.then(values => {
+					this.dataArr = [{
+						isLoading: false,
+						searchKey: '',
+						dateValue: '',
+						data: [],
+						isScroll: false,
+						loadingText: '加载更多...',
+						renderImage: false
+					}];
+					values.forEach((item, index) => {
+						this.dataArr.push({
+							isLoading: false,
+							searchKey: '',
+							dateValue: '',
+							data: [],
+							isScroll: false,
+							loadingText: '加载更多...',
+							renderImage: false
+						});
+						this.dataArr[index+1].data = item.data.result.data;
+					});
+				});
+				console.log(this.dataArr);
+				let _arr = [];
+				this.dataArr.forEach(item => {
+					item.data.forEach(dataItem => {
+						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+						_arr = _arr.concat(dataItem);
+					});
+				});
+				this.dataArr[0].data = _arr;
+				this.displayDataArr = util.deepCopy(this.dataArr);
+			},
 			goDetail(index) {
 				// 查看订单详情
 				console.log(index);

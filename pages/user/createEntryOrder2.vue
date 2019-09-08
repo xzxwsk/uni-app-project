@@ -33,31 +33,29 @@
 			</view>
 			<view class="input-row">
 				<text class="title">手机：</text>
-				<input-box placeholder="手机"></input-box>
+				<input-box v-model="billObj.Mobile" placeholder="手机"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">EMAIL：</text>
-				<input-box placeholder="EMAIL"></input-box>
+				<input-box v-model="billObj.Email" placeholder="EMAIL"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">紧急联系人：</text>
-				<input-box placeholder="紧急联系人"></input-box>
+				<input-box v-model="billObj.LinkMan" placeholder="紧急联系人"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">联系人电话：</text>
-				<input-box placeholder="联系人电话"></input-box>
+				<input-box v-model="billObj.LinkManTel" placeholder="联系人电话"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">密码：</text>
-				<input-box type="password" displayable v-model="password" placeholder="请输入密码"></input-box>
+				<input-box type="password" displayable v-model="billObj.Password" placeholder="请输入密码"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">确认密码：</text>
-				<input-box type="password" displayable v-model="password" placeholder="请再次输入密码"></input-box>
+				<input-box type="password" displayable v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
 			</view>
 		</view>
-		<mpvue-picker :themeColor="themeColor" ref="mpvuePicker" :pickerValueDefault="pickerValueDefault"
-		 @onCancel="onCancel" @onConfirm="onConfirm"></mpvue-picker>
 	</view>
 </template>
 
@@ -69,11 +67,10 @@
 	import util from '@/common/util.js';
 	import frontImg from '@/static/img/H_027_1.jpg';
 	import backImg from '@/static/img/H_9X10_1.jpg';
-	import mpvuePicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue';
 	import cityData from '@/common/city.data-3.js';
 	export default {
 		components: {
-			inputBox, customDatePicker, mpvuePicker
+			inputBox, customDatePicker
 		},
 		data() {
 			return {
@@ -87,44 +84,71 @@
 				mode: '',
 				deepLength: 0,
 				pickerValueDefault: [],
+				confirmPassword: '',
+				billObj: {
+					"RecordId": '',
+					"BillCode": '',
+					"BillDate": '',
+					"AboveDealerId": '',
+					"DealerNo": "",
+					"DealerName": '',
+					"BirthDay": '',
+					"NativePlace": '',
+					"IDCardNo": '',
+					"Sex": 0,
+					"HasMarried": false,
+					"SpouseName": '',
+					"SpouseIDCard": '',
+					"EducationLevel": '',
+					"HomeAddress": '',
+					"PostCode": '',
+					"Tel": '',
+					"Email": '',
+					"Mobile": '',
+					"LinkMan": '',
+					"LinkManTel": '',
+					"Relationship": '',
+					"Bank": '',
+					"AccountNo": '',
+					"AccountName": '',
+					"AlipayAccNo": '',
+					"MicromsgNo": '',
+					"Password": '',
+					"Remark": '',
+					"DealerId": '',
+					"State": 0,
+					"Creator": '',
+					"CreatorName": '',
+					"CreateTime": '',
+					"LastModifier": '',
+					"LastModifierName": '',
+					"LastModifyTime": '',
+					"Auditor": '',
+					"AuditorName": '',
+					"AuditTime": '',
+					"StateChanged": false,
+					"TimeStamp": '',
+					"IDCardNo_FrontImage": frontImg,
+					"IDCardNo_BackImage": backImg,
+					"ChangeType": 0,
+					"IdValues": [
+						''
+					],
+					"iState": 0
+				}
 			}
 		},
 		onLoad(option) {
-			console.log('option: ', option);
+			for(let key in this.billObj) {
+				if (key !== 'IdValues') {
+					this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
+				}
+			}
 		},
 		onNavigationBarButtonTap(e) {
-			util.goUrl({
-				url: './createEntryOrder3'
-			});
+			this.goNext();
 		},
 		methods: {
-			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
-				this.dateValue = value;
-			},
-			bindProtocal() {
-				// 许可条款
-				this.protocal = !this.protocal;
-			},
-			bindToProtocal(e) {
-				// 查看许可条款
-				util.goUrl({
-					url: './protocal'
-				});
-			},
-			selectArea() {
-				this.pickerValueArray = cityData;
-				this.mode = 'multiLinkageSelector';
-				this.deepLength = 3;
-				this.pickerValueDefault = [22, 0, 1];
-				this.$refs.mpvuePicker.show();
-			},
-			changeStatus() {
-				//单据状态
-			},
-			changeMarriage() {
-				// 婚否
-			},
 			previewImage(e) {
 				var current = e.target.dataset.src
 				uni.previewImage({
@@ -140,6 +164,10 @@
 					success: res => {
 						console.log(res);
 						this.frontImg = res.tempFilePaths[0];
+						this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
+						  // 转化后的base64图片地址
+						  this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes);
+						});
 					}
 				});
 			},			
@@ -158,11 +186,55 @@
 					success: res => {
 						console.log(res);
 						this.backImg = res.tempFilePaths[0];
+						this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
+						  // 转化后的base64图片地址
+						  this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
+						});
 					}
 				});
 			},
-			saveOrder() {
-				
+			goNext() {
+				if (this.billObj.Password === '') {
+					util.showToast({
+						title: '密码不能为空'
+					});
+					return;
+				}
+				if (this.confirmPassword !== this.billObj.Password) {
+					util.showToast({
+						title: '密码不一致'
+					});
+					return;
+				}
+				let str = '?';
+				let n = 0;
+				for(let key in this.billObj) {
+					if (n > 0) {
+						str += '&'
+					}
+					str += key + '=' + this.billObj[key];
+					n++;
+				}
+				// console.log(str);
+				// return;
+				util.goUrl({
+					url: './createEntryOrder3' + str
+				});
+			},
+			urlToBase64(url) {
+			  return new Promise ((resolve,reject) => {
+				fetch(url).then(data=>{
+					const blob = data.blob();
+					return blob;
+				}).then(blob=>{
+					let reader = new window.FileReader();
+					reader.onloadend = function() {
+						const data = reader.result;
+						resolve(data);
+					};					
+					reader.readAsDataURL(blob);
+				});
+			  });
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

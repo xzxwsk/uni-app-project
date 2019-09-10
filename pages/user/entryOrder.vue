@@ -43,8 +43,8 @@
 											<text>{{item.status}}</text>
 										</view>
 									</view>
-									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">删除</button><button class="btn">修改</button>
+									<view class="ls_item_bottom">
+										<button class="btn" v-if="item.State === 1">删除</button><button class="btn" v-if="item.State === 1">修改</button><button class="btn" @click.stop="goDetail(index)">详情</button>
 									</view>
 								</view>
 							</view>

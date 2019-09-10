@@ -149,7 +149,7 @@
 						query.select('#detail').boundingClientRect();
 						query.selectViewport().scrollOffset();
 						query.exec(function(offset){
-							console.log(offset);
+							console.log('offset: ', offset);
 							me.loca1 = offset[0].top;
 						});
 						this.topHeight = 42;

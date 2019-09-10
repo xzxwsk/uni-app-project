@@ -192,7 +192,6 @@
 			
 		},
 		mounted() {
-			console.log('baseInfo mounted', this.userInfo);
 			if(!this.hasLogin) {
 				util.redirectUrl({
 					url: '../login/login'

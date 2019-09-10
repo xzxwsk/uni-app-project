@@ -220,8 +220,8 @@
 				});
 			},
 			goDetail(index) {
-				uni.navigateTo({
-					url: '../product/productDetail'
+				util.goUrl({
+					url: '../product/productDetail?id=' + this.getCartLs[index].ProductId
 				});
 			},
 			unEvent() {},

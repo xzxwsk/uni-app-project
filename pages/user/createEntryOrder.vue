@@ -15,7 +15,7 @@
 			</view>
 			<view class="input-row">
 				<text class="title">姓名：</text>
-				<input-box v-model="billObj.DealerName" placeholder="请输入姓名"></input-box>
+				<input-box ref="dealerName" v-model="billObj.DealerName" placeholder="请输入姓名"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">生日：</text>
@@ -42,24 +42,24 @@
 			</view>
 			<view class="input-row">
 				<text class="title">学历：</text>
-				<input-box v-model="billObj.EducationLevel" placeholder="请输入学历"></input-box>
+				<input-box ref="educationLevel" v-model="billObj.EducationLevel" placeholder="请输入学历"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">籍贯：</text>
-				<view class="input_box">
-					<input-box v-model="billObj.NativePlace" placeholder="请输入籍贯"></input-box>
-				<!-- <view class="input_box" @tap="selectArea"> -->
+				<input-box ref="nativePlace" v-model="billObj.NativePlace" placeholder="请输入籍贯"></input-box>
+				<!-- <view class="input_box">
+				<view class="input_box" @tap="selectArea"> -->
 					<!-- <input class="ipt" type="text" disabled v-model="billObj.NativePlace" placeholder="请输入籍贯"></input> -->
-					<!-- <view class="uni-icon uni-icon-arrowright"></view> -->
-				</view>
+					<!-- <view class="uni-icon uni-icon-arrowright"></view>
+				</view> -->
 			</view>
 			<view class="input-row">
 				<text class="title">家庭地址：</text>
-				<input-box v-model="billObj.HomeAddress" placeholder="请输入详细地址"></input-box>
+				<input-box ref="homeAddress" v-model="billObj.HomeAddress" placeholder="请输入详细地址"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">邮编：</text>
-				<input-box type="number" v-model="billObj.PostCode" placeholder="邮编"></input-box>
+				<input-box type="number" ref="postCode" v-model="billObj.PostCode" placeholder="邮编"></input-box>
 			</view>
 		</view>
 		<!-- 地址选择器 此处仅保留-->
@@ -143,13 +143,33 @@
 				}
 			}
 		},
-		onLoad() {
-			this.getDefault();
+		onLoad(option) {
+			if(option.id) {
+				this.setDetail(option.id);
+			} else {
+				this.getDefault();
+			}
 		},
 		onNavigationBarButtonTap(e) {
 			this.goNext();
 		},
 		methods: {
+			setDetail(id) {
+				util.showLoading();
+				util.ajax({
+					method: 'Businese.BillJoinDAL.GetById',
+					params: {
+						RecordId: id
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.billObj = res.data.result;
+					// 初始化显示值
+					this.setInfo();
+				});
+			},
 			getDefault() {
 				util.showLoading();
 				// 单据ID初始化
@@ -166,6 +186,16 @@
 					this.$refs.billDate.setValue(res.data.result.BillDate);
 					this.$refs.dealerNo.setValue(res.data.result.DealerNo);
 				});
+			},
+			setInfo() {
+				this.$refs.billCode.setValue(this.billObj.BillCode);
+				this.$refs.billDate.setValue(this.billObj.BillDate);
+				this.$refs.dealerNo.setValue(this.billObj.DealerNo);
+				this.$refs.dealerName.setValue(this.billObj.DealerName);
+				this.$refs.educationLevel.setValue(this.billObj.EducationLevel);
+				this.$refs.nativePlace.setValue(this.billObj.NativePlace);
+				this.$refs.homeAddress.setValue(this.billObj.HomeAddress);
+				this.$refs.postCode.setValue(this.billObj.PostCode);
 			},
 			goNext() {
 				let str = '?';

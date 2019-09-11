@@ -3,7 +3,7 @@
 		<view class="input-group">
 			<view class="input-row">
 				<text class="title">身份证号：</text>
-				<input-box placeholder="身份证号"></input-box>
+				<input-box ref="iDCardNo" placeholder="身份证号"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">身份证正面照：</text>
@@ -33,23 +33,23 @@
 			</view>
 			<view class="input-row">
 				<text class="title">手机：</text>
-				<input-box v-model="billObj.Mobile" placeholder="手机"></input-box>
+				<input-box ref="mobile" v-model="billObj.Mobile" placeholder="手机"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">EMAIL：</text>
-				<input-box v-model="billObj.Email" placeholder="EMAIL"></input-box>
+				<input-box ref="email" v-model="billObj.Email" placeholder="EMAIL"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">紧急联系人：</text>
-				<input-box v-model="billObj.LinkMan" placeholder="紧急联系人"></input-box>
+				<input-box ref="linkMan" v-model="billObj.LinkMan" placeholder="紧急联系人"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">联系人电话：</text>
-				<input-box v-model="billObj.LinkManTel" placeholder="联系人电话"></input-box>
+				<input-box ref="linkManTel" v-model="billObj.LinkManTel" placeholder="联系人电话"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">密码：</text>
-				<input-box type="password" displayable v-model="billObj.Password" placeholder="请输入密码"></input-box>
+				<input-box type="password" ref="password" displayable v-model="billObj.Password" placeholder="请输入密码"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">确认密码：</text>
@@ -128,8 +128,8 @@
 					"AuditTime": '',
 					"StateChanged": false,
 					"TimeStamp": '',
-					"IDCardNo_FrontImage": frontImg,
-					"IDCardNo_BackImage": backImg,
+					"IDCardNo_FrontImage": '',
+					"IDCardNo_BackImage": '',
 					"ChangeType": 0,
 					"IdValues": [
 						''
@@ -140,13 +140,17 @@
 		},
 		onLoad(option) {
 			for(let key in this.billObj) {
-				if (key !== 'IdValues') {
-					this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
-				}
+				this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
 			}
 		},
 		onNavigationBarButtonTap(e) {
 			this.goNext();
+		},
+		mounted() {
+			this.$nextTick(() => {
+				// 初始化显示值
+				this.setInfo();				
+			});
 		},
 		methods: {
 			previewImage(e) {
@@ -192,6 +196,16 @@
 						});
 					}
 				});
+			},
+			setInfo() {
+				this.$refs.iDCardNo.setValue(this.billObj.IDCardNo);
+				this.frontImg = (this.billObj.IDCardNo_FrontImage !== '') ? ('data:image/jpeg;base64,' + this.billObj.IDCardNo_FrontImage) : '';
+				this.backImg = (this.billObj.IDCardNo_BackImage !== '') ? ('data:image/jpeg;base64,' + this.billObj.IDCardNo_BackImage) : '';
+				this.$refs.mobile.setValue(this.billObj.Mobile);
+				this.$refs.email.setValue(this.billObj.Email);
+				this.$refs.linkMan.setValue(this.billObj.LinkMan);
+				this.$refs.linkManTel.setValue(this.billObj.LinkManTel);
+				this.$refs.password.setValue(this.billObj.Password);
 			},
 			goNext() {
 				if (this.billObj.Password === '') {

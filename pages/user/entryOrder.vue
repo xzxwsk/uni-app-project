@@ -44,7 +44,7 @@
 										</view>
 									</view>
 									<view class="ls_item_bottom">
-										<button class="btn" v-if="item.State === 1">删除</button><button class="btn" v-if="item.State === 1">修改</button><button class="btn" @click.stop="goDetail(index)">详情</button>
+										<button class="btn" @click.stop="del(index)" v-if="item.State !== 1">删除</button><button class="btn" @click.stop="edit(index)" v-if="item.State !== 1">修改</button><button class="btn" @click.stop="goDetail(index)">详情</button>
 									</view>
 								</view>
 							</view>
@@ -64,6 +64,7 @@
 	import inputBox from '@/components/input-box/input-box';
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
+	import noImg from '@/static/images/no_data_d.png';
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
 	const list = [{
@@ -92,7 +93,7 @@
 		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: noImg,
 				mode: 'widthFix',
 				scrollLeft: 0,
 				tabIndex: 0,
@@ -146,7 +147,6 @@
 						}
 					}));
 				});
-				console.log(promiseArray);
 				await Promise.all(promiseArray)
 				.then(values => {
 					this.dataArr = [{
@@ -171,7 +171,6 @@
 						this.dataArr[index+1].data = item.data.result.data;
 					});
 				});
-				console.log(this.dataArr);
 				let _arr = [];
 				this.dataArr.forEach(item => {
 					item.data.forEach(dataItem => {
@@ -182,11 +181,27 @@
 				this.dataArr[0].data = _arr;
 				this.displayDataArr = util.deepCopy(this.dataArr);
 			},
-			goDetail(index) {
-				// 查看订单详情
-				console.log(index);
+			del(index) {
+				util.ajax({
+					method: 'Businese.BillJoinDAL.Delete',
+					params: {
+						RecordId: this.displayDataArr[this.tabIndex].data[index].RecordId
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.getAllData([0, 1, 2]);
+				})
+			},
+			edit(index) {
 				util.goUrl({
-					url: './orderDetail'
+					url: './createEntryOrder?id=' + this.displayDataArr[this.tabIndex].data[index].RecordId
+				});
+			},
+			goDetail(index) {
+				util.goUrl({
+					url: './entryOrderDetail?id=' + this.displayDataArr[this.tabIndex].data[index].RecordId
 				});
 			},
 			query() {

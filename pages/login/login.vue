@@ -166,8 +166,8 @@
 				this.resetVoliCode();
 			},
 			resetVoliCode() {
-				console.log('重新发送验证码');
-				console.log('sessionId: ', this.sessionId);
+				// console.log('验证码');
+				// console.log('sessionId: ', this.sessionId);
 				util.ajax({
 					method: 'SYS.UserDAL.GetVerifyCodeBase64',
 					tags: {
@@ -175,7 +175,7 @@
 						sessionid: this.sessionId
 					}
 				}).then(res => {
-					console.log('获取验证码： ', res);
+					// console.log('获取验证码： ', res);
 					this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
 				});
 				// util.ajax({
@@ -221,9 +221,13 @@
 						}
 					}).then(res => {
 						console.log('登录返回： ', res);
+						util.setStorageSync({
+							key: 'session_id',
+							data: res.data.result
+						});
 						this.setOpenid(res.data.result);
 					});
-					console.log('openid: ', this.openid);
+					// console.log('openid: ', this.openid);
 					await util.ajax({
 						method: 'SYS.UserDAL.GetDealerByToken',
 						params: {},
@@ -233,7 +237,14 @@
 					}).then(res => {
 						console.log('经销商信息：', res);
 						me.setUserInfo(res.data.result);
-						me.toMain(res.data.result.DealerName);
+						util.showToast({
+							title: '登录成功',
+							success() {
+								setTimeout(() => {
+									me.toMain(res.data.result.DealerName);
+								}, 1000);
+							}
+						});
 					});
 					console.log('登录成功');
 					// this.login(data.account);

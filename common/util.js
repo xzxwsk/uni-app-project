@@ -151,6 +151,37 @@ let random = function(minNum,maxNum){
             return 0;
     }
 };
+let stringReplace = function (string, character, replace) {
+	var data = string;
+	var reg;
+	var setReplace = function (character, index) {
+		var newCharacter;
+		reg = null;
+		reg = new RegExp(character, "g");
+		if (typeof replace == "object") {
+			for (var i = 0; i < replace.length; i++) {
+				if (i == index) {
+					newCharacter = replace[i];
+				}
+			}
+		} else if (typeof replace == "string") {
+			newCharacter = replace;
+		}
+		data = data.replace(reg, newCharacter);
+	}
+	if (typeof character == "object") {
+		for (var i = 0; i < character.length; i++) {
+			setReplace(character[i], i)
+		}
+	} else {
+		setReplace(character)
+	}
+	return data;
+};
+let jsonReplace = function (json, character, replace) {
+	var str = JSON.stringify(json);
+	return JSON.parse(stringReplace(str, character, replace));
+};
 let deepCopy = function(data) {
     var type = getType(data);
     var obj;
@@ -280,7 +311,7 @@ let setStorageSync = function(prompt) {
 	uni.setStorageSync(prompt.key, prompt.data);
 };
 let getStorageSync = function(key) {
-	uni.getStorageSync(key);
+	return uni.getStorageSync(key);
 };
 let clearStorageSync = function() {
 	uni.clearStorageSync();
@@ -393,10 +424,13 @@ let ajax = async function(prompt) {
 		}
 	};
 	extend(_prompt, prompt);
+	if (!_prompt.tags.usertoken || _prompt.tags.usertoken === '' || _prompt.tags.usertoken === 'null') {
+		_prompt.tags.usertoken = await getStorageSync('session_id');
+	}
 	return await new Promise((resolve, reject) => {
 		if(prompt.get) {
 			getAjax(_prompt)
-			.then(data => resolve(data))
+			.then(data => resolve(jsonReplace(data, 'null', '" "')))
 			.catch(err => {
 				if (err.hasOwnProperty('errMsg')) {
 					err.message = '网络超时',
@@ -406,7 +440,7 @@ let ajax = async function(prompt) {
 			});
 		} else {
 			postAjax(_prompt)
-			.then(data => resolve(data))
+			.then(data => resolve(jsonReplace(data, 'null', '" "')))
 			.catch(err => {
 				if (err.hasOwnProperty('errMsg')) {
 					err.message = '网络超时',

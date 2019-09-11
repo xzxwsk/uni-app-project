@@ -163,6 +163,22 @@
 				}
 			}
 		}, {
+			"path": "pages/user/entryOrderDetail",
+			"style": {
+				"navigationBarTitleText": "经销商加盟单详情",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"text": "",
+							"fontSize": 0,
+							"color": "#333",
+							"width": 0
+						}]
+					}
+				}
+			}
+		}, {
 			"path": "pages/user/createEntryOrder",
 			"style": {
 				"navigationBarTitleText": "新增经销商加盟单",

@@ -182,6 +182,7 @@
 				this.displayDataArr = util.deepCopy(this.dataArr);
 			},
 			del(index) {
+				let me = this;
 				util.ajax({
 					method: 'Businese.BillJoinDAL.Delete',
 					params: {
@@ -191,8 +192,15 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					this.getAllData([0, 1, 2]);
-				})
+					util.showToast({
+						title: '删除成功',
+						success() {
+							setTimeout(() => {
+								me.getAllData([0, 1, 2]);
+							}, 1000);
+						}
+					});
+				});
 			},
 			edit(index) {
 				util.goUrl({
@@ -207,7 +215,6 @@
 			query() {
 				let searchKey = this.displayDataArr[this.tabIndex].searchKey;
 				let tempArr = [];
-				console.log(this.displayDataArr[this.tabIndex].searchKey, this.displayDataArr[this.tabIndex].dateValue);
 				this.displayDataArr[this.tabIndex].data = [];
 				this.dataArr[this.tabIndex].data.forEach(item => {
 					if(item.title.indexOf(searchKey) != -1){
@@ -220,7 +227,6 @@
 				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
 			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
 				this.displayDataArr[this.tabIndex].dateValue = value;
 			},
 			addData(e) {

@@ -69,12 +69,17 @@
 				});
 			},
 			bindLogout() {
-			    this.logout();
-				// uni.reLaunch({
-				//     url: '../login/login'
-				// });
-				util.goTab({
-					url: '../tabBar/user'
+				util.showLoading();
+				util.ajax({
+					method: 'SYS.UserDAL.Logoff',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.logout();
+					util.goTab({
+						url: '../tabBar/user'
+					});
 				});
 			}
 		}

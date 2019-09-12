@@ -19,7 +19,7 @@
 		<view class="uni-product-list">
 			<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail(index)">
 				<view class="image-view">
-					<image v-if="renderImage" class="uni-product-image" :src="product.image"></image>
+					<image v-if="renderImage" mode="aspectFit" class="uni-product-image" :src="product.image"></image>
 				</view>
 				<view class="uni-product-title">
 					<view>
@@ -46,6 +46,7 @@
 <script>
 	import util from '@/common/util.js';
 	import shareMenu from '@/components/share-menu/index';
+	import defaultImg from '@/static/img/2X1_1.jpg';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
@@ -182,7 +183,7 @@
 					let ls = res.data.result.data.map(item => {
 						return {
 							id: item.RecordId,
-							image: item.SmallImageBase64 !== null ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : '/static/images/no_data_f.png',
+							image: (item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg,
 							title: item.Name + ' ' + item.Spec + '/' + item.Unit, // Spec, 规格   Unit, 计量单位,
 							originalPrice: item.Price,
 							favourPrice: item.FactPrice, // 实际单价， 折扣后单价

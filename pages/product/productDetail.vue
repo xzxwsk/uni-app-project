@@ -87,13 +87,14 @@
 
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
+	import defaultImg from '@/static/img/2X1_1.jpg';
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
 			uniPopup
 		},
-		computed: mapState(['hasLogin', 'openid']),
+		computed: mapState(['openid']),
 		data() {
 			return {
 				detail: {},
@@ -141,7 +142,8 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					this.imgLs.push(res.data.result.BigImageBase64 !== null ? ('data:image/jpeg;base64,' + item.BigImageBase64) : '/static/images/no_data_f.png');
+					console.log('产品详情: ', res.data.result);
+					this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
 					this.detail = res.data.result;
 					this.$nextTick(() => {
 						let me = this;
@@ -175,8 +177,18 @@
 				
 			},
 			goCreateOrder() {
+				let str = '?';
+				let n = 0;
+				this.detail.num = this.num;
+				for(let key in this.detail) {
+					if (n > 0) {
+						str += '&'
+					}
+					str += key + '=' + this.detail[key];
+					n++;
+				}
 				util.goUrl({
-					url: '../order/createOrder'
+					url: '../order/createOrder' + str
 				});
 			},
 			goTop() {

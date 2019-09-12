@@ -3,15 +3,15 @@
         <view class="input-group">
             <view class="input-row">
                 <text class="title">原密码：</text>
-                <input-box type="password" focus clearable v-model="oldPsw" placeholder="请输入原密码"></input-box>
+                <input-box type="password" focus :verification="['isNull']" :verificationTip="['密码不能为空']" v-model="oldPsw" placeholder="请输入原密码"></input-box>
             </view>
 			<view class="input-row">
 			    <text class="title">新密码：</text>
-			    <input-box type="password" focus clearable v-model="newPsw" placeholder="请输入新密码"></input-box>
+			    <input-box type="password" :verification="['isNull']" :verificationTip="['新密码不能为空']" v-model="newPsw" placeholder="请输入新密码"></input-box>
 			</view>
 			<view class="input-row">
 			    <text class="title">确认新密码：</text>
-			    <input-box type="password" focus clearable v-model="newConfirmPsw" placeholder="请确认新密码"></input-box>
+			    <input-box type="password" :verification="['isNull']" :verificationTip="['确认新密码不能为空']" v-model="newConfirmPsw" placeholder="请确认新密码"></input-box>
 			</view>
         </view>
 
@@ -22,9 +22,9 @@
 </template>
 
 <script>
-    import service from '../../service.js';
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
+	import util from '@/common/util.js';
 
     export default {
         components: {
@@ -56,7 +56,33 @@
                 });
             },
 			confirmPassword() {
-				
+				if (this.newConfirmPsw !== this.newPsw) {
+					util.showToast({
+						title: '密码不一致'
+					});
+					return;
+				}
+				util.ajax({
+					method: 'SYS.UserDAL.ChangePassword',
+					params: {
+						OldPassword: this.oldPsw,
+						NewPassword: this.newPsw
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '修改成功',
+						success() {
+							setTimeout(() => {
+								util.goTab({
+									url: '/pages/tabBar/user'
+								});
+							}, 1000);
+						}
+					});
+				});
 			}
         }
     }

@@ -370,12 +370,12 @@ let postAjax = function(prompt) {
 					});
 					return;
 				} else if (res.data.hasOwnProperty('error')) {
-					if (res.data.error.code === -32603) {
-						redirectUrl({
-							url: '/pages/login/login'
-						});
-						return;
-					}
+					// if (res.data.error.code === -32603) {
+					// 	redirectUrl({
+					// 		url: '/pages/login/login'
+					// 	});
+					// 	return;
+					// }
 					reject(res.data.error);
 					return;
 				}

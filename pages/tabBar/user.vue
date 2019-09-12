@@ -15,10 +15,10 @@
 						<navigator url="../login/login" hover-class="navigator-hover">
 							<text class="word">登录</text>
 						</navigator>
-						<text class="split">/</text>
+						<!-- <text class="split">/</text>
 						<navigator url="../login/reg" hover-class="navigator-hover">
 							<text class="word">注册</text>
-						</navigator>
+						</navigator> -->
 					</view>
 				</view>
 			</view>
@@ -107,7 +107,7 @@
 			}
 		},
 		onLoad: function (option) {
-			console.log('onload option: ', option);
+			
 		},
 		methods: {
 			imageError(e) {

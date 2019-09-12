@@ -160,7 +160,7 @@
 				await util.ajax({
 					method: 'SYS.UserDAL.GetSessionId'
 				}).then(res => {
-					console.log('GetSessionId: ', res);
+					// console.log('GetSessionId: ', res);
 					this.setSessionId(res.data.result);
 				});
 				this.resetVoliCode();
@@ -194,7 +194,6 @@
 			},
 			async bindLogin() {
 				let me = this;
-				console.log('this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue()：', this.$refs.input1.getValue(), this.$refs.input2.getValue(), this.$refs.input3.getValue());
 				const data = {
 				    account: this.$refs.input1.getValue(),
 				    password: this.$refs.input2.getValue(),
@@ -220,7 +219,7 @@
 							sessionid: this.sessionId
 						}
 					}).then(res => {
-						console.log('登录返回： ', res);
+						// console.log('登录返回： ', res);
 						util.setStorageSync({
 							key: 'session_id',
 							data: res.data.result
@@ -235,19 +234,11 @@
 							usertoken: me.openid
 						}
 					}).then(res => {
-						console.log('经销商信息：', res);
+						// console.log('经销商信息：', res);
 						me.setUserInfo(res.data.result);
-						util.showToast({
-							title: '登录成功',
-							success() {
-								setTimeout(() => {
-									me.toMain(res.data.result.DealerName);
-								}, 1000);
-							}
-						});
+						me.toMain(res.data.result.DealerName);
 					});
 					console.log('登录成功');
-					// this.login(data.account);
 					// util.goTab({
 					// 	url: '../tabBar/user?logined=true',
 					// 	success: (e) => {

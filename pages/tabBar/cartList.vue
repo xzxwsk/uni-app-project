@@ -270,8 +270,18 @@
 				});
 			},
 			toPay() {
+				this.getCartLs.forEach((item, index) => {
+					item.num = this.cartLs[index].num;
+					item.DtlId = '';
+					item.RecordId = '';
+					item.CartItemId = item.Id;
+					item.ProductCode = item.ProductNo;
+					item.ProductName = item.ProductName;
+					item.FactPrice = item.Price;
+					item.ChangeType = 0;
+				});
 				util.goUrl({
-					url: '../order/createOrder'
+					url: '../order/createOrder?obj=' + JSON.stringify(this.getCartLs)
 				});
 			},
 			deleteLs(arr) {

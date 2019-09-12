@@ -44,7 +44,7 @@
 										</view>
 									</view>
 									<view class="ls_item_bottom">
-										<button class="btn" @click.stop="del(index)" v-if="item.State !== 1">删除</button><button class="btn" @click.stop="edit(index)" v-if="item.State !== 1">修改</button><button class="btn" @click.stop="goDetail(index)">详情</button>
+										<button class="btn" @click.stop="del(index)" v-if="item.State === 1">删除</button><button class="btn" @click.stop="edit(index)" v-if="item.State === 1">修改</button><button class="btn" @click.stop="goDetail(index)">详情</button>
 									</view>
 								</view>
 							</view>

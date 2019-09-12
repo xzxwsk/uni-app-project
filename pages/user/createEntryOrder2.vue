@@ -139,7 +139,7 @@
 			}
 		},
 		onLoad(option) {
-			for(let key in this.billObj) {
+			for(let key in option) {
 				this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
 			}
 		},

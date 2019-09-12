@@ -79,6 +79,9 @@ uni-tabbar {
 	.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; width: 330upx;
 		.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}
 	}
+	.uni-product{
+		.image-view{border: 1px #ccc solid;}
+	}
 }
 .cart_ls{position: relative; display: flex; flex-direction: column; justify-content: center; width: 100%; height: 100%; text-align: center;
 	.uni-list{margin: 0 2% 160upx; width: 96%; background: transparent;
@@ -370,7 +373,7 @@ uni-tabbar {
 .addr_ls{display: flex; flex-direction: column; height: 100%;
 	.con{flex: 1; display: flex; flex-direction: column; justify-content: center; height: 100%;}
 	.ls{height: 100%;
-		.ls_item{margin:0 0 20upx; background: #fff;
+		.ls_item{display: block; margin:0 0 20upx; background: #fff;
 			.ls_item_top{display: flex; flex-direction: row; padding: 20upx 0 0 20upx;
 				.img{margin: 0 10px; width: 35%;}
 				.title{flex: 1;}

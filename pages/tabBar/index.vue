@@ -52,7 +52,7 @@
 		components: {
 			shareMenu
 		},
-		computed: mapState(['hasLogin', 'openid']),
+		computed: mapState(['hasLogin', 'openid', 'changeNum']),
 		data() {
 			return {
 				sysInfo: '',
@@ -75,12 +75,14 @@
 			}
 		},
 		onLoad() {
-			console.log('onLoad');
-			this.getSystemInfo();
-			uni.setTabBarBadge({
-				index: 2,
-				text: '12'
-			});
+			if (this.hasLogin && this.changeNum === null) {
+				this.getChangeNum();
+			}
+			// this.getSystemInfo();
+			// uni.setTabBarBadge({
+			// 	index: 2,
+			// 	text: '12'
+			// });
 			setTimeout(()=> {
 			    this.renderImage = true;
 			}, 300);
@@ -122,6 +124,57 @@
 			// #endif
 		},
 		methods: {
+			async getChangeNum() {
+				let num = 0;
+				let myOrderChangeNum = 0;
+				let myPayOrderChangeNum = 0;
+				let myRefundOrderChangeNum = 0;
+				// 我的订单
+				await util.ajax({
+					method: 'Businese.OrderDAL.GetChangedListCount',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				// 我的付款单
+				await util.ajax({
+					method: 'Businese.BillPayDAL.GetChangedListCount',
+					params: {
+						State: 0
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myPayOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				// 我的退款单
+				await util.ajax({
+					method: 'Businese.BillPayReturnDAL.GetChangedListCount',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myRefundOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				console.log(num);
+				this.setChangeNum({
+					myOrderChangeNum,
+					myPayOrderChangeNum,
+					myRefundOrderChangeNum
+				});
+				if (num > 0) {
+					uni.setTabBarBadge({
+						index: 2,
+						text: String(num)
+					});
+				}
+			},
 			getSystemInfo() {
 				let me = this;
 				uni.getSystemInfo({

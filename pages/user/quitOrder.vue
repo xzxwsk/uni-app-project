@@ -1,7 +1,7 @@
 <template>
 	<view class="quit_order">			
 		<view class="uni-tab-bar">
-			<view v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
+			<block v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
 				<view class="list">
 					<block v-if="itemLs.data.length<1">
 						<view class="no-data">
@@ -16,25 +16,26 @@
 							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 								<view class="ls_item_top">
 									<view class="title">
-										<view><text class="gray">日期:</text>2012-12-05</view>
-										<view><text class="gray">姓名:</text>大</view>
+										<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
+										<view><text class="gray">姓名:</text>{{item.CreatorName}}</view>
 										<view><text class="gray">保证金:</text><text class="price">￥{{item.price}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{item.payType}}</text></view>
-										<view><text class="gray">经销商编号:</text>df348209834</view>
-										<view><text class="gray">经销商姓名:</text>df348209834</view>
-										<view><text class="gray">注销原因:</text>df348209834</view>
+										<view><text class="gray">经销商编号:</text>{{item.DealerCode}}</view>
+										<view><text class="gray">经销商姓名:</text>{{item.DealerName}}</view>
+										<view><text class="gray">注销原因:</text>{{item.Remark}}</view>
 									</view>
 									<view class="status">
 										<text>{{item.status}}</text>
 									</view>
 								</view>
 								<view class="ls_item_bottom">
-									<button class="btn">确认退款</button>
+									<button v-if="item.State === 0" class="btn" @click="bindDel(item.RecordId)">删除</button>
+									<button v-if="item.State === 1" class="btn" @click="bindConfirm(item.RecordId)">确认退款</button>
 								</view>
 							</view>
 						</view>
 					</view>
 				</view>
-			</view>
+			</block>
 		</view>
 	</view>
 </template>
@@ -43,6 +44,8 @@
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
+	import noImg from '@/static/images/no_data_d.png';
+	import {mapState, mapMutations} from 'vuex';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
@@ -55,9 +58,10 @@
 		components: {
 			inputBox
 		},
+		computed: mapState(['openid']),
 		data() {
 			return {
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: noImg,
 				mode: 'widthFix',
 				scrollLeft: 0,
 				tabIndex: 0,
@@ -80,16 +84,17 @@
 				loadingText: '加载更多...',
 				dateValue: '',
 				searchKey: '',
-				startDate: '2010-01',
-				endDate: '2199-12',
+				startDate: '2010-01-01',
+				endDate: '2199-12-31',
 				ls: list
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			setTimeout(()=> {
-			    this.dataArr[0].renderImage = true;
-			}, 300);
+			this.init();
+			// this.dataArr = this.randomfn();
+			// setTimeout(()=> {
+			//     this.dataArr[0].renderImage = true;
+			// }, 300);
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
@@ -97,6 +102,97 @@
 			})
 		},
 		methods: {
+			init() {
+				this.getAllData([0, 1, 2, 3, 4]);
+			},
+			async getAllData(arr) {
+				// 获取全部状态的数据
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.BillLeaveDAL.QueryMyList',
+						params: {
+							Filter: {
+								StartDate: '',
+								EndDate: '',
+								BillNoLike: '',
+								State: item,
+								PageIndex: 1,
+								PageSize: 20
+							}
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				await Promise.all(promiseArray)
+				.then(values => {
+					this.dataArr = [{
+						isLoading: false,
+						searchKey: '',
+						dateValue: '',
+						data: [],
+						isScroll: false,
+						loadingText: '加载更多...',
+						renderImage: false
+					}];
+					values.forEach((item, index) => {
+						this.dataArr.push({
+							isLoading: false,
+							searchKey: '',
+							dateValue: '',
+							data: [],
+							isScroll: false,
+							loadingText: '加载更多...',
+							renderImage: false
+						});
+						if(item.data.hasOwnProperty('result')) {
+							this.dataArr[index+1].data = item.data.result.data;
+						}
+					});
+				});
+				let _arr = [];
+				this.dataArr.forEach(item => {
+					item.data.forEach(dataItem => {
+						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+						_arr = _arr.concat(dataItem);
+					});
+				});
+				this.dataArr[0].data = _arr;
+				this.dataArr.splice(1);
+			},
+			bindDel(RecordId) {
+				util.ajax({
+					method: 'Businese.BillLeaveDAL.Cancel',
+					params: {
+						RecordId: RecordId
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '删除注销单成功'
+					});
+					this.init();
+				});
+			},
+			bindConfirm(RecordId) {
+				// (5)	退款确认：注销单审核后，可以进行退款确认操作。确认退款后，经销商成为注销状态，不能再登录系统，不能再进行任何操作
+				util.showLoading();
+				util.ajax({
+					method: 'SYS.UserDAL.Logoff',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.logout();
+					util.goTab({
+						url: '../tabBar/user'
+					});
+				});
+			},
 			goDetail(index) {
 				// 查看订单详情
 				console.log(index);

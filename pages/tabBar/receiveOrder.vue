@@ -17,6 +17,7 @@
 								<text class="txt">{{ item.name }}</text>
 							</view>
 							<text v-if="item.subName" class="title sub_txt">{{ item.subName }}</text>
+							<!-- <uni-badge text="12" type="error" /> -->
 						</view>
 					</view>
 				</view>
@@ -26,7 +27,11 @@
 </template>
 
 <script>
+	import uniBadge from '@/components/uni-badge/uni-badge.vue';
 	export default {
+		components: {
+			uniBadge
+		},
 		data() {
 			return {
 				imgSrcHead: '/static/images/avatar_member.gif',

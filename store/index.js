@@ -9,7 +9,8 @@ const store = new Vuex.Store({
 		loginProvider: '',
 		sessionId: null,
 		openid: null,
-		userInfo: {}
+		userInfo: {},
+		changeNum: null
 	},
 	mutations: {
 		login(state, provider) {
@@ -28,6 +29,9 @@ const store = new Vuex.Store({
 		},
 		setUserInfo(state, userInfo) {
 			state.userInfo = userInfo
+		},
+		setChangeNum(state, changeNum) {
+			state.changeNum = changeNum
 		}
 	},
 	actions: {

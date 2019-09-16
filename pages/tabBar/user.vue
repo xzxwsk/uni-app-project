@@ -69,6 +69,7 @@
 					<view class="menu_txt">
 						<text class="title">{{ item.name }}</text>
 						<text v-if="item.subName" class="title sub_txt">{{ item.subName }}</text>
+						<uni-badge :text="item.changeNum" type="error" />
 					</view>
 				</view>
 			</view>
@@ -80,9 +81,13 @@
 	import util from '@/common/util.js';
 	import imgSrcHead from "@/static/images/avatar_member.gif";
 	import imgSrc from "@/static/images/member_bg.png";
-	import {mapState} from 'vuex';
+	import uniBadge from '@/components/uni-badge/uni-badge.vue';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
-		computed: mapState(['hasLogin', 'loginProvider', 'userInfo']),
+		components: {
+			uniBadge
+		},
+		computed: mapState(['hasLogin', 'loginProvider', 'userInfo', 'changeNum', 'openid']),
 		data() {
 			return {
 				imgSrcHead: imgSrcHead,
@@ -93,23 +98,115 @@
 					{
 						name: '经销商加盟单',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
-						url: 'user/entryOrder'
+						url: 'user/entryOrder',
+						changeNum: 0,
 					},
 					{
 						name: '经销商注销单',
-						url: 'user/quitOrder'
+						url: 'user/quitOrder',
+						changeNum: 0,
 					},
 					{
 						name: '处罚申请单',
-						url: 'user/punishOrder'
+						url: 'user/punishOrder',
+						changeNum: 0,
 					}
 				]
 			}
 		},
 		onLoad: function (option) {
-			
+			console.log('load');
+			if (this.hasLogin && this.changeNum === null) {
+				this.getChangeNum();
+			}
 		},
 		methods: {
+			...mapMutations(['setChangeNum']),
+			async getChangeNum() {
+				let num = 0;
+				let myOrderChangeNum = 0;
+				let myPayOrderChangeNum = 0;
+				let myRefundOrderChangeNum = 0;
+				// 我的订单
+				await util.ajax({
+					method: 'Businese.OrderDAL.GetChangedListCount',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				// 我的付款单
+				await util.ajax({
+					method: 'Businese.BillPayDAL.GetChangedListCount',
+					params: {
+						State: 0
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myPayOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				// 我的退款单
+				await util.ajax({
+					method: 'Businese.BillPayReturnDAL.GetChangedListCount',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myRefundOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				console.log(num);
+				this.setChangeNum({
+					myOrderChangeNum,
+					myPayOrderChangeNum,
+					myRefundOrderChangeNum
+				});
+				if (num > 0) {
+					uni.setTabBarBadge({
+						index: 2,
+						text: String(num)
+					});
+				}
+				
+				// 经销商加盟单
+				await util.ajax({
+					method: 'Businese.BillJoinDAL.GetChangedListCount',
+					params: {
+						State: 0
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.pages[0].changeNum = res.data.result;
+				});
+				// 经销商注销单
+				await util.ajax({
+					method: 'Businese.BillLeaveDAL.GetChangedListCount',
+					params: {
+						State: 0
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.pages[1].changeNum = res.data.result;
+				});				
+				// 处罚申请单
+				await util.ajax({
+					method: 'Businese.BillPenalizationDAL.GetChangedListCount',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.pages[2].changeNum = res.data.result;
+				});
+			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},

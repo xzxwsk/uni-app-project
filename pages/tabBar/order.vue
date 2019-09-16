@@ -17,6 +17,7 @@
 								<text class="txt">{{ item.name }}</text>
 							</view>
 							<text v-if="item.subName" class="title sub_txt">{{ item.subName }}</text>
+							<uni-badge :text="item.changeNum" type="error" />
 						</view>
 					</view>
 				</view>
@@ -26,7 +27,13 @@
 </template>
 
 <script>
+	import uniBadge from '@/components/uni-badge/uni-badge.vue';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
+		components: {
+			uniBadge
+		},
+		computed: mapState(['hasLogin', 'changeNum']),
 		data() {
 			return {
 				imgSrcHead: '/static/images/avatar_member.gif',
@@ -38,22 +45,35 @@
 						name: '订单',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
 						url: 'order/myOrder',
-						icon: 'paperplane'
+						icon: 'paperplane',
+						changeNum: 0
 					},
 					{
 						name: '付款单',
 						url: 'order/payOrder',
-						icon: 'location-filled'
+						icon: 'location-filled',
+						changeNum: 0
 					},
 					{
 						name: '退款单',
 						url: 'order/refundOrder',
-						icon: 'map'
+						icon: 'map',
+						changeNum: 0
 					}
 				]
 			}
 		},
+		mounted() {
+			if (this.hasLogin && this.changeNum === null) {
+				this.init();
+			}
+		},
 		methods: {
+			init() {
+				this.pages[0].changeNum = this.changeNum.myOrderChangeNum;
+				this.pages[1].changeNum = this.changeNum.myPayOrderChangeNum;
+				this.pages[2].changeNum = this.changeNum.myRefundOrderChangeNum;
+			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},

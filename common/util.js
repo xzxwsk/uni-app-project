@@ -370,12 +370,12 @@ let postAjax = function(prompt) {
 					});
 					return;
 				} else if (res.data.hasOwnProperty('error')) {
-					// if (res.data.error.code === -32603) {
-					// 	redirectUrl({
-					// 		url: '/pages/login/login'
-					// 	});
-					// 	return;
-					// }
+					if (res.data.error.data && res.data.error.data.indexOf('用户没有登录') != -1) {
+						redirectUrl({
+							url: '/pages/login/login'
+						});
+						return;
+					}
 					reject(res.data.error);
 					return;
 				}
@@ -430,7 +430,7 @@ let ajax = async function(prompt) {
 	return await new Promise((resolve, reject) => {
 		if(prompt.get) {
 			getAjax(_prompt)
-			.then(data => resolve(jsonReplace(data, 'null', '" "')))
+			.then(data => resolve(data))
 			.catch(err => {
 				if (err.hasOwnProperty('errMsg')) {
 					err.message = '网络超时',
@@ -440,7 +440,7 @@ let ajax = async function(prompt) {
 			});
 		} else {
 			postAjax(_prompt)
-			.then(data => resolve(jsonReplace(data, 'null', '" "')))
+			.then(data => resolve(data))
 			.catch(err => {
 				if (err.hasOwnProperty('errMsg')) {
 					err.message = '网络超时',

@@ -34,20 +34,20 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<text class="title">
-											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">款项性质:</text>{{item.nature}}</text>
+											<text class="gray">日期:</text>{{item.billDateStr}}}<br/>
+											<text class="gray">款项性质:</text>{{item.accountTypeStr}}</text>
 										<view class="status">
-											<text>{{item.status}}</text>
-											<text class="price">￥{{item.price}}</text>
+											<text>{{item.stateStr}}</text>
+											<text class="price">￥{{item.Amount}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count"><text class="gray">自己帐户:</text>dif92347</text>
-										<text class="count"><text class="gray">对方帐户:</text>xxxx</text>
+										<text class="count"><text class="gray">自己帐户:</text>{{item.PayAccountNo}}</text>
+										<text class="count"><text class="gray">对方帐户:</text>{{item.ReceiveAccountInfo}}</text>
 									</view>
 									<view class="ls_item_center">
-										<text><text class="gray">付款方式:</text>微信</text>
-										<text class="count"><text class="gray">备注:</text>xxxx</text>
+										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
+										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
 										<button class="btn">取消</button>
@@ -130,8 +130,9 @@
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
+			this.getAllData([0, -1, 2]);
+			// this.dataArr = this.randomfn();
+			// this.displayDataArr = util.deepCopy(this.dataArr);
 		},
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
@@ -139,6 +140,64 @@
 			})
 		},
 		methods: {
+			async getAllData(arr) {
+				// 获取全部状态的数据
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.BillPayDAL.QueryMyList',
+						params: {
+							Filter: {
+								StartDate: '',
+								EndDate: '',
+								BillNoLike: '',
+								State: item,
+								PageIndex: 1,
+								PageSize: 20
+							}
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				await Promise.all(promiseArray)
+				.then(values => {
+					this.dataArr = [{
+						isLoading: false,
+						searchKey: '',
+						dateValue: '',
+						data: [],
+						isScroll: false,
+						loadingText: '加载更多...',
+						renderImage: false
+					}];
+					values.forEach((item, index) => {
+						this.dataArr.push({
+							isLoading: false,
+							searchKey: '',
+							dateValue: '',
+							data: [],
+							isScroll: false,
+							loadingText: '加载更多...',
+							renderImage: false
+						});
+						this.dataArr[index+1].data = item.data.result.data;
+					});
+				});
+				let _arr = [];
+				this.dataArr.forEach(item => {
+					item.data.forEach(dataItem => {
+						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+						dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
+						dataItem.stateStr = ['已取消', '未收款', '', '已收款', ][dataItem.State+1];
+						dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
+						_arr = _arr.concat(dataItem);
+					});
+				});
+				this.dataArr[0].data = _arr;
+				this.displayDataArr = util.deepCopy(this.dataArr);
+			},
 			goDetail(index) {
 				console.log(index);
 			},

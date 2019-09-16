@@ -333,11 +333,12 @@ uni-tabbar {
 		}
 		.bg{font-size: 0;}
 	}
-	.menu_txt{flex: 1; display: flex; flex-direction: column;
+	.menu_txt{flex: 1; display: flex; flex-direction: column; position: relative;
 		.title{flex: 1; display: flex; flex-direction: row;}
 		.uni-icon{margin: 0 20upx 0 0;}
 		.txt{display: block;}
 		.sub_txt{display: block; font-size: 20upx; color: #888;}
+		.uni-badge{position: absolute; right: 20upx; top: 5px;}
 	}
 	.btn_box{display: flex; flex-direction: row; justify-content: space-around; flex-wrap:wrap; margin: 20upx 0; padding:20uxp; background: #fff; line-height: 60upx;
 		.btn{margin: 10upx 20upx; text-align: center; color: #666;}

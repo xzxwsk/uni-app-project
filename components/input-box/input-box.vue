@@ -7,12 +7,12 @@
 			</view>
 			<!-- 密码输入框类 -->
 			<view class="input-box-center" v-if="type==='password'">
-				<input @input="keyInput" :placeholder="placeholder" :disabled="disabled" :value="value" type="text" :maxlength="maxLength" class="input-box-center-text" v-show="isShowEye"/>
-				<input @input="keyInput" :placeholder="placeholder" :disabled="disabled" :value="value" type="password" :password="true" :maxlength="maxLength" class="input-box-center-text" v-show="!isShowEye"/>
+				<input @blur="bindBlur" @input="keyInput" :placeholder="placeholder" :disabled="disabled" :value="value" type="text" :maxlength="maxLength" class="input-box-center-text" v-show="isShowEye"/>
+				<input @blur="bindBlur" @input="keyInput" :placeholder="placeholder" :disabled="disabled" :value="value" type="password" :password="true" :maxlength="maxLength" class="input-box-center-text" v-show="!isShowEye"/>
 			</view>
 			<!-- 非密码输入框类 -->
 			<view class="input-box-center" v-else>
-				<input @input="keyInput" :placeholder="placeholder" :disabled="disabled" :value="value" :type="type" :maxlength="maxLength" class="input-box-center-text" />
+				<input @blur="bindBlur" @input="keyInput" :placeholder="placeholder" :disabled="disabled" :value="value" :type="type" :maxlength="maxLength" class="input-box-center-text" />
 			</view>
 			<!-- 清空输入框 -->
 			<view class="input-box-clear" v-show="clearShow && value" @click="clear">
@@ -138,6 +138,9 @@
 			rightClick(){
 				//传值到父组件和父组件双向绑定
 				this.$emit('rightClick', this.value);
+			},
+			bindBlur() {
+				this.$emit('blur', this.value);
 			},
 			 /**
 			 * @desc 监听输入框的值

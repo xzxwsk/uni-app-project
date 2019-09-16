@@ -74,6 +74,9 @@
 		onLoad(option) {
 			console.log('option: ', option);
 			if(option.hasOwnProperty('id')) {
+				uni.setNavigationBarTitle({
+					title: '编辑地址'
+				});
 				this.addrId = option.id;
 				this.edit(option.id);
 			}

@@ -2,23 +2,48 @@
 	<view class="create_pay_order">
 		<view class="input-group">
 			<view class="input-row">
+				<text class="title">单据编号：</text>
+				<input-box ref="billCode" v-model="billObj.BillCode" disabled></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">单据日期：</text>
+				<input-box ref="billDate" v-model="billObj.BillDate" disabled></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">单据状态：</text>
+				<radio-group class="uni-flex" name="gender" @change="changeState">
+					<label>
+						<radio value="0" checked color="#f23030" />申请</label>
+					<label>
+						<radio value="2" color="#f23030" />已审核</label>
+				</radio-group>
+			</view>
+			<view class="input-row">
 				<text class="title">经销商编号：</text>
-				<input-box placeholder="经销商编号"></input-box>
+				<input-box ref="dealerCode" v-model="billObj.DealerCode" :verification="['isNull']" :verificationTip="['经销商编号为空']"
+				 placeholder="经销商编号" @blur="getNameOfCode"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">经销商姓名：</text>
-				<input-box placeholder="经销商姓名"></input-box>
+				<input-box ref="dealerName" placeholder="" disabled></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">处罚类别：</text>
-				<radio-group class="uni-flex" name="gender" @change="changeMoneyNature">
-					<label><radio value="0" checked color="#f23030" />类别一</label>
-					<label><radio value="1" color="#f23030" />类别二</label>
+				<radio-group class="uni-flex" name="gender" @change="changePenaliztionClass">
+					<!-- penaliztionClass 处罚类别设置中维护的类别 -->
+					<label>
+						<radio value="0" checked color="#f23030" />类别一</label>
+					<label>
+						<radio value="1" color="#f23030" />类别二</label>
 				</radio-group>
 			</view>
 			<view class="input-row">
 				<text class="title">处罚说明：</text>
-				<textarea style="padding: 10px 11px; height: 60px;" placeholder="请输入处罚说明"/>
+				<textarea style="padding: 10px 11px; height: 60px;" ref="description" placeholder="请输入处罚说明" />
+				</view>
+			<view class="input-row">
+				<text class="title">备注：</text>
+				<textarea style="padding: 10px 11px; height: 60px;" ref="ermark" placeholder="请输入备注"/>
 			</view>
 		</view>
 		<view class="result">
@@ -37,39 +62,102 @@
 		},
 		data() {
 			return {
-				moneyNature: '0',
-				amount: '',
-				moneyType: '1',
-				account: '',
-				placeholder: '请输入收款人微信帐号'
+				penaliztionClass: [], // 处罚类别设置中维护的类别
+				billObj: {
+				  "RecordId": ""  /*单据Id*/,
+				  "BillCode": ""  /*单据编号*/,
+				  "BillDate": ""  /*单据日期*/,
+				  "DealerId": ""  /*经销商Id*/,
+				  "DealerCode": ""  /*经销商编号*/,
+				  "DealerName": ""  /*经销商姓名*/,
+				  "Remark": ""  /*备注*/,
+				  "PenaliztionClassId": ""  /*处罚类别*/,
+				  "Description": ""  /*处罚说明*/,
+				  "State": 1  /*State*/,
+				  "Creator": ""  /*录入人*/,
+				  "CreatorName": ""  /*录入人姓名*/,
+				  "CreateTime": ""  /*录入时间*/,
+				  "LastModifier": ""  /*最后修改人*/,
+				  "LastModifierName": ""  /*最后修改人姓名*/,
+				  "LastModifyTime": ""  /*最后修改时间*/,
+				  "Auditor": ""  /*审核人*/,
+				  "AuditorName": ""  /*审核人姓名*/,
+				  "AuditTime": ""  /*审核时间*/,
+				  "StateChanged": false  /*状态是否发生过改变*/,
+				  "TimeStamp": ""  /*时间戳*/,
+				  "ChangeType": 0,
+				  "IdValues": [
+					""
+				  ],
+				  "iState": 1
+				}
 			}
 		},
-		onLoad() {
-			
+		onLoad(option) {
+			if (option.hasOwnProperty('item')) {
+				let item = JSON.parse(option.item);
+				uni.setNavigationBarTitle({
+					title: '编辑处罚申请单'
+				});
+				this.edit(option);
+			} else {
+				this.init();
+			}
 		},
 		methods: {
-			changeMoneyNature(e) {
-				// 款项性质
-				console.log(e.target.value);
-				this.moneyNature = e.target.value;
+			init() {
+				// 获取初始单据
 			},
-			changeMoneyType(e) {
-				// 付款方式
-				console.log(e.target.value);
-				this.moneyType = e.target.value;
-				if (e.target.value === '0') {
-					this.placeholder = '请输入收款人微信帐号'
-				} else if (e.target.value === '1') {
-					this.placeholder = '请输入收款人支付宝帐号'
-				} else if (e.target.value === '2') {
-					this.placeholder = '请输入收款人银行帐号'
+			edit(obj) {
+				for(let key in this.billObj) {
+					this.billObj[key] = obj[key];
 				}
 			},
-			saveOrder() {
-				console.log(this.moneyNature, this.moneyType);
+			changeState(e) {
+				// 状态 申请/已审核 默认申请
+				let value = Number(e.target.value);
+				console.log(value);
 			},
-			imageError(e) {
-				console.log('image发生error事件，携带值为' + e.detail.errMsg)
+			getNameOfCode(e) {
+				// 通过经销商编号获取姓名
+				console.log(e);
+			},
+			changePenaliztionClass(e) {
+				// 处罚类别设置中维护的类别
+				let value = e.target.value;
+				console.log(value);
+			},
+			saveOrder() {
+				if(this.$refs.dealerCode.getValue()) {
+					// 新增
+					let title = '新增';
+					let method = 'Businese.BillPenalizationDAL.Create';
+					if (this.billObj.RecordId !== '') {
+						// 编辑
+						title = '修改';
+						method = 'Businese.BillPenalizationDAL.Update'
+					}
+					util.ajax({
+						method: method,
+						params: {
+							Bill: this.billObj
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}.then(res => {
+						util.showToast({
+							title: title + '处罚申请单成功',
+							success() {
+								setTimeout(() => {
+									util.goUrl({
+										url: '../user/punishOrder'
+									});
+								}, 1000);
+							}
+						});
+					}));
+				}
 			}
 		}
 	}

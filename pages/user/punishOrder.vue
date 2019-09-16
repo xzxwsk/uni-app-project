@@ -28,7 +28,7 @@
 								<view class="no-img cart">
 									<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
 								</view>
-								<view class="txt"><text>亲，还没有相关付款单哦~</text></view>
+								<view class="txt"><text>亲，还没有相关处罚单哦~</text></view>
 							</view>
 						</block>
 						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
@@ -36,17 +36,17 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<view class="title">
-											<view><text class="gray">日期:</text>2012-12-05</view>
-											<view><text class="gray">处罚类别:</text>大</view>
-											<view><text class="gray">经销商编号:</text>dsdffdgdfs</view>
-											<view><text class="gray">经销商姓名:</text>卡咔砂</view>
+											<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
+											<view><text class="gray">处罚类别:</text>{{item.penaliztionClassStr}}</view>
+											<view><text class="gray">经销商编号:</text>{{item.DealerCode}}</view>
+											<view><text class="gray">经销商姓名:</text>{{item.DealerName}}</view>
 										</view>
 										<view class="status">
-											<text>{{item.status}}</text>
+											<text>{{item.stateStr}}</text>
 										</view>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">删除</button><button class="btn">修改</button>
+										<button class="btn" @click="del(item.RecordId)">删除</button><button class="btn" @click="edit(item)">修改</button>
 									</view>
 								</view>
 							</view>
@@ -67,6 +67,7 @@
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
@@ -90,6 +91,7 @@
 		components: {
 			inputBox, customDatePicker
 		},
+		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
@@ -119,8 +121,9 @@
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
+			// this.dataArr = this.randomfn();
+			// this.displayDataArr = util.deepCopy(this.dataArr);
+			this.init();
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
@@ -128,6 +131,91 @@
 			})
 		},
 		methods: {
+			init() {
+				this.getAllData([0, 1, 2, 3, -1]);
+			},
+			async getAllData(arr) {
+				// 获取全部状态的数据
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.BillPenalizationDAL.QueryMyList',
+						params: {
+							Filter: {
+								StartDate: '',
+								EndDate: '',
+								BillNoLike: '',
+								State: item,
+								PageIndex: 1,
+								PageSize: 20
+							}
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				await Promise.all(promiseArray)
+				.then(values => {
+					this.dataArr = [{
+						isLoading: false,
+						searchKey: '',
+						dateValue: '',
+						data: [],
+						isScroll: false,
+						loadingText: '加载更多...',
+						renderImage: false
+					}];
+					values.forEach((item, index) => {
+						this.dataArr.push({
+							isLoading: false,
+							searchKey: '',
+							dateValue: '',
+							data: [],
+							isScroll: false,
+							loadingText: '加载更多...',
+							renderImage: false
+						});
+						if (item.data.hasOwnProperty('result')) {
+							this.dataArr[index+1].data = item.data.result.data;
+						}
+					});
+				});
+				let _arr = [];
+				this.dataArr.forEach(item => {
+					item.data.forEach(dataItem => {
+						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+						dataItem.penaliztionClassStr = '';
+						dataItem.stateStr = ['已作废', '草稿', '审核中', '已审核', '已完成'][dataItem.State + 1];
+						_arr = _arr.concat(dataItem);
+					});
+				});
+				this.dataArr[0].data = _arr;
+				this.displayDataArr = util.deepCopy(this.dataArr);
+			},
+			del(id) {
+				util.ajax({
+					method: 'Businese.BillPenalizationDAL.Delete',
+					params: {
+						RecordId: id
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}.then(res => {
+					util.showToast({
+						title: '删除成功',
+						success() {
+							this.init();
+						}
+					});
+				}));
+			},
+			edit(item) {
+				util.goUrl({
+					url: '../user/createPunishOrder?item=' + JSON.stringify(item)
+				});
+			},
 			goDetail(index) {
 				console.log(index);
 			},

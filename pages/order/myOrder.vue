@@ -35,21 +35,22 @@
 									<!-- <view class="img">
 										<image v-if="itemLs.renderImage" :src="item.src" style="width: 100%;" mode="widthFix"></image>
 									</view> -->
-									<text class="title">{{item.title}}</text>
+									<text class="title">下单日期: {{item.billDateStr}}</text>
 									<view class="status">
-										<text>{{item.status}}</text>
-										<text class="price">￥{{item.price}}</text>
+										<text>{{item.stateStr}}</text>
+										<text class="price">￥{{item.Amount}}</text>
 									</view>
 								</view>
 								<view class="ls_item_center">
-									<text class="count">共{{item.count}}件商品</text>
-									<text>合计：￥{{item.price * item.count}}</text>
+									<!-- <text class="count">共{{item.count}}件商品</text> -->
+									<!-- <text>合计：￥{{item.Amount}}</text> -->
+									<text>收货地址：{{item.Address}}</text>
 								</view>
-								<view class="ls_item_bottom">
-									<button v-if="tabIndex===5" class="btn">关闭</button>
-									<button class="btn">收货确认</button>
-									<button class="btn">退货</button>
-									<button v-if="tabIndex===4" class="btn">撤销退货</button>
+								<view class="ls_item_bottom" v-show="tabIndex===1 || tabIndex===2 || tabIndex===4">
+									<button v-if="tabIndex===1" class="btn" @click.stop="bindClose(item.RecordId)">关闭</button>
+									<button v-if="tabIndex===2" class="btn" @click.stop="bindConfirmReceive(item.RecordId)">收货确认</button>
+									<button v-if="tabIndex===2" class="btn" @click.stop="bindReturn(item.RecordId)">退货</button>
+									<button v-if="tabIndex===4" class="btn" @click.stop="bindCancelReturn(item.RecordId)">撤销退货</button>
 								</view>
 							</view>
 						</view>
@@ -69,6 +70,7 @@
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '下单日期：2019-05-22',
@@ -128,6 +130,7 @@
 		components: {
 			inputBox, customDatePicker
 		},
+		computed: mapState(['openid']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
@@ -163,6 +166,7 @@
 			}
 		},
 		onLoad(option) {
+			// this.init();
 			this.dataArr = this.randomfn();
 			this.displayDataArr = util.deepCopy(this.dataArr);
 			setTimeout(()=> {
@@ -170,6 +174,69 @@
 			}, 300);
 		},
 		methods: {
+			init() {
+				this.getAllData([0, 1, 2, 4, 5, -1]);
+			},
+			async getAllData(arr) {
+				util.showLoading();
+				// 获取全部状态的数据
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.OrderDAL.QueryMyList',
+						params: {
+							Filter: {
+								StartDate: '',
+								EndDate: '',
+								BillNoLike: '',
+								ProductLike: '',
+								States: item,
+								PageIndex: 1,
+								PageSize: 20
+							}
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				await Promise.all(promiseArray)
+				.then(values => {
+					this.dataArr = [{
+						isLoading: false,
+						searchKey: '',
+						dateValue: '',
+						data: [],
+						isScroll: false,
+						loadingText: '加载更多...',
+						renderImage: false
+					}];
+					values.forEach((item, index) => {
+						this.dataArr.push({
+							isLoading: false,
+							searchKey: '',
+							dateValue: '',
+							data: [],
+							isScroll: false,
+							loadingText: '加载更多...',
+							renderImage: false
+						});
+						if (item.data.hasOwnProperty('result')) {
+							this.dataArr[index+1].data = item.data.result.data;
+						}
+					});
+				});
+				let _arr = [];
+				this.dataArr.forEach(item => {
+					item.data.forEach(dataItem => {
+						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+						dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认'][dataItem.State+1];
+						_arr = _arr.concat(dataItem);
+					});
+				});
+				this.dataArr[0].data = _arr;
+				this.displayDataArr = util.deepCopy(this.dataArr);
+			},
 			goDetail(index) {
 				// 查看订单详情
 				console.log(index);
@@ -208,7 +275,6 @@
 				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
 			bindDateChange(value) {
-				console.log('bindDateChange: ', value, this.tabIndex);
 				this.displayDataArr[this.tabIndex].dateValue = value;
 			},
 			addData(e) {
@@ -237,7 +303,8 @@
 			},
 			async changeTab(e) {
 				let index = e.target.current;
-				if (!index) {
+				console.log('index: ', index);
+				if (index !== 0 && !index) {
 					return;
 				}
                 this.tabIndex = index;
@@ -301,6 +368,18 @@
 					ary.push(aryItem);
 				}
 				return ary;
+			},
+			bindClose(id) {
+				// 关闭
+			},
+			bindConfirmReceive(id) {
+				// 收货确认
+			},
+			bindReturn(id) {
+				// 退货
+			},
+			bindCancelReturn(id) {
+				// 撤销退货
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

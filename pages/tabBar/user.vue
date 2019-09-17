@@ -160,7 +160,6 @@
 					myRefundOrderChangeNum = res.data.result;
 					num += res.data.result;
 				});
-				console.log(num);
 				this.setChangeNum({
 					myOrderChangeNum,
 					myPayOrderChangeNum,
@@ -240,12 +239,19 @@
 				});
 			},
 			accountBalance() {
-				// 帐户余额
-				util.dialog({
-					title: '帐户余额',
-					content: '保证金余额：￥22.11\n   货款余额：￥354.00',
-					showCancel: false
-				})
+				// util.ajax({
+				// 	method: 'Businese.BillPayReturnDAL.GetChangedListCount',
+				// 	tags: {
+				// 		usertoken: this.openid
+				// 	}
+				// }).then(res => {
+					// 帐户余额
+					util.dialog({
+						title: '帐户余额',
+						content: '保证金余额：￥22.11\n   货款余额：￥354.00',
+						showCancel: false
+					});
+				// });
 			},
 			bonus() {
 				// 奖金查询

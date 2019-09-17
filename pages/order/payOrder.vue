@@ -71,6 +71,7 @@
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
@@ -104,6 +105,7 @@
 		components: {
 			inputBox, customDatePicker
 		},
+		computed: mapState(['openid']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
@@ -182,7 +184,9 @@
 							loadingText: '加载更多...',
 							renderImage: false
 						});
-						this.dataArr[index+1].data = item.data.result.data;
+						if (item.data.hasOwnProperty('result')) {
+							this.dataArr[index+1].data = item.data.result.data;
+						}
 					});
 				});
 				let _arr = [];
@@ -190,7 +194,7 @@
 					item.data.forEach(dataItem => {
 						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
 						dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
-						dataItem.stateStr = ['已取消', '未收款', '', '已收款', ][dataItem.State+1];
+						dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State+1];
 						dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
 						_arr = _arr.concat(dataItem);
 					});

@@ -12,7 +12,7 @@
 			</view>
 			<!-- 非密码输入框类 -->
 			<view class="input-box-center" v-else>
-				<input @blur="bindBlur" @input="keyInput" :placeholder="placeholder" :disabled="disabled" :value="value" :type="type" :maxlength="maxLength" class="input-box-center-text" />
+				<input @blur="bindBlur" @input="keyInput" :placeholder="disabled !== false ? '' : placeholder" :disabled="disabled" :value="value" :type="type" :maxlength="maxLength" class="input-box-center-text" />
 			</view>
 			<!-- 清空输入框 -->
 			<view class="input-box-clear" v-show="clearShow && value" @click="clear">
@@ -117,6 +117,7 @@
 	    },
 		mounted() {
 			// console.log(inputVerification)
+			console.log(this.disabled);
 		},
 		methods: {
 			  /**

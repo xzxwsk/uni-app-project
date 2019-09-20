@@ -34,23 +34,23 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<text class="title">
-											<text class="gray">日期:</text>2012-12-05<br/>
-											<text class="gray">款项性质:</text>{{item.payType}}</text>
+											<text class="gray">日期:</text>{{item.billDateStr}}<br/>
+											<text class="gray">款项性质:</text>{{item.accountTypeStr}}</text>
 										<view class="status">
-											<text>{{item.status}}</text>
-											<text class="price">￥{{item.price}}</text>
+											<text>{{item.stateStr}}</text>
+											<text class="price">￥{{item.Amount}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count"><text class="gray">自己帐户:</text>43345dfgh245</text>
-										<text class="count"><text class="gray">对方帐户:</text>xxxx</text>
+										<text class="count"><text class="gray">自己帐户:</text>{{item.PayAccountNo}}</text>
+										<text class="count"><text class="gray">对方帐户:</text>{{item.ReceiveAccountInfo}}</text>
 									</view>
 									<view class="ls_item_center">
-										<text><text class="gray">付款方式:</text>微信</text>
+										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">取消</button>
+										<button class="btn" @click.stop="bindCancel(item)">取消</button>
 									</view>
 								</view>
 							</view>
@@ -71,6 +71,7 @@
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
@@ -104,6 +105,7 @@
 		components: {
 			inputBox, customDatePicker
 		},
+		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
@@ -130,8 +132,9 @@
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
+			// this.dataArr = this.randomfn();
+			// this.displayDataArr = util.deepCopy(this.dataArr);
+			this.init();
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
@@ -139,6 +142,90 @@
 			})
 		},
 		methods: {
+			init(){
+				this.getAllData([0, 2, -1]);
+			},
+			async getAllData(arr) {
+				util.showLoading();
+				// 获取全部状态的数据
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.BillPayReturnDAL.QueryMyList',
+						params: {
+							Filter: {
+								StartDate: '',
+								EndDate: '',
+								BillNoLike: '',
+								States: item,
+								PageIndex: 1,
+								PageSize: 20
+							}
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				await Promise.all(promiseArray)
+				.then(values => {
+					this.dataArr = [{
+						isLoading: false,
+						searchKey: '',
+						dateValue: '',
+						data: [],
+						isScroll: false,
+						loadingText: '加载更多...',
+						renderImage: false
+					}];
+					values.forEach((item, index) => {
+						this.dataArr.push({
+							isLoading: false,
+							searchKey: '',
+							dateValue: '',
+							data: [],
+							isScroll: false,
+							loadingText: '加载更多...',
+							renderImage: false
+						});
+						if (item.data.hasOwnProperty('result')) {
+							this.dataArr[index+1].data = item.data.result.data;
+						}
+					});
+				});
+				let _arr = [];
+				this.dataArr.forEach(item => {
+					item.data.forEach(dataItem => {
+						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+						dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][item.AccountType]
+						dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State+1];
+						dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
+						_arr = _arr.concat(dataItem);
+					});
+				});
+				this.dataArr[0].data = _arr;
+				this.displayDataArr = util.deepCopy(this.dataArr);
+			},
+			bindCancel(item) {
+				let me = this;
+				// 取消退款单
+				util.ajax({
+					method: 'Businese.BillPayReturnDAL.Cancel',
+					params: {
+						Bill : item
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '取消退款单成功',
+						success() {
+							me.init();
+						}
+					});
+				});
+			},
 			goDetail(index) {
 				console.log(index);
 			},

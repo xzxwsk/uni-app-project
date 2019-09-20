@@ -30,7 +30,7 @@
 					</block>
 					<scroll-view v-else class="box" scroll-y @scrolltolower="loadMore">
 						<view>
-							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
+							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(item.RecordId)">
 								<view class="ls_item_top">
 									<!-- <view class="img">
 										<image v-if="itemLs.renderImage" :src="item.src" style="width: 100%;" mode="widthFix"></image>
@@ -49,7 +49,7 @@
 								<view class="ls_item_bottom" v-show="tabIndex===1 || tabIndex===2 || tabIndex===4">
 									<button v-if="tabIndex===1" class="btn" @click.stop="bindClose(item.RecordId)">关闭</button>
 									<button v-if="tabIndex===2" class="btn" @click.stop="bindConfirmReceive(item.RecordId)">收货确认</button>
-									<button v-if="tabIndex===2" class="btn" @click.stop="bindReturn(item.RecordId)">退货</button>
+									<button v-if="tabIndex===2" class="btn" @click.stop="bindReturn(index)">退货</button>
 									<button v-if="tabIndex===4" class="btn" @click.stop="bindCancelReturn(item.RecordId)">撤销退货</button>
 								</view>
 							</view>
@@ -61,6 +61,25 @@
 				</view>
 			</swiper-item>
 		</swiper>
+		
+		<uni-popup ref="popup" type="bottom">
+			<view class="pop">
+				<button class="uni-icon uni-icon-closeempty close_btn" @click="closePopup"></button>
+				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
+					<view class="input-group">
+						<view class="input-row border">
+							<text class="title">退货货运单号：</text>
+							<input-box ref="trackingNo" type="text" :verification="['isNull']" :verificationTip="['货运单号不能为空']" class="input-box" clearable focus v-model="trackingNo" placeholder="请输入退货货运单号"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货原因：</text>
+							<textarea v-model="reson" style="padding: 10px 11px; height: 60px;" placeholder="请输入退货原因"/>
+						</view>
+					</view>
+				</view>
+				<button type="warn" @click="closePopup('confirm')">确定</button>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -69,6 +88,7 @@
 	import inputBox from '@/components/input-box/input-box';
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
+	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
 	const list = [{
@@ -128,9 +148,9 @@
 	}];
 	export default {
 		components: {
-			inputBox, customDatePicker
+			inputBox, customDatePicker, uniPopup
 		},
-		computed: mapState(['openid']),
+		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
@@ -162,7 +182,10 @@
 					id: 'tiyu3'
 				}],
 				startDate: '2010-01',
-				endDate: '2199-12'
+				endDate: '2199-12',
+				trackingNo: '', // 货运单号
+				reson: '', // 退货原因
+				curSelected: {} // 当前选中
 			}
 		},
 		onLoad(option) {
@@ -237,11 +260,11 @@
 				this.dataArr[0].data = _arr;
 				this.displayDataArr = util.deepCopy(this.dataArr);
 			},
-			goDetail(index) {
+			goDetail(id) {
 				// 查看订单详情
 				console.log(index);
 				util.goUrl({
-					url: './orderDetail'
+					url: './orderDetail?id=' + id
 				});
 			},
 			query() {
@@ -303,7 +326,6 @@
 			},
 			async changeTab(e) {
 				let index = e.target.current;
-				console.log('index: ', index);
 				if (index !== 0 && !index) {
 					return;
 				}
@@ -371,15 +393,100 @@
 			},
 			bindClose(id) {
 				// 关闭
+				util.ajax({
+					method: 'Businese.OrderDAL.Close',
+					params: {
+						"BillId" : this.curSelected.RecordId /*订单Id [String]*/
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '收货确认成功',
+						success() {
+							me.init();
+						}
+					});
+				});
 			},
 			bindConfirmReceive(id) {
 				// 收货确认
+				util.ajax({
+					method: 'Businese.OrderDAL.ReceiveConfirm',
+					params: {
+						"OrderId" : this.curSelected.RecordId /*订单Id [String]*/
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '收货确认成功',
+						success() {
+							me.init();
+						}
+					});
+				});
 			},
-			bindReturn(id) {
+			bindReturn(index) {
 				// 退货
+				this.$refs.popup.open();
+				this.curSelected = this.dataArr[this.tabIndex].data[index];
 			},
 			bindCancelReturn(id) {
 				// 撤销退货
+				util.ajax({
+					method: 'Businese.OrderDAL.ReturnCancel',
+					params: {
+						"OrderId" : this.curSelected.RecordId /*订单Id [String]*/
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '撤销退货操作成功',
+						success() {
+							me.init();
+						}
+					});
+				});
+			},
+			closePopup(str){
+				let me = this;
+				if (str === 'confirm') {
+					// 退货点击确定
+					if (this.$refs.trackingNo.getValue()) {
+						this.$refs.popup.close();
+						util.ajax({
+							method: 'Businese.OrderDAL.Return',
+							params: {
+								"OrderId" : this.curSelected.RecordId /*订单Id [String]*/,
+								"DiliveryInfo" : {
+								  "Adress": this.curSelected.Address  /*收货地址*/,
+								  "LinkMan": this.curSelected.DealerName  /*联系人*/,
+								  "Mobile": this.userInfo.Mobile  /*手机号*/,
+								  "TransportCompany": this.curSelected.FreightInfo  /*货运公司*/,
+								  "TrackingNo": this.trackingNo  /*运单号*/
+								} /*货运信息 [DiliveryInfo]*/,
+								"Reson" : this.reson /*退货原因 [String]*/
+							},
+							tags: {
+								usertoken: this.openid
+							}
+						}).then(res => {
+							util.showToast({
+								title: '退货操作成功',
+								success() {
+									me.init();
+								}
+							});
+						});
+					}
+				} else {
+					this.$refs.popup.close();
+				}
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

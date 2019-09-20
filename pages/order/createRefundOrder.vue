@@ -3,36 +3,36 @@
 		<view class="input-group">
 			<view class="input-row">
 				<text class="title"><text class="price">*</text>会员编号：</text>
-				<input-box v-model="userNo" placeholder="请输入收款会员编号"></input-box>
+				<input-box v-model="billObj.RcvDealerCode" placeholder="请输入收款会员编号"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title"><text class="price">*</text>会员姓名：</text>
-				<input-box v-model="userName" placeholder="请输入收款会员姓名"></input-box>
+				<input-box v-model="billObj.RcvDealerName" placeholder="请输入收款会员姓名"></input-box>
 			</view>
 			<view class="input-row border">
 				<text class="title">款项性质：</text>
-				<text class="txt">货款</text>
+				<text class="txt">{{billObj.accountTypeStr}}</text>
 			</view>
 			<view class="input-row">
 				<text class="title">付款方式：</text>
 				<radio-group class="pay_type" name="payType" @change="changeMoneyType">
-					<label class="label"><radio value="0" color="#f23030" checked />微信</label>
-					<label class="label"><radio value="1" color="#f23030" />支付宝</label>
-					<label class="label"><radio value="2" color="#f23030" />银行转账</label>
-					<label class="label"><radio value="3" color="#f23030" />现金</label>
+					<label class="label"><radio value="3" color="#f23030" :checked="billObj.PayType === 3" />微信</label>
+					<label class="label"><radio value="2" color="#f23030" :checked="billObj.PayType === 2" />支付宝</label>
+					<label class="label"><radio value="1" color="#f23030" :checked="billObj.PayType === 1" />银行转账</label>
+					<label class="label"><radio value="0" color="#f23030" :checked="billObj.PayType === 0" />现金</label>
 				</radio-group>
 			</view>
-			<view class="input-row" v-if="moneyType != 3">
+			<view class="input-row" v-if="billObj.PayType != 0">
 				<text class="title">付款方帐号：</text>
-				<input-box v-model="amount" :placeholder="placeholder"></input-box>
+				<input-box v-model="billObj.PayAccountNo" :placeholder="placeholder"></input-box>
 			</view>
-			<view class="input-row" v-if="moneyType != 3">
+			<view class="input-row" v-if="billObj.PayType != 0">
 				<text class="title">对方帐号：</text>
-				<text>dkji34832947329</text>
+				<input-box v-model="billObj.ReceiveAccountInfo" :placeholder="placeholder"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">付款金额：</text>
-				<input-box type="number" v-model="amount" placeholder="元"></input-box>
+				<input-box type="number" v-model="billObj.Amount" placeholder="元"></input-box>
 			</view>
 		</view>
 		<view class="result">
@@ -45,24 +45,76 @@
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
 			inputBox
 		},
+		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				userNo: '',
-				userName: '',
-				moneyType: '1',
-				account: '',
-				amount: '',
-				placeholder: '请输入付款人微信帐号'
+				placeholder: '请输入付款人微信帐号',
+				billObj: {
+				  "RecordId": ""  /*单据Id*/,
+				  "BillCode": ""  /*单据编号*/,
+				  "BillDate": "2019-09-19T11:24:51.9472886+08:00"  /*单据日期*/,
+				  "Amount": 0.0  /*付款金额*/,
+				  "RcvDealerId": ""  /*收款方经销商Id*/,
+				  "RcvDealerCode": ""  /*收款方经销商编号*/,
+				  "RcvDealerName": ""  /*收款方经销商姓名*/,
+				  "AccountType": 0  /*付款类别*/,
+				  "PayType": 0  /*付款方式*/,
+				  "ReceiveAccountInfo": ""  /*收款方账户信息*/,
+				  "PayBank": ""  /*付款银行*/,
+				  "PayAccountNo": ""  /*付款账户*/,
+				  "PayAccountName": ""  /*付款户名*/,
+				  "Remark": ""  /*备注*/,
+				  "State": 0  /*State*/,
+				  "Creator": ""  /*录入人*/,
+				  "CreatorName": ""  /*录入人姓名*/,
+				  "CreateTime": ""  /*录入时间*/,
+				  "LastModifier": ""  /*最后修改人*/,
+				  "LastModifierName": ""  /*最后修改人姓名*/,
+				  "LastModifyTime": ""  /*最后修改时间*/,
+				  "Auditor": ""  /*审核人*/,
+				  "AuditorName": ""  /*审核人姓名*/,
+				  "AuditTime": ""  /*审核时间*/,
+				  "StateChanged": false  /*状态是否发生过改变*/,
+				  "PayDealerId": ""  /*付款方经销商Id*/,
+				  "PayDealerCode": ""  /*付款方经销商编号*/,
+				  "PayDealerName": ""  /*付款方经销商姓名*/,
+				  "TimeStamp": ""  /*时间戳*/,
+				  "ChangeType": 0,
+				  "IdValues": [
+					""
+				  ],
+				  "iState": 1
+				}
 			}
 		},
-		onLoad() {
-			
+		onLoad(option) {
+			if (option.hasOwnProperty('id')){
+				let id = option.id;
+				this.init(id)
+			}
+			this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
+			this.billObj.accountTypeStr = ['货款', '保证金', '代交保证金'][this.billObj.AccountType];
 		},
 		methods: {
+			init(id) {
+				// 获取详情
+				util.ajax({
+					method: 'Businese.OrderDAL.GetById',
+					params: {
+						RecordId: id
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.billObj = res.data.result;
+				});
+			},
 			changeMoneyNature(e) {
 				// 款项性质
 				console.log(e.target.value);
@@ -70,18 +122,34 @@
 			},
 			changeMoneyType(e) {
 				// 付款方式
-				console.log(e.target.value);
-				this.moneyType = e.target.value;
-				if (e.target.value === '0') {
+				let val = Number(e.target.value);
+				this.billObj.PayType = val;
+				if (val === 3) {
 					this.placeholder = '请输入付款人微信帐号'
-				} else if (e.target.value === '1') {
+				} else if (val === 2) {
 					this.placeholder = '请输入付款人支付宝帐号'
-				} else if (e.target.value === '2') {
+				} else if (val === 1) {
 					this.placeholder = '请输入付款人银行帐号'
 				}
 			},
 			saveOrder() {
-				console.log(this.moneyNature, this.moneyType);
+				let me = this;
+				util.ajax({
+					method: 'Businese.BillPayReturnDAL.Create',
+					params: {
+						Bill: this.billObj
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '新建退款单成功',
+						success() {
+							uni.navigateBack();
+						}
+					});
+				});
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

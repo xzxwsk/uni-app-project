@@ -117,7 +117,6 @@
 	    },
 		mounted() {
 			// console.log(inputVerification)
-			console.log(this.disabled);
 		},
 		methods: {
 			  /**

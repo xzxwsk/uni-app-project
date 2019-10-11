@@ -130,6 +130,9 @@
 				// 我的订单
 				await util.ajax({
 					method: 'Businese.OrderDAL.GetChangedListCount',
+					params: {
+						State: 0
+					},
 					tags: {
 						usertoken: this.openid
 					}
@@ -153,6 +156,9 @@
 				// 我的退款单
 				await util.ajax({
 					method: 'Businese.BillPayReturnDAL.GetChangedListCount',
+					params: {
+						State: 0
+					},
 					tags: {
 						usertoken: this.openid
 					}

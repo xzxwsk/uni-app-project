@@ -35,26 +35,26 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<view class="title">
-											<view><text class="gray">日期:</text>2012-12-05</view>
-											<view><text class="gray">款项性质:</text>{{item.nature}}</view>
-											<view><text class="gray">自己帐户:</text>sfds354fdg</view>
-											<view><text class="gray">对方帐户: </text>ghgfdsh34512321</view>
+											<view><text class="gray">日期:</text>{{item.billDateStr}}}</view>
+											<view><text class="gray">款项性质:</text>{{item.accountTypeStr}}</view>
+											<view><text class="gray">自己帐户:</text>{{item.PayAccountNo}}</view>
+											<view><text class="gray">对方帐户: </text>{{item.ReceiveAccountInfo}}</view>
 										</view>
 										<view class="status">
-											<text>{{item.status}}</text>
-											<text class="price">￥{{item.price}}</text>
+											<text>{{item.stateStr}}</text>
+											<text class="price">￥{{item.Amount}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count"><text class="gray">经销商编号:</text>df348209834</text>
-										<text class="count"><text class="gray">姓名:</text>dfidsa</text>
+										<text class="count"><text class="gray">经销商编号:</text>{{item.PayDealerCode}}</text>
+										<text class="count"><text class="gray">姓名:</text>{{item.PayDealerName}}</text>
 									</view>
 									<view class="ls_item_center">
-										<text><text class="gray">付款方式:</text>微信</text>
-										<text class="count"><text class="gray">备注:</text>xxxx</text>
+										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
+										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn">收款确认</button>
+										<button class="btn" @click="bindConfirm(index)">收款确认</button>
 									</view>
 								</view>
 							</view>
@@ -75,6 +75,10 @@
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex';
 	const list = [{
 		src: '/static/img/H_023_180@200.JPG',
 		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
@@ -101,6 +105,7 @@
 		components: {
 			inputBox, customDatePicker
 		},
+		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
 				imgSrc: '/static/images/no_data_d.png',
@@ -127,10 +132,96 @@
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
+			// this.dataArr = this.randomfn();
+			// this.displayDataArr = util.deepCopy(this.dataArr);
+			this.init();
 		},
 		methods: {
+			init() {
+				this.getAllData([0, 2, -1]);
+			},
+			async getAllData(arr) {
+				util.showLoading();
+				// 获取全部状态的数据
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.BillPayDAL.QueryReceivedList',
+						params: {
+							Filter: {
+								StartDate: '',
+								EndDate: '',
+								BillNoLike: '',
+								State: item,
+								PageIndex: 1,
+								PageSize: 20,
+								SortFields: ''
+							}
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				await Promise.all(promiseArray)
+					.then(values => {
+						util.hideLoading();
+						this.dataArr = [{
+							isLoading: false,
+							searchKey: '',
+							dateValue: '',
+							data: [],
+							isScroll: false,
+							loadingText: '加载更多...',
+							renderImage: false
+						}];
+						values.forEach((item, index) => {
+							this.dataArr.push({
+								isLoading: false,
+								searchKey: '',
+								dateValue: '',
+								data: [],
+								isScroll: false,
+								loadingText: '加载更多...',
+								renderImage: false
+							});
+							if (item.data.hasOwnProperty('result')) {
+								this.dataArr[index + 1].data = item.data.result.data;
+							}
+						});
+					});
+				let _arr = [];
+				this.dataArr.forEach(item => {
+					item.data.forEach(dataItem => {
+						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+						dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State + 1];
+						dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
+						dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
+						_arr = _arr.concat(dataItem);
+					});
+				});
+				this.dataArr[0].data = _arr;
+				this.displayDataArr = util.deepCopy(this.dataArr);
+			},
+			bindConfirm(index) {
+				let me = this;
+				util.ajax({
+					method: 'Businese.BillPayDAL.ReceiveConfirm',
+					params: {
+						RecordId: this.displayDataArr[this.tabIndex].data[index].RecordId
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '收款确认成功',
+						success() {
+							me.init();
+						}
+					});
+				});
+			},
 			goDetail(index) {
 				console.log(index);
 			},

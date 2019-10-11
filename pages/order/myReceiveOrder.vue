@@ -191,9 +191,9 @@
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
-			// this.init();
+			// this.dataArr = this.randomfn();
+			// this.displayDataArr = util.deepCopy(this.dataArr);
+			this.init();
 		},
 		methods: {
 			init() {
@@ -212,7 +212,7 @@
 								EndDate: '',
 								BillNoLike: '',
 								ProductLike: '',
-								States: item,
+								State: item,
 								PageIndex: 1,
 								PageSize: 20
 							}

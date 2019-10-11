@@ -35,22 +35,22 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<text class="title">
-											<text class="gray">日期:</text>2012-12-05
+											<text class="gray">日期:</text>{{item.billDateStr}}}
 										</text>
 										<view class="status">
-											<text>{{item.status}}</text>
+											<text>{{item.stateStr}}</text>
 										</view>
 									</view>
 									<view class="ls_item_top">
 										<view class="title">
-											<view><text class="gray">经销商编号:</text>df348209834</view>
-											<view><text class="gray">姓名:</text>dfidsafkd</view>
+											<view><text class="gray">经销商编号:</text>{{item.PayDealerCode}}</view>
+											<view><text class="gray">姓名:</text>{{item.PayDealerName}}</view>
 											<view><text class="gray">注销原因:</text>dfidsdfdsgasafkd</view>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text><text class="gray">退款方式:</text>微信</text>
-										<text class="count"><text class="gray">备注:</text>xxxx</text>
+										<text><text class="gray">退款方式:</text>{{item.payTypeStr}}</text>
+										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
 									</view>
 									<view class="ls_item_bottom" v-show="tabIndex === 1">
 										<button class="btn" @click="bindApproval(index)">退货款</button>
@@ -121,11 +121,14 @@
 					name: '已退货款',
 					id: 'guanzhu1'
 				}, {
-					name: '已审核',
-					id: 'tuijian'
+					name: '已退保证金',
+					id: 'guanzhu2'
 				}, {
 					name: '已确认收款',
 					id: 'tiyu'
+				}, {
+					name: '退货款中',
+					id: 'guanzhu3'
 				}],
 				startDate: '2010-01',
 				endDate: '2199-12'
@@ -134,8 +137,74 @@
 		onLoad() {
 			this.dataArr = this.randomfn();
 			this.displayDataArr = util.deepCopy(this.dataArr);
+			// this.init();
 		},
 		methods: {
+			init() {
+				this.getAllData([0, 1, 2, 3, 4, -1]);
+			},
+			async getAllData(arr) {
+				util.showLoading();
+				// 获取全部状态的数据
+				var promiseArray = [];
+				arr.forEach(item => {
+					promiseArray.push(util.ajax({
+						method: 'Businese.BillLeaveDAL.QueryReceivedList',
+						params: {
+							Filter: {
+								StartDate: '',
+								EndDate: '',
+								BillNoLike: '',
+								State: item,
+								PageIndex: 1,
+								PageSize: 20,
+								SortFields: ''
+							}
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}));
+				});
+				await Promise.all(promiseArray)
+					.then(values => {
+						util.hideLoading();
+						this.dataArr = [{
+							isLoading: false,
+							searchKey: '',
+							dateValue: '',
+							data: [],
+							isScroll: false,
+							loadingText: '加载更多...',
+							renderImage: false
+						}];
+						values.forEach((item, index) => {
+							this.dataArr.push({
+								isLoading: false,
+								searchKey: '',
+								dateValue: '',
+								data: [],
+								isScroll: false,
+								loadingText: '加载更多...',
+								renderImage: false
+							});
+							if (item.data.hasOwnProperty('result')) {
+								this.dataArr[index + 1].data = item.data.result.data;
+							}
+						});
+					});
+				let _arr = [];
+				this.dataArr.forEach(item => {
+					item.data.forEach(dataItem => {
+						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+						dataItem.stateStr = ['已取消', '申请', '已退货款', '已退保证金', '已收款确认', '退货款中'][dataItem.State + 1];
+						dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
+						_arr = _arr.concat(dataItem);
+					});
+				});
+				this.dataArr[0].data = _arr;
+				this.displayDataArr = util.deepCopy(this.dataArr);
+			},
 			goDetail(index) {
 				console.log(index);
 			},

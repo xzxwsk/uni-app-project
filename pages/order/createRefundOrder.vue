@@ -69,7 +69,7 @@
 				  "PayAccountNo": ""  /*付款账户*/,
 				  "PayAccountName": ""  /*付款户名*/,
 				  "Remark": ""  /*备注*/,
-				  "State": 0  /*State*/,
+				  "State": 1  /*State*/,
 				  "Creator": ""  /*录入人*/,
 				  "CreatorName": ""  /*录入人姓名*/,
 				  "CreateTime": ""  /*录入时间*/,

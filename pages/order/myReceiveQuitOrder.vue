@@ -35,7 +35,7 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<text class="title">
-											<text class="gray">日期:</text>{{item.billDateStr}}}
+											<text class="gray">日期:</text>{{item.billDateStr}}
 										</text>
 										<view class="status">
 											<text>{{item.stateStr}}</text>
@@ -135,9 +135,9 @@
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
-			// this.init();
+			// this.dataArr = this.randomfn();
+			// this.displayDataArr = util.deepCopy(this.dataArr);
+			this.init();
 		},
 		methods: {
 			init() {
@@ -226,7 +226,6 @@
 				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
 			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
 				this.displayDataArr[this.tabIndex].dateValue = value;
 			},
 			bindApproval(value){

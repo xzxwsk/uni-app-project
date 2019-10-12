@@ -447,7 +447,7 @@ let ajax = async function(prompt) {
 					err.data = err.errMsg;
 				}
 				ajaxReturn(err, _prompt);
-			});
+			})
 		}
 	});
 }

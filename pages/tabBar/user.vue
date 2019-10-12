@@ -205,6 +205,9 @@
 				// 处罚申请单
 				await util.ajax({
 					method: 'Businese.BillPenalizationDAL.GetChangedListCount',
+					params: {
+						State: 0
+					},
 					tags: {
 						usertoken: this.openid
 					}

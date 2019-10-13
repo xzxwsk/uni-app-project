@@ -131,7 +131,7 @@
 				await util.ajax({
 					method: 'Businese.OrderDAL.GetChangedListCount',
 					params: {
-						State: 0
+						State: null
 					},
 					tags: {
 						usertoken: this.openid
@@ -144,7 +144,7 @@
 				await util.ajax({
 					method: 'Businese.BillPayDAL.GetChangedListCount',
 					params: {
-						State: 0
+						State: null
 					},
 					tags: {
 						usertoken: this.openid
@@ -157,7 +157,7 @@
 				await util.ajax({
 					method: 'Businese.BillPayReturnDAL.GetChangedListCount',
 					params: {
-						State: 0
+						State: null
 					},
 					tags: {
 						usertoken: this.openid
@@ -182,7 +182,7 @@
 				await util.ajax({
 					method: 'Businese.BillJoinDAL.GetChangedListCount',
 					params: {
-						State: 0
+						State: null
 					},
 					tags: {
 						usertoken: this.openid
@@ -194,7 +194,7 @@
 				await util.ajax({
 					method: 'Businese.BillLeaveDAL.GetChangedListCount',
 					params: {
-						State: 0
+						State: null
 					},
 					tags: {
 						usertoken: this.openid
@@ -206,7 +206,7 @@
 				await util.ajax({
 					method: 'Businese.BillPenalizationDAL.GetChangedListCount',
 					params: {
-						State: 0
+						State: null
 					},
 					tags: {
 						usertoken: this.openid
@@ -248,19 +248,28 @@
 				});
 			},
 			accountBalance() {
-				// util.ajax({
-				// 	method: 'Businese.BillPayReturnDAL.GetChangedListCount',
-				// 	tags: {
-				// 		usertoken: this.openid
-				// 	}
-				// }).then(res => {
+				util.ajax({
+					method: 'Businese.QueryAppDAL.QueryMyAccount',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					let data = res.data.result;
+					console.log('帐户余额: ', res.data);
+					let str = '';
+					data.forEach(item => {
+						if (str !== '') {
+							str += '\n\n';
+						}
+						str += '类别： ' + ['货款','保证金','代交保证金'][item.AccountType] + '\n经销商名称：' + item.DealerName + '\n余额：' + item.Amount + '\n预留金额：' + item.ReservedAmount + '\n可用余额：' + item.AmountCanUse;
+					});
 					// 帐户余额
 					util.dialog({
 						title: '帐户余额',
-						content: '保证金余额：￥22.11\n   货款余额：￥354.00',
+						content: str || '余额：￥0',
 						showCancel: false
 					});
-				// });
+				});
 			},
 			bonus() {
 				// 奖金查询

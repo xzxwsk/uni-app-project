@@ -9,7 +9,7 @@
 			</scroll-view>
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
 				<swiper-item>
-					<view class="con" v-if="false">
+					<view class="con" v-if="tableList.length < 1">
 						<view class="no-data">
 							<view class="no-img">
 								<image style="width: 100%;" mode="widthFix" :src="imgSrc" @error="imageError"></image>
@@ -29,13 +29,13 @@
 										<t-th align="left">奖金</t-th>
 										<t-th align="left">操作</t-th>
 									</t-tr>
-									<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList" :key="item.id">
-										<t-td align="left"><text class="first_col">2019-05</text></t-td>
-										<t-td align="left">35434534</t-td>
-										<t-td align="left">张顺利</t-td>
-										<t-td align="left">{{ item.hobby }}</t-td>
-										<t-td align="left">345</t-td>
-										<t-td align="left"><view @click="paymentGoodsDetail(item.id)" class="a">收支明细</view></t-td>
+									<t-tr font-size="12" color="#5d6f61" align="right" v-for="(item,index) in tableList" :key="item.id">
+										<t-td align="left"><text class="first_col">{{item.Year + '-' + item.Month}}</text></t-td>
+										<t-td align="left">{{item.SubDealerNo}}</t-td>
+										<t-td align="left">{{item.SubDealerName}}</t-td>
+										<t-td align="left">{{ ['直推', '团队'][item.BonusType] }}</t-td>
+										<t-td align="left">{{item.Bonus}}</t-td>
+										<t-td align="left"><view @click="paymentGoodsDetail(index)" class="a">收支明细</view></t-td>
 									</t-tr>
 								</t-table>
 							</view>
@@ -46,7 +46,7 @@
 					</block>
 				</swiper-item>
 				<swiper-item>
-					<view class="con" v-if="false">
+					<view class="con" v-if="tableList2.length < 1">
 						<view class="no-data">
 							<view class="no-img">
 								<image style="width: 100%;" mode="widthFix" :src="imgSrc" @error="imageError"></image>
@@ -77,7 +77,7 @@
 										<t-th align="left">奖金</t-th>
 										<t-th align="left">操作</t-th>
 									</t-tr>
-									<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList" :key="item.id">
+									<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList2" :key="item.id">
 										<t-td align="left"><text class="first_col">2019-05</text></t-td>
 										
 										<t-td align="left">35434534</t-td>
@@ -110,6 +110,7 @@
 	import tTd from '@/components/t-table/t-td.vue';
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
+	import {mapState, mapMutations} from 'vuex';
 	
 	const tableList = [{
 	                    id: 0,
@@ -138,6 +139,7 @@
 		components: {
 		    inputBox, tTable, tTh, tTr, tTd, customDatePicker
 		},
+		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
 				scrollLeft: 0,
@@ -152,6 +154,7 @@
 				}],
 				imgSrc: '/static/images/no_data_d.png',
 				tableList: tableList,
+				tableList2: [],
 				isScroll: false,
 				// 奖金查询
 				userNo: '',
@@ -161,7 +164,41 @@
 				isScroll2: false
 			}
 		},
+		mounted() {
+			// this.init();
+		},
 		methods: {
+			init() {
+				util.ajax({
+					method: 'Businese.QueryAppDAL.QuerySubAccount',
+					tags: {
+						usertoken: this.openid
+					}
+				})
+				.then(res => {
+					let data = res.data.result;
+					console.log('下属的货款: ', data);
+					this.tableList = data;
+				});
+			},
+			getList2() {
+				let dateValue = this.dateValue.split('-');
+				util.ajax({
+					method: 'Businese.QueryAppDAL.QuerySubBonus',
+					params: {
+						Year: dateValue[0],
+						Month: dateValue[1]
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				})
+				.then(res => {
+					let data = res.data.result;
+					console.log('下属的奖金: ', data);
+					this.tableList2 = data;
+				});
+			},
 			getElSize(id) { //得到元素的size
 				return new Promise((res, rej) => {
 					uni.createSelectorQuery().select("#" + id).fields({
@@ -231,6 +268,7 @@
 			bindDateChange(value) {
 				console.log('bindDateChange: ', value);
 				this.dateValue = value;
+				this.getList2();
 			},
 			loadMore2(e) {
 				console.log('loadMore2: ', e);

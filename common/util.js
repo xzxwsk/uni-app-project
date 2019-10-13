@@ -370,7 +370,7 @@ let postAjax = function(prompt) {
 					});
 					return;
 				} else if (res.data.hasOwnProperty('error')) {
-					if (res.data.error.data && res.data.error.data.indexOf('用户没有登录') != -1) {
+					if (res.data.error.data && getType(res.data.error.data) === 'string' && res.data.error.data.indexOf('用户没有登录') != -1) {
 						redirectUrl({
 							url: '/pages/login/login'
 						});

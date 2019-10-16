@@ -1,5 +1,5 @@
 <template>
-	<view class="t-th" :style="{ 'border-width': thBorder + 'px' ,'border-color':borderColor,'font-size':fontSize+'px' ,'color':color,'justify-content':thAlignCpd}">
+	<view class="t-th" :style="{ 'border-width': thBorder + 'px' ,'border-color':borderColor,'font-size':fontSize+'px' ,'color':color,'justify-content':thAlignCpd,'text-align':align}">
 		<slot></slot>
 	</view>
 </template>

@@ -15,12 +15,12 @@
 							<radio class="radio" v-show="titleBtn==='完成'" color="#f23030" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
 							<image class="uni-media-list-logo" mode="aspectFit" :src="item.img" @error="imageError"></image>
 							<view class="uni-media-list-body">
-								<view class="uni-media-list-text-top">{{ item.title }}</view>
+								<view class="uni-media-list-text-top">{{ item.ProductName }}</view>
 								<view class="uni-media-list-text-bottom">
-									<text class="price">${{ item.price.toFixed(2) }}</text>
+									<text class="price">${{ item.Price.toFixed(2) }}</text>
 									<view class="num">
 										<button class="btn" @click.stop="reduce(index)">-</button>
-										<input class="ipt" @click.stop="unEvent" type="number" v-model="item.num"></input>
+										<input class="ipt" @click.stop="unEvent" type="number" v-model="item.Qty"></input>
 										<button class="btn" @click.stop="add(index)">+</button>
 									</view>
 								</view>
@@ -39,7 +39,7 @@
 				<block v-else>
 					<view class="count b"></view>
 					<button class="btn" type="default">加入收藏</button>
-					<button class="btn" type="warn">删除</button>
+					<button class="btn" type="warn" @click="bindDel">删除</button>
 				</block>
 			</view>
 		</block>
@@ -49,6 +49,7 @@
 <script>
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
+	import defaultImg from '@/static/img/H_9X10_1.jpg';
 	export default {
 		computed: mapState(['hasLogin', 'openid']),
 		data() {
@@ -59,49 +60,51 @@
 				allSelect: false,
 				countPrice: 0,
 				getCartLs: [], // 保存取出来的源列表
-				cartLs: [{ // 显示列表
-					selected: false,
-					img: '/static/img/H_9X10_1.jpg',
-					title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
-					price: 130.00,
-					num: 1,
-					hoverClass: ''
-				},{
-					selected: false,
-					img: '/static/img/H_027_1.jpg',
-					title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
-					price: 148.00,
-					num: 1,
-					hoverClass: ''
-				},{
-					selected: false,
-					img: '/static/img/H_023_180@200.JPG',
-					title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
-					price: 139.00,
-					num: 1,
-					hoverClass: ''
-				},{
-					selected: false,
-					img: '/static/img/H_9X10_1.jpg',
-					title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
-					price: 130.00,
-					num: 1,
-					hoverClass: ''
-				},{
-					selected: false,
-					img: '/static/img/H_027_1.jpg',
-					title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
-					price: 148.00,
-					num: 1,
-					hoverClass: ''
-				},{
-					selected: false,
-					img: '/static/img/H_023_180@200.JPG',
-					title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
-					price: 139.00,
-					num: 1,
-					hoverClass: ''
-				}]
+				cartLs: [ // 显示列表
+					// {
+					// 	selected: false,
+					// 	img: '/static/img/H_9X10_1.jpg',
+					// 	title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
+					// 	price: 130.00,
+					// 	num: 1,
+					// 	hoverClass: ''
+					// },{
+					// 	selected: false,
+					// 	img: '/static/img/H_027_1.jpg',
+					// 	title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
+					// 	price: 148.00,
+					// 	num: 1,
+					// 	hoverClass: ''
+					// },{
+					// 	selected: false,
+					// 	img: '/static/img/H_023_180@200.JPG',
+					// 	title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
+					// 	price: 139.00,
+					// 	num: 1,
+					// 	hoverClass: ''
+					// },{
+					// 	selected: false,
+					// 	img: '/static/img/H_9X10_1.jpg',
+					// 	title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
+					// 	price: 130.00,
+					// 	num: 1,
+					// 	hoverClass: ''
+					// },{
+					// 	selected: false,
+					// 	img: '/static/img/H_027_1.jpg',
+					// 	title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
+					// 	price: 148.00,
+					// 	num: 1,
+					// 	hoverClass: ''
+					// },{
+					// 	selected: false,
+					// 	img: '/static/img/H_023_180@200.JPG',
+					// 	title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
+					// 	price: 139.00,
+					// 	num: 1,
+					// 	hoverClass: ''
+					// }
+				]
 			}
 		},
 		onLoad() {
@@ -151,19 +154,9 @@
 			}
 			// #ifdef APP-PLUS
 			let webView = this.$mp.page.$getAppWebview();
-			if(this.titleBtn === '删除') {
-				// 选择状态
-				webView.setTitleNViewButtonStyle(0, {  
-					text: '完成' 
-				});
-				this.titleBtn = '完成';
-			} else {
-				// 已选择
-				webView.setTitleNViewButtonStyle(0, {  
-					text: '删除' 
-				});
-				this.titleBtn = '删除';
-			}
+			webView.setTitleNViewButtonStyle(0, {
+				text: this.titleBtn
+			});
 			// #endif 
 			// let pages = getCurrentPages(); 
 			// let page = pages[pages.length - 1]; 
@@ -181,17 +174,25 @@
 					console.log('购物车列表：', res);
 					this.getCartLs = res.data.result;
 					let ls = res.data.result.map((item, index) => {
-						return {
-							id: item.Id,
-							selected: false,
-							img: '/static/img/H_9X10_1.jpg',
-							title: item.ProductName + ' ' + item.Spec + '/' + item.UnitName, // Spec, 规格   UnitName, 计量单位
-							price: item.Price,
-							num: item.Qty,
-							hoverClass: ''
-						}
+						let tempObj = JSON.parse(JSON.stringify(item));
+						tempObj.selected = false;
+						tempObj.img = defaultImg;
+						tempObj.hoverClass = '';
+						return tempObj;
 					});
 					this.cartLs = ls;
+					this.allSelect = false;
+					if (this.cartLs.length > 0) {
+						this.titleBtn = '删除';
+					} else {
+						this.titleBtn = '';
+					}
+					// #ifdef APP-PLUS
+					let webView = this.$mp.page.$getAppWebview();
+					webView.setTitleNViewButtonStyle(0, {  
+						text: this.titleBtn  
+					});  
+					// #endif 
 				});
 			},
 			imageError(e) {
@@ -226,11 +227,11 @@
 			},
 			unEvent() {},
 			reduce(index) {
-				this.$set(this.cartLs[index], 'num', Number(this.cartLs[index]['num'])-1);
+				this.$set(this.cartLs[index], 'Qty', Number(this.cartLs[index]['Qty'])-1);
 			},
 			add(index) {
 				console.log('add: ', index);
-				this.$set(this.cartLs[index], 'num', Number(this.cartLs[index]['num'])+1);
+				this.$set(this.cartLs[index], 'Qty', Number(this.cartLs[index]['Qty'])+1);
 			},
 			hoverClass(index) {
 				console.log('hoverClass');
@@ -240,6 +241,7 @@
 				console.log('hoverClassEnd');
 				this.$set(this.cartLs[index], 'hoverClass', '');
 			},
+			// 全选
 			onAllSelect() {
 				if (this.cartLs.length < 1) {
 					// 列表为空
@@ -252,16 +254,14 @@
 				// #ifdef APP-PLUS
 				let webView = this.$mp.page.$getAppWebview();
 				if(this.allSelect) {
-					webView.setTitleNViewButtonStyle(0, {  
-						text: '完成' 
-					});
 					this.titleBtn = '完成';
 				} else {
-					webView.setTitleNViewButtonStyle(0, {  
-						text: '删除' 
-					});
 					this.titleBtn = '删除';
 				}
+				
+				webView.setTitleNViewButtonStyle(0, {  
+					text: this.titleBtn
+				});
 				// #endif 
 			},
 			toIndex() {
@@ -269,20 +269,14 @@
 					url: './index'
 				});
 			},
+			// 去结算
 			toPay() {
-				this.getCartLs.forEach((item, index) => {
-					item.num = this.cartLs[index].num;
-					item.DtlId = '';
-					item.RecordId = '';
-					item.CartItemId = item.Id;
-					item.ProductCode = item.ProductNo;
-					item.ProductName = item.ProductName;
-					item.FactPrice = item.Price;
-					item.ChangeType = 0;
-				});
 				util.goUrl({
-					url: '../order/createOrder?obj=' + JSON.stringify(this.getCartLs)
+					url: '../order/createOrder?obj=' + JSON.stringify(this.cartLs)
 				});
+			},
+			bindDel() {
+				
 			},
 			deleteLs(arr) {
 				// 批量删除选中

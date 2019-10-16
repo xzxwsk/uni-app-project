@@ -14,9 +14,9 @@
 					</view>
 					<view class="uni-media-list-body">
 						<view>
-							<view class="uni-media-list-text-top">{{value.Name}}</view>
+							<view class="uni-media-list-text-top">{{value.ProductName}}</view>
 							<view class="uni-media-list-text-top sub_txt">计量单位: {{value.UnitName}}</view>
-							<view class="uni-media-list-text-top sub_txt">数量: {{value.num}}件</view>
+							<view class="uni-media-list-text-top sub_txt">数量: {{value.Qty}}件</view>
 						</view>
 						<view class="uni-media-list-text-bottom uni-ellipsis price">￥{{value.Amount}}</view>
 					</view>
@@ -33,7 +33,7 @@
 			<view class="uni-list-cell">
 				<view class="uni-list-cell-navigate">
 					<text class="item-title"><text>订货日期</text></text>
-					<text class="item-content"><text>{{billObj.BillDate}}</text></text>
+					<text class="item-content"><text>{{billObj.BillDateStr}}</text></text>
 				</view>
 			</view>
 			<view class="uni-list-cell">
@@ -167,35 +167,34 @@
 			this.init();
 		},
 		methods: {
-			init() {
+			async init() {
 				console.log('购买商品列表：', this.orderLs);
-				if (this.orderLs.length < 1) {
-					this.orderLs = tpl.slice(0, 2);
-				}				
+				// if (this.orderLs.length < 1) {
+				// 	this.orderLs = tpl.slice(0, 2);
+				// }
+				// 生成订单
+				await util.ajax({
+					method: 'Businese.OrderDAL.CreateDefault',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					let data = res.data.result;
+					console.log('生成默认订单：', data);
+					this.billObj = data;
+				});
 				let amount = 0; // 总金额
 				this.orderLs.forEach(item => {
-					item.Amount = Number(((item.FactPrice || 0) * (item.num || 1)).toFixed(2));
+					item.Amount = Number(((item.Price || 0) * (Number(item.Qty) || 1)).toFixed(2));
 					amount += item.Amount; // 总金额
 					item.DtlId = '';
-					item.CartItemId = item.CartItemId || '';
-					item.ProductCode = item.ProductCode || item.Code;
-					item.ProductName = item.ProductName || item.Name;
-					item.UnitName = item.UnitName || item.Unit;
-					item.Qty = item.num;
-					item.Price = item.FactPrice;
+					item.RecordId = '';
+					item.CartItemId = item.Id || '';
+					item.ProductCode = item.ProductNo || '';
 				});
+				this.billObj.BillDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');;
 				this.billObj.Amount = amount;
 				this.billObj.Items = this.billObj.Items.concat(this.orderLs);
-				this.billObj.BillDate = util.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
-				this.billObj.CreateTime = this.billObj.LastModifyTime = this.billObj.BillDate;
-				this.billObj.DealerId = this.userInfo.DealerId;
-				this.billObj.DealerCode = this.userInfo.DealerNo;
-				this.billObj.DealerName = this.userInfo.DealerName;
-				this.billObj.Address = this.addr.detail;
-				this.billObj.Creator = this.userInfo.DealerId;
-				this.billObj.CreatorName = this.userInfo.DealerName;
-				this.billObj.LastModifier = this.userInfo.DealerId;
-				this.billObj.LastModifierName = this.userInfo.DealerName;
 				setTimeout(() => {
 					this.showImg = true;
 				}, 400);
@@ -212,6 +211,7 @@
 					});
 					return;
 				}
+				this.billObj.Address = this.addr.detail;
 				// 生成订单
 				util.ajax({
 					method: 'Businese.OrderDAL.Create',

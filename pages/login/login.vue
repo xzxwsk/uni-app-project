@@ -76,12 +76,14 @@
 			// #endif
 			// this.initPosition();
 			// this.initProvider();
+			// #ifdef H5
 			document.onkeydown = e => {  
 			    //webview不需要兼容ie  
 				if (e.keyCode === 13) {
 					this.bindLogin();
 				}
 			}
+			// #endif
 		},
 		methods: {
 			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),

@@ -22,20 +22,19 @@
 							<view class="box">
 								<t-table border="0">
 									<t-tr font-size="14" color="#000" align="left">
-										<t-th align="left"><text class="first_col">年月</text></t-th>
+										<!-- <t-th align="left"><text class="first_col">年月</text></t-th> -->
 										<t-th align="left">编号</t-th>
 										<t-th align="left">姓名</t-th>
 										<t-th align="left">资金类别</t-th>
-										<t-th align="left">奖金</t-th>
-										<t-th align="left">操作</t-th>
+										<t-th align="left">余额</t-th>
 									</t-tr>
 									<t-tr font-size="12" color="#5d6f61" align="right" v-for="(item,index) in tableList" :key="item.id">
-										<t-td align="left"><text class="first_col">{{item.Year + '-' + item.Month}}</text></t-td>
+										<!-- <t-td align="left"><text class="first_col">{{item.Year + '-' + item.Month}}</text></t-td> -->
 										<t-td align="left">{{item.SubDealerNo}}</t-td>
 										<t-td align="left">{{item.SubDealerName}}</t-td>
-										<t-td align="left">{{ ['直推', '团队'][item.BonusType] }}</t-td>
-										<t-td align="left">{{item.Bonus}}</t-td>
-										<t-td align="left"><view @click="paymentGoodsDetail(index)" class="a">收支明细</view></t-td>
+										<t-td align="left">{{ ['货款', '保证金', '代交保证金'][item.AccountType] }}</t-td>
+										<t-td align="left">{{item.Amount}}</t-td>
+										<!-- <t-td align="left"><view @click="paymentGoodsDetail(index)" class="a">收支明细</view></t-td> -->
 									</t-tr>
 								</t-table>
 							</view>
@@ -46,6 +45,17 @@
 					</block>
 				</swiper-item>
 				<swiper-item>
+					<view class="search_box">
+						<input-box ref="input1" type="text" clearable focus v-model="userNo" placeholder="请输入会员编号"></input-box>
+						<customDatePicker class="date_picker"
+							fields="month"
+							:start="startDate"
+							:end="endDate"
+							:value="dateValue"
+							@change="bindDateChange"
+						></customDatePicker>
+						<button class="btn" type="warn" @click="query">查询</button>
+					</view>
 					<view class="con" v-if="tableList2.length < 1">
 						<view class="no-data">
 							<view class="no-img">
@@ -57,34 +67,23 @@
 					<block v-else>
 						<scroll-view class="list" scroll-y @scrolltolower="loadMore2">
 							<view class="box">
-								<view class="search_box">
-									<input-box ref="input1" type="text" clearable focus v-model="userNo" placeholder="请输入会员编号"></input-box>
-									<customDatePicker class="date_picker"
-										fields="month"
-										:start="startDate"
-										:end="endDate"
-										:value="dateValue"
-										@change="bindDateChange"
-									></customDatePicker>
-									<button class="btn" type="warn" @click="query">查询</button>
-								</view>
 								<t-table border="0">
 									<t-tr font-size="14" color="#000" align="left">
 										<t-th align="left"><text class="first_col">年月</text></t-th>
 										<t-th align="left">编号</t-th>
 										<t-th align="left">姓名</t-th>
-										<t-th align="left">资金类别</t-th>
+										<t-th align="left">奖金类别</t-th>
 										<t-th align="left">奖金</t-th>
-										<t-th align="left">操作</t-th>
+										<!-- <t-th align="left">操作</t-th> -->
 									</t-tr>
 									<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList2" :key="item.id">
-										<t-td align="left"><text class="first_col">2019-05</text></t-td>
+										<t-td align="left"><text class="first_col">{{item.Year + '-' + item.Month}}</text></t-td>
 										
-										<t-td align="left">35434534</t-td>
-										<t-td align="left">张顺利</t-td>
-										<t-td align="left">{{ item.hobby }}</t-td>
-										<t-td align="left">345</t-td>
-										<t-td align="left"><view @click="paymentGoodsDetail(item.id)" class="a">收支明细</view></t-td>
+										<t-td align="left">{{item.SubDealerNo}}</t-td>
+										<t-td align="left">{{item.SubDealerName}}</t-td>
+										<t-td align="left">{{ ['直推', '团队'][item.BonusType] }}</t-td>
+										<t-td align="left">{{item.Bonus}}</t-td>
+										<!-- <t-td align="left"><view @click="paymentGoodsDetail(item.id)" class="a">收支明细</view></t-td> -->
 									</t-tr>
 								</t-table>
 							</view>
@@ -146,14 +145,14 @@
 				isClickChange: false,
 				tabIndex: 0,
 				tabBars: [{
-					name: '下属帐户余额',
+					name: '下属货款/保证金',
 					id: 'accountBalance'
 				}, {
 					name: '下属奖金查询',
 					id: 'bonusQuery'
 				}],
 				imgSrc: '/static/images/no_data_d.png',
-				tableList: tableList,
+				tableList: [],
 				tableList2: [],
 				isScroll: false,
 				// 奖金查询
@@ -165,7 +164,7 @@
 			}
 		},
 		mounted() {
-			// this.init();
+			this.init();
 		},
 		methods: {
 			init() {
@@ -186,8 +185,8 @@
 				util.ajax({
 					method: 'Businese.QueryAppDAL.QuerySubBonus',
 					params: {
-						Year: dateValue[0],
-						Month: dateValue[1]
+						Year: Number(dateValue[0]),
+						Month: Number(dateValue[1])
 					},
 					tags: {
 						usertoken: this.openid
@@ -222,7 +221,6 @@
 				}
 			},
 			async changeTab(e) {
-				console.log(e.target);
 				if(!e.target.hasOwnProperty('current')) {
 					return;
 				}
@@ -276,7 +274,11 @@
 			},
 			query() {
 				console.log('查询条件：', this.userNo, this.dateValue)
+				this.getList2();
 			}
 		}
 	}
 </script>
+<style scoped>
+	.t-th, .t-td{padding: 3px;}
+</style>

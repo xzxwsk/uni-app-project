@@ -5,7 +5,24 @@
 			// #ifdef APP-PLUS
 			// 锁定屏幕方向
 			plus.screen.lockOrientation('portrait-primary'); //锁定
+			plus.nativeUI.closeWaiting();
+			//app启动时打开启动广告页
+			var w = plus.webview.open(
+				'hybrid/html/advertise/advertise.html',
+				'本地地址',
+				{ top: 0, bottom: 0, zindex: 999 },
+				'fade-in',
+				500,
+				function() {
+					plus.nativeUI.closeWaiting();
+				}
+			);
+			//设置定时器，关闭启动广告页
+			setTimeout(function() {
+				plus.webview.close(w);
+			}, 7000);
 			// 检测升级
+			/* 
 			uni.request({
 				url: 'https://uniapp.dcloud.io/update', //检查更新的服务器地址
 				data: {
@@ -30,6 +47,7 @@
 					}
 				}
 			});
+			 */
 			plus.push.addEventListener('click', function(msg){  
 				//处理透传消息的业务逻辑代码
 				uni.showModal({

@@ -132,6 +132,10 @@ uni-toast{z-index: 100000;}
 .product_detail{position: relative; width: 100%; height: 100%; display: flex; flex-direction: column;
 	.price{font-size: 40upx;
 		.sub{font-size: 20upx;}
+		&.flex{display: flex; align-items: center;}
+	}
+	.old_price{margin: 0 20upx 0 0; font-size: 20upx; text-decoration: line-through; color: #999;
+		.sub{font-size: 12px;}
 	}
 	.top{height: 42px; line-height: 42px; font-size: 34upx; text-align: center; background: #fff;
 		.txt{margin: 0 20upx;}
@@ -361,11 +365,14 @@ uni-toast{z-index: 100000;}
 	}
 	.primary{margin: 0 0 20upx;}
 }
-.bonus{
+.bonus{height: 100%; background: #fff;
 	.search_box{padding: 30upx; background: #fff;}
+	.con{display: flex; flex-direction: column; justify-content: center; height: 88%; background: #fff;}
+	.list{height: 88%;}
 	.box{background: #fff;}
 }
-.stock{
+.stock{height: 100%;
+	.con{display: flex; flex-direction: column; justify-content: center; height: 100%; background: #fff;}
 	.box{background: #fff;
 		.t-th{padding: 26upx 5upx;
 			.first_col{padding: 0 0 0 10upx;}
@@ -373,7 +380,7 @@ uni-toast{z-index: 100000;}
 	}
 }
 .my_subordinate_info{height: 100%; background: #fff;
-	.con{display: flex; flex-direction: column; justify-content: center; height: 100%;}
+	.con{display: flex; flex-direction: column; justify-content: center; height: 88%;}
 }
 .addr_ls{display: flex; flex-direction: column; height: 100%;
 	.con{flex: 1; display: flex; flex-direction: column; justify-content: center; height: 100%;}

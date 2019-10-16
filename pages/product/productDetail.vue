@@ -4,7 +4,7 @@
 			<text :class="'txt' + (tabCur===0 ? ' cur' : '')" @click="goTop">商品</text><text :class="'txt' + (tabCur===1 ? ' cur' : '')" @click="goDetail">详情</text>
 		</view>
 		<view class="center">
-			<scroll-view scroll-y="true" :scroll-top="scrollTop" style="width: 100%; height: 100%;" @scroll="scroll" scroll-with-animation>
+			<scroll-view scroll-y :scroll-top="scrollTop" style="height: 1130upx;" @scroll="scroll" scroll-with-animation>
 				<view class="swiper_box">
 					<swiper class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
 						<swiper-item v-for="(item, index) in imgLs" :key="index">
@@ -15,14 +15,17 @@
 					</swiper>
 				</view>
 				<view class="intro">
-					<view class="price"><text class="sub">￥</text>{{detail.FactPrice}}<text class="sub">.00</text></view>
+					<view class="price flex">
+						<view class="old_price"><text class="sub">￥</text>{{detail.Price}}<text class="sub">.00</text></view>
+						<view><text class="sub">￥</text>{{detail.FactPrice}}<text class="sub">.00</text></view>
+					</view>
 					<view class="title">{{detail.Name}}</view>
 					<view>{{detail.Remark}}</view>
 				</view>
 				<view class="uni-list">
 					<view class="uni-list-cell">
 						<!-- <view class="uni-list-cell-navigate uni-navigate-right" @click="openPopup"> -->
-						<view class="uni-list-cell-navigate" @click="openPopup">
+						<view class="uni-list-cell-navigate">
 							<view class="menu_txt">
 								<text class="title">计量单位</text>
 								<text class="title sub_txt">{{detail.Spec}}/{{detail.Unit}} （{{detail.TypeName}}）</text>
@@ -128,7 +131,7 @@
 			this.getDetail(option.id)
 		},
 		mounted() {
-			
+			this.imgLs = [];
 		},
 		methods: {
 			getDetail(id) {
@@ -179,7 +182,12 @@
 			goCreateOrder() {
 				let str = '?';
 				let n = 0;
-				this.detail.num = this.num;
+				this.detail.ProductId = this.detail.RecordId;
+				this.detail.ProductCode = this.detail.Code;
+				this.detail.ProductName = this.detail.Name;
+				this.detail.UnitName = this.detail.Unit;
+				this.detail.Qty = this.num;
+				this.detail.Amount = Number(((this.detail.Price || 0) * (parseInt(this.detail.Qty) || 1)).toFixed(2));
 				for(let key in this.detail) {
 					if (n > 0) {
 						str += '&'

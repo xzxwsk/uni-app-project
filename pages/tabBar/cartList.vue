@@ -12,7 +12,7 @@
 				<view class="uni-list">
 					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @click="goDetail(index)" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
 						<view class="uni-media-list">
-							<radio class="radio" v-show="titleBtn==='完成'" color="#f23030" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
+							<radio class="radio" color="#f23030" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
 							<image class="uni-media-list-logo" mode="aspectFit" :src="item.img" @error="imageError"></image>
 							<view class="uni-media-list-body">
 								<view class="uni-media-list-text-top">{{ item.ProductName }}</view>
@@ -34,7 +34,7 @@
 				<block v-if="titleBtn === '删除'">
 					<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
 					<button class="btn" @click="toIndex">继续购物</button>
-					<button class="btn" type="warn" @click="toPay">去结算</button>
+					<button class="btn" type="warn" @click="toPay" v-if="selectedArr.length > 0">去结算</button>
 				</block>
 				<block v-else>
 					<view class="count b"></view>
@@ -59,6 +59,7 @@
 				mode: 'widthFix',
 				allSelect: false,
 				countPrice: 0,
+				selectedArr: [],
 				getCartLs: [], // 保存取出来的源列表
 				cartLs: [ // 显示列表
 					// {
@@ -147,8 +148,8 @@
 				// 	return;
 				// }
 				// 批量删除选中
-				let selectedArr = this.getSelectedArr();
-				if (selectedArr.length > 0) {
+				this.selectedArr = this.getSelectedArr();
+				if (this.selectedArr.length > 0) {
 					this.deleteLs(selectedArr);
 				}
 			}
@@ -202,8 +203,8 @@
 				console.log('checkboxChange: ', index);
 				this.$set(this.cartLs[index], 'selected', !this.cartLs[index]['selected']);
 				this.$nextTick(() => {
-					let selectedArr = this.getSelectedArr();
-					if(this.cartLs.length > 0 && selectedArr.length === this.cartLs.length) {
+					this.selectedArr = this.getSelectedArr();
+					if(this.cartLs.length > 0 && this.selectedArr.length === this.cartLs.length) {
 						this.allSelect = true;
 					} else {
 						this.allSelect = false;
@@ -271,8 +272,9 @@
 			},
 			// 去结算
 			toPay() {
+				let selectCartLs = this.cartLs.filter(item => item.selected);
 				util.goUrl({
-					url: '../order/createOrder?obj=' + JSON.stringify(this.cartLs)
+					url: '../order/createOrder?obj=' + JSON.stringify(selectCartLs)
 				});
 			},
 			bindDel() {

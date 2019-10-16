@@ -7,7 +7,7 @@
 			</view>
 		</view>
 		<view class="uni-list">
-			<view class="uni-list-cell" v-for="(value,key) in orderLs" :key="key">
+			<view class="uni-list-cell" v-for="(value,key) in billObj.Items" :key="key">
 				<view class="uni-media-list">
 					<view class="uni-media-list-logo">
 						<image v-if="showImg" mode="aspectFit" @error="imageError" :src="value.img"></image>
@@ -151,7 +151,6 @@
 				// 购物车进入结算
 				this.orderLs = JSON.parse(option.obj);
 				this.orderLs.forEach(item => {
-					item.num = Number(item.num);
 					item.img = (item.hasOwnProperty('SmallImageBase64') && item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg;
 				});
 			} else {
@@ -172,9 +171,13 @@
 				// if (this.orderLs.length < 1) {
 				// 	this.orderLs = tpl.slice(0, 2);
 				// }
-				// 生成订单
+				// 生成默认订单
+				let CartItemIds = this.orderLs.map(item => item.Id);
 				await util.ajax({
 					method: 'Businese.OrderDAL.CreateDefault',
+					params: {
+						CartItemIds: CartItemIds
+					},
 					tags: {
 						usertoken: this.openid
 					}
@@ -184,17 +187,8 @@
 					this.billObj = data;
 				});
 				let amount = 0; // 总金额
-				this.orderLs.forEach(item => {
-					item.Amount = Number(((item.Price || 0) * (Number(item.Qty) || 1)).toFixed(2));
-					amount += item.Amount; // 总金额
-					item.DtlId = '';
-					item.RecordId = '';
-					item.CartItemId = item.Id || '';
-					item.ProductCode = item.ProductNo || '';
-				});
 				this.billObj.BillDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');;
 				this.billObj.Amount = amount;
-				this.billObj.Items = this.billObj.Items.concat(this.orderLs);
 				setTimeout(() => {
 					this.showImg = true;
 				}, 400);

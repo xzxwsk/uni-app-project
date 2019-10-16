@@ -63,11 +63,13 @@
 				interval: 50000,
 				duration: 500,
 				mode: 'widthFix',
-				imgLs: ['/static/img/09b56be258853ac27ec6ecc946453b65.jpg',
-					'/static/img/56da50eddd39e1089c0724e40443c850.png',
-					'/static/img/18092294969201596540241d96bc0592.jpg',
-					'/static/img/c1b03c41d7eeec63eece551efdeb03af.jpg',
-					'/static/img/f3cd12cb76ff1be193dbc091b56fde2b.jpg'],
+				imgLs: [
+					// '/static/img/09b56be258853ac27ec6ecc946453b65.jpg',
+					// '/static/img/56da50eddd39e1089c0724e40443c850.png',
+					// '/static/img/18092294969201596540241d96bc0592.jpg',
+					// '/static/img/c1b03c41d7eeec63eece551efdeb03af.jpg',
+					// '/static/img/f3cd12cb76ff1be193dbc091b56fde2b.jpg'
+				],
 				productList: [],
 				recordsTotal: 0,
 				pageIndex: 1,
@@ -226,6 +228,21 @@
 				});
 			},
 			async loadData(key = '', pageIndex = 1, action = 'add') {
+				// 获取广告图
+				await util.ajax({
+					method: 'SYS.OptionsDAL.GetOptions',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					console.log('首页广告图片: ', res.data.result.PictureTopBase64);
+					this.imgLs = [];
+					let img = res.data.result.PictureTopBase64;
+					if (img) {
+						this.imgLs.push('data:image/jpeg;base64,' + img);
+					}
+				});
+				// 获取产品列表
 				await util.ajax({
 					method: 'Basic.ProductDAL.QueryList',
 					params: {
@@ -304,13 +321,15 @@
 						this.productList.push(item);
 					});
 				}
-				this.imgLs = this.productList.map(item => {
-					let img = item.image;
-					if (item.BigImageBase64) {
-						img = 'data:image/jpeg;base64,' + item.BigImageBase64;
-					}
-					return img;
-				});
+				if (this.imgLs.length < 1) {
+					this.imgLs = this.productList.map(item => {
+						let img = item.image;
+						if (item.BigImageBase64) {
+							img = 'data:image/jpeg;base64,' + item.BigImageBase64;
+						}
+						return img;
+					});
+				}
 			}
 		}
 	}

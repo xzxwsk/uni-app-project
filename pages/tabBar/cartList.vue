@@ -13,7 +13,7 @@
 					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @click="goDetail(index)" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
 						<view class="uni-media-list">
 							<radio class="radio" color="#f23030" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
-							<image class="uni-media-list-logo" mode="aspectFit" :src="item.img" @error="imageError"></image>
+							<!-- <image class="uni-media-list-logo" mode="aspectFit" :src="item.img" @error="imageError"></image> -->
 							<view class="uni-media-list-body">
 								<view class="uni-media-list-text-top">{{ item.ProductName }}</view>
 								<view class="uni-media-list-text-bottom">
@@ -177,7 +177,7 @@
 					let ls = res.data.result.map((item, index) => {
 						let tempObj = JSON.parse(JSON.stringify(item));
 						tempObj.selected = false;
-						tempObj.img = defaultImg;
+						// tempObj.img = defaultImg;
 						tempObj.hoverClass = '';
 						return tempObj;
 					});
@@ -229,10 +229,26 @@
 			unEvent() {},
 			reduce(index) {
 				this.$set(this.cartLs[index], 'Qty', Number(this.cartLs[index]['Qty'])-1);
+				this.updateCartItem(index);
 			},
 			add(index) {
-				console.log('add: ', index);
 				this.$set(this.cartLs[index], 'Qty', Number(this.cartLs[index]['Qty'])+1);
+				this.updateCartItem(index);
+			},
+			updateCartItem(index) {
+				util.showLoading();
+				util.ajax({
+					method: 'Businese.CartDAL.UpdateCartItem',
+					params: {
+						Item: this.cartLs[index]
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					let data = res.data.result;
+					console.log('更新购物车：', data);
+				});
 			},
 			hoverClass(index) {
 				console.log('hoverClass');

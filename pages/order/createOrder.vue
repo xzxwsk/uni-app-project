@@ -9,9 +9,9 @@
 		<view class="uni-list">
 			<view class="uni-list-cell" v-for="(value,key) in billObj.Items" :key="key">
 				<view class="uni-media-list">
-					<view class="uni-media-list-logo">
+					<!-- <view class="uni-media-list-logo">
 						<image v-if="showImg" mode="aspectFit" @error="imageError" :src="value.img"></image>
-					</view>
+					</view> -->
 					<view class="uni-media-list-body">
 						<view>
 							<view class="uni-media-list-text-top">{{value.ProductName}}</view>
@@ -150,45 +150,52 @@
 			if (option.hasOwnProperty('obj')) {
 				// 购物车进入结算
 				this.orderLs = JSON.parse(option.obj);
-				this.orderLs.forEach(item => {
-					item.img = (item.hasOwnProperty('SmallImageBase64') && item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg;
-				});
-			} else {
+				// this.orderLs.forEach(item => {
+				// 	item.img = (item.hasOwnProperty('SmallImageBase64') && item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg;
+				// });
+				this.init();
+			} else if (option.hasOwnProperty('id')) {
 				// 商品详情进入结算
-				let obj = {};
-				for(let key in option) {
-					obj[key] = option[key] !== 'null' ? option[key] : obj[key];
-				}
-				obj.num = Number(obj.num);
-				obj.img = (obj.hasOwnProperty('SmallImageBase64') && obj.SmallImageBase64 !== null && obj.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + obj.SmallImageBase64) : defaultImg;
-				this.orderLs.push(obj);
-			}			
-			this.init();
+				this.init(option.id);
+			}
 		},
 		methods: {
-			async init() {
-				console.log('购买商品列表：', this.orderLs);
-				// if (this.orderLs.length < 1) {
-				// 	this.orderLs = tpl.slice(0, 2);
-				// }
-				// 生成默认订单
-				let CartItemIds = this.orderLs.map(item => item.Id);
-				await util.ajax({
-					method: 'Businese.OrderDAL.CreateDefault',
-					params: {
-						CartItemIds: CartItemIds
-					},
-					tags: {
-						usertoken: this.openid
-					}
-				}).then(res => {
-					let data = res.data.result;
-					console.log('生成默认订单：', data);
-					this.billObj = data;
-				});
-				let amount = 0; // 总金额
+			async init(id) {
+				if(id) {
+					// 商品详情进入结算
+					let CartItemIds = this.orderLs.map(item => item.Id);
+					await util.ajax({
+						method: 'Businese.OrderDAL.CreateDefaultByProductId',
+						params: {
+							ProductIds: [id]
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}).then(res => {
+						let data = res.data.result;
+						console.log('生成默认订单：', data);
+						this.billObj = data;
+					});
+				} else {
+					console.log('购买商品列表：', this.orderLs);
+					// 生成默认订单
+					let CartItemIds = this.orderLs.map(item => item.Id);
+					await util.ajax({
+						method: 'Businese.OrderDAL.CreateDefault',
+						params: {
+							CartItemIds: CartItemIds
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}).then(res => {
+						let data = res.data.result;
+						console.log('生成默认订单：', data);
+						this.billObj = data;
+					});
+				}
 				this.billObj.BillDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');;
-				this.billObj.Amount = amount;
 				setTimeout(() => {
 					this.showImg = true;
 				}, 400);

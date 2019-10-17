@@ -180,23 +180,8 @@
 				
 			},
 			goCreateOrder() {
-				let str = '?';
-				let n = 0;
-				this.detail.ProductId = this.detail.RecordId;
-				this.detail.ProductCode = this.detail.Code;
-				this.detail.ProductName = this.detail.Name;
-				this.detail.UnitName = this.detail.Unit;
-				this.detail.Qty = this.num;
-				this.detail.Amount = Number(((this.detail.Price || 0) * (parseInt(this.detail.Qty) || 1)).toFixed(2));
-				for(let key in this.detail) {
-					if (n > 0) {
-						str += '&'
-					}
-					str += key + '=' + this.detail[key];
-					n++;
-				}
 				util.goUrl({
-					url: '../order/createOrder' + str
+					url: '../order/createOrder?id=' + this.detail.RecordId
 				});
 			},
 			goTop() {

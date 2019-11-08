@@ -115,6 +115,7 @@ uni-toast{z-index: 100000;}
 	.uni-media-list-body{height: auto;
 		.uni-media-list-text-top{text-align: left;}
 		.uni-media-list-text-bottom{display: flex; flex-direction: row; justify-content: space-between;
+			.price{display: flex; flex-direction: column; justify-content: flex-end;}
 			.num{width: 220upx; height: 60upx; display: flex; flex-direction: row; justify-content: space-between;
 				.btn{padding: 0; width: 60upx; line-height: 60upx; text-align: center;}
 				.ipt{flex: 1; margin:0 6upx; height: 56upx; border: 2upx #999 solid; border-radius: 3px; 

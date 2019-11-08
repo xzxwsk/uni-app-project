@@ -9,6 +9,10 @@
 			</scroll-view>
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
 				<swiper-item>
+					<view class="search_box">
+						<input-box type="text" clearable focus v-model="searchKey" placeholder="请输入经销商编号或姓名"></input-box>
+						<button class="btn" type="warn" @click="query">查询</button>
+					</view>
 					<view class="con" v-if="tableList.length < 1">
 						<view class="no-data">
 							<view class="no-img">
@@ -34,7 +38,6 @@
 										<t-td align="left">{{item.SubDealerName}}</t-td>
 										<t-td align="left">{{ ['货款', '保证金', '代交保证金'][item.AccountType] }}</t-td>
 										<t-td align="left">{{item.Amount}}</t-td>
-										<!-- <t-td align="left"><view @click="paymentGoodsDetail(index)" class="a">收支明细</view></t-td> -->
 									</t-tr>
 								</t-table>
 							</view>
@@ -46,7 +49,7 @@
 				</swiper-item>
 				<swiper-item>
 					<view class="search_box">
-						<input-box ref="input1" type="text" clearable focus v-model="userNo" placeholder="请输入会员编号"></input-box>
+						<input-box type="text" clearable focus v-model="searchKey2" placeholder="请输入经销商编号或姓名"></input-box>
 						<customDatePicker class="date_picker"
 							fields="month"
 							:start="startDate"
@@ -54,7 +57,7 @@
 							:value="dateValue"
 							@change="bindDateChange"
 						></customDatePicker>
-						<button class="btn" type="warn" @click="query">查询</button>
+						<button class="btn" type="warn" @click="query2">查询</button>
 					</view>
 					<view class="con" v-if="tableList2.length < 1">
 						<view class="no-data">
@@ -155,8 +158,10 @@
 				tableList: [],
 				tableList2: [],
 				isScroll: false,
+				// 货款查询
+				searchKey: '',
 				// 奖金查询
-				userNo: '',
+				searchKey2: '',
 				dateValue: '',
 				startDate: '2010-01',
 				endDate: '2199-12',
@@ -170,6 +175,9 @@
 			init() {
 				util.ajax({
 					method: 'Businese.QueryAppDAL.QuerySubAccount',
+					params: {
+						DealerLike: this.searchKey
+					},
 					tags: {
 						usertoken: this.openid
 					}
@@ -186,7 +194,8 @@
 					method: 'Businese.QueryAppDAL.QuerySubBonus',
 					params: {
 						Year: Number(dateValue[0]),
-						Month: Number(dateValue[1])
+						Month: Number(dateValue[1]),
+						DealerLike: this.searchKey2
 					},
 					tags: {
 						usertoken: this.openid
@@ -260,7 +269,6 @@
 				})
 			},
 			loadMore(e) {
-				console.log('loadMore: ', e);
 				this.isScroll = true;
 			},
 			bindDateChange(value) {
@@ -269,11 +277,12 @@
 				this.getList2();
 			},
 			loadMore2(e) {
-				console.log('loadMore2: ', e);
 				this.isScroll2 = true;
 			},
 			query() {
-				console.log('查询条件：', this.userNo, this.dateValue)
+				this.init();
+			},
+			query2() {
 				this.getList2();
 			}
 		}

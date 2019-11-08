@@ -199,6 +199,10 @@
 				}).then(res => {
 					// console.log('获取验证码： ', res);
 					this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
+					
+					// #ifdef APP-PLUS
+					plus.nativeUI.closeWaiting();
+					// #endif
 				});
 				// util.ajax({
 				// 	get: true,

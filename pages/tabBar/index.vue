@@ -80,7 +80,7 @@
 			if (this.hasLogin && this.changeNum === null) {
 				this.getChangeNum();
 			}
-			// this.getSystemInfo();
+			this.getSystemInfo();
 			// uni.setTabBarBadge({
 			// 	index: 2,
 			// 	text: '12'
@@ -197,6 +197,7 @@
 									+ 'SDKVersion: ' + res.SDKVersion + '<br/>'
 									+ 'system: ' + res.system + '<br/>'
 									+ 'statusBarHeight: ' + res.statusBarHeight;
+						console.log('me.sysInfo: ' + me.sysInfo);
 					}
 				})
 			},

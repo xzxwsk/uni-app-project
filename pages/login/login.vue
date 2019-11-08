@@ -7,34 +7,47 @@
 			<view class="return_btn" @tap="goMain"><text class="uni-icon uni-icon-home"></text></view> <button class="b login_title">登录</button>
 		</view>
 		<view class="content">
-			<view class="input-group">
-				<view class="input-row border">
-					<text class="title">账号：</text>
-					<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['帐号不能为空']" class="input-box" clearable focus :inputValue="account" v-model="account" placeholder="请输入经销商编号或身份证号"></input-box>
+			<block v-if="!initAddr">
+				<view class="input-group">
+					<view class="input-row border">
+						<text class="title">接口地址：</text>
+						<input-box ref="interfaceAddrIpt" type="text" :inputValue="interfaceAddr" v-model="interfaceAddr"></input-box>
+					</view>
 				</view>
-				<view class="input-row">
-					<text class="title">密码：</text>
-					<input-box ref="input2" type="password" :verification="['isNull','isChineseEnlishAndNumber']" :verificationTip="['密码不能为空','密码只能输入中文、数字和字母']" :inputValue="password" v-model="password" placeholder="请输入密码"></input-box>
+				<view class="btn-row">
+					<button type="warn" @tap="setInterfaceAddr">请先配置接口服务地址</button>
 				</view>
-				<view class="input-row">
-					<text class="title">验证码：</text>
-					<input-box class="voli_code_ipt" ref="input3" type="text" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
-					<view class="voli_code_img"><image style="width: 100%;" mode="widthFix" :src="voliCodeSrc" @click="resetVoliCode"></image></view>
+			</block>
+			<block v-else>
+				<view class="input-group">
+					<view class="input-row border">
+						<text class="title">账号：</text>
+						<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['帐号不能为空']" class="input-box" clearable focus :inputValue="account" v-model="account" placeholder="请输入经销商编号或身份证号"></input-box>
+					</view>
+					<view class="input-row">
+						<text class="title">密码：</text>
+						<input-box ref="input2" type="password" :verification="['isNull','isChineseEnlishAndNumber']" :verificationTip="['密码不能为空','密码只能输入中文、数字和字母']" :inputValue="password" v-model="password" placeholder="请输入密码"></input-box>
+					</view>
+					<view class="input-row">
+						<text class="title">验证码：</text>
+						<input-box class="voli_code_ipt" ref="input3" type="text" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
+						<view class="voli_code_img"><image style="width: 100%;" mode="widthFix" :src="voliCodeSrc" @click="resetVoliCode"></image></view>
+					</view>
 				</view>
-			</view>
-			<view class="btn-row">
-				<button type="warn" @tap="bindLogin">登录</button>
-			</view>
-			<!-- <view class="action-row">
-				<navigator url="./reg">注册账号</navigator>
-				<text class="split">|</text>
-				<navigator url="./pwd">忘记密码</navigator>
-			</view> -->
-			<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
-				<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
-					<image :src="provider.image" @tap="oauth(provider.value)"></image>
+				<view class="btn-row">
+					<button type="warn" @tap="bindLogin">登录</button>
 				</view>
-			</view>
+				<!-- <view class="action-row">
+					<navigator url="./reg">注册账号</navigator>
+					<text class="split">|</text>
+					<navigator url="./pwd">忘记密码</navigator>
+				</view> -->
+				<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
+					<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
+						<image :src="provider.image" @tap="oauth(provider.value)"></image>
+					</view>
+				</view>
+			</block>
 		</view>
 	</view>
 </template>
@@ -52,6 +65,8 @@
 		computed: mapState(['sessionId', 'openid']),
 		data() {
 			return {
+				initAddr: false,
+				interfaceAddr: '',
 				providerList: [],
 				hasProvider: false,
 				account: 'A0000002',
@@ -63,16 +78,16 @@
 		},
 		onLoad() {
 			console.log('onLoad');
-			this.getSessionId();
+			// this.getSessionId();
 			// #ifdef APP-PLUS
-			plus.nativeUI.showWaiting('加载中……');
+			// plus.nativeUI.showWaiting('加载中……');
 			// this.getSystemInfo();
 			// #endif
 		},
 		onReady() {
 			console.log('onReady');
 			// #ifdef APP-PLUS
-			plus.nativeUI.closeWaiting();
+			// plus.nativeUI.closeWaiting();
 			// #endif
 			// this.initPosition();
 			// this.initProvider();
@@ -84,6 +99,11 @@
 				}
 			}
 			// #endif
+		},
+		mounted() {
+			console.log('mounted');
+			this.interfaceAddr = util.getBaseUrl();
+			this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
 		},
 		methods: {
 			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),
@@ -193,6 +213,17 @@
 				// 	}
 				// 	this.voliCodeSrc = 'data:image/jpeg;base64,' + buffer.toString("base64");
 				// });
+			},
+			setInterfaceAddr() {
+				// #ifdef APP-PLUS
+				plus.nativeUI.showWaiting('加载中……');
+				// #endif
+				util.setBaseUrl(this.interfaceAddr);
+				this.initAddr = true;
+				this.$nextTick(() => {
+					this.$refs.input1.setValue(this.account);
+					this.getSessionId();
+				});
 			},
 			async bindLogin() {
 				let me = this;

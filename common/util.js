@@ -1,4 +1,5 @@
-const baseUrl = 'http://118.31.54.76/qcdm/';
+const baseUrlGlobal = 'http://118.31.54.76/qcdm/';
+var baseUrl = '';
 
 function formatTime(time) {
 	if (typeof time !== 'number' || time < 0) {
@@ -317,10 +318,17 @@ let clearStorageSync = function() {
 	uni.clearStorageSync();
 };
 
+let setBaseUrl = function(url) {
+	baseUrl = url;
+};
+let getBaseUrl = function() {
+	return baseUrl || baseUrlGlobal;
+};
+
 let getAjax = function(prompt) {
 	return new Promise((resolve, reject) => {
 		uni.request({
-			url: baseUrl + prompt.method,
+			url: getBaseUrl() + prompt.method,
 			data: prompt.params,
 			header: {},
 			method: 'GET',
@@ -351,7 +359,7 @@ let getAjax = function(prompt) {
 let postAjax = function(prompt) {
 	return new Promise((resolve, reject) => {
 		uni.request({
-			url: baseUrl + 'json.rpc/webapi',
+			url: getBaseUrl() + 'json.rpc/webapi',
 			data: JSON.stringify(prompt),
 			header: {},
 			method: 'POST',
@@ -453,6 +461,8 @@ let ajax = async function(prompt) {
 }
 
 module.exports = {
+	getBaseUrl: getBaseUrl,
+	setBaseUrl: setBaseUrl,
 	formatTime: formatTime,
 	formatLocation: formatLocation,
 	dateUtils: dateUtils,

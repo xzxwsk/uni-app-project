@@ -1,6 +1,6 @@
 <template>
 	<view class="about">
-		<view style="height: 90%; align-items: center; justify-content: center;">关于我们</view>
+		<!-- <view style="height: 90%; align-items: center; justify-content: center;">关于我们</view> -->
 		<!-- <view class="content">
 			<view class="qrcode">
 				<image src="https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/app_download.png" @longtap="save"></image>
@@ -27,16 +27,30 @@
 			<!--<button type="primary" @click="share">分享</button>
 			<!-- #endif -->
 		<!--</view> -->
-		<!-- #ifdef APP-PLUS -->
-		<view class="version">
-			当前版本：{{version}}
+		<view class="uni-list">
+			<view class="uni-list-cell">
+				<view class="uni-list-cell-navigate uni-navigate-right">
+					<view class="menu_txt">
+						<view class="title">清除缓存</view>
+					</view>
+				</view>
+			</view>
+			<view class="uni-list-cell" @click="updateVersion">
+				<view class="uni-list-cell-navigate">
+					<view class="menu_txt">
+						<view class="title">
+							<text class="txt">当前版本：{{version}}</text>
+						</view>
+					</view>
+				</view>
+			</view>
 		</view>
-		<!-- #endif -->
 	</view>
 </template>
 
 <script>
-	import uLink from "@/components/uLink.vue"
+	import uLink from "@/components/uLink.vue";
+	import util from "@/common/util.js";
 
 	export default {
 		components: {
@@ -45,12 +59,16 @@
 		data() {
 			return {
 				providerList: [],
-				version: ''
+				version: '',
+				wgtWaiting: null
 			}
 		},
 		onLoad() {
+			let me = this;
 			// #ifdef APP-PLUS
-			this.version = plus.runtime.version;
+			plus.runtime.getProperty(plus.runtime.appid, function(currentVersionInfo) {
+				me.version = currentVersionInfo.version;
+			});
 			uni.getProvider({
 				service: 'share',
 				success: (result) => {
@@ -142,6 +160,107 @@
 						});
 					}
 				})
+			},
+			// android 更新
+			updateFun(version, str) {
+				let me = this;
+				let dtask = plus.downloader.createDownload(version, {timeout: 5}, function(d, status) {
+					if(status == 200) {
+						uni.showToast({
+							title: "下载成功，自动安装...",
+						});
+						console.log('d: ', d);
+						plus.runtime.install(d.filename, function() {
+							uni.showToast({
+								title: "安装完成"
+							});
+						});
+					} else {
+						plus.nativeUI.alert("下载资源失败！");
+					}
+					me.wgtWaiting && me.wgtWaiting.close();
+				});
+				dtask.addEventListener("statechanged", function(download, status) {
+					switch(download.state) {
+						case 2:
+							wgtWaiting.setTitle("已连接到服务器");
+							break;
+						case 3:
+							var percent = download.downloadedSize / download.totalSize * 100;
+							wgtWaiting.setTitle("已下载 " + parseInt(percent) + "%");
+							break;
+						case 4:
+							str && me.wgtWaiting.setTitle(str);
+							break;
+					}
+				});
+				dtask.start();
+			},
+			// android 自动下载并安装更新包
+			autoInstallfun(currentVersionInfo, data, isBigVersion) {
+				var str = '';
+				uni.showToast({
+					title: '发现新版本即将更新..'
+				});
+				this.wgtWaiting = plus.nativeUI.showWaiting("下载更新资源...");
+				if(data.code == 1) {
+					// 如果是大版本，则先全量更新(安装该大版本的基础版本)
+					var curVersionArr = currentVersionInfo.version.split('.');
+					var serverVersionArr = data.version.split('.');
+					// 大版本
+					if (isBigVersion) {
+						// 先更新到基础版本
+						this.updateFun(data.bigUpdate);
+					} else {
+						// 增量更新
+						str = '版本对比,等待安装...';
+						this.updateFun(data.smallUpdate, str);
+					}
+				} else if(data.code == 2) {
+					// 全量更新
+					str = '下载完成';
+					this.updateFun(data.bigUpdate, str);
+				}
+			},
+			updateVersion() {
+				let me = this;
+				// 检测升级
+				uni.request({
+					url: 'http://39.108.139.53/appSource/updateData.json?random=' + Math.random(), //检查更新的服务器地址
+					// data: {
+					// 	appid: plus.runtime.appid,
+					// 	version: plus.runtime.version,
+					// 	imei: plus.device.imei
+					// },
+					success: res => {
+						res = res.data;
+						console.log('update: ', res);
+						plus.runtime.getProperty(plus.runtime.appid, function(currentVersionInfo) {
+							var curVersionArr = currentVersionInfo.version.split('.');
+							var serverVersionArr = res.version.split('.');
+							console.log('systemObj.name: ' + plus.os.name);
+							console.log('当前版本: ' + curVersionArr);
+							console.log('服务器版本: ' + serverVersionArr);
+							var isUpdate = false, isBigUpdate = false;
+							if (Number(serverVersionArr[0]) > Number(curVersionArr[0]) || Number(serverVersionArr[1]) > Number(curVersionArr[1])){
+								isUpdate = true;
+								isBigUpdate = true;
+							} else if (Number(serverVersionArr[2]) > Number(curVersionArr[2])) {
+								isUpdate = true;
+							}
+							console.log('isUpdate: ' + isUpdate);
+							if(plus.os.name == "Android") {
+								if(isUpdate) {
+									// 自动下载并安装更新包
+									me.autoInstallfun(currentVersionInfo, res, isBigUpdate);
+								}
+							} else if(plus.os.name == "iOS") {
+								// var url='itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8';// HelloH5应用在appstore的地址  
+								// plus.runtime.openURL(url);
+							}
+						});
+					}
+				});
 			}
 			// #endif
 		}

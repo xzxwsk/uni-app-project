@@ -3,7 +3,7 @@
 		<view class="input-group">
 			<view class="input-row">
 				<text class="title">身份证号：</text>
-				<input-box ref="iDCardNo" placeholder="身份证号"></input-box>
+				<input-box ref="iDCardNo" v-model="billObj.IDCardNo" placeholder="身份证号"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">身份证正面照：</text>
@@ -53,7 +53,7 @@
 			</view>
 			<view class="input-row">
 				<text class="title">确认密码：</text>
-				<input-box type="password" displayable v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
+				<input-box type="password" ref="confirmPassword" displayable v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
 			</view>
 		</view>
 	</view>
@@ -68,10 +68,12 @@
 	import frontImg from '@/static/img/H_027_1.jpg';
 	import backImg from '@/static/img/H_9X10_1.jpg';
 	import cityData from '@/common/city.data-3.js';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
 			inputBox, customDatePicker
 		},
+		computed: mapState(['billJoinDAL']),
 		data() {
 			return {
 				dateValue: '',
@@ -139,8 +141,12 @@
 			}
 		},
 		onLoad(option) {
-			for(let key in option) {
-				this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
+			// for(let key in option) {
+			// 	this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
+			// }
+			this.billObj = this.billJoinDAL;
+			if (this.billObj.Password !== '') {
+				this.confirmPassword = this.billObj.Password;
 			}
 		},
 		onNavigationBarButtonTap(e) {
@@ -149,10 +155,11 @@
 		mounted() {
 			this.$nextTick(() => {
 				// 初始化显示值
-				this.setInfo();				
+				this.setInfo();
 			});
 		},
 		methods: {
+			...mapMutations(['setBillJoinDAL']),
 			previewImage(e) {
 				var current = e.target.dataset.src
 				uni.previewImage({
@@ -166,12 +173,49 @@
 					sizeType: ['compressed'],
 					count: 1,
 					success: res => {
-						console.log(res);
-						this.frontImg = res.tempFilePaths[0];
-						this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
-						  // 转化后的base64图片地址
-						  this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes);
-						});
+						console.log(res, res.tempFiles[0].size, res.tempFiles[0].size > 512000);
+						if(res.tempFiles[0].size > 512000){
+							util.showToast({
+								title: '图片太大了，请选择500K内的图片',
+							});
+							// #ifdef APP-PLUS
+								
+							// #endif
+							// #ifdef H5
+							// plus.zip.compressImage({
+							// 	src: res.tempFilePaths[0],
+							// 	dst: res.tempFilePaths[0],
+							// 	overwrite: true,
+							// 	quality: 60
+							// }, res => {
+							// 	console.log(res);
+							// }, err => {
+							// 	console.log(err);
+							// });
+							// uni.compressImage({
+							// 	src: res.tempFilePaths[0],
+							// 	quality: 60,
+							// 	success: tempFilePath => {
+							// 		console.log(tempFilePath);
+							// 		this.urlToBase64(tempFilePath).then(baseRes => {
+							// 		  // 转化后的base64图片地址
+							// 		  this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes);
+							// 		  this.frontImg = baseRes;
+							// 		});
+							// 	},
+							// 	fail: err => {
+							// 		console.log('err: ', err);
+							// 	}
+							// });
+							// #endif
+						} else {
+							// this.frontImg = res.tempFilePaths[0];
+							this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
+							  // 转化后的base64图片地址
+							  this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes);
+							  this.frontImg = baseRes;
+							});
+						}
 					}
 				});
 			},			
@@ -189,23 +233,30 @@
 					count: 1,
 					success: res => {
 						console.log(res);
-						this.backImg = res.tempFilePaths[0];
-						this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
-						  // 转化后的base64图片地址
-						  this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
-						});
+						if(res.tempFiles[0].size > 512000){
+							util.showToast({
+								title: '图片太大了，请选择500K内的图片',
+							});
+						} else {
+							this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
+							  // 转化后的base64图片地址
+							  this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
+							  this.backImg = baseRes;
+							});
+						}
 					}
 				});
 			},
 			setInfo() {
 				this.$refs.iDCardNo.setValue(this.billObj.IDCardNo);
-				this.frontImg = (this.billObj.IDCardNo_FrontImage !== '') ? ('data:image/jpeg;base64,' + this.billObj.IDCardNo_FrontImage) : '';
-				this.backImg = (this.billObj.IDCardNo_BackImage !== '') ? ('data:image/jpeg;base64,' + this.billObj.IDCardNo_BackImage) : '';
+				this.frontImg = (this.billObj.IDCardNo_FrontImage !== '') ? ((this.billObj.IDCardNo_FrontImage.indexOf('data:image/jpeg;base64,') !== -1 ? '' : 'data:image/jpeg;base64,') + this.billObj.IDCardNo_FrontImage) : '';
+				this.backImg = (this.billObj.IDCardNo_BackImage !== '') ? ((this.billObj.IDCardNo_BackImage.indexOf('data:image/jpeg;base64,') !== -1 ? '' : 'data:image/jpeg;base64,') + this.billObj.IDCardNo_BackImage) : '';
 				this.$refs.mobile.setValue(this.billObj.Mobile);
 				this.$refs.email.setValue(this.billObj.Email);
 				this.$refs.linkMan.setValue(this.billObj.LinkMan);
 				this.$refs.linkManTel.setValue(this.billObj.LinkManTel);
 				this.$refs.password.setValue(this.billObj.Password);
+				this.$refs.confirmPassword.setValue(this.confirmPassword);
 			},
 			goNext() {
 				if (this.billObj.Password === '') {
@@ -220,23 +271,28 @@
 					});
 					return;
 				}
-				let str = '?';
-				let n = 0;
-				for(let key in this.billObj) {
-					if (n > 0) {
-						str += '&'
-					}
-					str += key + '=' + this.billObj[key];
-					n++;
-				}
-				// console.log(str);
-				// return;
+				this.setBillJoinDAL(this.billObj);
 				util.goUrl({
-					url: './createEntryOrder3' + str
+					url: './createEntryOrder3'
 				});
 			},
 			urlToBase64(url) {
 			  return new Promise ((resolve,reject) => {
+				// #ifdef APP-PLUS
+				plus.io.resolveLocalFileSystemURL(url, function(entry){
+				  	// 可通过entry对象操作test.html文件
+				  	entry.file( function(file){
+				  		let fileReader = new plus.io.FileReader();
+				  		fileReader.onloadend = function(evt) {
+				  			const data = fileReader.result;
+							console.log('APP-PLUS');
+				  			resolve(data);
+				  		}
+				  		fileReader.readAsDataURL( file );
+				  	});
+				});
+				// #endif
+				// #ifdef H5
 				fetch(url).then(data=>{
 					const blob = data.blob();
 					return blob;
@@ -244,10 +300,12 @@
 					let reader = new window.FileReader();
 					reader.onloadend = function() {
 						const data = reader.result;
+						console.log('H5');
 						resolve(data);
-					};					
+					};
 					reader.readAsDataURL(blob);
 				});
+				// #endif
 			  });
 			},
 			imageError(e) {

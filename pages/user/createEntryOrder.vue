@@ -154,6 +154,7 @@
 			this.goNext();
 		},
 		methods: {
+			...mapMutations(['setBillJoinDAL']),
 			setDetail(id) {
 				util.showLoading();
 				util.ajax({
@@ -171,6 +172,7 @@
 				});
 			},
 			getDefault() {
+				let me = this;
 				util.showLoading();
 				// 单据ID初始化
 				util.ajax({
@@ -180,11 +182,13 @@
 					}
 				}).then(res => {
 					util.hideLoading();
-					this.billObj = res.data.result;
-					this.billObj.BillDate = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
-					this.$refs.billCode.setValue(res.data.result.BillCode);
-					this.$refs.billDate.setValue(res.data.result.BillDate);
-					this.$refs.dealerNo.setValue(res.data.result.DealerNo);
+					res.data.result = util.jsonReplace(res.data.result,'null','""');
+					me.billObj = res.data.result;
+					me.billObj.BillDate = util.formatDate(me.billObj.BillDate, 'yyyy-MM-dd');
+					me.billObj.BirthDay = me.billObj.BirthDay || '请选择日期';
+					me.$refs.billCode.setValue(res.data.result.BillCode);
+					me.$refs.billDate.setValue(res.data.result.BillDate);
+					me.$refs.dealerNo.setValue(res.data.result.DealerNo);
 				});
 			},
 			setInfo() {
@@ -198,17 +202,19 @@
 				this.$refs.postCode.setValue(this.billObj.PostCode);
 			},
 			goNext() {
-				let str = '?';
-				let n = 0;
-				for(let key in this.billObj) {
-					if (n > 0) {
-						str += '&'
-					}
-					str += key + '=' + this.billObj[key];
-					n++;
-				}
+				this.setBillJoinDAL(this.billObj);
+				// let str = '?';
+				// let n = 0;
+				// for(let key in this.billObj) {
+				// 	if (n > 0) {
+				// 		str += '&'
+				// 	}
+				// 	str += key + '=' + this.billObj[key];
+				// 	n++;
+				// }
 				util.goUrl({
-					url: './createEntryOrder2' + str
+					// url: './createEntryOrder2' + str
+					url: './createEntryOrder2'
 				});
 			},
 			bindChangeBirthDay(value) {

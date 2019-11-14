@@ -41,10 +41,12 @@
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
+	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
 			inputBox
 		},
+		computed: mapState(['billJoinDAL']),
 		data() {
 			return {
 				protocal: false,
@@ -102,9 +104,7 @@
 			}
 		},
 		onLoad(option) {
-			for(let key in option) {
-				this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
-			}
+			this.billObj = this.billJoinDAL;
 		},
 		mounted() {
 			this.$nextTick(() => {
@@ -113,6 +113,7 @@
 			});
 		},
 		methods: {
+			...mapMutations(['setBillJoinDAL']),
 			setInfo() {
 				this.$refs.bank.setValue(this.billObj.Bank);
 				this.$refs.accountNo.setValue(this.billObj.AccountNo);
@@ -156,6 +157,9 @@
 					method = 'Businese.BillJoinDAL.Update';
 					title = '修改成功';
 				}
+				if(this.billObj.BirthDay === '请选择日期') {
+					this.billObj.BirthDay = '';
+				}
 				util.ajax({
 					method: method,
 					params: {
@@ -165,6 +169,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					this.setBillJoinDAL(null);
 					util.showToast({
 						title: title,
 						success() {

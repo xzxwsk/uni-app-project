@@ -352,7 +352,9 @@ uni-toast{z-index: 100000;}
 	.btn_box{display: flex; flex-direction: row; justify-content: space-around; flex-wrap:wrap; margin: 20upx 0; padding:20uxp; background: #fff; line-height: 60upx;
 		.btn{margin: 10upx 20upx; text-align: center; color: #666;}
 	}
-	.uni-list{flex: 1;}
+	.uni-list{flex: 1;
+		.uni-list-cell-navigate{padding: .7rem 16px;}
+	}
 	.logout_btn{margin: 10px 30upx;
 		.btn{padding: 0 20upx; font-size: 30upx; height: 80upx; line-height: 80upx;}
 	}

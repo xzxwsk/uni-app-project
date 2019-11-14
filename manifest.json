@@ -2,8 +2,8 @@
     "name" : "纤畅App",
     "appid" : "__UNI__F960A47",
     "description" : "应用描述",
-    "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "versionName" : "1.0.1",
+    "versionCode" : 101,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -16,11 +16,7 @@
             "delay" : 0
         },
         "modules" : {
-            "OAuth" : {},
-            "Payment" : {},
-            "Push" : {},
-            "Share" : {},
-            "VideoPlayer" : {}
+            "Push" : {}
         },
         /* 应用发布信息 */
         "distribute" : {

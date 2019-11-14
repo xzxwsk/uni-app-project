@@ -468,6 +468,7 @@ module.exports = {
 	dateUtils: dateUtils,
 	formatDate: formatDate,
 	getType: getType,
+	jsonReplace: jsonReplace,
 	deepCopy: deepCopy,
 	extend: extend,
 	goUrl: goUrl,

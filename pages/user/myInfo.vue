@@ -51,7 +51,7 @@
 						icon: 'paperplane'
 					},
 					{
-						name: '清除缓存',
+						name: '关于纤畅',
 						url: 'about/about',
 						icon: 'paperplane'
 					}

@@ -10,7 +10,8 @@ const store = new Vuex.Store({
 		sessionId: null,
 		openid: null,
 		userInfo: {},
-		changeNum: null
+		changeNum: null,
+		billJoinDAL: null // 缓存经销商加盟单信息
 	},
 	mutations: {
 		login(state, provider) {
@@ -32,6 +33,9 @@ const store = new Vuex.Store({
 		},
 		setChangeNum(state, changeNum) {
 			state.changeNum = changeNum
+		},
+		setBillJoinDAL(state, billJoinDALData) {
+			state.billJoinDAL = billJoinDALData
 		}
 	},
 	actions: {

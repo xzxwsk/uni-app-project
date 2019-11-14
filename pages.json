@@ -228,14 +228,6 @@
 				}
 			}
 		}, {
-			"path": "pages/user/protocal",
-			"style": {
-				"navigationBarTitleText": "许可协议",
-				"app-plus": {
-					"bounce": "none"
-				}
-			}
-		}, {
 			"path": "pages/user/quitOrder",
 			"style": {
 				"navigationBarTitleText": "经销商注销单",
@@ -349,6 +341,22 @@
 				"navigationBarTitleText": "我的资料",
 				"app-plus": {
 					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/user/protocal",
+			"style": {
+				"navigationBarTitleText": "许可协议",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/about/about",
+			"style": {
+				"navigationBarTitleText": "关于纤畅",
+				"app-plus": {
+					"bounce": "none"
 				}
 			}
 		}, {

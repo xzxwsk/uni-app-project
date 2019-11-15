@@ -1,6 +1,13 @@
 const baseUrlGlobal = 'http://118.31.54.76/qcdm/';
-var baseUrl = '';
+const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
+let baseUrl = '';
 
+let setBaseUrl = function(url) {
+	baseUrl = url;
+};
+let getBaseUrl = function() {
+	return baseUrl || baseUrlGlobal;
+};
 function formatTime(time) {
 	if (typeof time !== 'number' || time < 0) {
 		return time
@@ -318,13 +325,6 @@ let clearStorageSync = function() {
 	uni.clearStorageSync();
 };
 
-let setBaseUrl = function(url) {
-	baseUrl = url;
-};
-let getBaseUrl = function() {
-	return baseUrl || baseUrlGlobal;
-};
-
 let getAjax = function(prompt) {
 	return new Promise((resolve, reject) => {
 		uni.request({
@@ -461,6 +461,7 @@ let ajax = async function(prompt) {
 }
 
 module.exports = {
+	timeout: timeout,
 	getBaseUrl: getBaseUrl,
 	setBaseUrl: setBaseUrl,
 	formatTime: formatTime,

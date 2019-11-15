@@ -28,7 +28,7 @@
 			<!-- #endif -->
 		<!--</view> -->
 		<view class="uni-list">
-			<view class="uni-list-cell">
+			<view class="uni-list-cell" @click="clearCache">
 				<view class="uni-list-cell-navigate uni-navigate-right">
 					<view class="menu_txt">
 						<view class="title">清除缓存</view>
@@ -111,14 +111,12 @@
 					itemList: ['保存图片到相册'],
 					success: () => {
 						plus.gallery.save('https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/app_download.png', function() {
-							uni.showToast({
-								title: '保存成功',
-								icon: 'none'
+							util.showToast({
+								title: '保存成功'
 							});
 						}, function() {
-							uni.showToast({
-								title: '保存失败，请重试！',
-								icon: 'none'
+							util.showToast({
+								title: '保存失败，请重试！'
 							});
 						});
 					}
@@ -164,16 +162,23 @@
 			// android 更新
 			updateFun(version, str) {
 				let me = this;
-				let dtask = plus.downloader.createDownload(version, {timeout: 5}, function(d, status) {
+				let dtask = plus.downloader.createDownload(version, {
+					timeout: 5,
+					retry: 2,
+					retryInterval: 1
+				}, function(d, status) {
 					if(status == 200) {
-						uni.showToast({
+						util.showToast({
 							title: "下载成功，自动安装...",
 						});
 						console.log('d: ', d);
-						plus.runtime.install(d.filename, function() {
+						plus.runtime.install(d.filename, {}, function(widgetInfo) {
+							console.log('安装完成：', widgetInfo);
 							uni.showToast({
 								title: "安装完成"
 							});
+						}, function(err) {
+							console.log('安装失败：', err);
 						});
 					} else {
 						plus.nativeUI.alert("下载资源失败！");
@@ -183,11 +188,11 @@
 				dtask.addEventListener("statechanged", function(download, status) {
 					switch(download.state) {
 						case 2:
-							wgtWaiting.setTitle("已连接到服务器");
+							me.wgtWaiting.setTitle("已连接到服务器");
 							break;
 						case 3:
-							var percent = download.downloadedSize / download.totalSize * 100;
-							wgtWaiting.setTitle("已下载 " + parseInt(percent) + "%");
+							let percent = download.downloadedSize / download.totalSize * 100;
+							me.wgtWaiting.setTitle("已下载 " + parseInt(percent) + "%");
 							break;
 						case 4:
 							str && me.wgtWaiting.setTitle(str);
@@ -197,16 +202,16 @@
 				dtask.start();
 			},
 			// android 自动下载并安装更新包
-			autoInstallfun(currentVersionInfo, data, isBigVersion) {
-				var str = '';
-				uni.showToast({
-					title: '发现新版本即将更新..'
-				});
-				this.wgtWaiting = plus.nativeUI.showWaiting("下载更新资源...");
+			async autoInstallfun(currentVersionInfo, data, isBigVersion) {
+				let str = '';
+				this.wgtWaiting = plus.nativeUI.showWaiting('发现新版本即将更新...');
+				await util.timeout(1500);
+				this.wgtWaiting.setTitle("下载更新资源...");
+				await util.timeout(500);
 				if(data.code == 1) {
 					// 如果是大版本，则先全量更新(安装该大版本的基础版本)
-					var curVersionArr = currentVersionInfo.version.split('.');
-					var serverVersionArr = data.version.split('.');
+					let curVersionArr = currentVersionInfo.version.split('.');
+					let serverVersionArr = data.version.split('.');
 					// 大版本
 					if (isBigVersion) {
 						// 先更新到基础版本
@@ -236,12 +241,12 @@
 						res = res.data;
 						console.log('update: ', res);
 						plus.runtime.getProperty(plus.runtime.appid, function(currentVersionInfo) {
-							var curVersionArr = currentVersionInfo.version.split('.');
-							var serverVersionArr = res.version.split('.');
+							let curVersionArr = currentVersionInfo.version.split('.');
+							let serverVersionArr = res.version.split('.');
 							console.log('systemObj.name: ' + plus.os.name);
 							console.log('当前版本: ' + curVersionArr);
 							console.log('服务器版本: ' + serverVersionArr);
-							var isUpdate = false, isBigUpdate = false;
+							let isUpdate = false, isBigUpdate = false;
 							if (Number(serverVersionArr[0]) > Number(curVersionArr[0]) || Number(serverVersionArr[1]) > Number(curVersionArr[1])){
 								isUpdate = true;
 								isBigUpdate = true;
@@ -249,20 +254,27 @@
 								isUpdate = true;
 							}
 							console.log('isUpdate: ' + isUpdate);
-							if(plus.os.name == "Android") {
-								if(isUpdate) {
+							if(isUpdate) {
+								if(plus.os.name == "Android") {
 									// 自动下载并安装更新包
 									me.autoInstallfun(currentVersionInfo, res, isBigUpdate);
+								} else if(plus.os.name == "iOS") {
+									// let url='itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8';// HelloH5应用在appstore的地址  
+									// plus.runtime.openURL(url);
 								}
-							} else if(plus.os.name == "iOS") {
-								// var url='itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8';// HelloH5应用在appstore的地址  
-								// plus.runtime.openURL(url);
+							} else {
+								util.showToast({
+									title: '当前已经是最新版本'
+								});
 							}
 						});
 					}
 				});
-			}
+			},
 			// #endif
+			async clearCache() {
+				
+			}
 		}
 	}
 </script>

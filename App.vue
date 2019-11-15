@@ -2,12 +2,13 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch');
+			const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 			// #ifdef APP-PLUS
 			// 锁定屏幕方向
 			plus.screen.lockOrientation('portrait-primary'); //锁定
 			plus.nativeUI.closeWaiting();
 			//app启动时打开启动广告页
-			var w = plus.webview.open(
+			let w = plus.webview.open(
 				'hybrid/html/advertise/advertise.html',
 				'本地地址',
 				{ top: 0, bottom: 0, zindex: 999 },
@@ -20,18 +21,26 @@
 			
 			// android 更新
 			let wgtWaiting;
-			let updateFun = function(version, str) {
-				let dtask = plus.downloader.createDownload(version, {timeout: 5}, function(d, status) {
-					console.log('status: ', status);
+			let updateFun = function(versionUrl, str) {
+				console.log('versionUrl: ', versionUrl);
+				let dtask = plus.downloader.createDownload(versionUrl, {
+					timeout: 5,
+					retry: 2,
+					retryInterval: 1
+				}, function(d, status) {
 					if(status == 200) {
 						uni.showToast({
 							title: "下载成功，自动安装...",
+							icon: 'none'
 						});
 						console.log('d: ', d);
-						plus.runtime.install(d.filename, function() {
+						plus.runtime.install(d.filename, {}, function(widgetInfo) {
+							console.log('安装完成：', widgetInfo);
 							uni.showToast({
 								title: "安装完成"
 							});
+						}, function(err) {
+							console.log('安装失败：', err);
 						});
 					} else {
 						plus.nativeUI.alert("下载资源失败！");
@@ -44,7 +53,7 @@
 							wgtWaiting.setTitle("已连接到服务器");
 							break;
 						case 3:
-							var percent = download.downloadedSize / download.totalSize * 100;
+							let percent = download.downloadedSize / download.totalSize * 100;
 							wgtWaiting.setTitle("已下载 " + parseInt(percent) + "%");
 							break;
 						case 4:
@@ -55,16 +64,16 @@
 				dtask.start();
 			};
 			// android 自动下载并安装更新包
-			var autoInstallfun = function(currentVersionInfo, data, isBigVersion) {
-				var str = '';
-				uni.showToast({
-					title: '发现新版本即将更新..'
-				});
-				wgtWaiting = plus.nativeUI.showWaiting("下载更新资源...");
+			let autoInstallfun = async function(currentVersionInfo, data, isBigVersion) {
+				let str = '';
+				wgtWaiting = plus.nativeUI.showWaiting('发现新版本即将更新...');
+				await timeout(1500);
+				wgtWaiting.setTitle("下载更新资源...");
+				await timeout(500);
 				if(data.code == 1) {
 					// 如果是大版本，则先全量更新(安装该大版本的基础版本)
-					var curVersionArr = currentVersionInfo.version.split('.');
-					var serverVersionArr = data.version.split('.');
+					let curVersionArr = currentVersionInfo.version.split('.');
+					let serverVersionArr = data.version.split('.');
 					// 大版本
 					if (isBigVersion) {
 						// 先更新到基础版本
@@ -93,12 +102,12 @@
 						res = res.data;
 						console.log('update: ', res);
 						plus.runtime.getProperty(plus.runtime.appid, function(currentVersionInfo) {
-							var curVersionArr = currentVersionInfo.version.split('.');
-							var serverVersionArr = res.version.split('.');
+							let curVersionArr = currentVersionInfo.version.split('.');
+							let serverVersionArr = res.version.split('.');
 							console.log('systemObj.name: ' + plus.os.name);
 							console.log('当前版本: ' + curVersionArr);
 							console.log('服务器版本: ' + serverVersionArr);
-							var isUpdate = false, isBigUpdate = false;
+							let isUpdate = false, isBigUpdate = false;
 							if (Number(serverVersionArr[0]) > Number(curVersionArr[0]) || Number(serverVersionArr[1]) > Number(curVersionArr[1])){
 								isUpdate = true;
 								isBigUpdate = true;
@@ -112,7 +121,7 @@
 									autoInstallfun(currentVersionInfo, res, isBigUpdate);
 								}
 							} else if(plus.os.name == "iOS") {
-								// var url='itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8';// HelloH5应用在appstore的地址  
+								// let url='itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8';// HelloH5应用在appstore的地址  
 								// plus.runtime.openURL(url);
 							}
 						});
@@ -136,6 +145,7 @@
 			//设置定时器，关闭启动广告页
 			setTimeout(function() {
 				plus.webview.close(w);
+				console.log('app.vue close');
 				checkUpdate();
 			}, 7000);
 			plus.push.addEventListener('click', function(msg){  

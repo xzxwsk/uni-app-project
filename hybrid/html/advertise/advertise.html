@@ -27,10 +27,15 @@
 		</div>
 	</body>
 	<script>
+		const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 		document.addEventListener('UniAppJSBridgeReady', function() {
 			document.querySelector('.btn').addEventListener('click', function(e) {
+				console.log('click e: ' + JSON.stringify(e));
 				if (e.isTrusted) {
 					plus.webview.currentWebview().close();
+					uni.getEnv(function(res) {
+						console.log('当前环境：' + JSON.stringify(res));
+					});
 				}
 			});
 		});

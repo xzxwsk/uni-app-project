@@ -23,26 +23,69 @@
 				</view>
 			</view>
 		</view>
-		<view class="uni-list count">
-			<view class="uni-list-cell">
-				<view class="uni-list-cell-navigate">
-					<text class="item-title"><text>订单编号</text></text>
-					<text class="item-content"><text>{{billObj.BillCode}}</text></text>
+		<scroll-view class="box" scroll-y>
+			<view class="uni-list count">
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>订单编号</text></text>
+						<text class="item-content"><text>{{billObj.BillCode}}</text></text>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>订货日期</text></text>
+						<text class="item-content"><text>{{billObj.BillDateStr}}</text></text>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>商品金额</text></text>
+						<text class="item-content"><text class="price">￥{{billObj.Amount}}</text></text>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>是否付款</text></text>
+						<radio @tap="onIsPayChange" color="#f23030" :value="billObj.IsPay ? 'true' : 'false'" :checked="billObj.IsPay" />
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>付款方式</text></text>
+						<radio-group class="pay_type" name="payType" @change="changeMoneyType">
+							<label class="label"><radio value="3" :checked="billObj.PayType === 3" color="#f23030" />微信</label>
+							<label class="label"><radio value="2" :checked="billObj.PayType === 2" color="#f23030" />支付宝</label>
+							<label class="label"><radio value="1" :checked="billObj.PayType === 1" color="#f23030" />银行转账</label>
+							<label class="label"><radio value="0" :checked="billObj.PayType === 0" color="#f23030" />现金</label>
+						</radio-group>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>收款方帐户</text></text>
+						<input-box v-model="billObj.ReceiveAccountInfo" disabled></input-box>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>付款银行</text></text>
+						<input-box v-model="billObj.PayBank" placeholder="请输入付款银行"></input-box>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>付款户名</text></text>
+						<input-box v-model="billObj.PayAccountName" placeholder="请输入付款方户名"></input-box>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>付款方帐户</text></text>
+						<input-box v-model="billObj.PayAccountNo" :placeholder="placeholder"></input-box>
+					</view>
 				</view>
 			</view>
-			<view class="uni-list-cell">
-				<view class="uni-list-cell-navigate">
-					<text class="item-title"><text>订货日期</text></text>
-					<text class="item-content"><text>{{billObj.BillDateStr}}</text></text>
-				</view>
-			</view>
-			<view class="uni-list-cell">
-				<view class="uni-list-cell-navigate">
-					<text class="item-title"><text>商品金额</text></text>
-					<text class="item-content"><text class="price">￥{{billObj.Amount}}</text></text>
-				</view>
-			</view>
-		</view>
+		</scroll-view>
 		<view class="result">
 			<view class="count b"><!-- <text class="price">￥{{(count+freight).toFixed(2)}}</text> --></view>
 			<button class="btn" type="warn" @click="goMyOrder">生成订单</button>
@@ -95,12 +138,14 @@
 		hoverClass: ''
 	}];
 	
+	// http://ext.dcloud.net.cn/plugin?id=449
+	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
 	import defaultImg from '@/static/img/2X1_1.jpg';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
-			
+			inputBox
 		},
 		computed: mapState(['openid', 'userInfo']),
 		data() {
@@ -111,6 +156,7 @@
 					detail: '请选择收获地址'
 				},
 				showImg: false,
+				placeholder: '请输入收款人微信帐号',
 				orderLs: [],
 				// freight: 212,
 				billObj: {
@@ -135,6 +181,20 @@
 				  "DealerCodeSend": ""  /*发货经销商编号*/,
 				  "DealerNameSend": ""  /*发货经销商姓名*/,
 				  "FreightInfo": ""  /*发货货运信息*/,
+				  "ReturnTime": "2020-01-07T21:03:16.6363625+08:00"  /*退货发起时间*/,
+				  "ReturnReason": ""  /*退货原因*/,
+				  "ReturnFreightInfo": ""  /*退货货运信息*/,
+				  "ReturnConfirmTime": "2020-01-07T21:03:16.6363625+08:00"  /*退货确认时间*/,
+				  "SendTime": "2020-01-07T21:03:16.6363625+08:00"  /*发货时间*/,
+				  "ReceiveConfirmTime": "2020-01-07T21:03:16.6363625+08:00"  /*收货确认时间*/,
+				  "IsPay": false  /*是否付款*/,
+				  "IsPayReturn": false  /*是否退款*/,
+				  "PayType": 0  /*付款方式*/,
+				  "ReceiveAccountInfo": ""  /*收款方账户信息*/,
+				  "PayBank": ""  /*付款银行*/,
+				  "PayAccountNo": ""  /*付款账户*/,
+				  "PayAccountName": ""  /*付款户名*/,
+				  "PayAccountInfo": ""  /*付款方账户信息*/,
 				  "TimeStamp": ""  /*时间戳*/,
 				  "State": 0  /*单据状态*/,
 				  "ChangeType": 0,
@@ -235,6 +295,22 @@
 						}
 					});
 				});
+			},
+			onIsPayChange(e){
+				console.log(e);
+				this.$set(this.billObj, 'IsPay', !this.billObj.IsPay);
+				console.log(this.billObj.IsPay)
+			},
+			changeMoneyType(e) {
+				// 付款方式
+				this.billObj.PayType = Number(e.target.value);
+				if (e.target.value === '3') {
+					this.placeholder = '请输入付款人微信帐号';
+				} else if (e.target.value === '2') {
+					this.placeholder = '请输入付款人支付宝帐号';
+				} else if (e.target.value === '1') {
+					this.placeholder = '请输入付款人银行帐号';
+				}
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

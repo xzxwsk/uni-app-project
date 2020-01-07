@@ -28,6 +28,7 @@
 
 <script>
 	import uniBadge from '@/components/uni-badge/uni-badge.vue';
+	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
@@ -64,11 +65,26 @@
 			}
 		},
 		mounted() {
+			console.log('mounted')
+			this.getMenu();
 			if (this.hasLogin && this.changeNum === null) {
 				this.init();
 			}
 		},
 		methods: {
+			getMenu() {
+				util.ajax({
+					method: 'SYS.DealerDAL.CanPay',
+					tags: {
+						usertoken: '',
+						sessionid: this.sessionId
+					}
+				}).then(res => {
+					if(!res.data.result) {
+						this.pages.splice(1, 1);
+					}
+				});
+			},
 			init() {
 				this.pages[0].changeNum = this.changeNum.myOrderChangeNum;
 				this.pages[1].changeNum = this.changeNum.myPayOrderChangeNum;

@@ -201,6 +201,7 @@ uni-toast{z-index: 100000;}
 		.txt{display: block;}
 		.sub_txt{display: block; font-size: 20upx; color: #444;}
 	}
+	.box{height: 770upx;}
 	.uni-list{margin: 0 20upx 20upx; width: calc(100% - 40upx);
 		.uni-list-cell{
 			&:after{right: 16px;}
@@ -209,7 +210,11 @@ uni-toast{z-index: 100000;}
 				.uni-media-list-text-top{font-size: 22upx; font-weight: bold;}
 				.sub_txt{font-weight: normal;}
 			}
-			.uni-list-cell-navigate{font-size: 22upx;}
+			.uni-list-cell-navigate{font-size: 22upx;
+				.item-title{margin: 0 20upx 0 0; white-space: nowrap;}
+				.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
+				uni-input, .uni-input-input{font-size: 14px; text-align: right;}
+			}
 		}
 		&.count{
 			.uni-list-cell{

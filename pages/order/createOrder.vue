@@ -49,41 +49,53 @@
 						<radio @tap="onIsPayChange" color="#f23030" :value="billObj.IsPay ? 'true' : 'false'" :checked="billObj.IsPay" />
 					</view>
 				</view>
-				<view class="uni-list-cell">
-					<view class="uni-list-cell-navigate">
-						<text class="item-title"><text>付款方式</text></text>
-						<radio-group class="pay_type" name="payType" @change="changeMoneyType">
-							<label class="label"><radio value="3" :checked="billObj.PayType === 3" color="#f23030" />微信</label>
-							<label class="label"><radio value="2" :checked="billObj.PayType === 2" color="#f23030" />支付宝</label>
-							<label class="label"><radio value="1" :checked="billObj.PayType === 1" color="#f23030" />银行转账</label>
-							<label class="label"><radio value="0" :checked="billObj.PayType === 0" color="#f23030" />现金</label>
-						</radio-group>
+				<block v-if="billObj.IsPay">
+					<view class="uni-list-cell">
+						<view class="uni-list-cell-navigate">
+							<text class="item-title"><text>付款方式</text></text>
+							<radio-group class="pay_type" name="payType" @change="changeMoneyType">
+								<label class="label"><radio value="3" :checked="billObj.PayType === 3" color="#f23030" />微信</label>
+								<label class="label"><radio value="2" :checked="billObj.PayType === 2" color="#f23030" />支付宝</label>
+								<label class="label"><radio value="1" :checked="billObj.PayType === 1" color="#f23030" />银行转账</label>
+								<label class="label"><radio value="0" :checked="billObj.PayType === 0" color="#f23030" />现金</label>
+							</radio-group>
+						</view>
 					</view>
-				</view>
-				<view class="uni-list-cell">
-					<view class="uni-list-cell-navigate">
-						<text class="item-title"><text>收款方帐户</text></text>
-						<input-box v-model="billObj.ReceiveAccountInfo" disabled></input-box>
+					<view class="uni-list-cell">
+						<view class="uni-list-cell-navigate">
+							<text class="item-title"><text>收款方账户</text></text>
+							<input-box v-model="billObj.ReceiveAccountInfo" disabled></input-box>
+						</view>
 					</view>
-				</view>
-				<view class="uni-list-cell">
-					<view class="uni-list-cell-navigate">
-						<text class="item-title"><text>付款银行</text></text>
-						<input-box v-model="billObj.PayBank" placeholder="请输入付款银行"></input-box>
-					</view>
-				</view>
-				<view class="uni-list-cell">
-					<view class="uni-list-cell-navigate">
-						<text class="item-title"><text>付款户名</text></text>
-						<input-box v-model="billObj.PayAccountName" placeholder="请输入付款方户名"></input-box>
-					</view>
-				</view>
-				<view class="uni-list-cell">
-					<view class="uni-list-cell-navigate">
-						<text class="item-title"><text>付款方帐户</text></text>
-						<input-box v-model="billObj.PayAccountNo" :placeholder="placeholder"></input-box>
-					</view>
-				</view>
+					<block v-if="billObj.PayType === 1">
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>付款银行</text><text style="color: #f33;">*</text></text>
+								<input-box v-model="billObj.PayBank" placeholder="请输入付款银行"></input-box>
+							</view>
+						</view>
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>付款户名</text><text style="color: #f33;">*</text></text>
+								<input-box v-model="billObj.PayAccountName" placeholder="请输入付款方户名"></input-box>
+							</view>
+						</view>
+					</block>
+					<block v-if="billObj.PayType !== 0">
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>付款方账户</text><text style="color: #f33;">*</text></text>
+								<input-box v-model="billObj.PayAccountNo" :placeholder="placeholder"></input-box>
+							</view>
+						</view>
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>付款方账户信息</text></text>
+								<input-box v-model="billObj.PayAccountInfo" placeholder="请输入付款方账户信息"></input-box>
+							</view>
+						</view>
+					</block>
+				</block>
 			</view>
 		</scroll-view>
 		<view class="result">
@@ -156,7 +168,7 @@
 					detail: '请选择收获地址'
 				},
 				showImg: false,
-				placeholder: '请输入收款人微信帐号',
+				placeholder: '请输入收款人微信账号',
 				orderLs: [],
 				// freight: 212,
 				billObj: {
@@ -273,6 +285,22 @@
 					return;
 				}
 				this.billObj.Address = this.addr.detail;
+				if (this.billObj.PayType === 1) {
+					if (this.billObj.PayBank === '' || this.billObj.PayAccountName === '') {
+						util.showToast({
+							title: '请输入付款银行和付款户名'
+						});
+						return;
+					}
+				}
+				if (this.billObj.PayType !== 0) {
+					if (this.billObj.PayAccountNo === '') {
+						util.showToast({
+							title: '请输入付款账户'
+						});
+						return;
+					}
+				}
 				// 生成订单
 				util.ajax({
 					method: 'Businese.OrderDAL.Create',
@@ -297,19 +325,17 @@
 				});
 			},
 			onIsPayChange(e){
-				console.log(e);
 				this.$set(this.billObj, 'IsPay', !this.billObj.IsPay);
-				console.log(this.billObj.IsPay)
 			},
 			changeMoneyType(e) {
 				// 付款方式
 				this.billObj.PayType = Number(e.target.value);
 				if (e.target.value === '3') {
-					this.placeholder = '请输入付款人微信帐号';
+					this.placeholder = '请输入付款人微信账号';
 				} else if (e.target.value === '2') {
-					this.placeholder = '请输入付款人支付宝帐号';
+					this.placeholder = '请输入付款人支付宝账号';
 				} else if (e.target.value === '1') {
-					this.placeholder = '请输入付款人银行帐号';
+					this.placeholder = '请输入付款人银行账号';
 				}
 			},
 			imageError(e) {

@@ -72,9 +72,31 @@
 							<text class="title">快递公司：</text>
 							<input-box ref="transportCompany" type="text" class="input-box" clearable focus v-model="transportCompany" placeholder="请输入货运公司"></input-box>
 						</view>
+						<block v-if="curSelected.IsPay">
+							<view class="input-row border">
+								<text class="title">付款方式：</text>
+								<input-box type="text" class="input-box" disabled :inputValue="['现金', '银行转账', '支付宝', '微信'][curSelected.PayType]"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">付款方账户信息：</text>
+								<input-box type="text" class="input-box" disabled :inputValue="curSelected.PayAccountInfo"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">收款方账户信息：</text>
+								<input-box type="text" class="input-box" disabled :inputValue="curSelected.ReceiveAccountInfo"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">付款金额：</text>
+								<input-box type="text" class="input-box" disabled :inputValue="curSelected.Amount"></input-box>
+							</view>
+						</block>
 					</view>
 				</view>
-				<button type="warn" @click="closePopup('confirm')">确定</button>
+				<button type="warn" v-if="!curSelected.IsPay" @click="closePopup('confirm')">确定</button>
+				<view class="btn_group" v-else>
+					<button type="warn" @click="closePopup('receiveConfirm')">确认收款</button>
+					<button @click="closePopup()">取消</button>
+				</view>
 			</view>
 		</uni-popup>
 		<uni-popup ref="popup2" type="bottom">
@@ -90,9 +112,27 @@
 							<text class="title">退货原因：</text>
 							<textarea v-model="reson" style="padding: 10px 11px; height: 60px;" disabled />
 						</view>
+						<block v-if="curSelected.IsPay">
+							<view class="input-row border">
+								<text class="title">是否退款：</text>
+								<radio @tap="onIsPayReturnChange" color="#f23030" :value="curSelected.IsPayReturn ? 'true' : 'false'" :checked="curSelected.IsPayReturn" />
+							</view>
+							<view class="input-row border">
+								<text class="title">收款方账户信息：</text>
+								<input-box type="text" class="input-box" disabled :inputValue="curSelected.PayAccountInfo"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">付款方账户信息：</text>
+								<input-box type="text" class="input-box" disabled :inputValue="curSelected.ReceiveAccountInfo"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">退款金额：</text>
+								<input-box type="text" class="input-box" disabled :inputValue="curSelected.Amount"></input-box>
+							</view>
+						</block>
 					</view>
 				</view>
-				<button type="warn" @click="closePopup2('confirm')">确定</button>
+				<button type="warn" :disabled="curSelected.IsPay && !curSelected.IsPayReturn" @click="closePopup2('confirm')">确定</button>
 			</view>
 		</uni-popup>
 	</view>
@@ -114,37 +154,49 @@
 		title: '下单日期：2019-05-22',
 		status: '未发货',
 		count: 1,
-		price: 16.28
+		price: 16.28,
+		IsPay: true,
+		IsPayReturn: true
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
 		title: '下单日期：2019-05-22',
 		status: '已发货',
 		count: 1,
-		price: 16.28
+		price: 16.28,
+		IsPay: true,
+		IsPayReturn: true
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
 		title: '下单日期：2019-05-22',
 		status: '已收货确认',
 		count: 1,
-		price: 16.28
+		price: 16.28,
+		IsPay: true,
+		IsPayReturn: true
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
 		title: '下单日期：2019-05-22',
 		status: '退货中',
 		count: 1,
-		price: 16.28
+		price: 16.28,
+		IsPay: false,
+		IsPayReturn: true
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
 		title: '下单日期：2019-05-22',
 		status: '已确认退货',
 		count: 1,
-		price: 16.28
+		price: 16.28,
+		IsPay: true,
+		IsPayReturn: true
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
 		title: '下单日期：2019-05-22',
 		status: '已关闭',
 		count: 1,
-		price: 16.28
+		price: 16.28,
+		IsPay: true,
+		IsPayReturn: true
 	}];
 	export default {
 		components: {
@@ -178,8 +230,11 @@
 					name: '已退货确认',
 					id: 'tiyu2'
 				}, {
-					name: '已关闭',
+					name: '已退款确认',
 					id: 'tiyu3'
+				}, {
+					name: '已关闭',
+					id: 'tiyu4'
 				}],
 				startDate: '2010-01',
 				endDate: '2199-12',
@@ -191,13 +246,13 @@
 			}
 		},
 		onLoad() {
-			// this.dataArr = this.randomfn();
-			// this.displayDataArr = util.deepCopy(this.dataArr);
-			this.init();
+			this.dataArr = this.randomfn();
+			this.displayDataArr = util.deepCopy(this.dataArr);
+			// this.init();
 		},
 		methods: {
 			init() {
-				this.getAllData([0, 1, 2, 4, 5, -1]);
+				this.getAllData([0, 1, 2, 4, 5, 6, -1]);
 			},
 			async getAllData(arr) {
 				util.showLoading();
@@ -374,9 +429,36 @@
 				return ary;
 			},
 			bindSend(index) {
-				// 发货
+				// 发货弹窗
 				this.$refs.popup.open();
 				this.curSelected = this.dataArr[this.tabIndex].data[index];
+			},
+			sendOrder() {
+				// 发货
+				util.ajax({
+					method: 'Businese.OrderDAL.Send',
+					params: {
+						"OrderId" : this.curSelected.RecordId /*订单Id [String]*/,
+						"DiliveryInfo" : {
+						  "Adress": this.curSelected.Address  /*收货地址*/,
+						  "LinkMan": this.curSelected.DealerName  /*联系人*/,
+						  "Mobile": this.userInfo.Mobile  /*手机号*/,
+						  "TransportCompany": this.curSelected.FreightInfo  /*货运公司*/,
+						  "TrackingNo": this.trackingNo  /*运单号*/
+						} /*货运信息 [DiliveryInfo]*/,
+						"Reson" : this.reson /*退货原因 [String]*/
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.showToast({
+						title: '发货成功',
+						success() {
+							me.init();
+						}
+					});
+				});
 			},
 			closePopup(str){
 				let me = this;
@@ -384,29 +466,22 @@
 					// 发货点击确定
 					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
 						this.$refs.popup.close();
+						this.sendOrder();
+					}
+				} else if (str === 'receiveConfirm') {
+					// 发货弹窗确认收款
+					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
+						this.$refs.popup.close();
 						util.ajax({
-							method: 'Businese.OrderDAL.Send',
+							method: 'Businese.BillPayDAL.ReceiveConfirm',
 							params: {
-								"OrderId" : this.curSelected.RecordId /*订单Id [String]*/,
-								"DiliveryInfo" : {
-								  "Adress": this.curSelected.Address  /*收货地址*/,
-								  "LinkMan": this.curSelected.DealerName  /*联系人*/,
-								  "Mobile": this.userInfo.Mobile  /*手机号*/,
-								  "TransportCompany": this.curSelected.FreightInfo  /*货运公司*/,
-								  "TrackingNo": this.trackingNo  /*运单号*/
-								} /*货运信息 [DiliveryInfo]*/,
-								"Reson" : this.reson /*退货原因 [String]*/
+								RecordId: this.curSelected.RecordId
 							},
 							tags: {
 								usertoken: this.openid
 							}
 						}).then(res => {
-							util.showToast({
-								title: '发货成功',
-								success() {
-									me.init();
-								}
-							});
+							this.sendOrder();
 						});
 					}
 				} else {
@@ -442,6 +517,9 @@
 				} else {
 					this.$refs.popup2.close();
 				}
+			},
+			onIsPayReturnChange(e) {
+				this.$set(this.curSelected, 'IsPayReturn', !this.curSelected.IsPayReturn);
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

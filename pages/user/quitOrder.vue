@@ -182,7 +182,10 @@
 				// (5)	退款确认：注销单审核后，可以进行退款确认操作。确认退款后，经销商成为注销状态，不能再登录系统，不能再进行任何操作
 				util.showLoading();
 				util.ajax({
-					method: 'SYS.UserDAL.Logoff',
+					method: 'Businese.OrderDAL.PayReturnConfirm',
+					params: {
+						"OrderId" : RecordId /*订单Id [String]*/
+					},
 					tags: {
 						usertoken: this.openid
 					}

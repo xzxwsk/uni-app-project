@@ -179,7 +179,7 @@
 		status: '退货中',
 		count: 1,
 		price: 16.28,
-		IsPay: false,
+		IsPay: true,
 		IsPayReturn: true
 	}, {
 		src: '/static/img/H_023_180@200.JPG',
@@ -495,14 +495,18 @@
 			},
 			closePopup2(str){
 				let me = this;
+				let params = {
+					"OrderId" : this.curSelected.RecordId /*订单Id [String]*/
+				};
+				if (this.curSelected.IsPay) {
+					params.PayReturn = this.curSelected.IsPayReturn;
+				}
 				if (str === 'confirm') {
 					// 退货点击确定
 					this.$refs.popup2.close();
 					util.ajax({
 						method: 'Businese.OrderDAL.ReturnConfirm',
-						params: {
-							"OrderId" : this.curSelected.RecordId /*订单Id [String]*/,
-						},
+						params: params,
 						tags: {
 							usertoken: this.openid
 						}

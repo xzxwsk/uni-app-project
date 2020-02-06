@@ -81,6 +81,7 @@
 			return {
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
+				canRecordPayBill: false,
 				scrollLeft: 0,
 				tabIndex: 0,
 				dataArr: [],
@@ -103,16 +104,43 @@
 			}
 		},
 		onLoad() {
+			this.getCanRecordPayBill();
 			this.getAllData([0, -1, 2]);
 			// this.dataArr = this.randomfn();
 			// this.displayDataArr = util.deepCopy(this.dataArr);
 		},
 		onNavigationBarButtonTap(e) {
-			util.goUrl({
-				url: './createPayOrder'
-			})
+			if (this.canRecordPayBill) {
+				util.goUrl({
+					url: './createPayOrder'
+				})
+			}
 		},
 		methods: {
+			getCanRecordPayBill() {
+				util.showLoading();
+				util.ajax({
+					method: 'Businese.BillPayDAL.CanRecordPayBill',
+					params: {},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.hideLoading();
+					this.canRecordPayBill = res.data.result;
+					// #ifdef APP-PLUS
+					console.log(res.data.result);
+					let webView = this.$mp.page.$getAppWebview();
+					let text = '新增';
+					if (!res.data.result) {
+						text = ''
+						webView.setTitleNViewButtonStyle(0, {
+							text: text
+						});
+					}
+					// #endif
+				});
+			},
 			async getAllData(arr) {
 				// 获取全部状态的数据
 				var promiseArray = [];

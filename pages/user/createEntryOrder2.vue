@@ -211,9 +211,9 @@
 						} else {
 							// this.frontImg = res.tempFilePaths[0];
 							this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
-							  // 转化后的base64图片地址
-							  this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes);
-							  this.frontImg = baseRes;
+							    // 转化后的base64图片地址
+							    this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes.split(',')[1]);
+							    this.frontImg = baseRes;
 							});
 						}
 					}
@@ -240,7 +240,7 @@
 						} else {
 							this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
 							  // 转化后的base64图片地址
-							  this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
+							  this.$set(this.billObj, 'IDCardNo_BackImage', baseRes.split(',')[1]);
 							  this.backImg = baseRes;
 							});
 						}

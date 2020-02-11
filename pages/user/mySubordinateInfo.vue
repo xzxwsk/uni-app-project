@@ -50,13 +50,15 @@
 				<swiper-item>
 					<view class="search_box">
 						<input-box type="text" clearable focus v-model="searchKey2" placeholder="请输入经销商编号或姓名"></input-box>
-						<customDatePicker class="date_picker"
-							fields="month"
-							:start="startDate"
-							:end="endDate"
-							:value="dateValue"
-							@change="bindDateChange"
-						></customDatePicker>
+						<view class="date_picker_box">
+							<customDatePicker class="date_picker"
+								fields="month"
+								:start="startDate"
+								:end="endDate"
+								:value="dateValue"
+								@change="bindDateChange"
+							></customDatePicker>
+						</view>
 						<button class="btn" type="warn" @click="query2">查询</button>
 					</view>
 					<view class="con" v-if="tableList2.length < 1">
@@ -173,6 +175,7 @@
 		},
 		methods: {
 			init() {
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.QueryAppDAL.QuerySubAccount',
 					params: {
@@ -183,6 +186,7 @@
 					}
 				})
 				.then(res => {
+					util.hideLoading();
 					let data = res.data.result;
 					console.log('下属的货款: ', data);
 					this.tableList = data;
@@ -190,6 +194,7 @@
 			},
 			getList2() {
 				let dateValue = this.dateValue.split('-');
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.QueryAppDAL.QuerySubBonus',
 					params: {
@@ -202,6 +207,7 @@
 					}
 				})
 				.then(res => {
+					util.hideLoading();
 					let data = res.data.result;
 					console.log('下属的奖金: ', data);
 					this.tableList2 = data;

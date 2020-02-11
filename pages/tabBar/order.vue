@@ -65,7 +65,7 @@
 			}
 		},
 		mounted() {
-			console.log('mounted')
+			console.log('order mounted');
 			this.getMenu();
 			if (this.hasLogin && this.changeNum === null) {
 				this.init();
@@ -73,6 +73,7 @@
 		},
 		methods: {
 			getMenu() {
+				util.showLoading();
 				util.ajax({
 					method: 'SYS.DealerDAL.CanPay',
 					tags: {
@@ -80,6 +81,7 @@
 						sessionid: this.sessionId
 					}
 				}).then(res => {
+					util.hideLoading();
 					if(!res.data.result) {
 						this.pages.splice(1, 1);
 					}

@@ -136,6 +136,7 @@
 		methods: {
 			getDetail(id) {
 				this.imgLs = [];
+				util.showLoading();
 				util.ajax({
 					method: 'Basic.ProductDAL.GetById',
 					params: {
@@ -145,6 +146,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					console.log('产品详情: ', res.data.result);
 					this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
 					this.detail = res.data.result;
@@ -163,6 +165,7 @@
 			},
 			async goCartLs() {
 				// 加入购物车
+				util.showLoading();
 				await util.ajax({
 					method: 'Businese.CartDAL.AddToCart',
 					params: {
@@ -173,6 +176,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					util.showToast({
 						title: '加入购物车成功'
 					});

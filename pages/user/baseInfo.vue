@@ -23,12 +23,14 @@
 					</view>
 					<view class="input-row border">
 						<text class="title">生日：</text>
-						<customDatePicker class="search_box" v-if="title === '确定'"
-							fields="day"
-							:start="startDate"
-							:end="endDate"
-							:value="birthDayStr"
-						></customDatePicker>
+						<view class="date_picker_box search_box" v-if="title === '确定'">
+							<customDatePicker class="date_picker"
+								fields="day"
+								:start="startDate"
+								:end="endDate"
+								:value="birthDayStr"
+							></customDatePicker>
+						</view>
 						<text class="info" v-else>
 							<text @click="selectCalendar">{{birthDayStr}}</text>
 						</text>
@@ -208,12 +210,17 @@
 			save() {
 				this.userInfo.Password = this.password;
 				this.userInfo.ChangePassword = true;
+				util.showLoading();
 				util.ajax({
 					method: 'SYS.DealerDAL.Update',
 					params: {
 						Data: this.userInfo,
 					}
 				}).then(res => {
+					util.hideLoading();
+					util.showToast({
+						title: '保存成功'
+					});
 					console.log('更新经销商：', res);
 				});
 			},

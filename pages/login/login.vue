@@ -104,12 +104,61 @@
 			console.log('mounted');
 			this.interfaceAddr = util.getBaseUrl();
 			this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
+			let sessionId = util.getStorageSync('session_id');
+			if (sessionId) {
+				this.autoLogin(sessionId);
+			}
 		},
 		methods: {
 			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),
+			autoLogin(sessionId) {
+				let me = this;
+				this.setOpenid(sessionId);
+				util.showLoading({
+					title: '自动登录中'
+				});
+				console.log(this.interfaceAddr + 'json.rpc/webapi')
+				uni.request({
+					url: this.interfaceAddr + 'json.rpc/webapi',
+					data: {
+						jsonrpc: '2.0',
+						method: 'SYS.UserDAL.GetDealerByToken',
+						params: {},
+						id: 1,
+						tags: {
+							usertoken: sessionId
+						}
+					},
+					header: {},
+					method: 'POST',
+					dataType: 'json',
+					responseType: 'text',
+					success(res) {
+						util.hideLoading();
+						if (res.statusCode === 200 && !res.data.hasOwnProperty('error')) {
+							if (res.data.hasOwnProperty('result')) {
+								res.data.result = util.jsonReplace(res.data.result, 'null', '""');
+								me.setUserInfo(res.data.result);
+								me.toMain(res.data.result.DealerName);
+							}
+						}
+					},
+					fail(err) {
+						util.hideLoading();
+						console.log(err);
+						if (err.hasOwnProperty('errMsg') && err.errMsg.indexOf('request:fail abort') !== -1) {
+							util.dialog({
+								title: '错误信息',
+								content: '网络错误，请查看网络是否开启',
+								showCancel: false
+							});
+						}
+					}
+				});
+			},
 			goMain() {
 				util.goTab({
-					url: '/pages/tabBar/user'
+					url: '/pages/tabBar/index'
 				});
 			},
 			initPosition() {
@@ -197,11 +246,12 @@
 						sessionid: this.sessionId
 					}
 				}).then(res => {
+					util.hideLoading();
 					// console.log('获取验证码： ', res);
 					this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
 					
 					// #ifdef APP-PLUS
-					plus.nativeUI.closeWaiting();
+					// plus.nativeUI.closeWaiting();
 					// #endif
 				});
 				// util.ajax({
@@ -220,8 +270,9 @@
 			},
 			setInterfaceAddr() {
 				// #ifdef APP-PLUS
-				plus.nativeUI.showWaiting('加载中……');
+				// plus.nativeUI.showWaiting('加载中……');
 				// #endif
+				util.showLoading();
 				util.setBaseUrl(this.interfaceAddr);
 				this.initAddr = true;
 				this.$nextTick(() => {
@@ -266,12 +317,13 @@
 					// console.log('openid: ', this.openid);
 					await util.ajax({
 						method: 'SYS.UserDAL.GetDealerByToken',
-						params: {},
 						tags: {
 							usertoken: me.openid
 						}
 					}).then(res => {
-						// console.log('经销商信息：', res);
+						util.hideLoading();
+						console.log('经销商信息：', res.data);
+						res.data.result = util.jsonReplace(res.data.result, 'null', '""');
 						me.setUserInfo(res.data.result);
 						me.toMain(res.data.result.DealerName);
 					});

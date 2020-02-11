@@ -106,6 +106,7 @@
 				this.getAllData([0, 1, 2, 3, 4]);
 			},
 			async getAllData(arr) {
+				util.showLoading();
 				// 获取全部状态的数据
 				var promiseArray = [];
 				arr.forEach(item => {
@@ -128,6 +129,7 @@
 				});
 				await Promise.all(promiseArray)
 				.then(values => {
+					util.hideLoading();
 					this.dataArr = [{
 						isLoading: false,
 						searchKey: '',
@@ -163,6 +165,8 @@
 				this.dataArr.splice(1);
 			},
 			bindDel(RecordId) {
+				util.showLoading();
+				let me = this;
 				util.ajax({
 					method: 'Businese.BillLeaveDAL.Cancel',
 					params: {
@@ -172,10 +176,13 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					util.showToast({
-						title: '删除注销单成功'
+						title: '删除注销单成功',
+						success() {
+							me.init();
+						}
 					});
-					this.init();
 				});
 			},
 			bindConfirm(RecordId) {
@@ -190,6 +197,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					this.logout();
 					util.goTab({
 						url: '../tabBar/user'

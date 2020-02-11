@@ -44,6 +44,15 @@
 					</view>
 				</view>
 			</view>
+			<view class="uni-list-cell" @click="updateVersion">
+				<view class="uni-list-cell-navigate">
+					<view class="menu_txt">
+						<view class="title">
+							<text class="txt">版本更新</text>
+						</view>
+					</view>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -175,7 +184,10 @@
 						plus.runtime.install(d.filename, {}, function(widgetInfo) {
 							console.log('安装完成：', widgetInfo);
 							uni.showToast({
-								title: "安装完成"
+								title: "安装完成",
+								success() {
+									plus.runtime.restart();
+								}
 							});
 						}, function(err) {
 							console.log('安装失败：', err);
@@ -205,9 +217,9 @@
 			async autoInstallfun(currentVersionInfo, data, isBigVersion) {
 				let str = '';
 				this.wgtWaiting = plus.nativeUI.showWaiting('发现新版本即将更新...');
-				await util.timeout(1500);
+				await new Promise(resolve => setTimeout(resolve, 1500));
 				this.wgtWaiting.setTitle("下载更新资源...");
-				await util.timeout(500);
+				await new Promise(resolve => setTimeout(resolve, 500));
 				if(data.code == 1) {
 					// 如果是大版本，则先全量更新(安装该大版本的基础版本)
 					let curVersionArr = currentVersionInfo.version.split('.');
@@ -225,6 +237,31 @@
 					// 全量更新
 					str = '下载完成';
 					this.updateFun(data.bigUpdate, str);
+				}
+			},
+			// ios 自动下载并安装更新包
+			async autoInstallfunIos(currentVersionInfo, data, isBigVersion) {
+				let str = '';
+				this.wgtWaiting = plus.nativeUI.showWaiting('发现新版本即将更新...');
+				await util.timeout(1500);
+				this.wgtWaiting.setTitle("下载更新资源...");
+				await util.timeout(500);
+				if(data.code == 1) {
+					// 如果是大版本，则先全量更新(安装该大版本的基础版本)
+					let curVersionArr = currentVersionInfo.version.split('.');
+					let serverVersionArr = data.version.split('.');
+					// 大版本
+					if (isBigVersion) {
+						// 先更新到基础版本
+						
+					} else {
+						// 增量更新
+						str = '版本对比,等待安装...';
+						this.updateFun(data.smallUpdate, str);
+					}
+				} else if(data.code == 2) {
+					// 全量更新
+					
 				}
 			},
 			updateVersion() {
@@ -261,6 +298,7 @@
 								} else if(plus.os.name == "iOS") {
 									// let url='itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8';// HelloH5应用在appstore的地址  
 									// plus.runtime.openURL(url);
+									me.autoInstallfunIos(currentVersionInfo, res, isBigUpdate);
 								}
 							} else {
 								util.showToast({

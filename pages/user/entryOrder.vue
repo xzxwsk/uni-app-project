@@ -11,13 +11,24 @@
 				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<customDatePicker class="date_picker"
-								fields="month"
-								:start="startDate"
-								:end="endDate"
-								:value="itemLs.dateValue"
-								@change="bindDateChange"
-							></customDatePicker>
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'startDate' + indexLs"
+									fields="day"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.startDateValue"
+									@change="bindStartDateChange"
+								></customDatePicker>
+							</view>
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'endDate' + indexLs"
+									fields="day"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.endDateValue"
+									@change="bindEndDateChange"
+								></customDatePicker>
+							</view>
 							<button class="btn" type="warn" @click="query">查询</button>
 						</view>
 						<block v-if="itemLs.data.length<1">
@@ -25,7 +36,7 @@
 								<view class="no-img cart">
 									<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
 								</view>
-								<view class="txt"><text>亲，还没有相关付款单哦~</text></view>
+								<view class="txt"><text>亲，还没有相关加盟单哦~</text></view>
 							</view>
 						</block>
 						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
@@ -34,17 +45,18 @@
 									<view class="ls_item_top">
 										<view class="title">
 											<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
-											<view><text class="gray">姓名:</text>{{item.DealerName}}</view>
-											<view><text class="gray">保证金:</text><text class="price">￥{{item.price}}</text></view>
+											<view><text class="gray">单据编号:</text>{{item.BillCode}}</view>
+											<view><text class="gray">联系人:</text>{{item.LinkMan}}</view>
+											<!-- <view><text class="gray">保证金:</text><text class="price">￥{{item.price}}</text></view> -->
 											<view><text class="gray">经销商编号:</text>{{item.DealerNo}}</view>
 											<view><text class="gray">经销商姓名:</text>{{item.DealerName}}</view>
 										</view>
 										<view class="status">
-											<text>{{item.status}}</text>
+											<text>{{item.stateStr}}</text>
 										</view>
 									</view>
 									<view class="ls_item_bottom">
-										<button class="btn" @click.stop="del(index)" v-if="item.State === 1">删除</button><button class="btn" @click.stop="edit(index)" v-if="item.State === 1">修改</button><button class="btn" @click.stop="goDetail(index)">详情</button>
+										<button class="btn" @click.stop="del(item.RecordId)" v-if="item.State === 0">删除</button><button class="btn" @click.stop="edit(item.RecordId)" v-if="item.State === 0">修改</button><button class="btn" @click.stop="goDetail(item.RecordId)">详情</button>
 									</view>
 								</view>
 							</view>
@@ -110,8 +122,9 @@
 					name: '已审核',
 					id: 'tuijian'
 				}],
-				startDate: '2010-01',
-				endDate: '2199-12'
+				startDate: '2010-01-01',
+				endDate: '2199-12-31',
+				stateArr: [null, 0, 2]
 			}
 		},
 		onLoad() {
@@ -124,116 +137,124 @@
 		},
 		methods: {
 			init() {
-				this.getAllData([0, 1, 2]);
-			},
-			async getAllData(arr) {
-				// 获取全部状态的数据
-				var promiseArray = [];
-				arr.forEach(item => {
-					promiseArray.push(util.ajax({
-						method: 'Businese.BillJoinDAL.QueryMyList',
-						params: {
-							Filter: {
-								StartDate: '',
-								EndDate: '',
-								BillNoLike: '',
-								State: item,
-								PageIndex: 1,
-								PageSize: 20
-							}
-						},
-						tags: {
-							usertoken: this.openid
-						}
-					}));
-				});
-				await Promise.all(promiseArray)
-				.then(values => {
-					this.dataArr = [{
+				let day = util.formatDate(new Date(), 'yyyy-MM-dd');
+				let dayArr = day.split('-');
+				this.stateArr.forEach(item => {
+					this.dataArr.push({
 						isLoading: false,
 						searchKey: '',
-						dateValue: '',
+						startDateValue: dayArr[0] + '-' + dayArr[1] + '-' + '01',
+						endDateValue: day,
 						data: [],
 						isScroll: false,
 						loadingText: '加载更多...',
-						renderImage: false
-					}];
-					values.forEach((item, index) => {
-						this.dataArr.push({
-							isLoading: false,
-							searchKey: '',
-							dateValue: '',
-							data: [],
-							isScroll: false,
-							loadingText: '加载更多...',
-							renderImage: false
-						});
-						this.dataArr[index+1].data = item.data.result.data;
+						renderImage: false,
 					});
 				});
-				let _arr = [];
-				this.dataArr.forEach(item => {
-					item.data.forEach(dataItem => {
-						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-						_arr = _arr.concat(dataItem);
-					});
-				});
-				this.dataArr[0].data = _arr;
 				this.displayDataArr = util.deepCopy(this.dataArr);
+				this.getData(this.stateArr[0]);
 			},
-			del(index) {
-				let me = this;
+			getData(state) {
+				util.showLoading();
+				let index = this.tabIndex;
+				if(this.$refs['startDate' + index]) {
+					this.dataArr[index].startDateValue = this.$refs['startDate' + index][0].getValue();
+				}
+				if(this.$refs['endDate' + index]) {
+					this.dataArr[index].endDateValue = this.$refs['endDate' + index][0].getValue();
+				}
 				util.ajax({
-					method: 'Businese.BillJoinDAL.Delete',
+					method: 'Businese.BillJoinDAL.QueryMyList',
 					params: {
-						RecordId: this.displayDataArr[this.tabIndex].data[index].RecordId
+						Filter: {
+							StartDate: this.dataArr[index].startDateValue,
+							EndDate: this.dataArr[index].endDateValue,
+							BillNoLike: '',
+							State: state,
+							PageIndex: 1,
+							PageSize: 20
+						}
 					},
 					tags: {
 						usertoken: this.openid
 					}
-				}).then(res => {
-					util.showToast({
-						title: '删除成功',
-						success() {
-							setTimeout(() => {
-								me.getAllData([0, 1, 2]);
-							}, 1000);
+				})
+				.then(res => {
+					util.hideLoading();
+					if (res.data.hasOwnProperty('result')) {
+						res.data.result.data.forEach(dataItem => {
+							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+							dataItem.stateStr = ['已作废', '草稿', '审核中', '已审核', '已完成'][dataItem.State+1];
+						});
+						this.dataArr[index].data = res.data.result.data;
+						this.displayDataArr[index].data = res.data.result.data;
+					}
+				});
+			},
+			del(id) {
+				let me = this;
+				util.dialog({
+					content: '确定要删除吗？',
+					success (e) {
+						if(e.confirm) {
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.BillJoinDAL.Delete',
+								params: {
+									RecordId: id
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '删除成功',
+									success() {
+										setTimeout(() => {
+											me.query();
+										}, 1000);
+									}
+								});
+							});
 						}
-					});
+					}
 				});
 			},
-			edit(index) {
+			edit(id) {
 				util.goUrl({
-					url: './createEntryOrder?id=' + this.displayDataArr[this.tabIndex].data[index].RecordId
+					url: './createEntryOrder?id=' + id
 				});
 			},
-			goDetail(index) {
+			goDetail(id) {
 				util.goUrl({
-					url: './entryOrderDetail?id=' + this.displayDataArr[this.tabIndex].data[index].RecordId
+					url: './entryOrderDetail?id=' + id
 				});
 			},
 			query() {
-				let searchKey = this.displayDataArr[this.tabIndex].searchKey;
-				let tempArr = [];
-				this.displayDataArr[this.tabIndex].data = [];
-				this.dataArr[this.tabIndex].data.forEach(item => {
-					if(item.title.indexOf(searchKey) != -1){
-						tempArr.push(item);
-					}
-				});
-				this.displayDataArr[this.tabIndex].data = tempArr;
+				this.getData(this.stateArr[this.tabIndex]);
 			},
 			loadMore(e) {
-				this.displayDataArr[this.tabIndex].isScroll = true;
+				// this.displayDataArr[this.tabIndex].isScroll = true;
 			},
-			bindDateChange(value) {
-				this.displayDataArr[this.tabIndex].dateValue = value;
+			bindStartDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.startDateValue = value;
+				})
+			},
+			bindEndDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.endDateValue = value;
+				})
 			},
 			addData(e) {
 				this.displayDataArr[e].isLoading = true;
 				this.displayDataArr[e].loadingText = '没有更多了';
-				if(this.displayDataArr[e].dateValue === ''){
-					this.displayDataArr[e].dateValue = this.displayDataArr[0].dateValue;
+				if(this.displayDataArr[e].startDateValue === ''){
+					this.displayDataArr[e].startDateValue = this.displayDataArr[0].startDateValue;
+				}
+				if(this.displayDataArr[e].endDateValue === ''){
+					this.displayDataArr[e].endDateValue = this.displayDataArr[0].endDateValue;
 				}
 			},
 			getElSize(id) { //得到元素的size
@@ -273,6 +294,7 @@
 				if (width < tabBarScrollLeft) {
 					this.scrollLeft = width;
 				}
+				this.query();
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
@@ -294,7 +316,8 @@
 					let aryItem = {
 						isLoading: false,
 						searchKey: '',
-						dateValue: '',
+						startDateValue: '',
+						endDateValue: '',
 						data: [],
 						isScroll: false,
 						loadingText: '加载更多...',

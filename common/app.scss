@@ -63,8 +63,11 @@ uni-toast{z-index: 100000;}
 }
 .search_box{display: flex; flex-direction: row; align-items: center; padding: 30upx 0; background: #fff;
 	.input-box-all{flex: 1; padding: 0 0 0 15upx !important;}
-	.input-box{ padding: 0 10px; height: 10vw; border: 1px solid #aaa; border-radius: 3px;}
-	.date_picker{flex: 1; display: flex; align-items: center; margin: 0 0 0 20upx; line-height: 10vw; white-space: nowrap;}
+	.input-box{padding: 0 10px; height: 10vw; border: 1px solid #aaa; border-radius: 3px;
+		.uni-input-placeholder{font-size: 26upx;}
+	}
+	.date_picker_box{position: relative; margin: 0 0 0 20upx; padding: 0; width: 250upx; height: 10vw; overflow: hidden; border: 1px solid #aaa; border-radius: 3px;}
+	.date_picker{position: absolute; left: 0; top: 0; z-index: 2; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; text-align: center; white-space: nowrap; font-size: 28upx;}
 	.btn{margin: 0 15upx; white-space: nowrap; width: 170upx; height: 10vw; line-height: 10vw; font-size: 35upx; }
 }
 .no-data{text-align: center;
@@ -81,7 +84,9 @@ uni-toast{z-index: 100000;}
 		.right_txt{margin: 0 0 0 30upx; display: flex; flex-direction: column; justify-content: flex-end;
 			.unit{color: #8f8f94;}
 		}
-		.title{margin: 10px 0; width: 200upx; line-height: 1.5; color: #8f8f94;}
+		.title{display: block; margin: 10px 0; width: 160upx; line-height: 1.5; color: #8f8f94;}
+		.input-box-all{flex: 1;}
+		.text_area{flex: 1; padding: 10px 11px; height: 60px;}
 		.ls{display: flex; flex-direction: row; flex-wrap:wrap;
 			.item{margin: 0 20upx 10upx 0; padding: 10upx; background: #f6f6f6; color: #616161; white-space: nowrap; border: .5px solid white;
 				&.cur{color: red; border-color: red; font-weight: bold;}
@@ -93,10 +98,15 @@ uni-toast{z-index: 100000;}
 	}
 }
 
+.login_page{
+	.voli_code_ipt{
+		.input-box-clear{margin: 0 220upx 0 5px;}
+	}
+}
 .index{
 	height: 1500px;
 }
-.index_page{
+.index_page{padding: 0 0 50px;
 	.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; width: 330upx;
 		.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}
 	}
@@ -202,7 +212,7 @@ uni-toast{z-index: 100000;}
 		.title{flex: 1; display: flex; flex-direction: row;}
 		.uni-icon{margin: 0 20upx 0 0;}
 		.txt{display: block;}
-		.sub_txt{display: block; font-size: 20upx; color: #444;}
+		.sub_txt{display: block; font-size: 22upx; color: #444;}
 	}
 	.box{height:  calc(100% - 400upx);}
 	.uni-list{margin: 0 20upx 20upx; width: calc(100% - 40upx);
@@ -312,6 +322,9 @@ uni-toast{z-index: 100000;}
 }
 .create_pay_order{height: 100%; background: #fff;
 	.search_box{flex: 1; margin: 0 20upx 0 0;}
+	.date_picker_box{position: relative; margin: 0; padding: 0; width: 250upx; height: 10vw; overflow: hidden;
+		.date_picker{position: absolute; left: 20upx; top: 50%; z-index: 2; transform: translateY(-50%); white-space: nowrap; font-size: 28upx;}
+	}
 	.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 	.input-box-all{flex: 1;}
 	.txt{margin: 0 15upx;}

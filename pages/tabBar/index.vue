@@ -81,20 +81,18 @@
 				this.getChangeNum();
 			}
 			this.getSystemInfo();
-			// uni.setTabBarBadge({
-			// 	index: 2,
-			// 	text: '12'
-			// });
 			setTimeout(()=> {
 			    this.renderImage = true;
 			}, 300);
 		},
 		onShow() {
 			console.log('onShow');
+			this.pageIndex = 1;
 			this.loadData('refresh');
 		},
 		onPullDownRefresh() {
 			// 下拉刷新
+			this.pageIndex = 1;
 		    this.loadData('refresh');
 		    // 实际开发中通常是网络请求，加载完数据后就停止。这里仅做演示，加延迟为了体现出效果。
 		    setTimeout(() => {
@@ -103,6 +101,7 @@
 		},
 		onReachBottom() {
 			// 上拉加载更多
+			this.pageIndex++;
 		    this.loadData();
 		},
 		onNavigationBarSearchInputChanged(e) {
@@ -126,6 +125,7 @@
 			// #endif
 		},
 		methods: {
+			...mapMutations(['setChangeNum']),
 			async getChangeNum() {
 				let num = 0;
 				let myOrderChangeNum = 0;
@@ -170,7 +170,6 @@
 					myRefundOrderChangeNum = res.data.result;
 					num += res.data.result;
 				});
-				console.log(num);
 				this.setChangeNum({
 					myOrderChangeNum,
 					myPayOrderChangeNum,
@@ -213,6 +212,7 @@
 			},
 			addCart(index) {
 				// 加入购物车
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.CartDAL.AddToCart',
 					params: {
@@ -223,12 +223,14 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					util.showToast({
 						title: '加入购物车成功'
 					});
 				});
 			},
-			async loadData(key = '', pageIndex = 1, action = 'add') {
+			async loadData(action = 'add', key = '') {
+				util.showLoading();
 				// 获取广告图
 				await util.ajax({
 					method: 'SYS.OptionsDAL.GetOptions',
@@ -249,14 +251,14 @@
 					params: {
 						filter: {
 							KeyWord: key,
-							PageIndex: pageIndex
+							PageIndex: this.pageIndex
 						}
 					},
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
-					console.log('商品列表: ', res);
+					util.hideLoading();
 					let ls = res.data.result.data.map(item => {
 						return {
 							id: item.RecordId,
@@ -267,7 +269,7 @@
 							remark: item.Remark
 						}
 					});
-					this.recordsTotal = res.data.result.recordsTotal;				
+					this.recordsTotal = res.data.result.recordsTotal;
 					if (action === 'refresh') {
 						this.productList = [];
 					}

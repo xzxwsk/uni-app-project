@@ -11,10 +11,26 @@
 				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box style="width: 200upx;" v-model="itemLs.searchKeyNo" placeholder="经销商编号"></input-box>
-							<input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box>
-							<customDatePicker class="date_picker" fields="month" :start="startDate" :end="endDate" :value="itemLs.dateValue"
-							 @change="bindDateChange"></customDatePicker>
+							<input-box v-model="itemLs.searchKeyNo" placeholder="请输入搜索关键字"></input-box>
+							<!-- <input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box> -->
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'startDate' + indexLs"
+									fields="month"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.startDateValue"
+									@change="bindStartDateChange"
+								></customDatePicker>
+							</view>
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'endDate' + indexLs"
+									fields="month"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.endDateValue"
+									@change="bindEndDateChange"
+								></customDatePicker>
+							</view>
 							<button class="btn" type="warn" @click="query">查询</button>
 						</view>
 						<block v-if="itemLs.data.length<1">
@@ -60,6 +76,7 @@
 			</swiper>
 		</view>
 		<uni-popup ref="popup" type="bottom">
+			<!-- 发货 -->
 			<view class="pop">
 				<button class="uni-icon uni-icon-closeempty close_btn" @click="closePopup"></button>
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
@@ -75,19 +92,19 @@
 						<block v-if="curSelected.IsPay">
 							<view class="input-row border">
 								<text class="title">付款方式：</text>
-								<input-box type="text" class="input-box" disabled :inputValue="['现金', '银行转账', '支付宝', '微信'][curSelected.PayType]"></input-box>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="['现金', '银行转账', '支付宝', '微信'][curSelected.PayType]"></input-box>
 							</view>
 							<view class="input-row border">
 								<text class="title">付款方账户信息：</text>
-								<input-box type="text" class="input-box" disabled :inputValue="curSelected.PayAccountInfo"></input-box>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="curSelected.PayAccountInfo"></input-box>
 							</view>
 							<view class="input-row border">
 								<text class="title">收款方账户信息：</text>
-								<input-box type="text" class="input-box" disabled :inputValue="curSelected.ReceiveAccountInfo"></input-box>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="curSelected.ReceiveAccountInfo"></input-box>
 							</view>
 							<view class="input-row border">
 								<text class="title">付款金额：</text>
-								<input-box type="text" class="input-box" disabled :inputValue="curSelected.Amount"></input-box>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="curSelected.Amount"></input-box>
 							</view>
 						</block>
 					</view>
@@ -106,11 +123,11 @@
 					<view class="input-group">
 						<view class="input-row border">
 							<text class="title">退货货运信息：</text>
-							<input-box ref="trackingNo2" type="text" class="input-box" clearable v-model="trackingNo2" disabled></input-box>
+							<input-box ref="trackingNo2" type="text" class="input-box" :clearShow="false" v-model="trackingNo2" disabled></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
-							<textarea v-model="reson" style="padding: 10px 11px; height: 60px;" disabled />
+							<textarea v-model="reson" class="text_area" disabled />
 						</view>
 						<block v-if="curSelected.IsPay">
 							<view class="input-row border">
@@ -119,19 +136,20 @@
 							</view>
 							<view class="input-row border">
 								<text class="title">收款方账户信息：</text>
-								<input-box type="text" class="input-box" disabled :inputValue="curSelected.PayAccountInfo"></input-box>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="curSelected.PayAccountInfo"></input-box>
 							</view>
 							<view class="input-row border">
 								<text class="title">付款方账户信息：</text>
-								<input-box type="text" class="input-box" disabled :inputValue="curSelected.ReceiveAccountInfo"></input-box>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="curSelected.ReceiveAccountInfo"></input-box>
 							</view>
 							<view class="input-row border">
 								<text class="title">退款金额：</text>
-								<input-box type="text" class="input-box" disabled :inputValue="curSelected.Amount"></input-box>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="curSelected.Amount"></input-box>
 							</view>
 						</block>
 					</view>
 				</view>
+				<!-- 如果是在订单上付款，这在退货确认时，需要弹出窗口录入退款信息。未选中是否退款，不能点击确定 -->
 				<button type="warn" :disabled="curSelected.IsPay && !curSelected.IsPayReturn" @click="closePopup2('confirm')">确定</button>
 			</view>
 		</uni-popup>
@@ -207,6 +225,7 @@
 			return {
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
+				isLoaded: false,
 				scrollLeft: 0,
 				tabIndex: 0,
 				dataArr: [],
@@ -239,83 +258,98 @@
 				startDate: '2010-01',
 				endDate: '2199-12',
 				transportCompany: '', // 货运公司
-				trackingNo: '', // 货运单号
-				trackingNo2: '',
+				trackingNo: '', // 发货货运单号
+				trackingNo2: '', // 退货货运信息
 				reson: '', // 退货原因
-				curSelected: {} // 当前选中
+				curSelected: {}, // 当前选中
+				stateArr: [null, 0, 1, 2, 4, 5, 6, -1]
 			}
 		},
 		onLoad() {
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
-			// this.init();
+			// this.dataArr = this.randomfn();
+			// this.displayDataArr = util.deepCopy(this.dataArr);
+			if (!this.isLoaded) {
+				this.init();
+				setTimeout(() => {
+					this.isLoaded = true;
+				}, 1000);
+			}
+		},
+		onShow() {
+			if (this.isLoaded) {
+				this.init();
+			}
+		},
+		mounted() {
+			// this.$refs.popup2.open();
 		},
 		methods: {
 			init() {
-				this.getAllData([0, 1, 2, 4, 5, 6, -1]);
-			},
-			async getAllData(arr) {
-				util.showLoading();
-				// 获取全部状态的数据
-				var promiseArray = [];
-				arr.forEach(item => {
-					promiseArray.push(util.ajax({
-						method: 'Businese.OrderDAL.QueryReceivedList',
-						params: {
-							Filter: {
-								StartDate: '',
-								EndDate: '',
-								BillNoLike: '',
-								ProductLike: '',
-								State: item,
-								PageIndex: 1,
-								PageSize: 20
-							}
-						},
-						tags: {
-							usertoken: this.openid
-						}
-					}));
-				});
-				await Promise.all(promiseArray)
-					.then(values => {
-						util.hideLoading();
-						this.dataArr = [{
-							isLoading: false,
-							searchKey: '',
-							dateValue: '',
-							data: [],
-							isScroll: false,
-							loadingText: '加载更多...',
-							renderImage: false
-						}];
-						values.forEach((item, index) => {
-							this.dataArr.push({
-								isLoading: false,
-								searchKey: '',
-								dateValue: '',
-								data: [],
-								isScroll: false,
-								loadingText: '加载更多...',
-								renderImage: false
-							});
-							if (item.data.hasOwnProperty('result')) {
-								this.dataArr[index + 1].data = item.data.result.data;
-							}
-						});
-					});
-				let _arr = [];
-				this.dataArr.forEach(item => {
-					item.data.forEach(dataItem => {
-						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-						dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][item.AccountType]
-						dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认'][dataItem.State + 1];
-						dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
-						_arr = _arr.concat(dataItem);
+				let day = util.formatDate(new Date(), 'yyyy-MM');
+				this.stateArr.forEach(item => {
+					this.dataArr.push({
+						isLoading: false,
+						searchKey: '',
+						startDateValue: day,
+						endDateValue: day,
+						data: [],
+						isScroll: false,
+						loadingText: '加载更多...',
+						renderImage: false,
 					});
 				});
-				this.dataArr[0].data = _arr;
 				this.displayDataArr = util.deepCopy(this.dataArr);
+				this.getData(this.stateArr[0]);
+			},
+			getData(state) {
+				util.showLoading();
+				let index = this.tabIndex;
+				if(this.$refs['startDate' + index]) {
+					this.displayDataArr[index].startDateValue = this.$refs['startDate' + index][0].getValue();
+				}
+				if(this.$refs['endDate' + index]) {
+					this.displayDataArr[index].endDateValue = this.$refs['endDate' + index][0].getValue();
+				}
+				let year;
+				let month;
+				let monthDays;
+				let endDate = this.displayDataArr[index].endDateValue;
+				let endDateArr = endDate.split('-')
+				if(endDate && endDate != '') {
+					year = Number(endDateArr[0]);
+					month = Number(endDateArr[1]);
+					monthDays = util.getMonthDays(year, month);
+				}
+				util.ajax({
+					method: 'Businese.OrderDAL.QueryReceivedList',
+					params: {
+						Filter: {
+							StartDate: this.displayDataArr[index].startDateValue + '-01',
+							EndDate: this.displayDataArr[index].endDateValue + '-' + monthDays,
+							BillNoLike: '',
+							ProductLike: this.displayDataArr[index].searchKey,
+							State: state,
+							PageIndex: 1,
+							PageSize: 20
+						}
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				})
+				.then(res => {
+					util.hideLoading();
+					if (res.data.hasOwnProperty('result')) {
+						res.data.result.data.forEach(dataItem => {
+							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][item.AccountType]
+							dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认'][dataItem.State + 1];
+							dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
+						});
+						this.dataArr[index].data = res.data.result.data;
+						this.displayDataArr[index].data = res.data.result.data;
+					}
+				});
 			},
 			goDetail(id) {
 				// 查看订单详情
@@ -324,25 +358,20 @@
 				});
 			},
 			query() {
-				let searchKeyNo = this.displayDataArr[this.tabIndex].searchKeyNo;
-				let searchKeyName = this.displayDataArr[this.tabIndex].searchKeyName;
-				let tempArr = [];
-				this.displayDataArr[this.tabIndex].data = [];
-				this.dataArr[this.tabIndex].data.forEach(item => {
-					if (searchKeyNo === '' && searchKeyName === '') {
-						tempArr.push(item);
-					} else if ((searchKeyNo != '' && item.title.indexOf(searchKeyNo) != -1) || (searchKeyName != '' && item.title.indexOf(
-							searchKeyName) != -1)) {
-						tempArr.push(item);
-					}
-				});
-				this.displayDataArr[this.tabIndex].data = tempArr;
+				this.getData(this.stateArr[this.tabIndex]);
 			},
 			loadMore(e) {
-				this.displayDataArr[this.tabIndex].isScroll = true;
+				// this.displayDataArr[this.tabIndex].isScroll = true;
 			},
-			bindDateChange(value) {
-				this.displayDataArr[this.tabIndex].dateValue = value;
+			bindStartDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.startDateValue = value;
+				})
+			},
+			bindEndDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.endDateValue = value;
+				})
 			},
 			addData(e) {
 				this.displayDataArr[e].isLoading = true;
@@ -367,9 +396,9 @@
 					return;
 				}
 				this.tabIndex = index;
-				if (!this.displayDataArr[index].isLoading) {
-					this.addData(index)
-				}
+				// if (!this.displayDataArr[index].isLoading) {
+				// 	this.addData(index)
+				// }
 				let tabBar = await this.getElSize("tab-bar"),
 					tabBarScrollLeft = tabBar.scrollLeft;
 				let width = 0;
@@ -387,12 +416,13 @@
 				if (width < tabBarScrollLeft) {
 					this.scrollLeft = width;
 				}
+				this.query();
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
-				if (!this.displayDataArr[tabIndex].isLoading) {
-					this.addData(tabIndex)
-				}
+				// if (!this.displayDataArr[tabIndex].isLoading) {
+				// 	this.addData(tabIndex)
+				// }
 				if (this.tabIndex === tabIndex) {
 					return false;
 				} else {
@@ -435,43 +465,54 @@
 			},
 			sendOrder() {
 				// 发货
+				let me = this;
 				util.ajax({
 					method: 'Businese.OrderDAL.Send',
 					params: {
-						"OrderId" : this.curSelected.RecordId /*订单Id [String]*/,
+						"OrderId" : me.curSelected.RecordId /*订单Id [String]*/,
 						"DiliveryInfo" : {
-						  "Adress": this.curSelected.Address  /*收货地址*/,
-						  "LinkMan": this.curSelected.DealerName  /*联系人*/,
-						  "Mobile": this.userInfo.Mobile  /*手机号*/,
-						  "TransportCompany": this.curSelected.FreightInfo  /*货运公司*/,
-						  "TrackingNo": this.trackingNo  /*运单号*/
+						  "Adress": me.curSelected.Address  /*收货地址*/,
+						  "LinkMan": me.curSelected.DealerName  /*联系人*/,
+						  "Mobile": me.curSelected.Mobile  /*手机号*/,
+						  "TransportCompany": me.curSelected.FreightInfo  /*货运公司*/,
+						  "TrackingNo": me.trackingNo  /*运单号*/
 						} /*货运信息 [DiliveryInfo]*/,
-						"Reson" : this.reson /*退货原因 [String]*/
 					},
 					tags: {
-						usertoken: this.openid
+						usertoken: me.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					util.showToast({
 						title: '发货成功',
 						success() {
-							me.init();
+							me.query();
 						}
 					});
 				});
 			},
 			closePopup(str){
 				let me = this;
+				// 对于付款的订单，需要弹出窗口，显示付款方式、付款方账户信息、收款方账户信息，付款金额(等于订单金额)，确认收款和取消按钮。必须确认收款才能发货。
 				if (str === 'confirm') {
 					// 发货点击确定
 					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
 						this.$refs.popup.close();
-						this.sendOrder();
+						util.dialog({
+							content: '确定发货吗？',
+							success (e) {
+								if(e.confirm) {
+									util.showLoading();
+									me.sendOrder();
+								}
+							}
+						});
 					}
 				} else if (str === 'receiveConfirm') {
 					// 发货弹窗确认收款
 					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
 						this.$refs.popup.close();
+						util.showLoading();
 						util.ajax({
 							method: 'Businese.BillPayDAL.ReceiveConfirm',
 							params: {
@@ -496,7 +537,8 @@
 			closePopup2(str){
 				let me = this;
 				let params = {
-					"OrderId" : this.curSelected.RecordId /*订单Id [String]*/
+					"OrderId" : this.curSelected.RecordId /*订单Id [String]*/,
+					"PayReturn" : false /*是否退款 [Boolean]*/
 				};
 				if (this.curSelected.IsPay) {
 					params.PayReturn = this.curSelected.IsPayReturn;
@@ -504,6 +546,7 @@
 				if (str === 'confirm') {
 					// 退货点击确定
 					this.$refs.popup2.close();
+					util.showLoading();
 					util.ajax({
 						method: 'Businese.OrderDAL.ReturnConfirm',
 						params: params,
@@ -511,6 +554,7 @@
 							usertoken: this.openid
 						}
 					}).then(res => {
+						util.hideLoading();
 						util.showToast({
 							title: '退货操作成功',
 							success() {

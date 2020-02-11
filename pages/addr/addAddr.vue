@@ -92,6 +92,7 @@
 			},
 			async edit(id) {
 				let me = this;
+				util.showLoading();
 				await util.ajax({
 					method: 'Basic.DealerAddressDAL.GetById',
 					params: {
@@ -101,6 +102,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					me.dealerId = res.data.result.DealerId;
 					me.area = res.data.result.Province + '-' + res.data.result.City + '-' + res.data.result.District;
 					me.detailAddr = res.data.result.AddrDetail;
@@ -124,6 +126,7 @@
 							method = 'Basic.DealerAddressDAL.Update'
 							dealerId = this.dealerId;
 						}
+						util.showLoading();
 						util.ajax({
 							method: method,
 							params: {
@@ -146,6 +149,7 @@
 								usertoken: this.openid
 							}
 						}).then(res => {
+							util.hideLoading();
 							console.log('添加地址：', res.data.result);
 							util.showToast({
 								title: (this.addrId !== '' ? '修改' : '添加') + '成功',

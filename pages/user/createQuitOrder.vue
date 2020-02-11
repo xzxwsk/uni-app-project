@@ -69,6 +69,7 @@
 		methods: {
 			saveOrder() {
 				// this.billObj.BillDate = this.billObj.CreateTime = this.billObj.LastModifyTime = util.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.BillLeaveDAL.Create',
 					params: {
@@ -78,6 +79,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					util.showToast({
 						title: '创建注销单成功',
 						success() {

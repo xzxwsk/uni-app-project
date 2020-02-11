@@ -19,12 +19,14 @@
 			</view>
 			<view class="input-row">
 				<text class="title">生日：</text>
-				<customDatePicker class="date_box"
-					fields="day"
-					:start="startDate"
-					:end="endDate"
-					:value="billObj.BirthDay"
-				></customDatePicker>
+				<view class="date_picker_box date_box">
+					<customDatePicker class="date_picker"
+						fields="day"
+						:start="startDate"
+						:end="endDate"
+						:value="billObj.BirthDay"
+					></customDatePicker>
+				</view>
 			</view>
 			<view class="input-row">
 				<text class="title">性别：</text>
@@ -169,6 +171,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					console.log('加盟单详情: ', res);
 					this.billObj = res.data.result;
 					// 初始化显示值

@@ -74,6 +74,12 @@ let dateUtils = {
 		return new Date(a[0], a[1] - 1, a[2], a[3], a[4], a[5]);
 	}
 };
+let getMonthDays = function (year, month) {
+	var stratDate = new Date(year,month-1,1),
+		endData = new Date(year,month,1);
+	var days = (endData -stratDate)/(1000*60*60*24);
+	return days;
+};
 let getType = function(obj){
     //tostring会返回对应不同的标签的构造函数
 	let type = Object.prototype.toString.call(obj);
@@ -378,7 +384,7 @@ let postAjax = function(prompt) {
 					});
 					return;
 				} else if (res.data.hasOwnProperty('error')) {
-					if (res.data.error.data && getType(res.data.error.data) === 'string' && res.data.error.data.indexOf('用户没有登录') != -1) {
+					if (res.data.error.code === 30000 || (res.data.error.message && getType(res.data.error.message) === 'string' && res.data.error.message.indexOf('令牌错误或用户没有登录') != -1)) {
 						redirectUrl({
 							url: '/pages/login/login'
 						});
@@ -391,9 +397,6 @@ let postAjax = function(prompt) {
 			},
 			fail: function(err) {
 				reject(err);
-			},
-			complete: function(data) {
-				hideLoading();
 			}
 		});
 	});
@@ -405,6 +408,7 @@ let ajaxReturn = function(err, _prompt) {
 	// 	err = JSON.stringify(err);
 	// }
 	console.log('err: ', err);
+	hideLoading();
 	dialog({
 		title: '错误信息',
 		content: err.message,
@@ -468,6 +472,7 @@ module.exports = {
 	formatLocation: formatLocation,
 	dateUtils: dateUtils,
 	formatDate: formatDate,
+	getMonthDays: getMonthDays,
 	getType: getType,
 	jsonReplace: jsonReplace,
 	deepCopy: deepCopy,

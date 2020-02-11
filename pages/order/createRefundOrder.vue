@@ -103,6 +103,7 @@
 		methods: {
 			init(id) {
 				// 获取详情
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.OrderDAL.GetById',
 					params: {
@@ -112,6 +113,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					this.billObj = res.data.result;
 				});
 			},
@@ -134,6 +136,7 @@
 			},
 			saveOrder() {
 				let me = this;
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.BillPayReturnDAL.Create',
 					params: {
@@ -143,6 +146,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					util.showToast({
 						title: '新建退款单成功',
 						success() {

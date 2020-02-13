@@ -9,9 +9,15 @@
 					<label><radio value="2" :checked="billObj.AccountType === 2" color="#f23030" />代交保证金</label>
 				</radio-group>
 			</view>
+			<view class="input-row" v-if="billObj.AccountType === 2">
+				<text class="title">请选择经销商：</text>
+				<radio-group class="pay_type" name="repayDealer" @change="changeRepayDealer">
+					<label class="label" v-for="(item, index) in repayDealer" :key="index"><radio :value="item.DealerId" :checked="billObj.RepayDealerId === item.DealerId" color="#f23030" />{{item.DealerName}}</label>
+				</radio-group>
+			</view>
 			<view class="input-row">
 				<text class="title">付款金额：</text>
-				<input-box ref="amount" type="number" v-model="billObj.Amount" placeholder="元"></input-box>
+				<input-box ref="amount" type="number" :disabled="billObj.AccountType === 2" :clearShow="billObj.AccountType !== 2" v-model="billObj.Amount" placeholder="元"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">付款方式：</text>
@@ -61,6 +67,8 @@
 			return {
 				placeholder: '请输入收款人微信帐号',
 				placeholder2: '请输入收款人微信帐号',
+				repayDealer: [], // 代支付经销商列表
+				selectRepayDealer: {},
 				billObj: {
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,
@@ -120,8 +128,22 @@
 					}
 				}).then(res => {
 					this.billObj = res.data.result;
-					this.$refs.amount.setValue(this.billObj.Amount);
+					if(this.$refs.amount){
+						this.$refs.amount.setValue(this.billObj.Amount);
+					}
+					this.getRepayDealerLs();
 					this.getDefaultPayInfo();
+				});
+			},
+			getRepayDealerLs() {
+				// 获取代支付经销商列表
+				util.ajax({
+					method: 'Businese.BillPayDAL.GetDepositRepayDealer',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.repayDealer = res.data.result;
 				});
 			},
 			getDefaultPayInfo() {
@@ -154,6 +176,12 @@
 			changeMoneyNature(e) {
 				// 款项性质
 				this.billObj.AccountType = Number(e.target.value);
+				if(this.billObj.AccountType === 2) {
+					if(this.$refs.amount && this.selectRepayDealer.Amount) {
+						this.$refs.amount.setValue(this.selectRepayDealer.Amount);
+						this.billObj.Amount = this.selectRepayDealer.Amount;
+					}
+				}
 			},
 			changeMoneyType(e) {
 				// 付款方式
@@ -169,6 +197,21 @@
 					this.placeholder2 = '请输入收款人银行帐号';
 				}
 				this.getDefaultPayInfo();
+			},
+			changeRepayDealer(e) {
+				console.log(e.target.value);
+				// 选择代支付经销商
+				let selectRepayDealer = this.repayDealer.find(item => {
+					return item.DealerId = e.target.value;
+				})
+				this.billObj.RepayDealerId = selectRepayDealer.DealerId
+				this.billObj.RepayDealerCode = selectRepayDealer.DealerCode
+				this.billObj.RepayDealerName = selectRepayDealer.DealerName
+				this.billObj.Amount = selectRepayDealer.Amount;
+				this.selectRepayDealer = selectRepayDealer;
+				if(this.$refs.amount) {
+					this.$refs.amount.setValue(selectRepayDealer.Amount);
+				}
 			},
 			saveOrder() {
 				this.billObj.Amount = Number(this.billObj.Amount);

@@ -20,7 +20,7 @@
 									<text class="price">${{ item.Price.toFixed(2) }}</text>
 									<view class="num">
 										<button class="btn" @click.stop="reduce(index)">-</button>
-										<input class="ipt" @click.stop="unEvent" type="number" v-model="item.Qty"></input>
+										<input class="ipt" @click.stop="unEvent" type="number" :data-index="index" @input="onChangeNum" v-model="item.Qty"></input>
 										<button class="btn" @click.stop="add(index)">+</button>
 									</view>
 								</view>
@@ -265,6 +265,15 @@
 				this.$set(this.cartLs[index], 'Qty', Number(this.cartLs[index]['Qty'])+1);
 				this.updateCartItem(index);
 				this.countPriceFun();
+			},
+			onChangeNum(e) {
+				console.log(e.target);
+				if(e.target.value){
+					let index = Number(e.target.dataset.index);
+					this.$set(this.cartLs[index], 'Qty', Number(e.target.value));
+					this.updateCartItem(index);
+					this.countPriceFun();
+				}
 			},
 			updateCartItem(index) {
 				util.showLoading();

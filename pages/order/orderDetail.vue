@@ -15,9 +15,9 @@
 				<view class="uni-list">
 					<view class="uni-list-cell" v-for="(value,key) in billObj.Items" :key="key">
 						<view class="uni-media-list">
-							<view class="uni-media-list-logo">
+							<!-- <view class="uni-media-list-logo">
 								<image v-if="showImg" mode="aspectFit" @error="imageError" :src="value.img"></image>
-							</view>
+							</view> -->
 							<view class="uni-media-list-body">
 								<view>
 									<view class="uni-media-list-text-top">{{value.ProductName}}</view>
@@ -39,7 +39,7 @@
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">
 							<text class="item-title"><text class="b">合计金额</text></text>
-							<text class="item-content"><text class="price">￥{{(count).toFixed(2)}}</text></text>
+							<text class="item-content"><text class="price">￥{{billObj.Amount}}</text></text>
 						</view>
 					</view>
 				</view>
@@ -119,12 +119,36 @@
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
 					<view class="input-group">
 						<view class="input-row border">
+							<text class="title">收货联系人：</text>
+							<input-box ref="linkManSend" type="text" class="input-box" :clearShow="false" disabled v-model="billObj.LinkMan"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货人手机号：</text>
+							<input-box ref="mobileSend" type="text" class="input-box" :clearShow="false" disabled v-model="billObj.Mobile"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货地址：</text>
+							<input-box ref="addressSend" type="text" class="input-box" :clearShow="false" disabled v-model="billObj.Address"></input-box>
+						</view>
+						<view class="input-row border">
 							<text class="title">货运单号：</text>
 							<input-box ref="trackingNo" type="text" :verification="['isNull']" :verificationTip="['货运单号不能为空']" class="input-box" clearable focus v-model="trackingNo" placeholder="请输入货运单号"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">快递公司：</text>
 							<input-box ref="transportCompany" type="text" class="input-box" clearable focus v-model="transportCompany" placeholder="请输入货运公司"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货的联系人：</text>
+							<input-box ref="linkManReturn" type="text" class="input-box" v-model="addr.PersonName" placeholder="请输入联系人"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货的手机号：</text>
+							<input-box ref="mobileReturn" type="number" class="input-box" v-model="addr.Mobile" placeholder="请输入手机号"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货的收货地址：</text>
+							<view class="uni-list-cell-navigate uni-navigate-right" @click="selectAddr">{{addr.Address}}</view>
 						</view>
 						<block v-if="billObj.IsPay">
 							<view class="input-row border">
@@ -357,7 +381,6 @@
 				},
 				showImg: false,
 				orderLs: [],
-				count: 278,
 				freight: 212,
 				orderNo: '2019073000000002',
 				createOrder: '2019-07-30 10:59:03'
@@ -382,6 +405,29 @@
 		},
 		mounted() {
 			// this.$refs.popup3.open();
+		},
+		watch: {
+			addr(oldVal, newVal) {
+				console.log('addr');
+				console.log(newVal);
+				// 退货 收货人
+				if(this.$refs.linkManReturn) {
+					this.$refs.linkManReturn.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobileReturn) {
+					this.$refs.mobileReturn.setValue(this.addr.Mobile);
+				}
+				
+				if(this.$refs.linkMan) {
+					this.$refs.linkMan.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobile) {
+					this.$refs.mobile.setValue(this.addr.Mobile);
+				}
+				if(this.$refs.addr) {
+					this.$refs.addr.setValue(this.addr.Address);
+				}
+			}
 		},
 		methods: {
 			init(id) {
@@ -448,8 +494,27 @@
 			async bindSend(index) {
 				// 发货
 				// 先获取默认地址
-				await this.getDefaultAddr();
+				util.showLoading();
 				this.$refs.popup.open();
+				this.billObj.Amount = String(this.billObj.Amount);
+				await this.getDefaultAddr();
+				// 收货人
+				if(this.$refs.linkManSend) {
+					this.$refs.linkManSend.setValue(this.billObj.LinkMan);
+				}
+				if(this.$refs.mobileSend) {
+					this.$refs.mobileSend.setValue(this.billObj.Mobile);
+				}
+				if(this.$refs.addressSend) {
+					this.$refs.addressSend.setValue(this.billObj.Address);
+				}
+				// 退货 收货人
+				if(this.$refs.linkManReturn) {
+					this.$refs.linkManReturn.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobileReturn) {
+					this.$refs.mobileReturn.setValue(this.addr.Mobile);
+				}
 			},
 			sendOrder() {
 				// 发货
@@ -461,13 +526,13 @@
 							"Adress": ''  /*收货地址*/,
 							"LinkMan": ''  /*联系人*/,
 							"Mobile": ''  /*手机号*/,
-							"TransportCompany": me.transportCompany  /*货运公司*/,
-							"TrackingNo": me.trackingNo  /*运单号*/
+							"TransportCompany": this.transportCompany  /*货运公司*/,
+							"TrackingNo": this.trackingNo  /*运单号*/
 						} /*货运信息 [DiliveryInfo]*/,
 						ReturnLinkInfo: { // 退货的收货人信息(必须填地址、收货人和电话)
-							"Adress":  me.addr.Address /*收货地址*/,
-							"LinkMan": me.addr.PersonName  /*联系人*/,
-							"Mobile": me.addr.Mobile  /*手机号*/,
+							"Adress":  this.addr.Address /*收货地址*/,
+							"LinkMan": this.addr.PersonName  /*联系人*/,
+							"Mobile": this.addr.Mobile  /*手机号*/,
 							"TransportCompany": ''  /*货运公司*/,
 							"TrackingNo": ''  /*运单号*/
 						}
@@ -662,30 +727,32 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					this.addr.Address = addr.Address;
-					this.addr.PersonName = addr.LinkMan;
-					this.addr.Mobile = addr.Mobile;
+					util.hideLoading();
+					this.addr.Address = res.data.result.Adress;
+					this.addr.PersonName = res.data.result.LinkMan;
+					this.addr.Mobile = res.data.result.Mobile;
 				});
 			},
 			async bindReturn() {
 				// 退货
-				util.showLoading();
 				// 先获取默认地址
+				util.showLoading();
 				await this.getDefaultAddr();
-				util.hideLoading();
 				this.$refs.popup3.open();
-				if(this.$refs.linkMan) {
-					this.$refs.linkMan.setValue(this.addr.PersonName);
-				}
-				if(this.$refs.mobile) {
-					this.$refs.mobile.setValue(this.addr.Mobile);
-				}
-				if(this.$refs.addr) {
-					this.$refs.addr.setValue(this.addr.Address);
-				}
-				if(this.$refs.freightInfo) {
-					this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
-				}
+				setTimeout(() => {
+					if(this.$refs.linkMan) {
+						this.$refs.linkMan.setValue(this.addr.PersonName);
+					}
+					if(this.$refs.mobile) {
+						this.$refs.mobile.setValue(this.addr.Mobile);
+					}
+					if(this.$refs.addr) {
+						this.$refs.addr.setValue(this.addr.Address);
+					}
+					if(this.$refs.freightInfo) {
+						this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
+					}
+				}, 500);
 			},
 			closePopup3(str){
 				if (str === 'confirm') {

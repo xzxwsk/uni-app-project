@@ -3,11 +3,11 @@
 		<view class="input-group">
 			<view class="input-row">
 				<text class="title"><text class="price">*</text>会员编号：</text>
-				<input-box v-model="billObj.RcvDealerCode" placeholder="请输入收款会员编号"></input-box>
+				<input-box v-model="billObj.RcvDealerCode" placeholder="请输入收款会员编号" @input="getNameOfCode"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title"><text class="price">*</text>会员姓名：</text>
-				<input-box v-model="billObj.RcvDealerName" placeholder="请输入收款会员姓名"></input-box>
+				<input-box ref="rcvDealerName" v-model="billObj.RcvDealerName" placeholder="请输入收款会员姓名" disabled :clearShow="false"></input-box>
 			</view>
 			<view class="input-row border">
 				<text class="title">款项性质：</text>
@@ -69,7 +69,7 @@
 				  "PayAccountNo": ""  /*付款账户*/,
 				  "PayAccountName": ""  /*付款户名*/,
 				  "Remark": ""  /*备注*/,
-				  "State": 1  /*State*/,
+				  "State": 0  /*State*/,
 				  "Creator": ""  /*录入人*/,
 				  "CreatorName": ""  /*录入人姓名*/,
 				  "CreateTime": ""  /*录入时间*/,
@@ -96,16 +96,16 @@
 			if (option.hasOwnProperty('id')){
 				let id = option.id;
 				this.init(id)
+			} else {
+				this.initDefault();
 			}
-			this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
-			this.billObj.accountTypeStr = ['货款', '保证金', '代交保证金'][this.billObj.AccountType];
 		},
 		methods: {
 			init(id) {
 				// 获取详情
 				util.showLoading();
 				util.ajax({
-					method: 'Businese.OrderDAL.GetById',
+					method: 'Businese.BillPayReturnDAL.GetById',
 					params: {
 						RecordId: id
 					},
@@ -115,6 +115,42 @@
 				}).then(res => {
 					util.hideLoading();
 					this.billObj = res.data.result;
+					this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
+					this.billObj.accountTypeStr = ['货款', '保证金', '代交保证金'][this.billObj.AccountType];
+				});
+			},
+			initDefault() {
+				util.showLoading();
+				util.ajax({
+					method: 'Businese.BillPayReturnDAL.CreateDefault',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.hideLoading();
+					this.billObj = res.data.result;
+					this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
+					this.billObj.accountTypeStr = ['货款', '保证金', '代交保证金'][this.billObj.AccountType];
+				});
+			},
+			getNameOfCode(e) {
+				// 通过经销商编号获取姓名
+				util.ajax({
+					method: 'SYS.DealerDAL.GetByCode',
+					params: {
+						Code: e
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					if (res.data.hasOwnProperty('result')) {
+						this.billObj.RcvDealerName = res.data.result.DealerName;
+						this.$refs.rcvDealerName.setValue(res.data.result.DealerName);
+					} else {
+						this.billObj.RcvDealerName = '';
+						this.$refs.rcvDealerName.setValue('');
+					}
 				});
 			},
 			changeMoneyNature(e) {

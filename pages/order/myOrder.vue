@@ -468,9 +468,9 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					this.addr.Address = addr.Address;
-					this.addr.PersonName = addr.LinkMan;
-					this.addr.Mobile = addr.Mobile;
+					this.addr.Address = res.data.result.Adress;
+					this.addr.PersonName = res.data.result.LinkMan;
+					this.addr.Mobile = res.data.result.Mobile;
 				});
 			},
 			async bindReturn(index) {
@@ -499,18 +499,20 @@
 						});
 					} else {
 						this.$refs.popup.open();
-						if(this.$refs.linkMan) {
-							this.$refs.linkMan.setValue(this.addr.PersonName);
-						}
-						if(this.$refs.mobile) {
-							this.$refs.mobile.setValue(this.addr.Mobile);
-						}
-						if(this.$refs.addr) {
-							this.$refs.addr.setValue(this.addr.Address);
-						}
-						if(this.$refs.freightInfo) {
-							this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
-						}
+						setTimeout(() => {
+							if(this.$refs.linkMan) {
+								this.$refs.linkMan.setValue(this.addr.PersonName);
+							}
+							if(this.$refs.mobile) {
+								this.$refs.mobile.setValue(this.addr.Mobile);
+							}
+							if(this.$refs.addr) {
+								this.$refs.addr.setValue(this.addr.Address);
+							}
+							if(this.$refs.freightInfo) {
+								this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
+							}
+						}, 500);
 					}
 				});
 			},

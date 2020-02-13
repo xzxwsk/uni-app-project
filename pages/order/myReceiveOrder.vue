@@ -82,6 +82,18 @@
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
 					<view class="input-group">
 						<view class="input-row border">
+							<text class="title">收货联系人：</text>
+							<input-box ref="linkManSend" type="text" class="input-box" :clearShow="false" disabled v-model="curSelected.LinkMan"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货人手机号：</text>
+							<input-box ref="mobileSend" type="text" class="input-box" :clearShow="false" disabled v-model="curSelected.Mobile"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货地址：</text>
+							<input-box ref="addressSend" type="text" class="input-box" :clearShow="false" disabled v-model="curSelected.Address"></input-box>
+						</view>
+						<view class="input-row border">
 							<text class="title">货运单号：</text>
 							<input-box ref="trackingNo" type="text" :verification="['isNull']" :verificationTip="['货运单号不能为空']" class="input-box" clearable focus v-model="trackingNo" placeholder="请输入货运单号"></input-box>
 						</view>
@@ -90,16 +102,17 @@
 							<input-box ref="transportCompany" type="text" class="input-box" clearable v-model="transportCompany" placeholder="请输入货运公司"></input-box>
 						</view>
 						<view class="input-row border">
-							<text class="title">联系人：</text>
-							<input-box ref="linkMan" type="text" class="input-box" clearable v-model="addr.PersonName" placeholder="请输入联系人"></input-box>
+							<text class="title">退货的联系人：</text>
+							<input-box ref="linkManReturn" type="text" class="input-box" v-model="addr.PersonName" placeholder="请输入联系人"></input-box>
 						</view>
 						<view class="input-row border">
-							<text class="title">手机号：</text>
-							<input-box ref="mobile" type="number" class="input-box" clearable v-model="addr.Mobile" placeholder="请输入手机号"></input-box>
+							<text class="title">退货的手机号：</text>
+							<input-box ref="mobileReturn" type="number" class="input-box" v-model="addr.Mobile" placeholder="请输入手机号"></input-box>
 						</view>
 						<view class="input-row border">
-							<text class="title">收货地址：</text>
-							<input-box ref="addr" type="text" class="input-box" :clearShow="false" disabled clearable v-model="addr.Address" @click="selectAddr"></input-box>
+							<text class="title">退货的收货地址：</text>
+							<!-- <input-box ref="addr" type="text" class="input-box" :clearShow="false" disabled v-model="addr.Address" @click="selectAddr"></input-box> -->
+							<view class="uni-list-cell-navigate uni-navigate-right" @click="selectAddr">{{addr.Address}}</view>
 						</view>
 						<block v-if="curSelected.IsPay">
 							<view class="input-row border">
@@ -292,13 +305,26 @@
 				}, 1000);
 			}
 		},
-		onShow() {
-			if (this.isLoaded) {
-				this.init();
-			}
-		},
+		// onShow() {
+		// 	if (this.isLoaded) {
+		// 		this.init();
+		// 	}
+		// },
 		mounted() {
 			// this.$refs.popup2.open();
+		},
+		watch: {
+			addr(oldVal, newVal) {
+				console.log('addr');
+				console.log(newVal);
+				// 退货 收货人
+				if(this.$refs.linkManReturn) {
+					this.$refs.linkManReturn.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobileReturn) {
+					this.$refs.mobileReturn.setValue(this.addr.Mobile);
+				}
+			}
 		},
 		methods: {
 			init() {
@@ -482,25 +508,37 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					this.addr.Address = addr.Address;
-					this.addr.PersonName = addr.LinkMan;
-					this.addr.Mobile = addr.Mobile;
+					util.hideLoading();
+					console.log('res:');
+					console.log(res);
+					this.addr.Address = res.data.result.Adress;
+					this.addr.PersonName = res.data.result.LinkMan;
+					this.addr.Mobile = res.data.result.Mobile;
 				});
 			},
 			async bindSend(index) {
 				// 发货弹窗
-				await this.getDefaultAddr();
+				util.showLoading();
 				this.$refs.popup.open();
+				await this.getDefaultAddr();
 				this.curSelected = this.dataArr[this.tabIndex].data[index];
 				this.curSelected.Amount = String(this.curSelected.Amount);
-				if(this.$refs.linkMan) {
-					this.$refs.linkMan.setValue(this.addr.PersonName);
+				// 收货人
+				if(this.$refs.linkManSend) {
+					this.$refs.linkManSend.setValue(this.curSelected.LinkMan);
 				}
-				if(this.$refs.mobile) {
-					this.$refs.mobile.setValue(this.addr.Mobile);
+				if(this.$refs.mobileSend) {
+					this.$refs.mobileSend.setValue(this.curSelected.Mobile);
 				}
-				if(this.$refs.addr) {
-					this.$refs.addr.setValue(this.addr.Address);
+				if(this.$refs.addressSend) {
+					this.$refs.addressSend.setValue(this.curSelected.Address);
+				}
+				// 退货 收货人
+				if(this.$refs.linkManReturn) {
+					this.$refs.linkManReturn.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobileReturn) {
+					this.$refs.mobileReturn.setValue(this.addr.Mobile);
 				}
 			},
 			sendOrder() {
@@ -589,9 +627,11 @@
 				// 退货确认
 				this.$refs.popup2.open();
 				this.curSelected = this.dataArr[this.tabIndex].data[index];
-				if(this.$refs.trackingNo2) {
-					this.$refs.trackingNo2.setValue(this.curSelected.ReturnFreightInfo);
-				}
+				setTimeout(() => {
+					if(this.$refs.trackingNo2) {
+						this.$refs.trackingNo2.setValue(this.curSelected.ReturnFreightInfo);
+					}
+				}, 500);
 			},
 			closePopup2(str){
 				let me = this;

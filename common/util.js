@@ -1,4 +1,4 @@
-const baseUrlGlobal = 'http://118.31.54.76/qcdm/';
+const baseUrlGlobal = 'http://47.104.226.115/qcdm/';
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 let baseUrl = '';
 

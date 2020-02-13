@@ -92,6 +92,7 @@
 			return {
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
+				isLoaded: false,
 				canRecordPayBill: false,
 				scrollLeft: 0,
 				tabIndex: 0,
@@ -112,13 +113,23 @@
 				}],
 				startDate: '2010-01-01',
 				endDate: '2199-12-31',
-				stateArr: [null, 0, -1, 2]
+				stateArr: [null, 0, 2, -1]
 			}
 		},
 		onLoad() {
-			this.init();
+			if (!this.isLoaded) {
+				this.init();
+				setTimeout(() => {
+					this.isLoaded = true;
+				}, 1000);
+			}
 			// this.dataArr = this.randomfn();
 			// this.displayDataArr = util.deepCopy(this.dataArr);
+		},
+		onShow() {
+			if (this.isLoaded) {
+				this.init();
+			}
 		},
 		onNavigationBarButtonTap(e) {
 			if (this.canRecordPayBill) {

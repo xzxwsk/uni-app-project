@@ -56,6 +56,28 @@
 							<text class="item-content"><text>{{billObj.billDateStr}}</text></text>
 						</view>
 					</view>
+					<block v-if="billObj.State === 1 || billObj.State === 2">
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>货运信息</text></text>
+								<text class="item-content"><text>{{billObj.FreightInfo}}</text></text>
+							</view>
+						</view>
+					</block>
+					<block v-if="billObj.State === 4 || billObj.State === 5 || billObj.State === 6">
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>退货货运信息</text></text>
+								<text class="item-content"><text>{{billObj.ReturnFreightInfo}}</text></text>
+							</view>
+						</view>
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>退货原因</text></text>
+								<text class="item-content"><text>{{billObj.ReturnReason}}</text></text>
+							</view>
+						</view>
+					</block>
 				</view>
 				<view class="empty"></view>
 			</scroll-view>
@@ -65,16 +87,15 @@
 			<block v-if="orderType === 'my'">
 				<button class="btn" v-if="billObj.State === 0" @click="bindClose">关闭</button>
 				<button class="btn" v-if="billObj.State === 1" type="warn" @click="bindConfirmReceive">确认收货</button>
-				<!-- <button class="btn" type="warn" v-if="isReturn" @click="bindReturn">退货</button> -->
 				<button class="btn" v-if="isReturn && billObj.State === 1" type="warn" @click="bindReturn">退货</button>
 				<button class="btn" v-if="billObj.State === 4" type="warn" @click="bindCancelReturn">取消退货</button>
-				<button class="btn" v-if="billObj.State === 6" type="warn" @click="bindConfirmReturn">确认退款</button>
+				<button class="btn" v-if="billObj.State === 5 && billObj.IsPay" type="warn" @click="bindConfirmReturn">确认退款</button>
 			</block>
 			
 			<!-- 收到的订单 -->
 			<block v-else>
-				<button class="btn" type="warn" v-if="false" @click="bindSend">发货</button>
-				<button class="btn" type="warn" v-if="false" @click="bindReturnConfirm">确认退货</button>
+				<button class="btn" type="warn" v-if="billObj.State === 0" @click="bindSend">发货</button>
+				<button class="btn" type="warn" v-if="billObj.State === 4" @click="bindReturnConfirm">确认退货</button>
 			</block>
 		</view>
 		
@@ -198,28 +219,32 @@
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
 					<view class="input-group">
 						<view class="input-row border">
-							<text class="title">运单号：</text>
-							<input-box ref="trackingNo3" type="text" class="input-box" clearable focus v-model="trackingNo3" placeholder="请输入运单号"></input-box>
+							<text class="title">退货货运信息：</text>
+							<input-box ref="freightInfo" type="text" class="input-box" :clearShow="false" clearable focus v-model="billObj.FreightInfo" placeholder=""></input-box>
 						</view>
 						<view class="input-row border">
-							<text class="title">收货地址：</text>
-							<input-box ref="adress" type="text" class="input-box" clearable focus v-model="billObj.Address" placeholder="请输入收货地址"></input-box>
+							<text class="title">退货运单号：</text>
+							<input-box ref="trackingNo3" type="text" class="input-box" :verification="['isNull']" :verificationTip="['运单号不能为空']" clearable  v-model="trackingNo3" placeholder="请输入退货运单号"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">联系人：</text>
-							<input-box ref="dealerName" type="text" class="input-box" clearable focus v-model="billObj.DealerName" placeholder="请输入联系人"></input-box>
+							<input-box ref="linkMan" type="text" class="input-box" clearable v-model="addr.PersonName" placeholder="请输入退货联系人"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">手机号：</text>
-							<input-box ref="mobile" type="number" class="input-box" clearable focus v-model="billObj.Mobile" placeholder="请输入手机号"></input-box>
+							<input-box ref="mobile" type="number" class="input-box" clearable v-model="addr.Mobile" placeholder="请输入退货人手机号"></input-box>
 						</view>
 						<view class="input-row border">
-							<text class="title">货运公司：</text>
-							<input-box ref="freightInfo" type="text" class="input-box" clearable focus v-model="billObj.FreightInfo" placeholder="请输入货运公司"></input-box>
+							<text class="title">收货地址：</text>
+							<input-box ref="addr" type="text" class="input-box" :clearShow="false" disabled clearable v-model="addr.Address" placeholder="请输入收货地址" @click="selectAddr"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货货运公司：</text>
+							<input-box ref="company" type="text" class="input-box" clearable v-model="company" placeholder="请输入退货货运公司"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
-							<textarea v-model="reson" class="text_area" placeholder="请输入退货原因"/>
+							<textarea v-model="billObj.ReturnReason" class="text_area" placeholder="请输入退货原因"/>
 						</view>
 					</view>
 				</view>
@@ -294,6 +319,12 @@
 				trackingNo3: '', // 退货单号
 				transportCompany: '', // 货运公司
 				reson: '', // 退货原因
+				addr: {
+					PersonName: '',
+					Mobile: '',
+					Address: ''
+				},
+				company: '', // 退货货运公司
 				billObj: {
 					"Items": []  /*订单明细*/,
 					"RecordId": ""  /*单据Id*/,
@@ -323,11 +354,6 @@
 					  ""
 					],
 					"iState": 1
-				},
-				addr: {
-					name: 'wsk',
-					phone: '17341303920',
-					detail: '北京北京市东城区北京北京市东城区北京北京市东城区北京北京市东城区sdafdsafd'
 				},
 				showImg: false,
 				orderLs: [],
@@ -419,8 +445,10 @@
 					}
 				});
 			},
-			bindSend(index) {
+			async bindSend(index) {
 				// 发货
+				// 先获取默认地址
+				await this.getDefaultAddr();
 				this.$refs.popup.open();
 			},
 			sendOrder() {
@@ -430,12 +458,19 @@
 					params: {
 						"OrderId" : this.billObj.RecordId /*订单Id [String]*/,
 						"DiliveryInfo" : {
-						  "Adress": this.billObj.Address  /*收货地址*/,
-						  "LinkMan": this.billObj.DealerName  /*联系人*/,
-						  "Mobile": this.billObj.Mobile  /*手机号*/,
-						  "TransportCompany": this.transportCompany  /*货运公司*/,
-						  "TrackingNo": this.trackingNo  /*运单号*/
+							"Adress": ''  /*收货地址*/,
+							"LinkMan": ''  /*联系人*/,
+							"Mobile": ''  /*手机号*/,
+							"TransportCompany": me.transportCompany  /*货运公司*/,
+							"TrackingNo": me.trackingNo  /*运单号*/
 						} /*货运信息 [DiliveryInfo]*/,
+						ReturnLinkInfo: { // 退货的收货人信息(必须填地址、收货人和电话)
+							"Adress":  me.addr.Address /*收货地址*/,
+							"LinkMan": me.addr.PersonName  /*联系人*/,
+							"Mobile": me.addr.Mobile  /*手机号*/,
+							"TransportCompany": ''  /*货运公司*/,
+							"TrackingNo": ''  /*运单号*/
+						}
 					},
 					tags: {
 						usertoken: this.openid
@@ -471,18 +506,27 @@
 					// 发货弹窗确认收款
 					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
 						this.$refs.popup.close();
-						util.showLoading();
-						util.ajax({
-							method: 'Businese.BillPayDAL.ReceiveConfirm',
-							params: {
-								RecordId: this.billObj.RecordId
-							},
-							tags: {
-								usertoken: this.openid
+						util.dialog({
+							content: '请确认收款？',
+							success (e) {
+								if(e.confirm) {
+									util.showLoading();
+									me.sendOrder();
+								}
 							}
-						}).then(res => {
-							this.sendOrder();
 						});
+						// util.showLoading();
+						// util.ajax({
+						// 	method: 'Businese.BillPayDAL.ReceiveConfirm',
+						// 	params: {
+						// 		RecordId: this.billObj.RecordId
+						// 	},
+						// 	tags: {
+						// 		usertoken: this.openid
+						// 	}
+						// }).then(res => {
+						// 	this.sendOrder();
+						// });
 					}
 				} else {
 					this.$refs.popup.close();
@@ -611,9 +655,37 @@
 					}
 				});
 			},
-			bindReturn() {
+			getDefaultAddr() {
+				return util.ajax({
+					method: 'Businese.OrderDAL.GetReturnLinkInfo',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.addr.Address = addr.Address;
+					this.addr.PersonName = addr.LinkMan;
+					this.addr.Mobile = addr.Mobile;
+				});
+			},
+			async bindReturn() {
 				// 退货
+				util.showLoading();
+				// 先获取默认地址
+				await this.getDefaultAddr();
+				util.hideLoading();
 				this.$refs.popup3.open();
+				if(this.$refs.linkMan) {
+					this.$refs.linkMan.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobile) {
+					this.$refs.mobile.setValue(this.addr.Mobile);
+				}
+				if(this.$refs.addr) {
+					this.$refs.addr.setValue(this.addr.Address);
+				}
+				if(this.$refs.freightInfo) {
+					this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
+				}
 			},
 			closePopup3(str){
 				if (str === 'confirm') {
@@ -626,13 +698,13 @@
 							params: {
 								"OrderId" : this.billObj.RecordId /*订单Id [String]*/,
 								"DiliveryInfo" : {
-								  "Adress": this.billObj.Address  /*收货地址*/,
-								  "LinkMan": this.billObj.DealerName  /*联系人*/,
-								  "Mobile": this.billObj.Mobile  /*手机号*/,
-								  "TransportCompany": this.billObj.FreightInfo  /*货运公司*/,
+								  "Adress": this.addr.Address  /*收货地址*/,
+								  "LinkMan": this.addr.PersonName  /*联系人*/,
+								  "Mobile": this.addr.Mobile  /*手机号*/,
+								  "TransportCompany": this.company  /*货运公司*/,
 								  "TrackingNo": this.trackingNo3  /*运单号*/
 								} /*货运信息 [DiliveryInfo]*/,
-								"Reson" : this.reson /*退货原因 [String]*/
+								"Reson" : this.billObj.ReturnReason /*退货原因 [String]*/
 							},
 							tags: {
 								usertoken: this.openid
@@ -650,6 +722,11 @@
 				} else {
 					this.$refs.popup3.close();
 				}
+			},
+			selectAddr() {
+				util.goUrl({
+					url: '../addr/addr?mode=select'
+				});
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

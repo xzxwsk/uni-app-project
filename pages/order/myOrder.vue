@@ -60,9 +60,10 @@
 								<view class="ls_item_bottom">
 									<button v-if="item.State===0" class="btn" @click.stop="bindClose(item.RecordId)">关闭</button>
 									<button v-if="item.State===1" class="btn" @click.stop="bindConfirmReceive(item.RecordId)">收货确认</button>
-									<button v-if="item.State===1" class="btn" @click.stop="bindReturn(index)">退货</button>
+									<!--2010-02-13 qq消息 退货就只在详情中显示, 因为是非常规操作-->
+									<!-- <button v-if="item.State===1" class="btn" @click.stop="bindReturn(index)">退货</button> -->
 									<button v-if="item.State===4" class="btn" @click.stop="bindCancelReturn(item.RecordId)">撤销退货</button>
-									<button v-if="item.State===6" class="btn" @click.stop="bindConfirmReturn(item.RecordId)">退款确认</button>
+									<button v-if="item.State===5 && item.IsPay" class="btn" @click.stop="bindConfirmReturn(item.RecordId)">退款确认</button>
 								</view>
 							</view>
 						</view>
@@ -80,12 +81,32 @@
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
 					<view class="input-group">
 						<view class="input-row border">
-							<text class="title">退货货运单号：</text>
-							<input-box ref="trackingNo" type="text" :verification="['isNull']" :verificationTip="['货运单号不能为空']" class="input-box" clearable focus v-model="trackingNo" placeholder="请输入退货货运单号"></input-box>
+							<text class="title">退货货运信息：</text>
+							<input-box ref="freightInfo" type="text" class="input-box" :clearShow="false" clearable focus v-model="curSelected.FreightInfo" placeholder=""></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货运单号：</text>
+							<input-box ref="trackingNo" type="text" :verification="['isNull']" :verificationTip="['运单号不能为空']" class="input-box" clearable focus v-model="trackingNo" placeholder="请输入退货运单号"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">联系人：</text>
+							<input-box ref="linkMan" type="text" class="input-box" clearable focus v-model="addr.PersonName" placeholder="请输入退货联系人"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">手机号：</text>
+							<input-box ref="mobile" type="text" class="input-box" clearable focus v-model="addr.Mobile" placeholder="请输入退货人手机号"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货地址：</text>
+							<input-box ref="addr" type="text" class="input-box" clearable focus v-model="addr.Address" placeholder="请输入退货收货地址"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货货运公司：</text>
+							<input-box ref="company" type="text" class="input-box" clearable focus v-model="company" placeholder="请输入退货货运公司"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
-							<textarea v-model="reson" style="padding: 10px 11px; height: 60px;" placeholder="请输入退货原因"/>
+							<textarea style="padding: 10px 11px; height: 60px;" v-model="curSelected.ReturnReason" placeholder="请输入退货原因"/>
 						</view>
 					</view>
 				</view>
@@ -199,8 +220,13 @@
 				}],
 				startDate: '2010-01',
 				endDate: '2199-12',
+				addr: {
+					PersonName: '',
+					Mobile: '',
+					Address: ''
+				},
 				trackingNo: '', // 货运单号
-				reson: '', // 退货原因
+				company: '', // 退货货运公司
 				curSelected: {}, // 当前选中
 				stateArr: [null, 0, 1, 2, 4, 5, 6, -1]
 			}
@@ -435,10 +461,58 @@
 					}
 				});
 			},
-			bindReturn(index) {
+			getDefaultAddr() {
+				return util.ajax({
+					method: 'Businese.OrderDAL.GetReturnLinkInfo',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.addr.Address = addr.Address;
+					this.addr.PersonName = addr.LinkMan;
+					this.addr.Mobile = addr.Mobile;
+				});
+			},
+			async bindReturn(index) {
+				// 2010-02-13 qq消息 退货就只在详情中显示, 因为是非常规操作
 				// 退货
-				this.$refs.popup.open();
 				this.curSelected = this.dataArr[this.tabIndex].data[index];
+				util.showLoading();
+				// 先获取默认地址
+				await this.getDefaultAddr();
+				// 判断是否可以退货
+				util.ajax({
+					method: 'Businese.OrderDAL.CanReturn',
+					params: {
+						OrderId: this.curSelected.RecordId
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				})
+				.then(res => {
+					util.hideLoading();
+					if(!res.data.result) {
+						util.dialog({
+							content: '该单据不能退货',
+							showCancel: false
+						});
+					} else {
+						this.$refs.popup.open();
+						if(this.$refs.linkMan) {
+							this.$refs.linkMan.setValue(this.addr.PersonName);
+						}
+						if(this.$refs.mobile) {
+							this.$refs.mobile.setValue(this.addr.Mobile);
+						}
+						if(this.$refs.addr) {
+							this.$refs.addr.setValue(this.addr.Address);
+						}
+						if(this.$refs.freightInfo) {
+							this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
+						}
+					}
+				});
 			},
 			closePopup(str){
 				let me = this;
@@ -452,13 +526,13 @@
 							params: {
 								"OrderId" : this.curSelected.RecordId /*订单Id [String]*/,
 								"DiliveryInfo" : {
-								  "Adress": this.curSelected.Address  /*收货地址*/,
-								  "LinkMan": this.curSelected.DealerName  /*联系人*/,
-								  "Mobile": this.userInfo.Mobile  /*手机号*/,
-								  "TransportCompany": this.curSelected.FreightInfo  /*货运公司*/,
+								  "Adress": this.addr.Address  /*收货地址*/,
+								  "LinkMan": this.addr.PersonName  /*联系人*/,
+								  "Mobile": this.addr.Mobile  /*手机号*/,
+								  "TransportCompany": this.company  /*货运公司*/,
 								  "TrackingNo": this.trackingNo  /*运单号*/
 								} /*货运信息 [DiliveryInfo]*/,
-								"Reson" : this.reson /*退货原因 [String]*/
+								"Reson" : this.curSelected.ReturnReason /*退货原因 [String]*/
 							},
 							tags: {
 								usertoken: this.openid

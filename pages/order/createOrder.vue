@@ -292,9 +292,12 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					this.addr = res.data.result.data.find(item => {
+					let addr = res.data.result.data.find(item => {
 						return item.IsDefault;
 					});
+					if (addr) {
+						this.addr = addr;
+					}
 				});
 			},
 			selectAddr() {
@@ -303,7 +306,7 @@
 				});
 			},
 			goMyOrder() {
-				if (this.addr.name === '' && this.addr.phone === '') {
+				if (this.addr.PersonName === '' && this.addr.Mobile === '') {
 					util.showToast({
 						title: '请选择收货地址'
 					});

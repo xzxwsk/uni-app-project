@@ -1,4 +1,4 @@
-1、我的订单           Businese.OrderDAL.QueryMyList                    订单详情  Businese.OrderDAL.GetById
+一1、我的订单         Businese.OrderDAL.QueryMyList                    订单详情  Businese.OrderDAL.GetById
 未发货  0：关闭；     Businese.OrderDAL.Close
 已发货  1：收货确认、 Businese.OrderDAL.ReceiveConfirm
            退货；     Businese.OrderDAL.Return
@@ -20,7 +20,10 @@
 3、我的退款单         Businese.BillPayReturnDAL.QueryMyList
 未收款  0：取消
 
-1、我收到的订单       Businese.OrderDAL.QueryReceivedList
+
+
+
+二1、我收到的订单       Businese.OrderDAL.QueryReceivedList
 未发货状态：0 发货；  Businese.OrderDAL.Send
                       对于付款的订单，需要弹出窗口，显示付款方式、付款方账户信息、收款方账户信息，付款金额(等于订单金额)，确认收款和取消按钮。
 		      必须确认收款才能发货。

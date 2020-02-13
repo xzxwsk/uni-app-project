@@ -238,7 +238,6 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					console.log('首页广告图片: ', res.data.result.PictureTopBase64);
 					this.imgLs = [];
 					let img = res.data.result.PictureTopBase64;
 					if (img) {

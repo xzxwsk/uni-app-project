@@ -87,7 +87,19 @@
 						</view>
 						<view class="input-row border">
 							<text class="title">快递公司：</text>
-							<input-box ref="transportCompany" type="text" class="input-box" clearable focus v-model="transportCompany" placeholder="请输入货运公司"></input-box>
+							<input-box ref="transportCompany" type="text" class="input-box" clearable v-model="transportCompany" placeholder="请输入货运公司"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">联系人：</text>
+							<input-box ref="linkMan" type="text" class="input-box" clearable v-model="addr.PersonName" placeholder="请输入联系人"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">手机号：</text>
+							<input-box ref="mobile" type="number" class="input-box" clearable v-model="addr.Mobile" placeholder="请输入手机号"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货地址：</text>
+							<input-box ref="addr" type="text" class="input-box" :clearShow="false" disabled clearable v-model="addr.Address" @click="selectAddr"></input-box>
 						</view>
 						<block v-if="curSelected.IsPay">
 							<view class="input-row border">
@@ -123,11 +135,11 @@
 					<view class="input-group">
 						<view class="input-row border">
 							<text class="title">退货货运信息：</text>
-							<input-box ref="trackingNo2" type="text" class="input-box" :clearShow="false" v-model="trackingNo2" disabled></input-box>
+							<input-box ref="trackingNo2" type="text" class="input-box" :clearShow="false" v-model="curSelected.ReturnFreightInfo" disabled></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
-							<textarea v-model="reson" class="text_area" disabled />
+							<textarea v-model="curSelected.ReturnReason" class="text_area" disabled />
 						</view>
 						<block v-if="curSelected.IsPay">
 							<view class="input-row border">
@@ -261,6 +273,11 @@
 				trackingNo: '', // 发货货运单号
 				trackingNo2: '', // 退货货运信息
 				reson: '', // 退货原因
+				addr: { // 发货用 发货地址
+					PersonName: '',
+					Mobile: '',
+					Address: ''
+				},
 				curSelected: {}, // 当前选中
 				stateArr: [null, 0, 1, 2, 4, 5, 6, -1]
 			}
@@ -342,7 +359,7 @@
 					if (res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][item.AccountType]
+							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType]
 							dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认'][dataItem.State + 1];
 							dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
 						});
@@ -458,10 +475,33 @@
 				}
 				return ary;
 			},
-			bindSend(index) {
+			getDefaultAddr() {
+				return util.ajax({
+					method: 'Businese.OrderDAL.GetReturnLinkInfo',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.addr.Address = addr.Address;
+					this.addr.PersonName = addr.LinkMan;
+					this.addr.Mobile = addr.Mobile;
+				});
+			},
+			async bindSend(index) {
 				// 发货弹窗
+				await this.getDefaultAddr();
 				this.$refs.popup.open();
 				this.curSelected = this.dataArr[this.tabIndex].data[index];
+				this.curSelected.Amount = String(this.curSelected.Amount);
+				if(this.$refs.linkMan) {
+					this.$refs.linkMan.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobile) {
+					this.$refs.mobile.setValue(this.addr.Mobile);
+				}
+				if(this.$refs.addr) {
+					this.$refs.addr.setValue(this.addr.Address);
+				}
 			},
 			sendOrder() {
 				// 发货
@@ -471,12 +511,19 @@
 					params: {
 						"OrderId" : me.curSelected.RecordId /*订单Id [String]*/,
 						"DiliveryInfo" : {
-						  "Adress": me.curSelected.Address  /*收货地址*/,
-						  "LinkMan": me.curSelected.DealerName  /*联系人*/,
-						  "Mobile": me.curSelected.Mobile  /*手机号*/,
-						  "TransportCompany": me.curSelected.FreightInfo  /*货运公司*/,
-						  "TrackingNo": me.trackingNo  /*运单号*/
+							"Adress": ''  /*收货地址*/,
+							"LinkMan": ''  /*联系人*/,
+							"Mobile": ''  /*手机号*/,
+							"TransportCompany": me.transportCompany  /*货运公司*/,
+							"TrackingNo": me.trackingNo  /*运单号*/
 						} /*货运信息 [DiliveryInfo]*/,
+						ReturnLinkInfo: { // 退货的收货人信息(必须填地址、收货人和电话)
+							"Adress":  me.addr.Address /*收货地址*/,
+							"LinkMan": me.addr.PersonName  /*联系人*/,
+							"Mobile": me.addr.Mobile  /*手机号*/,
+							"TransportCompany": ''  /*货运公司*/,
+							"TrackingNo": ''  /*运单号*/
+						}
 					},
 					tags: {
 						usertoken: me.openid
@@ -512,18 +559,27 @@
 					// 发货弹窗确认收款
 					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
 						this.$refs.popup.close();
-						util.showLoading();
-						util.ajax({
-							method: 'Businese.BillPayDAL.ReceiveConfirm',
-							params: {
-								RecordId: this.curSelected.RecordId
-							},
-							tags: {
-								usertoken: this.openid
+						// 直接调用发货接口，表示确认收款
+						util.dialog({
+							content: '请确认收款？',
+							success (e) {
+								if(e.confirm) {
+									util.showLoading();
+									me.sendOrder();
+								}
 							}
-						}).then(res => {
-							this.sendOrder();
 						});
+						// util.ajax({
+						// 	method: 'Businese.BillPayDAL.ReceiveConfirm',
+						// 	params: {
+						// 		RecordId: this.curSelected.RecordId
+						// 	},
+						// 	tags: {
+						// 		usertoken: this.openid
+						// 	}
+						// }).then(res => {
+						// 	this.sendOrder();
+						// });
 					}
 				} else {
 					this.$refs.popup.close();
@@ -533,6 +589,9 @@
 				// 退货确认
 				this.$refs.popup2.open();
 				this.curSelected = this.dataArr[this.tabIndex].data[index];
+				if(this.$refs.trackingNo2) {
+					this.$refs.trackingNo2.setValue(this.curSelected.ReturnFreightInfo);
+				}
 			},
 			closePopup2(str){
 				let me = this;
@@ -568,6 +627,11 @@
 			},
 			onIsPayReturnChange(e) {
 				this.$set(this.curSelected, 'IsPayReturn', !this.curSelected.IsPayReturn);
+			},
+			selectAddr() {
+				util.goUrl({
+					url: '../addr/addr?mode=select'
+				});
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

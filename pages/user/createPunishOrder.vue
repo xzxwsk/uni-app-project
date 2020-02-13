@@ -21,9 +21,9 @@
 				<text class="title">单据状态：</text>
 				<radio-group class="uni-flex" name="gender" @change="changeState">
 					<label>
-						<radio value="0" :checked="billObj.State === 0" color="#f23030" />申请</label>
+						<radio value="0" :disabled="isNew" :checked="billObj.State === 0" color="#f23030" />申请</label>
 					<label>
-						<radio value="2" :checked="billObj.State === 2" color="#f23030" />已审核</label>
+						<radio value="2" :disabled="isNew" :checked="billObj.State === 2" color="#f23030" />已审核</label>
 				</radio-group>
 			</view>
 			<view class="input-row">
@@ -72,6 +72,7 @@
 				penaliztionClass: [], // 处罚类别设置中维护的类别
 				startDate: '2010-01-01',
 				endDate: '2199-12-31',
+				isNew: true,
 				billObj: {
 				  "RecordId": ""  /*单据Id*/,
 				  "BillCode": ""  /*单据编号*/,
@@ -106,6 +107,7 @@
 			console.log(option)
 			if (option.hasOwnProperty('item')) {
 				let item = JSON.parse(option.item);
+				this.isNew = false;
 				if (option.hasOwnProperty('detail')) {
 					uni.setNavigationBarTitle({
 						title: '查看处罚申请单'
@@ -219,7 +221,8 @@
 						tags: {
 							usertoken: this.openid
 						}
-					}.then(res => {
+					})
+					.then(res => {
 						util.hideLoading();
 						util.showToast({
 							title: title + '处罚申请单成功',
@@ -231,7 +234,7 @@
 								}, 1000);
 							}
 						});
-					}));
+					});
 				}
 			}
 		}

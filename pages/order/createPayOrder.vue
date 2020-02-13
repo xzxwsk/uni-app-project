@@ -119,17 +119,35 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					util.hideLoading();
 					this.billObj = res.data.result;
 					this.$refs.amount.setValue(this.billObj.Amount);
+					this.getDefaultPayInfo();
+				});
+			},
+			getDefaultPayInfo() {
+				util.ajax({
+					method: 'Businese.BillPayDAL.GetDefaultPayInfo',
+					params: {
+						PayType: this.billObj.PayType
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.hideLoading();
+					res.data.result = util.jsonReplace(res.data.result, 'null', '""');
+					this.billObj.PayAccountNo = res.data.result.PayAccountNo;
+					this.billObj.payBank = res.data.result.payBank;
+					this.billObj.PayAccountName = res.data.result.PayAccountName;
+					this.billObj.ReceiveAccountInfo = res.data.result.ReceiveAccountInfo;
 					if (this.$refs.payAccountNo) {
-						this.$refs.payAccountNo.setValue(this.billObj.PayAccountNo);
+						this.$refs.payAccountNo.setValue(res.data.result.PayAccountNo);
 					}
 					if (this.$refs.payBank) {
-						this.$refs.payBank.setValue(this.billObj.PayBank);
+						this.$refs.payBank.setValue(res.data.result.PayBank);
 					}
 					if (this.$refs.payAccountName) {
-						this.$refs.payAccountName.setValue(this.billObj.PayAccountName);
+						this.$refs.payAccountName.setValue(res.data.result.PayAccountName);
 					}
 				});
 			},
@@ -150,15 +168,7 @@
 					this.placeholder = '请输入付款人银行帐号';
 					this.placeholder2 = '请输入收款人银行帐号';
 				}
-				if (this.$refs.payAccountNo) {
-					this.$refs.payAccountNo.setValue(this.billObj.PayAccountNo);
-				}
-				if (this.$refs.payBank) {
-					this.$refs.payBank.setValue(this.billObj.PayBank);
-				}
-				if (this.$refs.payAccountName) {
-					this.$refs.payAccountName.setValue(this.billObj.PayAccountName);
-				}
+				this.getDefaultPayInfo();
 			},
 			saveOrder() {
 				this.billObj.Amount = Number(this.billObj.Amount);

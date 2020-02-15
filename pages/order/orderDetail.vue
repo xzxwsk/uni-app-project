@@ -193,7 +193,7 @@
 					<view class="input-group">
 						<view class="input-row border">
 							<text class="title">退货货运信息：</text>
-							<input-box ref="trackingNo2" type="text" class="input-box" :clearShow="false" v-model="trackingNo2" disabled></input-box>
+							<input-box ref="trackingNo2" type="text" class="input-box" :clearShow="false" v-model="billObj.FreightInfo" disabled></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
@@ -242,9 +242,13 @@
 				<button class="uni-icon uni-icon-closeempty close_btn" @click="closePopup3"></button>
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
 					<view class="input-group">
-						<view class="input-row border">
+						<!-- <view class="input-row border">
 							<text class="title">退货货运信息：</text>
 							<input-box ref="freightInfo" type="text" class="input-box" :clearShow="false" clearable focus v-model="billObj.FreightInfo" placeholder=""></input-box>
+						</view> -->
+						<view class="input-row border">
+							<text class="title">退货货运公司：</text>
+							<input-box ref="company" type="text" class="input-box" clearable v-model="company" placeholder="请输入退货货运公司"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货运单号：</text>
@@ -261,10 +265,6 @@
 						<view class="input-row border">
 							<text class="title">收货地址：</text>
 							<input-box ref="addr" type="text" class="input-box" :clearShow="false" disabled clearable v-model="addr.Address" placeholder="请输入收货地址" @click="selectAddr"></input-box>
-						</view>
-						<view class="input-row border">
-							<text class="title">退货货运公司：</text>
-							<input-box ref="company" type="text" class="input-box" clearable v-model="company" placeholder="请输入退货货运公司"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
@@ -390,7 +390,7 @@
 			util.showLoading();
 			if (option.hasOwnProperty('id')){
 				if (option.hasOwnProperty('type')){
-					this.orderType = option.type
+					this.orderType = option.type;
 				}
 				let id = option.id;
 				this.init(id)
@@ -629,6 +629,11 @@
 			bindReturnConfirm(index) {
 				// 退货确认
 				this.$refs.popup2.open();
+				setTimeout(() => {
+					if(this.$refs.trackingNo2) {
+						this.$refs.trackingNo2.setValue(this.billObj.FreightInfo);
+					}
+				}, 500);
 			},
 			closePopup2(str){
 				let me = this;
@@ -695,7 +700,7 @@
 				// 确认退款
 				let me = this;
 				util.dialog({
-					content: '确定要确认退款吗？',
+					content: '你确定收到退款了吗？',
 					success (e) {
 						if(e.confirm) {
 							util.showLoading();
@@ -749,9 +754,9 @@
 					if(this.$refs.addr) {
 						this.$refs.addr.setValue(this.addr.Address);
 					}
-					if(this.$refs.freightInfo) {
-						this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
-					}
+					// if(this.$refs.freightInfo) {
+					// 	this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
+					// }
 				}, 500);
 			},
 			closePopup3(str){

@@ -13,7 +13,7 @@
 					</block>
 					<view v-else="" class="box">
 						<view>
-							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
+							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(item.RecordId)">
 								<view class="ls_item_top">
 									<view class="title">
 										<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
@@ -204,11 +204,11 @@
 					});
 				});
 			},
-			goDetail(index) {
+			goDetail(id) {
 				// 查看订单详情
 				console.log(index);
 				util.goUrl({
-					url: './orderDetail'
+					url: './orderDetail?id=' + id
 				});
 			},
 			query() {

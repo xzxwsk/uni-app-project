@@ -204,18 +204,15 @@ uni-toast{z-index: 100000;}
 		}
 	}
 }
-.create_order{height: calc(100% - 100upx);
-	.uni-list-cell-navigate{
-		padding: 20upx;
-	}
-	.menu_txt{flex: 1; display: flex; flex-direction: column; background: #fff; border-radius: 4px; border-bottom: 3px solid #ff0036; padding: 10px;
+.create_order{padding: 160upx 0 100upx;
+	.uni-list-cell-navigate{padding: 20upx;}
+	.menu_txt{flex: 1; display: flex; flex-direction: column; background: #fff; border-radius: 0 0 4px 4px; border-top: 10px #f0f2f5 solid; border-bottom: 3px solid #ff0036; padding: 10px;
 		.title{flex: 1; display: flex; flex-direction: row;}
 		.uni-icon{margin: 0 20upx 0 0;}
 		.txt{display: block;}
 		.sub_txt{display: block; font-size: 22upx; color: #444;}
 	}
-	.box{height:  calc(100% - 400upx);}
-	.uni-list{margin: 0 20upx 20upx; width: calc(100% - 40upx);
+	.uni-list{z-index: 2; margin: 0 20upx 20upx; width: calc(100% - 40upx);
 		.uni-list-cell{
 			&:after{right: 16px;}
 			.uni-media-list-logo{width: 180upx; height: 180upx;}
@@ -223,7 +220,7 @@ uni-toast{z-index: 100000;}
 				.uni-media-list-text-top{font-size: 22upx; font-weight: bold;}
 				.sub_txt{font-weight: normal;}
 			}
-			.uni-list-cell-navigate{font-size: 22upx;
+			.uni-list-cell-navigate{padding: 20upx 0 20upx 20upx; font-size: 22upx;
 				.item-title{margin: 0 20upx 0 0; white-space: nowrap;}
 				.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 				uni-input, .uni-input-input{font-size: 14px; text-align: right;}
@@ -235,10 +232,11 @@ uni-toast{z-index: 100000;}
 			}
 		}
 	}
-	.result{position: absolute; bottom: 0; left: 0; z-index: 2; width: 100%; height: 100upx; background: #fff; display: flex; flex-direction: row; box-shadow: 0px 1px 3px 1px #ddd;
+	.result{position: fixed; bottom: 0; left: 0; z-index: 2; width: 100%; height: 100upx; background: #fff; display: flex; flex-direction: row; box-shadow: 0px 1px 3px 1px #ddd;
 		.count{margin: 0 0 0 20upx; flex: 1; display: flex; flex-direction: row; justify-content: flex-start; align-items: center;}
 		.btn{margin: 10upx 20upx 10upx 0; font-size: 30upx; height: 80upx; line-height: 80upx;}
 	}
+	&>.uni-list-cell-navigate{position: fixed; left: 0; top: 60upx; z-index: 3; width: 100%;}
 }
 .order_detail{display: flex; flex-direction: column; height: 100%; position: relative;
 	.top{position: relative;
@@ -328,6 +326,7 @@ uni-toast{z-index: 100000;}
 	.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 	.input-box-all{flex: 1;}
 	.txt{margin: 0 15upx;}
+	.info{margin: 0 0 0 10px;}
 	.date_box{border: none !important;}
 	.box{height: calc(100vh - 200upx); overflow-y: hidden;
 		.input-row{
@@ -383,8 +382,19 @@ uni-toast{z-index: 100000;}
 .baseInfo{height: 100%;
 	.con{height: 100%; overflow: hidden;}
 	.input-row{
+		.search_box{
+			.date_picker_box{width: 180upx;}
+		}
 		.info{flex: 1; display: flex; flex-direction: column; justify-content: center; margin: 0 0 0 20upx; line-height: 1.2; word-break:break-all; word-wrap: break-word;
-			&.input_box{height: 60upx; border: 1px #ccc solid;}
+			.radio{padding: 0 5px 0 0; white-space:nowrap;
+				&:last-child{padding: 0;}
+			}
+			&.input_box{padding: 0; height: 60upx; border: 1px #ccc solid;
+				.input-box-all{padding: 0 5px !important;}
+			}
+			&.text_area_box{margin: 5px 0 5px 20upx; padding: 10px; border: 1px #ccc solid;
+				.text_area{width: calc(95% - 20px);}
+			}
 		}
 	}
 	.primary{margin: 0 0 20upx;}

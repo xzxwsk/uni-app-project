@@ -151,7 +151,9 @@
 							} else if(plus.os.name == "iOS") {
 								// let url='itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8';// HelloH5应用在appstore的地址  
 								// plus.runtime.openURL(url);
-								autoInstallfunIos(currentVersionInfo, res, isBigUpdate);
+								if(isUpdate) {
+									autoInstallfunIos(currentVersionInfo, res, isBigUpdate);
+								}
 							}
 						});
 						// if (res.statusCode == 200 && res.data.isUpdate) {

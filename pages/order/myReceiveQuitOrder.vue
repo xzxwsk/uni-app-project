@@ -54,16 +54,16 @@
 									</view>
 									<view class="ls_item_top">
 										<view class="title">
-											<view><text class="gray">经销商编号:</text>{{item.PayDealerCode}}</view>
-											<view><text class="gray">姓名:</text>{{item.PayDealerName}}</view>
-											<view><text class="gray">注销原因:</text>dfidsdfdsgasafkd</view>
+											<view><text class="gray">经销商编号:</text>{{item.DealerCode}}</view>
+											<view><text class="gray">姓名:</text>{{item.DealerName}}</view>
+											<view><text class="gray">注销原因:</text>{{item.Remark}}</view>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text><text class="gray">退款方式:</text>{{item.payTypeStr}}</text>
-										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
+										<text v-if="item.PayReturnItems.length > 0"><text class="gray">退款方式:</text>{{item.payTypeStr}}</text>
+										<!-- <text class="count"><text class="gray">备注:</text>{{item.Remark}}</text> -->
 									</view>
-									<view class="ls_item_bottom" v-show="item.State === 0">
+									<view class="ls_item_bottom" v-if="item.State === 0">
 										<button class="btn" @click="bindApproval(item.RecordId)">退货款</button>
 									</view>
 								</view>
@@ -202,7 +202,9 @@
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
 							dataItem.stateStr = ['已取消', '申请', '已退货款', '已退保证金', '已收款确认', '退货款中'][dataItem.State + 1];
-							dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
+							if(dataItem.PayReturnItems.length > 0) {
+								dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayReturnItems[0].PayType];
+							}
 						});
 						this.dataArr[index].data = res.data.result.data;
 						this.displayDataArr[index].data = res.data.result.data;

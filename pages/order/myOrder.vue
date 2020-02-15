@@ -586,7 +586,7 @@
 				// 确认退款
 				let me = this;
 				util.dialog({
-					content: '确定要确认退款吗？',
+					content: '你确定收到退款了吗？',
 					success (e) {
 						if(e.confirm) {
 							util.showLoading();

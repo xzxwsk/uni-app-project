@@ -67,7 +67,8 @@
 		mounted() {
 			console.log('order mounted');
 			this.getMenu();
-			if (this.hasLogin && this.changeNum === null) {
+			console.log(this.hasLogin, this.changeNum);
+			if (this.hasLogin && this.changeNum !== null) {
 				this.init();
 			}
 		},

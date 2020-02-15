@@ -60,7 +60,7 @@
 										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
-									<view class="ls_item_bottom" v-show="item.State === 0">
+									<view class="ls_item_bottom" v-if="item.State === 0">
 										<button class="btn" @click.stop="bindCancel(item.RecordId)">取消</button>
 									</view>
 								</view>
@@ -202,7 +202,7 @@
 					if (res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][item.AccountType]
+							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
 							dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State+1];
 							dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
 						});

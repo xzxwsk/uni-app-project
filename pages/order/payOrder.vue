@@ -60,7 +60,7 @@
 										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
 										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
 									</view>
-									<view class="ls_item_bottom" v-show="item.State === 0" @click="bindCancelOrder(item.RecordId)">
+									<view class="ls_item_bottom" v-if="item.State === 0" @click="bindCancelOrder(item.RecordId)">
 										<button class="btn">取消</button>
 									</view>
 								</view>

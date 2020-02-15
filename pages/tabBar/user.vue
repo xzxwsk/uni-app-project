@@ -119,6 +119,8 @@
 			if (!this.onLoadFlag) {
 				if (this.hasLogin && this.changeNum === null) {
 					this.getChangeNum();
+				} else {
+					this.getCurPageChangeNum();
 				}
 				this.onLoadFlag = true;
 			}
@@ -129,6 +131,8 @@
 				console.log(this.hasLogin, this.changeNum)
 				if (this.hasLogin && this.changeNum === null) {
 					this.getChangeNum();
+				} else {
+					this.getCurPageChangeNum();
 				}
 			}
 		},
@@ -190,7 +194,9 @@
 						text: String(num)
 					});
 				}
-				
+				this.getCurPageChangeNum();
+			},
+			async getCurPageChangeNum() {
 				// 经销商加盟单
 				await util.ajax({
 					method: 'Businese.BillJoinDAL.GetChangedListCount',

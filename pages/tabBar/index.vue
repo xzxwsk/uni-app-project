@@ -77,6 +77,7 @@
 			}
 		},
 		onLoad() {
+			console.log(this.hasLogin, this.changeNum)
 			if (this.hasLogin && this.changeNum === null) {
 				this.getChangeNum();
 			}
@@ -106,7 +107,7 @@
 		},
 		onNavigationBarSearchInputChanged(e) {
 			// 输入框改变
-			console.log(e);
+			console.log(e.text);
 		},
 		onNavigationBarSearchInputConfirmed(e) {
 			// 点击搜索按钮
@@ -116,6 +117,9 @@
 			// 	showCancel: false,
 			// 	content: e.text
 			// });
+			this.pageIndex = 1;
+			uni.hideKeyboard();
+			this.searchLs(e.text);
 		},
 		onNavigationBarButtonTap(e) {
 			// 点击分享按钮
@@ -229,6 +233,9 @@
 					});
 				});
 			},
+			searchLs(key) {
+				this.loadData('refresh', key);
+			},
 			async loadData(action = 'add', key = '') {
 				util.showLoading();
 				// 获取广告图
@@ -250,6 +257,7 @@
 					params: {
 						filter: {
 							KeyWord: key,
+							TypeName: '',
 							PageIndex: this.pageIndex
 						}
 					},

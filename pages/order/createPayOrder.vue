@@ -199,7 +199,6 @@
 				this.getDefaultPayInfo();
 			},
 			changeRepayDealer(e) {
-				console.log(e.target.value);
 				// 选择代支付经销商
 				let selectRepayDealer = this.repayDealer.find(item => {
 					return item.DealerId = e.target.value;

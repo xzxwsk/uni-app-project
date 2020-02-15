@@ -6,7 +6,7 @@
 				<input-box v-model="billObj.RcvDealerCode" placeholder="请输入收款会员编号" @input="getNameOfCode"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title"><text class="price">*</text>会员姓名：</text>
+				<text class="title">会员姓名：</text>
 				<input-box ref="rcvDealerName" v-model="billObj.RcvDealerName" placeholder="请输入收款会员姓名" disabled :clearShow="false"></input-box>
 			</view>
 			<view class="input-row border">

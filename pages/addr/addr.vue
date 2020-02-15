@@ -71,6 +71,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					let ls = res.data.result.data.map(item => {
 						return {
 							id: item.Id,
@@ -143,15 +144,17 @@
 					content: '您确定要删除本地址吗？',
 					success(data) {
 						if (data.confirm) {
+							util.showLoading();
 							util.ajax({
 								method: 'Basic.DealerAddressDAL.Delete',
 								params: {
-									Data: me.addrLs[index]
+									RecordId: me.addrLs[index].id
 								},
 								tags: {
 									usertoken: me.openid
 								}
 							}).then(res => {
+								util.hideLoading();
 								console.log('删除地址：', res);
 								util.showToast({
 									title: '删除成功'
@@ -168,7 +171,9 @@
 					let nowPage = pages[ pages.length - 1];  //当前页页面实例
 					let prevPage = pages[ pages.length - 2 ];  //上一页页面实例
 					let addr = util.deepCopy(this.addrLs[index]);
-					addr.detail = addr.area + addr.detail;
+					addr.PersonName = addr.name;
+					addr.Mobile = addr.phone;
+					addr.Address = addr.area + addr.detail;
 					prevPage.$vm.addr = addr;
 					uni.navigateBack();
 				}

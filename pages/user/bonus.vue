@@ -2,13 +2,15 @@
     <view class="bonus">
 		<view class="search_box">
 			<text class="label">查询年月：</text>
-			<customDatePicker class="date_picker"
-				fields="month"
-				:start="startDate"
-				:end="endDate"
-				:value="dateValue"
-				@change="bindDateChange"
-			></customDatePicker>
+			<view class="date_picker_box">
+				<customDatePicker class="date_picker"
+					fields="month"
+					:start="startDate"
+					:end="endDate"
+					:value="dateValue"
+					@change="bindDateChange"
+				></customDatePicker>
+			</view>
 		</view>
 		<block v-if="loaded">
 			<view class="con" v-if="tableList.length < 1">
@@ -226,6 +228,7 @@
         methods: {
 			init() {
 				let curDate = this.dateValue.split('-');
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.QueryAppDAL.QueryMyBonus',
 					params: {
@@ -237,6 +240,7 @@
 					}
 				})
 				.then(res => {
+					util.hideLoading();
 					let data = res.data.result;
 					console.log('我的奖金: ', data);
 					this.loaded = true;

@@ -57,18 +57,61 @@
 				}
 			}
 		},
-		onLoad() {
-			
-		},
-		mounted() {
-			this.$nextTick(() => {
-				this.$refs.dealerCode.setValue(this.userInfo.DealerNo);
-				this.$refs.dealerName.setValue(this.userInfo.DealerName);
-			})
+		onLoad(option) {
+			if (option.hasOwnProperty('id')) {
+				let id = option.id;
+				this.init(id);
+				uni.setNavigationBarTitle({
+				    title: '修改经销商注销单'
+				});
+			} else {
+				this.createDefault();
+			}
 		},
 		methods: {
+			createDefault() {
+				util.showLoading();
+				util.ajax({
+					method: 'Businese.BillLeaveDAL.CreateDefault',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.hideLoading();
+					res.data.result = util.jsonReplace(res.data.result, 'null', '""');
+					this.billObj = res.data.result;
+					if(this.$refs.dealerCode) {
+						this.$refs.dealerCode.setValue(this.billObj.DealerCode);
+					}
+					if(this.$refs.dealerName) {
+						this.$refs.dealerName.setValue(this.billObj.DealerName);
+					}
+				});
+			},
+			init(id) {
+				util.ajax({
+					method: 'Businese.BillLeaveDAL.GetById',
+					params: {
+						RecordId: id
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.hideLoading();
+					res.data.result = util.jsonReplace(res.data.result, 'null', '""');
+					this.billObj = res.data.result;
+					if(this.$refs.dealerCode) {
+						this.$refs.dealerCode.setValue(this.billObj.DealerNo);
+					}
+					if(this.$refs.dealerName) {
+						this.$refs.dealerName.setValue(this.billObj.DealerName);
+					}
+				});
+			},
 			saveOrder() {
 				// this.billObj.BillDate = this.billObj.CreateTime = this.billObj.LastModifyTime = util.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.BillLeaveDAL.Create',
 					params: {
@@ -78,6 +121,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					util.showToast({
 						title: '创建注销单成功',
 						success() {

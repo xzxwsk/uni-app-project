@@ -200,24 +200,14 @@
 			},
 			cancelDate(e){
 				this.cancel = e
+			},
+			getValue() {
+				return this.curValue
 			}
 		}
 	}
 </script>
 
 <style>
-	.rui-picker{
-	  flex: 1;
-	  min-width: 90px;
-	  height: 10vw;
-	  font-size: 4vw;
-	  color: #000;
-	  display: -webkit-flex;
-	  display: flex;
-	  align-items: center;
-	  padding: 0 10px;
-	  box-sizing: border-box;
-	  border: 1px solid #aaa;
-	  border-radius: 3px;
-	}
+	
 </style>

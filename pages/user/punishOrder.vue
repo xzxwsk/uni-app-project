@@ -11,14 +11,23 @@
 				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-							<view class="date_picker">
-								<customDatePicker
-									fields="month"
+							<!-- <input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box> -->
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'startDate' + indexLs"
+									fields="day"
 									:start="startDate"
 									:end="endDate"
-									:value="itemLs.dateValue"
-									@change="bindDateChange"
+									:value="itemLs.startDateValue"
+									@change="bindStartDateChange"
+								></customDatePicker>
+							</view>
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'endDate' + indexLs"
+									fields="day"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.endDateValue"
+									@change="bindEndDateChange"
 								></customDatePicker>
 							</view>
 							<button class="btn" type="warn" @click="query">查询</button>
@@ -45,7 +54,7 @@
 											<text>{{item.stateStr}}</text>
 										</view>
 									</view>
-									<view class="ls_item_bottom" v-show="tabIndex === 1">
+									<view class="ls_item_bottom" v-if="item.State === 1">
 										<button class="btn" @click="del(item.RecordId)">删除</button><button class="btn" @click="edit(item)">修改</button>
 									</view>
 								</view>
@@ -115,9 +124,10 @@
 				loadingText: '加载更多...',
 				dateValue: '',
 				searchKey: '',
-				startDate: '2010-01',
-				endDate: '2199-12',
-				ls: list
+				startDate: '2010-01-01',
+				endDate: '2199-12-31',
+				ls: list,
+				stateArr: [null, 0, 2]
 			}
 		},
 		onLoad() {
@@ -132,84 +142,88 @@
 		},
 		methods: {
 			init() {
-				this.getAllData([0, 1, 2, 3, -1]);
-			},
-			async getAllData(arr) {
-				// 获取全部状态的数据
-				var promiseArray = [];
-				arr.forEach(item => {
-					promiseArray.push(util.ajax({
-						method: 'Businese.BillPenalizationDAL.QueryMyList',
-						params: {
-							Filter: {
-								StartDate: '',
-								EndDate: '',
-								BillNoLike: '',
-								State: item,
-								PageIndex: 1,
-								PageSize: 20
-							}
-						},
-						tags: {
-							usertoken: this.openid
-						}
-					}));
-				});
-				await Promise.all(promiseArray)
-				.then(values => {
-					this.dataArr = [{
+				let day = util.formatDate(new Date(), 'yyyy-MM-dd');
+				let dayArr = day.split('-');
+				this.stateArr.forEach(item => {
+					this.dataArr.push({
 						isLoading: false,
 						searchKey: '',
-						dateValue: '',
+						startDateValue: dayArr[0] + '-' + dayArr[1] + '-' + '01',
+						endDateValue: day,
 						data: [],
 						isScroll: false,
 						loadingText: '加载更多...',
 						renderImage: false
-					}];
-					values.forEach((item, index) => {
-						this.dataArr.push({
-							isLoading: false,
-							searchKey: '',
-							dateValue: '',
-							data: [],
-							isScroll: false,
-							loadingText: '加载更多...',
-							renderImage: false
-						});
-						if (item.data.hasOwnProperty('result')) {
-							this.dataArr[index+1].data = item.data.result.data;
-						}
 					});
 				});
-				let _arr = [];
-				this.dataArr.forEach(item => {
-					item.data.forEach(dataItem => {
-						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-						dataItem.penaliztionClassStr = '';
-						dataItem.stateStr = ['已作废', '草稿', '审核中', '已审核', '已完成'][dataItem.State + 1];
-						_arr = _arr.concat(dataItem);
-					});
-				});
-				this.dataArr[0].data = _arr;
 				this.displayDataArr = util.deepCopy(this.dataArr);
+				this.getData(this.stateArr[0]);
 			},
-			del(id) {
+			getData(state) {
+				util.showLoading();
+				let index = this.tabIndex;
+				if(this.$refs['startDate' + index]) {
+					this.dataArr[index].startDateValue = this.$refs['startDate' + index][0].getValue();
+				}
+				if(this.$refs['endDate' + index]) {
+					this.dataArr[index].endDateValue = this.$refs['endDate' + index][0].getValue();
+				}
 				util.ajax({
-					method: 'Businese.BillPenalizationDAL.Delete',
+					method: 'Businese.BillPenalizationDAL.QueryMyList',
 					params: {
-						RecordId: id
+						Filter: {
+							StartDate: this.dataArr[index].startDateValue,
+							EndDate: this.dataArr[index].endDateValue,
+							BillNoLike: '',
+							State: state,
+							PageIndex: 1,
+							PageSize: 20
+						}
 					},
 					tags: {
 						usertoken: this.openid
 					}
-				}.then(res => {
-					util.showToast({
-						title: '删除成功',
-						success() {
-							this.init();
+				})
+				.then(res => {
+					util.hideLoading();
+					if (res.data.hasOwnProperty('result')) {
+						res.data.result.data.forEach(dataItem => {
+							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+							dataItem.penaliztionClassStr = dataItem.PenaliztionClass;
+							dataItem.stateStr = ['已作废', '草稿', '审核中', '已审核', '已完成'][dataItem.State + 1];
+						});
+						this.dataArr[index].data = res.data.result.data;
+						this.displayDataArr[index].data = res.data.result.data;
+					}
+				});
+			},
+			del(id) {
+				let me = this;
+				util.dialog({
+					content: '确定要删除吗？',
+					success (e) {
+						if(e.confirm) {
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.BillPenalizationDAL.Delete',
+								params: {
+									RecordId: id
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}.then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '删除成功',
+									success() {
+										me.query();
+									}
+								});
+							}));
 						}
-					});
-				}));
+					}
+				});
 			},
 			edit(item) {
 				util.goUrl({
@@ -217,26 +231,25 @@
 				});
 			},
 			goDetail(index) {
-				console.log(index);
+				util.goUrl({
+					url: '../user/createPunishOrder?item=' + JSON.stringify(item) + '&detail=true'
+				});
 			},
 			query() {
-				let searchKey = this.displayDataArr[this.tabIndex].searchKey;
-				let tempArr = [];
-				console.log(this.displayDataArr[this.tabIndex].searchKey, this.displayDataArr[this.tabIndex].dateValue);
-				this.displayDataArr[this.tabIndex].data = [];
-				this.dataArr[this.tabIndex].data.forEach(item => {
-					if(item.title.indexOf(searchKey) != -1){
-						tempArr.push(item);
-					}
-				});
-				this.displayDataArr[this.tabIndex].data = tempArr;
+				this.getData(this.stateArr[this.tabIndex]);
 			},
 			loadMore(e) {
 				this.displayDataArr[this.tabIndex].isScroll = true;
 			},
-			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
-				this.displayDataArr[this.tabIndex].dateValue = value;
+			bindStartDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.startDateValue = value;
+				})
+			},
+			bindEndDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.endDateValue = value;
+				})
 			},
 			addData(e) {
 				this.displayDataArr[e].isLoading = true;
@@ -262,9 +275,9 @@
 				}
 				index = e.target.current;
                 this.tabIndex = index;
-				if (!this.displayDataArr[index].isLoading) {
-					this.addData(index)
-				}
+				// if (!this.displayDataArr[index].isLoading) {
+				// 	this.addData(index)
+				// }
 				let tabBar = await this.getElSize("tab-bar"),
 					tabBarScrollLeft = tabBar.scrollLeft;
 				let width = 0;
@@ -282,12 +295,13 @@
 				if (width < tabBarScrollLeft) {
 					this.scrollLeft = width;
 				}
+				this.query();
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
-				if (!this.displayDataArr[tabIndex].isLoading) {
-					this.addData(tabIndex)
-				}
+				// if (!this.displayDataArr[tabIndex].isLoading) {
+				// 	this.addData(tabIndex)
+				// }
 				if (this.tabIndex === tabIndex) {
 					return false;
 				} else {

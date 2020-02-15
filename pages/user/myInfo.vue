@@ -76,7 +76,9 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					this.logout();
+					util.clearStorageSync();
 					util.goTab({
 						url: '../tabBar/user'
 					});

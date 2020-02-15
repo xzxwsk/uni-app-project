@@ -37,7 +37,10 @@
 						plus.runtime.install(d.filename, {}, function(widgetInfo) {
 							console.log('安装完成：', widgetInfo);
 							uni.showToast({
-								title: "安装完成"
+								title: "安装完成",
+								success() {
+									plus.runtime.restart();
+								}
 							});
 						}, function(err) {
 							console.log('安装失败：', err);
@@ -89,6 +92,31 @@
 					updateFun(data.bigUpdate, str);
 				}
 			};
+			// ios 自动下载并安装更新包
+			let autoInstallfunIos = async function(currentVersionInfo, data, isBigVersion) {
+				let str = '';
+				wgtWaiting = plus.nativeUI.showWaiting('发现新版本即将更新...');
+				await new Promise(resolve => setTimeout(resolve, 1500));
+				wgtWaiting.setTitle("下载更新资源...");
+				await new Promise(resolve => setTimeout(resolve, 500));
+				if(data.code == 1) {
+					// 如果是大版本，则先全量更新(安装该大版本的基础版本)
+					let curVersionArr = currentVersionInfo.version.split('.');
+					let serverVersionArr = data.version.split('.');
+					// 大版本
+					if (isBigVersion) {
+						// 先更新到基础版本
+						wgtWaiting.close();
+					} else {
+						// 增量更新
+						str = '版本对比,等待安装...';
+						updateFun(data.smallUpdate, str);
+					}
+				} else if(data.code == 2) {
+					// 全量更新
+					wgtWaiting.close();
+				}
+			};
 			function checkUpdate() {
 				// 检测升级
 				uni.request({
@@ -123,6 +151,9 @@
 							} else if(plus.os.name == "iOS") {
 								// let url='itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8';// HelloH5应用在appstore的地址  
 								// plus.runtime.openURL(url);
+								if(isUpdate) {
+									autoInstallfunIos(currentVersionInfo, res, isBigUpdate);
+								}
 							}
 						});
 						// if (res.statusCode == 200 && res.data.isUpdate) {

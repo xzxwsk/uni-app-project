@@ -90,6 +90,7 @@
 		computed: mapState(['hasLogin', 'loginProvider', 'userInfo', 'changeNum', 'openid']),
 		data() {
 			return {
+				onLoadFlag: false,
 				imgSrcHead: imgSrcHead,
 				modeHead: 'widthFix',
 				imgSrc: imgSrc,
@@ -114,10 +115,25 @@
 				]
 			}
 		},
-		onLoad: function (option) {
-			console.log('load');
-			if (this.hasLogin && this.changeNum === null) {
-				this.getChangeNum();
+		onLoad (option) {
+			if (!this.onLoadFlag) {
+				if (this.hasLogin && this.changeNum === null) {
+					this.getChangeNum();
+				} else {
+					this.getCurPageChangeNum();
+				}
+				this.onLoadFlag = true;
+			}
+		},
+		onShow () {
+			console.log('show user');
+			if (this.onLoadFlag) {
+				console.log(this.hasLogin, this.changeNum)
+				if (this.hasLogin && this.changeNum === null) {
+					this.getChangeNum();
+				} else {
+					this.getCurPageChangeNum();
+				}
 			}
 		},
 		methods: {
@@ -128,6 +144,7 @@
 				let myPayOrderChangeNum = 0;
 				let myRefundOrderChangeNum = 0;
 				// 我的订单
+				util.showLoading();
 				await util.ajax({
 					method: 'Businese.OrderDAL.GetChangedListCount',
 					params: {
@@ -177,7 +194,9 @@
 						text: String(num)
 					});
 				}
-				
+				this.getCurPageChangeNum();
+			},
+			async getCurPageChangeNum() {
 				// 经销商加盟单
 				await util.ajax({
 					method: 'Businese.BillJoinDAL.GetChangedListCount',
@@ -201,7 +220,7 @@
 					}
 				}).then(res => {
 					this.pages[1].changeNum = res.data.result;
-				});				
+				});
 				// 处罚申请单
 				await util.ajax({
 					method: 'Businese.BillPenalizationDAL.GetChangedListCount',
@@ -212,6 +231,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					this.pages[2].changeNum = res.data.result;
 				});
 			},
@@ -248,12 +268,14 @@
 				});
 			},
 			accountBalance() {
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.QueryAppDAL.QueryMyAccount',
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					let data = res.data.result;
 					console.log('帐户余额: ', res.data);
 					let str = '';

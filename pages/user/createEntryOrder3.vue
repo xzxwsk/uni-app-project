@@ -146,8 +146,10 @@
 						this.billObj[key] = eval(this.billObj[key]);
 					} else if (key === 'IdValues') {
 						this.billObj[key] = [this.billObj[key]];
-					} else {
+					} else if(util.getType(this.billObj[key]) === 'string'){
 						this.billObj[key] = this.billObj[key].trim();
+					} else {
+						this.billObj[key] = this.billObj[key] || ''
 					}
 				}
 				util.showLoading();
@@ -169,6 +171,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					this.setBillJoinDAL(null);
 					util.showToast({
 						title: title,

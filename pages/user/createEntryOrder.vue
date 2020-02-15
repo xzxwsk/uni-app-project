@@ -19,12 +19,16 @@
 			</view>
 			<view class="input-row">
 				<text class="title">生日：</text>
-				<customDatePicker class="date_box" @change="bindChangeBirthDay"
-					fields="day"
-					:start="startDate"
-					:end="endDate"
-					:value="billObj.BirthDay"
-				></customDatePicker>
+				<view class="date_picker_box">
+					<view class="date_picker_box date_box">
+						<customDatePicker class="date_picker" @change="bindChangeBirthDay"
+							fields="day"
+							:start="startDate"
+							:end="endDate"
+							:value="billObj.BirthDay"
+						></customDatePicker>
+					</view>
+				</view>
 			</view>
 			<view class="input-row">
 				<text class="title">性别：</text>
@@ -166,7 +170,22 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					this.billObj = res.data.result;
+					let arr = ['Sex', 'State', 'ChangeType', 'iState'];
+					for(let key in this.billObj) {
+						if (arr.indexOf(key) !== -1) {
+							this.billObj[key] = Number(this.billObj[key]);
+						} else if (key === 'HasMarried' || key === 'StateChanged') {
+							this.billObj[key] = eval(this.billObj[key]);
+						} else if (key === 'IdValues') {
+							this.billObj[key] = [this.billObj[key]];
+						} else if(util.getType(this.billObj[key]) === 'string'){
+							this.billObj[key] = this.billObj[key].trim();
+						} else {
+							this.billObj[key] = this.billObj[key] || ''
+						}
+					}
 					// 初始化显示值
 					this.setInfo();
 				});

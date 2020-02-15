@@ -11,14 +11,25 @@
 				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-							<customDatePicker class="date_picker"
-								fields="month"
-								:start="startDate"
-								:end="endDate"
-								:value="itemLs.dateValue"
-								@change="bindDateChange"
-							></customDatePicker>
+							<!-- <input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box> -->
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'startDate' + indexLs"
+									fields="day"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.startDateValue"
+									@change="bindStartDateChange"
+								></customDatePicker>
+							</view>
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'endDate' + indexLs"
+									fields="day"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.endDateValue"
+									@change="bindEndDateChange"
+								></customDatePicker>
+							</view>
 							<button class="btn" type="warn" @click="query">查询</button>
 						</view>
 						<block v-if="itemLs.data.length<1">
@@ -34,7 +45,7 @@
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
 									<view class="ls_item_top">
 										<text class="title">
-											<text class="gray">日期:</text>{{item.billDateStr}}}<br/>
+											<text class="gray">日期:</text>{{item.billDateStr}}<br/>
 											<text class="gray">款项性质:</text>{{item.accountTypeStr}}</text>
 										<view class="status">
 											<text>{{item.stateStr}}</text>
@@ -49,7 +60,7 @@
 										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
 										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
 									</view>
-									<view class="ls_item_bottom" v-show="tabIndex === 1">
+									<view class="ls_item_bottom" v-if="item.State === 0" @click="bindCancelOrder(item.RecordId)">
 										<button class="btn">取消</button>
 									</view>
 								</view>
@@ -81,6 +92,7 @@
 			return {
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
+				isLoaded: false,
 				canRecordPayBill: false,
 				scrollLeft: 0,
 				tabIndex: 0,
@@ -99,15 +111,25 @@
 					name: '取消',
 					id: 'tiyu'
 				}],
-				startDate: '2010-01',
-				endDate: '2199-12'
+				startDate: '2010-01-01',
+				endDate: '2199-12-31',
+				stateArr: [null, 0, 2, -1]
 			}
 		},
 		onLoad() {
-			this.getCanRecordPayBill();
-			this.getAllData([0, -1, 2]);
+			if (!this.isLoaded) {
+				this.init();
+				setTimeout(() => {
+					this.isLoaded = true;
+				}, 1000);
+			}
 			// this.dataArr = this.randomfn();
 			// this.displayDataArr = util.deepCopy(this.dataArr);
+		},
+		onShow() {
+			if (this.isLoaded) {
+				this.init();
+			}
 		},
 		onNavigationBarButtonTap(e) {
 			if (this.canRecordPayBill) {
@@ -117,16 +139,34 @@
 			}
 		},
 		methods: {
-			getCanRecordPayBill() {
+			init() {
+				let day = util.formatDate(new Date(), 'yyyy-MM-dd');
+				let dayArr = day.split('-');
+				this.stateArr.forEach(item => {
+					this.dataArr.push({
+						isLoading: false,
+						searchKey: '',
+						startDateValue: dayArr[0] + '-' + dayArr[1] + '-' + '01',
+						endDateValue: day,
+						data: [],
+						isScroll: false,
+						loadingText: '加载更多...',
+						renderImage: false
+					});
+				});
+				this.displayDataArr = util.deepCopy(this.dataArr);
 				util.showLoading();
-				util.ajax({
+				this.getCanRecordPayBill();
+				this.getData(this.stateArr[0]);
+			},
+			async getCanRecordPayBill() {
+				await util.ajax({
 					method: 'Businese.BillPayDAL.CanRecordPayBill',
 					params: {},
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
-					util.hideLoading();
 					this.canRecordPayBill = res.data.result;
 					// #ifdef APP-PLUS
 					console.log(res.data.result);
@@ -141,86 +181,92 @@
 					// #endif
 				});
 			},
-			async getAllData(arr) {
-				// 获取全部状态的数据
-				var promiseArray = [];
-				arr.forEach(item => {
-					promiseArray.push(util.ajax({
-						method: 'Businese.BillPayDAL.QueryMyList',
-						params: {
-							Filter: {
-								StartDate: '',
-								EndDate: '',
-								BillNoLike: '',
-								State: item,
-								PageIndex: 1,
-								PageSize: 20
-							}
-						},
-						tags: {
-							usertoken: this.openid
+			getData(state) {
+				let index = this.tabIndex;
+				if(this.$refs['startDate' + index]) {
+					this.dataArr[index].startDateValue = this.$refs['startDate' + index][0].getValue();
+				}
+				if(this.$refs['endDate' + index]) {
+					this.dataArr[index].endDateValue = this.$refs['endDate' + index][0].getValue();
+				}
+				util.ajax({
+					method: 'Businese.BillPayDAL.QueryMyList',
+					params: {
+						Filter: {
+							StartDate: this.dataArr[index].startDateValue,
+							EndDate: this.dataArr[index].endDateValue,
+							BillNoLike: '',
+							State: state,
+							PageIndex: 1,
+							PageSize: 20
 						}
-					}));
-				});
-				await Promise.all(promiseArray)
-				.then(values => {
-					this.dataArr = [{
-						isLoading: false,
-						searchKey: '',
-						dateValue: '',
-						data: [],
-						isScroll: false,
-						loadingText: '加载更多...',
-						renderImage: false
-					}];
-					values.forEach((item, index) => {
-						this.dataArr.push({
-							isLoading: false,
-							searchKey: '',
-							dateValue: '',
-							data: [],
-							isScroll: false,
-							loadingText: '加载更多...',
-							renderImage: false
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				})
+				.then(res => {
+					util.hideLoading();
+					if (res.data.hasOwnProperty('result')) {
+						res.data.result.data.forEach(dataItem => {
+							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
+							dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State+1];
+							dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
 						});
-						if (item.data.hasOwnProperty('result')) {
-							this.dataArr[index+1].data = item.data.result.data;
-						}
-					});
+						this.dataArr[index].data = res.data.result.data;
+						this.displayDataArr[index].data = res.data.result.data;
+					}
 				});
-				let _arr = [];
-				this.dataArr.forEach(item => {
-					item.data.forEach(dataItem => {
-						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-						dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
-						dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State+1];
-						dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
-						_arr = _arr.concat(dataItem);
-					});
-				});
-				this.dataArr[0].data = _arr;
-				this.displayDataArr = util.deepCopy(this.dataArr);
 			},
 			goDetail(index) {
 				console.log(index);
 			},
 			query() {
-				let searchKey = this.displayDataArr[this.tabIndex].searchKey;
-				let tempArr = [];
-				console.log(this.displayDataArr[this.tabIndex].searchKey, this.displayDataArr[this.tabIndex].dateValue);
-				this.displayDataArr[this.tabIndex].data = [];
-				this.dataArr[this.tabIndex].data.forEach(item => {
-					if(item.title.indexOf(searchKey) != -1){
-						tempArr.push(item);
-					}
-				});
-				this.displayDataArr[this.tabIndex].data = tempArr;
+				util.showLoading();
+				this.getData(this.stateArr[this.tabIndex]);
 			},
 			loadMore(e) {
-				this.displayDataArr[this.tabIndex].isScroll = true;
+				// this.displayDataArr[this.tabIndex].isScroll = true;
 			},
-			bindDateChange(value) {
-				this.displayDataArr[this.tabIndex].dateValue = value;
+			bindStartDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.startDateValue = value;
+				})
+			},
+			bindEndDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.endDateValue = value;
+				})
+			},
+			bindCancelOrder(RecordId) {
+				let me = this;
+				util.dialog({
+					content: '确定要取消付款吗？',
+					success (e) {
+						if(e.confirm) {
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.BillPayDAL.Cancel',
+								params: {
+									RecordId: RecordId
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							})
+							.then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '取消付款成功',
+									success() {
+										me.query();
+									}
+								});
+							})
+						}
+					}
+				});
 			},
 			addData(e) {
 				this.displayDataArr[e].isLoading = true;
@@ -240,15 +286,16 @@
 				})
 			},
 			async changeTab(e) {
+				console.log('changeTab');
 				let index;
 				if (!e.target.hasOwnProperty('current')) {
 					return;
 				}
 				index = e.target.current;
                 this.tabIndex = index;
-				if (!this.displayDataArr[index].isLoading) {
-					this.addData(index)
-				}
+				// if (!this.displayDataArr[index].isLoading) {
+				// 	this.addData(index)
+				// }
 				let tabBar = await this.getElSize("tab-bar"),
 					tabBarScrollLeft = tabBar.scrollLeft;
 				let width = 0;
@@ -266,12 +313,14 @@
 				if (width < tabBarScrollLeft) {
 					this.scrollLeft = width;
 				}
+				this.query();
 			},
 			async tapTab(e) { //点击tab-bar
+				console.log('tapTab');
 				let tabIndex = e.target.dataset.current;
-				if (!this.displayDataArr[tabIndex].isLoading) {
-					this.addData(tabIndex)
-				}
+				// if (!this.displayDataArr[tabIndex].isLoading) {
+				// 	this.addData(tabIndex)
+				// }
 				if (this.tabIndex === tabIndex) {
 					return false;
 				} else {

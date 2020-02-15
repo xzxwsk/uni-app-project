@@ -20,7 +20,7 @@
 									<text class="price">${{ item.Price.toFixed(2) }}</text>
 									<view class="num">
 										<button class="btn" @click.stop="reduce(index)">-</button>
-										<input class="ipt" @click.stop="unEvent" type="number" v-model="item.Qty"></input>
+										<input class="ipt" @click.stop="unEvent" type="number" :data-index="index" @input="onChangeNum" v-model="item.Qty"></input>
 										<button class="btn" @click.stop="add(index)">+</button>
 									</view>
 								</view>
@@ -30,16 +30,16 @@
 				</view>
 			</scroll-view>
 			<view class="result">
-				<label class="radio"><radio color="#f23030" :checked="allSelect" @click="onAllSelect" />全选</label>
-				<block v-if="titleBtn === '删除'">
+				<label class="radio" @click="onAllSelect"><radio color="#f23030" :checked="allSelect" />全选</label>
+				<block v-if="selectedArr.length > 0">
 					<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
-					<button class="btn" @click="toIndex">继续购物</button>
-					<button class="btn" type="warn" @click="toPay" v-if="selectedArr.length > 0">去结算</button>
+					<button class="btn" type="default">加入收藏</button>
+					<button class="btn" type="warn" @click="toPay">去结算</button>
 				</block>
 				<block v-else>
 					<view class="count b"></view>
-					<button class="btn" type="default">加入收藏</button>
-					<button class="btn" type="warn" @click="bindDel">删除</button>
+					<button class="btn" @click="toIndex">继续购物</button>
+					<!-- <button class="btn" type="warn" @click="bindDel">删除</button> -->
 				</block>
 			</view>
 		</block>
@@ -54,6 +54,7 @@
 		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
+				onLoadFlag: false,
 				titleBtn: '删除',
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
@@ -120,11 +121,32 @@
 			// uni.showTabBarRedDot({
 			// 	index: 2
 			// });
+			console.log('cartList load');
+			if (!this.onLoadFlag) {
+				this.getLs();
+				this.onLoadFlag = true;
+			}
 		},
 		onShow() {
-			this.getLs();
+			console.log('mounted');
+			if(this.onLoadFlag) {
+				this.getLs();
+			}
+		},
+		onPullDownRefresh() {
+			console.log('下拉刷新');
+			// 下拉刷新
+			if(this.onLoadFlag) {
+				this.getLs();
+			}
 		},
 		onNavigationBarButtonTap(e) {
+			// 批量删除选中
+			this.selectedArr = this.getSelectedArr();
+			if (this.selectedArr.length > 0) {
+				this.deleteLs(this.selectedArr);
+			}
+			/*
 			if(this.titleBtn === '删除') {
 				// 选择状态
 				this.titleBtn = '完成';
@@ -147,17 +169,15 @@
 				// 	});
 				// 	return;
 				// }
-				// 批量删除选中
-				this.selectedArr = this.getSelectedArr();
-				if (this.selectedArr.length > 0) {
-					this.deleteLs(selectedArr);
-				}
 			}
+			*/
 			// #ifdef APP-PLUS
+			/*
 			let webView = this.$mp.page.$getAppWebview();
 			webView.setTitleNViewButtonStyle(0, {
 				text: this.titleBtn
 			});
+			*/
 			// #endif 
 			// let pages = getCurrentPages(); 
 			// let page = pages[pages.length - 1]; 
@@ -166,12 +186,14 @@
 		},
 		methods: {
 			getLs() {
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.CartDAL.GetUserCart',
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					console.log('购物车列表：', res);
 					this.getCartLs = res.data.result;
 					let ls = res.data.result.map((item, index) => {
@@ -183,11 +205,13 @@
 					});
 					this.cartLs = ls;
 					this.allSelect = false;
+					this.selectedArr = [];
 					if (this.cartLs.length > 0) {
 						this.titleBtn = '删除';
 					} else {
 						this.titleBtn = '';
 					}
+					this.countPriceFun();
 					// #ifdef APP-PLUS
 					let webView = this.$mp.page.$getAppWebview();
 					webView.setTitleNViewButtonStyle(0, {  
@@ -199,9 +223,18 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
+			countPriceFun() {
+				this.countPrice = 0;
+				this.cartLs.forEach(item => {
+					if(item.selected) {
+						this.countPrice += item.Price * item.Qty;
+					}
+				});
+			},
 			checkboxChange(index) {
 				console.log('checkboxChange: ', index);
 				this.$set(this.cartLs[index], 'selected', !this.cartLs[index]['selected']);
+				this.countPriceFun();
 				this.$nextTick(() => {
 					this.selectedArr = this.getSelectedArr();
 					if(this.cartLs.length > 0 && this.selectedArr.length === this.cartLs.length) {
@@ -212,13 +245,9 @@
 				});
 			},
 			getSelectedArr() {
-				let me = this;
 				// 获取选中列表
-				return this.cartLs.map((item, index) => {
-					if(item.selected) {
-						return me.getCartLs[index];
-					}
-					return false;
+				return this.cartLs.filter((item, index) => {
+					return item.selected;
 				});
 			},
 			goDetail(index) {
@@ -228,12 +257,23 @@
 			},
 			unEvent() {},
 			reduce(index) {
-				this.$set(this.cartLs[index], 'Qty', Number(this.cartLs[index]['Qty'])-1);
+				this.$set(this.cartLs[index], 'Qty', Math.max(Number(this.cartLs[index]['Qty'])-1, 0));
 				this.updateCartItem(index);
+				this.countPriceFun();
 			},
 			add(index) {
 				this.$set(this.cartLs[index], 'Qty', Number(this.cartLs[index]['Qty'])+1);
 				this.updateCartItem(index);
+				this.countPriceFun();
+			},
+			onChangeNum(e) {
+				console.log(e.target);
+				if(e.target.value){
+					let index = Number(e.target.dataset.index);
+					this.$set(this.cartLs[index], 'Qty', Number(e.target.value));
+					this.updateCartItem(index);
+					this.countPriceFun();
+				}
 			},
 			updateCartItem(index) {
 				util.showLoading();
@@ -246,6 +286,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					let data = res.data.result;
 					console.log('更新购物车：', data);
 				});
@@ -268,17 +309,19 @@
 				this.cartLs.forEach(item => {
 					item.selected = this.allSelect;
 				});
+				this.selectedArr = this.getSelectedArr();
+				this.countPriceFun();
 				// #ifdef APP-PLUS
-				let webView = this.$mp.page.$getAppWebview();
-				if(this.allSelect) {
-					this.titleBtn = '完成';
-				} else {
-					this.titleBtn = '删除';
-				}
+				// let webView = this.$mp.page.$getAppWebview();
+				// if(this.allSelect) {
+				// 	this.titleBtn = '完成';
+				// } else {
+				// 	this.titleBtn = '删除';
+				// }
 				
-				webView.setTitleNViewButtonStyle(0, {  
-					text: this.titleBtn
-				});
+				// webView.setTitleNViewButtonStyle(0, {  
+				// 	text: this.titleBtn
+				// });
 				// #endif 
 			},
 			toIndex() {
@@ -294,9 +337,13 @@
 				});
 			},
 			bindDel() {
-				
+				this.selectedArr = this.getSelectedArr();
+				if (this.selectedArr.length > 0) {
+					this.deleteLs(this.selectedArr);
+				}
 			},
 			deleteLs(arr) {
+				util.showLoading();
 				// 批量删除选中
 				var promiseArray = [];
 				arr.forEach(item => {
@@ -312,6 +359,7 @@
 				});
 				Promise.all(promiseArray)
 				.then(values => {
+					util.hideLoading();
 					console.log('删除购物车列表：', values);
 					util.showToast({
 						title: '删除成功'

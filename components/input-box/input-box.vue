@@ -290,4 +290,7 @@
 			}
 		}
 	}
+	.input-box-clear{
+		width: 60upx; text-align: center;
+	}
 </style>

@@ -63,8 +63,11 @@ uni-toast{z-index: 100000;}
 }
 .search_box{display: flex; flex-direction: row; align-items: center; padding: 30upx 0; background: #fff;
 	.input-box-all{flex: 1; padding: 0 0 0 15upx !important;}
-	.input-box{ padding: 0 10px; height: 10vw; border: 1px solid #aaa; border-radius: 3px;}
-	.date_picker{flex: 1; display: flex; align-items: center; margin: 0 0 0 20upx; line-height: 10vw; white-space: nowrap;}
+	.input-box{padding: 0 10px; height: 10vw; border: 1px solid #aaa; border-radius: 3px;
+		.uni-input-placeholder{font-size: 26upx;}
+	}
+	.date_picker_box{position: relative; margin: 0 0 0 20upx; padding: 0; width: 250upx; height: 10vw; overflow: hidden; border: 1px solid #aaa; border-radius: 3px;}
+	.date_picker{position: absolute; left: 0; top: 0; z-index: 2; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; text-align: center; white-space: nowrap; font-size: 28upx;}
 	.btn{margin: 0 15upx; white-space: nowrap; width: 170upx; height: 10vw; line-height: 10vw; font-size: 35upx; }
 }
 .no-data{text-align: center;
@@ -81,7 +84,9 @@ uni-toast{z-index: 100000;}
 		.right_txt{margin: 0 0 0 30upx; display: flex; flex-direction: column; justify-content: flex-end;
 			.unit{color: #8f8f94;}
 		}
-		.title{margin: 10px 0; width: 200upx; line-height: 1.5; color: #8f8f94;}
+		.title{display: block; margin: 10px 0; width: 160upx; line-height: 1.5; color: #8f8f94;}
+		.input-box-all{flex: 1;}
+		.text_area{flex: 1; padding: 10px 11px; height: 60px;}
 		.ls{display: flex; flex-direction: row; flex-wrap:wrap;
 			.item{margin: 0 20upx 10upx 0; padding: 10upx; background: #f6f6f6; color: #616161; white-space: nowrap; border: .5px solid white;
 				&.cur{color: red; border-color: red; font-weight: bold;}
@@ -93,10 +98,15 @@ uni-toast{z-index: 100000;}
 	}
 }
 
+.login_page{
+	.voli_code_ipt{
+		.input-box-clear{margin: 0 220upx 0 5px;}
+	}
+}
 .index{
 	height: 1500px;
 }
-.index_page{
+.index_page{padding: 0 0 50px;
 	.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; width: 330upx;
 		.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}
 	}
@@ -194,18 +204,15 @@ uni-toast{z-index: 100000;}
 		}
 	}
 }
-.create_order{height: calc(100% - 100upx);
-	.uni-list-cell-navigate{
-		padding: 20upx;
-	}
-	.menu_txt{flex: 1; display: flex; flex-direction: column; background: #fff; border-radius: 4px; border-bottom: 3px solid #ff0036; padding: 10px;
+.create_order{padding: 160upx 0 100upx;
+	.uni-list-cell-navigate{padding: 20upx;}
+	.menu_txt{flex: 1; display: flex; flex-direction: column; background: #fff; border-radius: 0 0 4px 4px; border-top: 10px #f0f2f5 solid; border-bottom: 3px solid #ff0036; padding: 10px;
 		.title{flex: 1; display: flex; flex-direction: row;}
 		.uni-icon{margin: 0 20upx 0 0;}
 		.txt{display: block;}
-		.sub_txt{display: block; font-size: 20upx; color: #444;}
+		.sub_txt{display: block; font-size: 22upx; color: #444;}
 	}
-	.box{height:  calc(100% - 400upx);}
-	.uni-list{margin: 0 20upx 20upx; width: calc(100% - 40upx);
+	.uni-list{z-index: 2; margin: 0 20upx 20upx; width: calc(100% - 40upx);
 		.uni-list-cell{
 			&:after{right: 16px;}
 			.uni-media-list-logo{width: 180upx; height: 180upx;}
@@ -213,7 +220,7 @@ uni-toast{z-index: 100000;}
 				.uni-media-list-text-top{font-size: 22upx; font-weight: bold;}
 				.sub_txt{font-weight: normal;}
 			}
-			.uni-list-cell-navigate{font-size: 22upx;
+			.uni-list-cell-navigate{padding: 20upx 0 20upx 20upx; font-size: 22upx;
 				.item-title{margin: 0 20upx 0 0; white-space: nowrap;}
 				.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 				uni-input, .uni-input-input{font-size: 14px; text-align: right;}
@@ -225,10 +232,11 @@ uni-toast{z-index: 100000;}
 			}
 		}
 	}
-	.result{position: absolute; bottom: 0; left: 0; z-index: 2; width: 100%; height: 100upx; background: #fff; display: flex; flex-direction: row; box-shadow: 0px 1px 3px 1px #ddd;
+	.result{position: fixed; bottom: 0; left: 0; z-index: 2; width: 100%; height: 100upx; background: #fff; display: flex; flex-direction: row; box-shadow: 0px 1px 3px 1px #ddd;
 		.count{margin: 0 0 0 20upx; flex: 1; display: flex; flex-direction: row; justify-content: flex-start; align-items: center;}
 		.btn{margin: 10upx 20upx 10upx 0; font-size: 30upx; height: 80upx; line-height: 80upx;}
 	}
+	&>.uni-list-cell-navigate{position: fixed; left: 0; top: 60upx; z-index: 3; width: 100%;}
 }
 .order_detail{display: flex; flex-direction: column; height: 100%; position: relative;
 	.top{position: relative;
@@ -261,7 +269,7 @@ uni-toast{z-index: 100000;}
 		}
 	}
 	.empty{height: 100upx;}
-	.result{position: absolute; bottom: 0; left: 0; z-index: 2; width: 100%; height: 100upx; background: #fff; display: flex; flex-direction: row; justify-content: flex-end; box-shadow: 0px 1px 3px 1px #ddd;
+	.result{position: absolute; bottom: 0; left: 0; z-index: 2; width: 100%; background: #fff; display: flex; flex-direction: row; justify-content: flex-end; box-shadow: 0px 1px 3px 1px #ddd;
 		.btn{margin: 10upx 20upx 10upx 0; font-size: 30upx; height: 80upx; line-height: 80upx;}
 	}
 }
@@ -312,9 +320,13 @@ uni-toast{z-index: 100000;}
 }
 .create_pay_order{height: 100%; background: #fff;
 	.search_box{flex: 1; margin: 0 20upx 0 0;}
+	.date_picker_box{position: relative; margin: 0; padding: 0; width: 250upx; height: 10vw; overflow: hidden;
+		.date_picker{position: absolute; left: 20upx; top: 50%; z-index: 2; transform: translateY(-50%); white-space: nowrap; font-size: 28upx;}
+	}
 	.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 	.input-box-all{flex: 1;}
 	.txt{margin: 0 15upx;}
+	.info{margin: 0 0 0 10px;}
 	.date_box{border: none !important;}
 	.box{height: calc(100vh - 200upx); overflow-y: hidden;
 		.input-row{
@@ -370,8 +382,19 @@ uni-toast{z-index: 100000;}
 .baseInfo{height: 100%;
 	.con{height: 100%; overflow: hidden;}
 	.input-row{
+		.search_box{
+			.date_picker_box{width: 180upx;}
+		}
 		.info{flex: 1; display: flex; flex-direction: column; justify-content: center; margin: 0 0 0 20upx; line-height: 1.2; word-break:break-all; word-wrap: break-word;
-			&.input_box{height: 60upx; border: 1px #ccc solid;}
+			.radio{padding: 0 5px 0 0; white-space:nowrap;
+				&:last-child{padding: 0;}
+			}
+			&.input_box{padding: 0; height: 60upx; border: 1px #ccc solid;
+				.input-box-all{padding: 0 5px !important;}
+			}
+			&.text_area_box{margin: 5px 0 5px 20upx; padding: 10px; border: 1px #ccc solid;
+				.text_area{width: calc(95% - 20px);}
+			}
 		}
 	}
 	.primary{margin: 0 0 20upx;}

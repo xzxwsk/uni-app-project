@@ -11,14 +11,25 @@
 				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-							<customDatePicker class="date_picker"
-								fields="month"
-								:start="startDate"
-								:end="endDate"
-								:value="itemLs.dateValue"
-								@change="bindDateChange"
-							></customDatePicker>
+							<!-- <input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box> -->
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'startDate' + indexLs"
+									fields="day"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.startDateValue"
+									@change="bindStartDateChange"
+								></customDatePicker>
+							</view>
+							<view class="date_picker_box">
+								<customDatePicker class="date_picker" :ref="'endDate' + indexLs"
+									fields="day"
+									:start="startDate"
+									:end="endDate"
+									:value="itemLs.endDateValue"
+									@change="bindEndDateChange"
+								></customDatePicker>
+							</view>
 							<button class="btn" type="warn" @click="query">查询</button>
 						</view>
 						<block v-if="itemLs.data.length<1">
@@ -26,7 +37,7 @@
 								<view class="no-img cart">
 									<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
 								</view>
-								<view class="txt"><text>亲，还没有相关付款单哦~</text></view>
+								<view class="txt"><text>亲，还没有相关退款单哦~</text></view>
 							</view>
 						</block>
 						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
@@ -49,8 +60,8 @@
 										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
-									<view class="ls_item_bottom" v-show="tabIndex === 1">
-										<button class="btn" @click.stop="bindCancel(item)">取消</button>
+									<view class="ls_item_bottom" v-if="item.State === 0">
+										<button class="btn" @click.stop="bindCancel(item.RecordId)">取消</button>
 									</view>
 								</view>
 							</view>
@@ -127,8 +138,9 @@
 					name: '取消',
 					id: 'tiyu'
 				}],
-				startDate: '2010-01',
-				endDate: '2199-12'
+				startDate: '2010-01-01',
+				endDate: '2199-12-31',
+				stateArr: [null, 0, 2, -1]
 			}
 		},
 		onLoad() {
@@ -143,110 +155,109 @@
 		},
 		methods: {
 			init(){
-				this.getAllData([0, 2, -1]);
-			},
-			async getAllData(arr) {
-				util.showLoading();
-				// 获取全部状态的数据
-				var promiseArray = [];
-				arr.forEach(item => {
-					promiseArray.push(util.ajax({
-						method: 'Businese.BillPayReturnDAL.QueryMyList',
-						params: {
-							Filter: {
-								StartDate: '',
-								EndDate: '',
-								BillNoLike: '',
-								States: item,
-								PageIndex: 1,
-								PageSize: 20
-							}
-						},
-						tags: {
-							usertoken: this.openid
-						}
-					}));
-				});
-				await Promise.all(promiseArray)
-				.then(values => {
-					this.dataArr = [{
+				let day = util.formatDate(new Date(), 'yyyy-MM-dd');
+				let dayArr = day.split('-');
+				this.stateArr.forEach(item => {
+					this.dataArr.push({
 						isLoading: false,
 						searchKey: '',
-						dateValue: '',
+						startDateValue: dayArr[0] + '-' + dayArr[1] + '-' + '01',
+						endDateValue: day,
 						data: [],
 						isScroll: false,
 						loadingText: '加载更多...',
 						renderImage: false
-					}];
-					values.forEach((item, index) => {
-						this.dataArr.push({
-							isLoading: false,
-							searchKey: '',
-							dateValue: '',
-							data: [],
-							isScroll: false,
-							loadingText: '加载更多...',
-							renderImage: false
-						});
-						if (item.data.hasOwnProperty('result')) {
-							this.dataArr[index+1].data = item.data.result.data;
-						}
 					});
 				});
-				let _arr = [];
-				this.dataArr.forEach(item => {
-					item.data.forEach(dataItem => {
-						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-						dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][item.AccountType]
-						dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State+1];
-						dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
-						_arr = _arr.concat(dataItem);
-					});
-				});
-				this.dataArr[0].data = _arr;
 				this.displayDataArr = util.deepCopy(this.dataArr);
+				this.getData(this.stateArr[0]);
 			},
-			bindCancel(item) {
-				let me = this;
-				// 取消退款单
+			async getData(state) {
+				util.showLoading();
+				let index = this.tabIndex;
+				if(this.$refs['startDate' + index]) {
+					this.dataArr[index].startDateValue = this.$refs['startDate' + index][0].getValue();
+				}
+				if(this.$refs['endDate' + index]) {
+					this.dataArr[index].endDateValue = this.$refs['endDate' + index][0].getValue();
+				}
 				util.ajax({
-					method: 'Businese.BillPayReturnDAL.Cancel',
+					method: 'Businese.BillPayReturnDAL.QueryMyList',
 					params: {
-						Bill : item
+						Filter: {
+							StartDate: this.dataArr[index].startDateValue,
+							EndDate: this.dataArr[index].endDateValue,
+							BillNoLike: '',
+							State: state,
+							PageIndex: 1,
+							PageSize: 20
+						}
 					},
 					tags: {
 						usertoken: this.openid
 					}
-				}).then(res => {
-					util.showToast({
-						title: '取消退款单成功',
-						success() {
-							me.init();
-						}
-					});
+				})
+				.then(res => {
+					util.hideLoading();
+					if (res.data.hasOwnProperty('result')) {
+						res.data.result.data.forEach(dataItem => {
+							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
+							dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State+1];
+							dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
+						});
+						this.dataArr[index].data = res.data.result.data;
+						this.displayDataArr[index].data = res.data.result.data;
+					}
 				});
+			},
+			bindCancel(id) {
+				let me = this;
+				// 取消退款单
+				util.dialog({
+					content: '确定要取消退款吗？',
+					success (e) {
+						if(e.confirm) {
+							util.ajax({
+								method: 'Businese.BillPayReturnDAL.Cancel',
+								params: {
+									RecordId : id
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '取消退款单成功',
+									success() {
+										me.init();
+									}
+								});
+							});
+						}
+					}
+				});
+				util.showLoading();
 			},
 			goDetail(index) {
 				console.log(index);
 			},
 			query() {
-				let searchKey = this.displayDataArr[this.tabIndex].searchKey;
-				let tempArr = [];
-				console.log(this.displayDataArr[this.tabIndex].searchKey, this.displayDataArr[this.tabIndex].dateValue);
-				this.displayDataArr[this.tabIndex].data = [];
-				this.dataArr[this.tabIndex].data.forEach(item => {
-					if(item.title.indexOf(searchKey) != -1){
-						tempArr.push(item);
-					}
-				});
-				this.displayDataArr[this.tabIndex].data = tempArr;
+				this.getData(this.stateArr[this.tabIndex]);
 			},
 			loadMore(e) {
-				this.displayDataArr[this.tabIndex].isScroll = true;
+				// this.displayDataArr[this.tabIndex].isScroll = true;
 			},
-			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
-				this.displayDataArr[this.tabIndex].dateValue = value;
+			bindStartDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.startDateValue = value;
+				})
+			},
+			bindEndDateChange(value) {
+				this.displayDataArr.forEach(item => {
+					item.endDateValue = value;
+				})
 			},
 			addData(e) {
 				this.displayDataArr[e].isLoading = true;
@@ -272,9 +283,9 @@
 				}
 				index = e.target.current;
                 this.tabIndex = index;
-				if (!this.dataArr[index].isLoading) {
-					this.addData(index)
-				}
+				// if (!this.dataArr[index].isLoading) {
+				// 	this.addData(index)
+				// }
 				let tabBar = await this.getElSize("tab-bar"),
 					tabBarScrollLeft = tabBar.scrollLeft;
 				let width = 0;
@@ -292,12 +303,13 @@
 				if (width < tabBarScrollLeft) {
 					this.scrollLeft = width;
 				}
+				this.query();
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = e.target.dataset.current;
-				if (!this.dataArr[tabIndex].isLoading) {
-					this.addData(tabIndex)
-				}
+				// if (!this.dataArr[tabIndex].isLoading) {
+				// 	this.addData(tabIndex)
+				// }
 				if (this.tabIndex === tabIndex) {
 					return false;
 				} else {

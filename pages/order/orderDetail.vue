@@ -15,9 +15,9 @@
 				<view class="uni-list">
 					<view class="uni-list-cell" v-for="(value,key) in billObj.Items" :key="key">
 						<view class="uni-media-list">
-							<view class="uni-media-list-logo">
+							<!-- <view class="uni-media-list-logo">
 								<image v-if="showImg" mode="aspectFit" @error="imageError" :src="value.img"></image>
-							</view>
+							</view> -->
 							<view class="uni-media-list-body">
 								<view>
 									<view class="uni-media-list-text-top">{{value.ProductName}}</view>
@@ -39,7 +39,7 @@
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">
 							<text class="item-title"><text class="b">合计金额</text></text>
-							<text class="item-content"><text class="price">￥{{(count).toFixed(2)}}</text></text>
+							<text class="item-content"><text class="price">￥{{billObj.Amount}}</text></text>
 						</view>
 					</view>
 				</view>
@@ -56,71 +56,219 @@
 							<text class="item-content"><text>{{billObj.billDateStr}}</text></text>
 						</view>
 					</view>
+					<block v-if="billObj.State === 1 || billObj.State === 2">
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>货运信息</text></text>
+								<text class="item-content"><text>{{billObj.FreightInfo}}</text></text>
+							</view>
+						</view>
+					</block>
+					<block v-if="billObj.State === 4 || billObj.State === 5 || billObj.State === 6">
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>退货货运信息</text></text>
+								<text class="item-content"><text>{{billObj.ReturnFreightInfo}}</text></text>
+							</view>
+						</view>
+						<view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>退货原因</text></text>
+								<text class="item-content"><text>{{billObj.ReturnReason}}</text></text>
+							</view>
+						</view>
+					</block>
 				</view>
 				<view class="empty"></view>
 			</scroll-view>
 		</view>
 		<view class="result">
 			<!-- 填写的订单 -->
-			<button class="btn" @click="bindClose">关闭</button>
-			<button class="btn" type="warn" @click="bindConfirmReceive">确认收货</button>
-			<!-- <button class="btn" type="warn" v-if="isReturn" @click="bindReturn">退货</button> -->
-			<button class="btn" type="warn" @click="bindReturn">退货</button>
-			<button class="btn" type="warn" @click="bindCancelReturn">取消退货</button>
+			<block v-if="orderType === 'my'">
+				<button class="btn" v-if="billObj.State === 0" @click="bindClose">关闭</button>
+				<button class="btn" v-if="billObj.State === 1" type="warn" @click="bindConfirmReceive">确认收货</button>
+				<button class="btn" v-if="isReturn && billObj.State === 1" type="warn" @click="bindReturn">退货</button>
+				<button class="btn" v-if="billObj.State === 4" type="warn" @click="bindCancelReturn">取消退货</button>
+				<button class="btn" v-if="billObj.State === 5 && billObj.IsPay" type="warn" @click="bindConfirmReturn">确认退款</button>
+			</block>
 			
 			<!-- 收到的订单 -->
-			<button class="btn" type="warn" @click="bindSend">发货</button>
-			<button class="btn" type="warn" @click="bindReturnConfirm">确认退货</button>
+			<block v-else>
+				<button class="btn" type="warn" v-if="billObj.State === 0" @click="bindSend">发货</button>
+				<button class="btn" type="warn" v-if="billObj.State === 4" @click="bindReturnConfirm">确认退货</button>
+			</block>
 		</view>
 		
 		<uni-popup ref="popup" type="bottom">
+			<!-- 我收到的订单 发货 -->
+			<!--对于付款的订单，需要弹出窗口，显示付款方式、付款方账户信息、收款方账户信息，付款金额(等于订单金额)，确认收款和取消按钮。
+		        必须确认收款才能发货。
+				{
+				    "OrderId" : "" /*订单Id [String]*/,
+				    "DiliveryInfo" : {
+					    "Adress": ""  /*收货地址*/,
+					    "LinkMan": ""  /*联系人*/,
+					    "Mobile": ""  /*手机号*/,
+					    "TransportCompany": ""  /*货运公司*/,
+					    "TrackingNo": ""  /*运单号*/
+				    } /*货运信息 [DiliveryInfo]*/
+				}
+			-->
 			<view class="pop">
 				<button class="uni-icon uni-icon-closeempty close_btn" @click="closePopup"></button>
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
 					<view class="input-group">
 						<view class="input-row border">
+							<text class="title">收货联系人：</text>
+							<input-box ref="linkManSend" type="text" class="input-box" :clearShow="false" disabled v-model="billObj.LinkMan"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货人手机号：</text>
+							<input-box ref="mobileSend" type="text" class="input-box" :clearShow="false" disabled v-model="billObj.Mobile"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货地址：</text>
+							<input-box ref="addressSend" type="text" class="input-box" :clearShow="false" disabled v-model="billObj.Address"></input-box>
+						</view>
+						<view class="input-row border">
 							<text class="title">货运单号：</text>
-							<input-box ref="trackingNo" type="text" :verification="['isNull']" :verificationTip="['货运单号不能为空']" class="input-box" clearable focus v-model="trackingNo" placeholder="请输入收货人"></input-box>
+							<input-box ref="trackingNo" type="text" :verification="['isNull']" :verificationTip="['货运单号不能为空']" class="input-box" clearable focus v-model="trackingNo" placeholder="请输入货运单号"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">快递公司：</text>
 							<input-box ref="transportCompany" type="text" class="input-box" clearable focus v-model="transportCompany" placeholder="请输入货运公司"></input-box>
 						</view>
+						<view class="input-row border">
+							<text class="title">退货的联系人：</text>
+							<input-box ref="linkManReturn" type="text" class="input-box" v-model="addr.PersonName" placeholder="请输入联系人"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货的手机号：</text>
+							<input-box ref="mobileReturn" type="number" class="input-box" v-model="addr.Mobile" placeholder="请输入手机号"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货的收货地址：</text>
+							<view class="uni-list-cell-navigate uni-navigate-right" @click="selectAddr">{{addr.Address}}</view>
+						</view>
+						<block v-if="billObj.IsPay">
+							<view class="input-row border">
+								<text class="title">付款方式：</text>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="['现金', '银行转账', '支付宝', '微信'][billObj.PayType]"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">付款方账户信息：</text>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="billObj.PayAccountInfo"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">收款方账户信息：</text>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="billObj.ReceiveAccountInfo"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">付款金额：</text>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="billObj.Amount"></input-box>
+							</view>
+						</block>
 					</view>
 				</view>
-				<button type="warn" @click="closePopup('confirm')">确定</button>
+				<button type="warn" v-if="!billObj.IsPay" @click="closePopup('confirm')">确定</button>
+				<view class="btn_group" v-else>
+					<button type="warn" @click="closePopup('receiveConfirm')">确认收款</button>
+					<button @click="closePopup()">取消</button>
+				</view>
 			</view>
 		</uni-popup>
 		<uni-popup ref="popup2" type="bottom">
+			<!-- 我收到的订单 退货确认 -->
+			<!-- 如果是在订单上付款IsPay，这在退货确认时，需要弹出窗口录入退款信息。
+		        包括是否退款（勾选）IsPayReturn，收款方信息(使用订单的付款账户信息，只读)、付款方信息(使用订单的收款方账户信息，只读)，退款金额(订单金额，只读)。
+				未勾选是否退款，不能点击确定
+				{
+					"OrderId" : "" /*订单Id [String]*/,
+				    "PayReturn" : false /*是否退款 [Boolean]*/
+				}
+			 -->
 			<view class="pop">
 				<button class="uni-icon uni-icon-closeempty close_btn" @click="closePopup2"></button>
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
 					<view class="input-group">
 						<view class="input-row border">
 							<text class="title">退货货运信息：</text>
-							<input-box ref="trackingNo2" type="text" class="input-box" clearable v-model="trackingNo2" disabled></input-box>
+							<input-box ref="trackingNo2" type="text" class="input-box" :clearShow="false" v-model="billObj.FreightInfo" disabled></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
-							<textarea v-model="reson" style="padding: 10px 11px; height: 60px;" disabled />
+							<textarea v-model="reson" class="text_area" disabled />
 						</view>
+						<block v-if="billObj.IsPay">
+							<view class="input-row border">
+								<text class="title">是否退款：</text>
+								<radio @tap="onIsPayReturnChange" color="#f23030" :value="billObj.IsPayReturn ? 'true' : 'false'" :checked="billObj.IsPayReturn" />
+							</view>
+							<view class="input-row border">
+								<text class="title">收款方账户信息：</text>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="billObj.PayAccountInfo"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">付款方账户信息：</text>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="billObj.ReceiveAccountInfo"></input-box>
+							</view>
+							<view class="input-row border">
+								<text class="title">退款金额：</text>
+								<input-box type="text" class="input-box" :clearShow="false" disabled :inputValue="billObj.Amount"></input-box>
+							</view>
+						</block>
 					</view>
 				</view>
-				<button type="warn" @click="closePopup2('confirm')">确定</button>
+				<!-- 如果是在订单上付款，这在退货确认时，需要弹出窗口录入退款信息。未选中是否退款，不能点击确定 -->
+				<button type="warn" :disabled="billObj.IsPay && !billObj.IsPayReturn" @click="closePopup2('confirm')">确定</button>
 			</view>
 		</uni-popup>
 		<uni-popup ref="popup3" type="bottom">
+			<!-- 我的订单 退货-->
+			<!--
+				{
+					  "OrderId" : "" /*订单Id [String]*/,
+					  "DiliveryInfo" : {
+					  "Adress": ""  /*收货地址*/,
+					  "LinkMan": ""  /*联系人*/,
+					  "Mobile": ""  /*手机号*/,
+					  "TransportCompany": ""  /*货运公司*/,
+					  "TrackingNo": ""  /*运单号*/
+					  } /*货运信息 [DiliveryInfo]*/,
+					  "Reson" : "" /*退货原因 [String]*/
+				  }
+			-->
 			<view class="pop">
 				<button class="uni-icon uni-icon-closeempty close_btn" @click="closePopup3"></button>
 				<view class="con" style="padding: 30px 0 0; min-height: 100px;">
 					<view class="input-group">
+						<!-- <view class="input-row border">
+							<text class="title">退货货运信息：</text>
+							<input-box ref="freightInfo" type="text" class="input-box" :clearShow="false" clearable focus v-model="billObj.FreightInfo" placeholder=""></input-box>
+						</view> -->
 						<view class="input-row border">
-							<text class="title">退货货运单号：</text>
-							<input-box ref="trackingNo3" type="text" :verification="['isNull']" :verificationTip="['货运单号不能为空']" class="input-box" clearable focus v-model="trackingNo3" placeholder="请输入货运单号"></input-box>
+							<text class="title">退货货运公司：</text>
+							<input-box ref="company" type="text" class="input-box" clearable v-model="company" placeholder="请输入退货货运公司"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">退货运单号：</text>
+							<input-box ref="trackingNo3" type="text" class="input-box" :verification="['isNull']" :verificationTip="['运单号不能为空']" clearable  v-model="trackingNo3" placeholder="请输入退货运单号"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">联系人：</text>
+							<input-box ref="linkMan" type="text" class="input-box" clearable v-model="addr.PersonName" placeholder="请输入退货联系人"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">手机号：</text>
+							<input-box ref="mobile" type="number" class="input-box" clearable v-model="addr.Mobile" placeholder="请输入退货人手机号"></input-box>
+						</view>
+						<view class="input-row border">
+							<text class="title">收货地址：</text>
+							<input-box ref="addr" type="text" class="input-box" :clearShow="false" disabled clearable v-model="addr.Address" placeholder="请输入收货地址" @click="selectAddr"></input-box>
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
-							<textarea v-model="reson" style="padding: 10px 11px; height: 60px;" placeholder="请输入退货原因"/>
+							<textarea v-model="billObj.ReturnReason" class="text_area" placeholder="请输入退货原因"/>
 						</view>
 					</view>
 				</view>
@@ -188,12 +336,19 @@
 		data() {
 			return {
 				bg: bg,
+				orderType: '',
 				isReturn: false, // 是否可以退货
 				trackingNo: '', // 发货单号
 				trackingNo2: '', // 退货确认单号
 				trackingNo3: '', // 退货单号
 				transportCompany: '', // 货运公司
 				reson: '', // 退货原因
+				addr: {
+					PersonName: '',
+					Mobile: '',
+					Address: ''
+				},
+				company: '', // 退货货运公司
 				billObj: {
 					"Items": []  /*订单明细*/,
 					"RecordId": ""  /*单据Id*/,
@@ -224,30 +379,55 @@
 					],
 					"iState": 1
 				},
-				state: '待确认收货',
-				addr: {
-					name: 'wsk',
-					phone: '17341303920',
-					detail: '北京北京市东城区北京北京市东城区北京北京市东城区北京北京市东城区sdafdsafd'
-				},
 				showImg: false,
 				orderLs: [],
-				count: 278,
 				freight: 212,
 				orderNo: '2019073000000002',
 				createOrder: '2019-07-30 10:59:03'
 			}
 		},
 		onLoad(option) {
+			util.showLoading();
 			if (option.hasOwnProperty('id')){
+				if (option.hasOwnProperty('type')){
+					this.orderType = option.type;
+				}
 				let id = option.id;
 				this.init(id)
+			} else {
+				this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
+				this.getIsReturn();
 			}
-			this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
 			// this.orderLs = tpl.slice(0, 2);
 			// setTimeout(() => {
 			// 	this.showImg = true;
 			// }, 400)
+		},
+		mounted() {
+			// this.$refs.popup3.open();
+		},
+		watch: {
+			addr(oldVal, newVal) {
+				console.log('addr');
+				console.log(newVal);
+				// 退货 收货人
+				if(this.$refs.linkManReturn) {
+					this.$refs.linkManReturn.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobileReturn) {
+					this.$refs.mobileReturn.setValue(this.addr.Mobile);
+				}
+				
+				if(this.$refs.linkMan) {
+					this.$refs.linkMan.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobile) {
+					this.$refs.mobile.setValue(this.addr.Mobile);
+				}
+				if(this.$refs.addr) {
+					this.$refs.addr.setValue(this.addr.Address);
+				}
+			}
 		},
 		methods: {
 			init(id) {
@@ -262,121 +442,224 @@
 					}
 				}).then(res => {
 					this.billObj = res.data.result;
+					this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
 					this.billObj.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认'][this.billObj.State + 1];
-					
-					// 是否可以退货
-					util.ajax({
-						method: 'Businese.OrderDAL.CanReturn',
-						params: {
-							OrderId: res.data.result.RecordId
-						},
-						tags: {
-							usertoken: this.openid
-						}
-					}).then(resReturn => {
-						this.isReturn = resReturn.data.result;
-					});
+					this.getIsReturn();
+				});
+			},
+			getIsReturn() {
+				// 是否可以退货
+				util.ajax({
+					method: 'Businese.OrderDAL.CanReturn',
+					params: {
+						OrderId: this.billObj.RecordId
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(resReturn => {
+					util.hideLoading();
+					this.isReturn = resReturn.data.result;
 				});
 			},
 			bindClose() {
 				// 关闭
+				let me = this;
+				util.dialog({
+					content: '确定要关闭吗？',
+					success (e) {
+						if(e.confirm) {
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.OrderDAL.Close',
+								params: {
+									"OrderId" : me.billObj.RecordId /*订单Id [String]*/
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '关闭成功',
+									success() {
+										uni.navigateBack();
+									}
+								});
+							});
+						}
+					}
+				});
+			},
+			async bindSend(index) {
+				// 发货
+				// 先获取默认地址
+				util.showLoading();
+				this.$refs.popup.open();
+				this.billObj.Amount = String(this.billObj.Amount);
+				await this.getDefaultAddr();
+				// 收货人
+				if(this.$refs.linkManSend) {
+					this.$refs.linkManSend.setValue(this.billObj.LinkMan);
+				}
+				if(this.$refs.mobileSend) {
+					this.$refs.mobileSend.setValue(this.billObj.Mobile);
+				}
+				if(this.$refs.addressSend) {
+					this.$refs.addressSend.setValue(this.billObj.Address);
+				}
+				// 退货 收货人
+				if(this.$refs.linkManReturn) {
+					this.$refs.linkManReturn.setValue(this.addr.PersonName);
+				}
+				if(this.$refs.mobileReturn) {
+					this.$refs.mobileReturn.setValue(this.addr.Mobile);
+				}
+			},
+			sendOrder() {
+				// 发货
 				util.ajax({
-					method: 'Businese.OrderDAL.Close',
+					method: 'Businese.OrderDAL.Send',
 					params: {
-						"BillId" : this.billObj.RecordId /*订单Id [String]*/
+						"OrderId" : this.billObj.RecordId /*订单Id [String]*/,
+						"DiliveryInfo" : {
+							"Adress": ''  /*收货地址*/,
+							"LinkMan": ''  /*联系人*/,
+							"Mobile": ''  /*手机号*/,
+							"TransportCompany": this.transportCompany  /*货运公司*/,
+							"TrackingNo": this.trackingNo  /*运单号*/
+						} /*货运信息 [DiliveryInfo]*/,
+						ReturnLinkInfo: { // 退货的收货人信息(必须填地址、收货人和电话)
+							"Adress":  this.addr.Address /*收货地址*/,
+							"LinkMan": this.addr.PersonName  /*联系人*/,
+							"Mobile": this.addr.Mobile  /*手机号*/,
+							"TransportCompany": ''  /*货运公司*/,
+							"TrackingNo": ''  /*运单号*/
+						}
 					},
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					util.showToast({
-						title: '收货确认成功',
+						title: '发货成功',
 						success() {
 							uni.navigateBack();
 						}
 					});
 				});
 			},
-			bindSend(index) {
-				// 发货
-				this.$refs.popup.open();
-			},
 			closePopup(str){
 				let me = this;
+				// 对于付款的订单，需要弹出窗口，显示付款方式、付款方账户信息、收款方账户信息，付款金额(等于订单金额)，确认收款和取消按钮。必须确认收款才能发货。
 				if (str === 'confirm') {
 					// 发货点击确定
 					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
 						this.$refs.popup.close();
-						util.ajax({
-							method: 'Businese.OrderDAL.Send',
-							params: {
-								"OrderId" : this.billObj.RecordId /*订单Id [String]*/,
-								"DiliveryInfo" : {
-								  "Adress": this.billObj.Address  /*收货地址*/,
-								  "LinkMan": this.billObj.DealerName  /*联系人*/,
-								  "Mobile": this.userInfo.Mobile  /*手机号*/,
-								  "TransportCompany": this.billObj.FreightInfo  /*货运公司*/,
-								  "TrackingNo": this.trackingNo  /*运单号*/
-								} /*货运信息 [DiliveryInfo]*/,
-								"Reson" : this.reson /*退货原因 [String]*/
-							},
-							tags: {
-								usertoken: this.openid
-							}
-						}).then(res => {
-							util.showToast({
-								title: '发货成功',
-								success() {
-									me.init();
+						util.dialog({
+							content: '确定发货吗？',
+							success (e) {
+								if(e.confirm) {
+									util.showLoading();
+									me.sendOrder();
 								}
-							});
+							}
 						});
+					}
+				} else if (str === 'receiveConfirm') {
+					// 发货弹窗确认收款
+					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
+						this.$refs.popup.close();
+						util.dialog({
+							content: '请确认收款？',
+							success (e) {
+								if(e.confirm) {
+									util.showLoading();
+									me.sendOrder();
+								}
+							}
+						});
+						// util.showLoading();
+						// util.ajax({
+						// 	method: 'Businese.BillPayDAL.ReceiveConfirm',
+						// 	params: {
+						// 		RecordId: this.billObj.RecordId
+						// 	},
+						// 	tags: {
+						// 		usertoken: this.openid
+						// 	}
+						// }).then(res => {
+						// 	this.sendOrder();
+						// });
 					}
 				} else {
 					this.$refs.popup.close();
 				}
 			},
 			bindConfirmReceive() {
-				// 收货确认
-				util.ajax({
-					method: 'Businese.OrderDAL.ReceiveConfirm',
-					params: {
-						"OrderId" : this.billObj.RecordId /*订单Id [String]*/
-					},
-					tags: {
-						usertoken: this.openid
-					}
-				}).then(res => {
-					util.showToast({
-						title: '收货确认成功',
-						success() {
-							uni.navigateBack();
+				let me = this;
+				util.dialog({
+					content: '确定要收货确认吗？',
+					success (e) {
+						if(e.confirm) {
+							// 收货确认
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.OrderDAL.ReceiveConfirm',
+								params: {
+									"OrderId" : me.billObj.RecordId /*订单Id [String]*/
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '收货确认成功',
+									success() {
+										uni.navigateBack();
+									}
+								});
+							});
 						}
-					});
+					}
 				});
 			},
 			bindReturnConfirm(index) {
 				// 退货确认
 				this.$refs.popup2.open();
+				setTimeout(() => {
+					if(this.$refs.trackingNo2) {
+						this.$refs.trackingNo2.setValue(this.billObj.FreightInfo);
+					}
+				}, 500);
 			},
 			closePopup2(str){
 				let me = this;
+				let params = {
+					"OrderId" : this.billObj.RecordId /*订单Id [String]*/,
+					"PayReturn" : false /*是否退款 [Boolean]*/
+				};
+				if (this.billObj.IsPay) {
+					params.PayReturn = this.billObj.IsPayReturn;
+				}
 				if (str === 'confirm') {
 					// 退货点击确定
 					this.$refs.popup2.close();
+					util.showLoading();
 					util.ajax({
 						method: 'Businese.OrderDAL.ReturnConfirm',
-						params: {
-							"OrderId" : this.billObj.RecordId /*订单Id [String]*/,
-						},
+						params: params,
 						tags: {
 							usertoken: this.openid
 						}
 					}).then(res => {
+						util.hideLoading();
 						util.showToast({
 							title: '退货操作成功',
 							success() {
-								me.init();
+								uni.navigateBack();
 							}
 						});
 					});
@@ -386,50 +669,120 @@
 			},
 			bindCancelReturn() {
 				// 撤销退货
-				util.ajax({
-					method: 'Businese.OrderDAL.ReturnCancel',
-					params: {
-						"OrderId" : this.billObj.RecordId /*订单Id [String]*/
-					},
+				let me = this;
+				util.dialog({
+					content: '确定要关闭吗？',
+					success (e) {
+						if(e.confirm) {
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.OrderDAL.ReturnCancel',
+								params: {
+									"OrderId" : me.billObj.RecordId /*订单Id [String]*/
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '撤销退货成功',
+									success() {
+										uni.navigateBack();
+									}
+								});
+							});
+						}
+					}
+				});
+			},
+			bindConfirmReturn() {
+				// 确认退款
+				let me = this;
+				util.dialog({
+					content: '你确定收到退款了吗？',
+					success (e) {
+						if(e.confirm) {
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.OrderDAL.PayReturnConfirm',
+								params: {
+									"OrderId" : me.billObj.RecordId /*订单Id [String]*/
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '确认退款成功',
+									success() {
+										uni.navigateBack();
+									}
+								});
+							});
+						}
+					}
+				});
+			},
+			getDefaultAddr() {
+				return util.ajax({
+					method: 'Businese.OrderDAL.GetReturnLinkInfo',
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
-					util.showToast({
-						title: '撤销退货操作成功',
-						success() {
-							uni.navigateBack();
-						}
-					});
+					util.hideLoading();
+					this.addr.Address = res.data.result.Adress;
+					this.addr.PersonName = res.data.result.LinkMan;
+					this.addr.Mobile = res.data.result.Mobile;
 				});
 			},
-			bindReturn() {
+			async bindReturn() {
 				// 退货
-				this.$refs.popup2.open();
+				// 先获取默认地址
+				util.showLoading();
+				await this.getDefaultAddr();
+				this.$refs.popup3.open();
+				setTimeout(() => {
+					if(this.$refs.linkMan) {
+						this.$refs.linkMan.setValue(this.addr.PersonName);
+					}
+					if(this.$refs.mobile) {
+						this.$refs.mobile.setValue(this.addr.Mobile);
+					}
+					if(this.$refs.addr) {
+						this.$refs.addr.setValue(this.addr.Address);
+					}
+					// if(this.$refs.freightInfo) {
+					// 	this.$refs.freightInfo.setValue(this.curSelected.FreightInfo);
+					// }
+				}, 500);
 			},
 			closePopup3(str){
-				let me = this;
 				if (str === 'confirm') {
 					// 退货点击确定
 					if (this.$refs.trackingNo3.getValue()) {
 						this.$refs.popup3.close();
+						util.showLoading();
 						util.ajax({
 							method: 'Businese.OrderDAL.Return',
 							params: {
 								"OrderId" : this.billObj.RecordId /*订单Id [String]*/,
 								"DiliveryInfo" : {
-								  "Adress": this.billObj.Address  /*收货地址*/,
-								  "LinkMan": this.billObj.DealerName  /*联系人*/,
-								  "Mobile": this.userInfo.Mobile  /*手机号*/,
-								  "TransportCompany": this.billObj.FreightInfo  /*货运公司*/,
+								  "Adress": this.addr.Address  /*收货地址*/,
+								  "LinkMan": this.addr.PersonName  /*联系人*/,
+								  "Mobile": this.addr.Mobile  /*手机号*/,
+								  "TransportCompany": this.company  /*货运公司*/,
 								  "TrackingNo": this.trackingNo3  /*运单号*/
 								} /*货运信息 [DiliveryInfo]*/,
-								"Reson" : this.reson /*退货原因 [String]*/
+								"Reson" : this.billObj.ReturnReason /*退货原因 [String]*/
 							},
 							tags: {
 								usertoken: this.openid
 							}
 						}).then(res => {
+							util.hideLoading();
 							util.showToast({
 								title: '退货操作成功',
 								success() {
@@ -441,6 +794,11 @@
 				} else {
 					this.$refs.popup3.close();
 				}
+			},
+			selectAddr() {
+				util.goUrl({
+					url: '../addr/addr?mode=select'
+				});
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

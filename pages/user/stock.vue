@@ -87,6 +87,7 @@
 		},
         methods: {
 			init() {
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.QueryAppDAL.QueryInventory',
 					tags: {
@@ -94,6 +95,7 @@
 					}
 				})
 				.then(res => {
+					util.hideLoading();
 					let data = res.data.result;
 					console.log('我的库存: ', data);
 					this.loaded = true;

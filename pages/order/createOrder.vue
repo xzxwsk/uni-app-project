@@ -2,8 +2,8 @@
 	<view class="create_order">			
 		<view class="uni-list-cell-navigate uni-navigate-right">
 			<view class="menu_txt">
-				<text class="title">{{ addr.name + ' ' + addr.phone }}</text>
-				<text class="title sub_txt" @click="selectAddr">{{ addr.detail }}</text>
+				<text class="title">{{ addr.PersonName + ' ' + addr.Mobile }}</text>
+				<text class="title sub_txt" @click="selectAddr">{{ addr.Address }}</text>
 			</view>
 		</view>
 		<view class="uni-list">
@@ -61,23 +61,17 @@
 							</radio-group>
 						</view>
 					</view>
-					<view class="uni-list-cell">
-						<view class="uni-list-cell-navigate">
-							<text class="item-title"><text>收款方账户</text></text>
-							<input-box v-model="billObj.ReceiveAccountInfo" disabled></input-box>
-						</view>
-					</view>
 					<block v-if="billObj.PayType === 1">
 						<view class="uni-list-cell">
 							<view class="uni-list-cell-navigate">
 								<text class="item-title"><text>付款银行</text><text style="color: #f33;">*</text></text>
-								<input-box v-model="billObj.PayBank" placeholder="请输入付款银行"></input-box>
+								<input-box v-model="billObj.PayBank" ref="PayBank" placeholder="请输入付款银行"></input-box>
 							</view>
 						</view>
 						<view class="uni-list-cell">
 							<view class="uni-list-cell-navigate">
 								<text class="item-title"><text>付款户名</text><text style="color: #f33;">*</text></text>
-								<input-box v-model="billObj.PayAccountName" placeholder="请输入付款方户名"></input-box>
+								<input-box v-model="billObj.PayAccountName" ref="PayAccountName" placeholder="请输入付款方户名"></input-box>
 							</view>
 						</view>
 					</block>
@@ -85,15 +79,21 @@
 						<view class="uni-list-cell">
 							<view class="uni-list-cell-navigate">
 								<text class="item-title"><text>付款方账户</text><text style="color: #f33;">*</text></text>
-								<input-box v-model="billObj.PayAccountNo" :placeholder="placeholder"></input-box>
+								<input-box v-model="billObj.PayAccountNo" ref="PayAccountNo" :placeholder="placeholder"></input-box>
 							</view>
 						</view>
 						<view class="uni-list-cell">
 							<view class="uni-list-cell-navigate">
-								<text class="item-title"><text>付款方账户信息</text></text>
-								<input-box v-model="billObj.PayAccountInfo" placeholder="请输入付款方账户信息"></input-box>
+								<text class="item-title"><text>收款方账户</text></text>
+								<input-box v-model="billObj.ReceiveAccountInfo" ref="ReceiveAccountInfo" disabled></input-box>
 							</view>
 						</view>
+						<!-- <view class="uni-list-cell">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>付款方账户信息</text></text>
+								<input-box v-model="billObj.PayAccountInfo" ref="PayAccountInfo" placeholder="请输入付款方账户信息"></input-box>
+							</view>
+						</view> -->
 					</block>
 				</block>
 			</view>
@@ -163,57 +163,60 @@
 		data() {
 			return {
 				addr: {
-					name: '',
-					phone: '',
-					detail: '请选择收获地址'
+					PersonName: '',
+					Mobile: '',
+					Address: '请选择收获地址'
 				},
 				showImg: false,
 				placeholder: '请输入收款人微信账号',
 				orderLs: [],
 				// freight: 212,
 				billObj: {
-				  "Items": []  /*订单明细*/,
-				  "RecordId": ""  /*单据Id*/,
-				  "BillCode": ""  /*单据编号*/,
-				  "BillDate": ""  /*单据日期*/,
-				  "DealerId": ""  /*订货经销商Id*/,
-				  "DealerCode": ""  /*订货经销商编号*/,
-				  "DealerName": ""  /*订货经销商姓名*/,
-				  "Remark": ""  /*备注*/,
-				  "Address": ""  /*收货地址*/,
-				  "Amount": 0.0  /*合计金额*/,
-				  "Creator": ""  /*录入人*/,
-				  "CreatorName": ""  /*录入人姓名*/,
-				  "CreateTime": ""  /*录入时间*/,
-				  "LastModifier": ""  /*最后修改人*/,
-				  "LastModifierName": ""  /*最后修改人姓名*/,
-				  "LastModifyTime": ""  /*最后修改时间*/,
-				  "StateChanged": false  /*状态是否发生过改变*/,
-				  "DealerIdSend": ""  /*发货经销商Id*/,
-				  "DealerCodeSend": ""  /*发货经销商编号*/,
-				  "DealerNameSend": ""  /*发货经销商姓名*/,
-				  "FreightInfo": ""  /*发货货运信息*/,
-				  "ReturnTime": "2020-01-07T21:03:16.6363625+08:00"  /*退货发起时间*/,
-				  "ReturnReason": ""  /*退货原因*/,
-				  "ReturnFreightInfo": ""  /*退货货运信息*/,
-				  "ReturnConfirmTime": "2020-01-07T21:03:16.6363625+08:00"  /*退货确认时间*/,
-				  "SendTime": "2020-01-07T21:03:16.6363625+08:00"  /*发货时间*/,
-				  "ReceiveConfirmTime": "2020-01-07T21:03:16.6363625+08:00"  /*收货确认时间*/,
-				  "IsPay": false  /*是否付款*/,
-				  "IsPayReturn": false  /*是否退款*/,
-				  "PayType": 0  /*付款方式*/,
-				  "ReceiveAccountInfo": ""  /*收款方账户信息*/,
-				  "PayBank": ""  /*付款银行*/,
-				  "PayAccountNo": ""  /*付款账户*/,
-				  "PayAccountName": ""  /*付款户名*/,
-				  "PayAccountInfo": ""  /*付款方账户信息*/,
-				  "TimeStamp": ""  /*时间戳*/,
-				  "State": 0  /*单据状态*/,
-				  "ChangeType": 0,
-				  "IdValues": [
-					""
-				  ],
-				  "iState": 1
+					"Items": []  /*订单明细*/,
+					"RecordId": ""  /*单据Id*/,
+					"BillCode": ""  /*单据编号*/,
+					"BillDate": "2020-02-07T19:04:14.174898+08:00"  /*单据日期*/,
+					"DealerId": ""  /*订货经销商Id*/,
+					"DealerCode": ""  /*订货经销商编号*/,
+					"DealerName": ""  /*订货经销商姓名*/,
+					"Remark": ""  /*备注*/,
+					"Address": ""  /*收货地址*/,
+					"LinkMan": ""  /*收货联系人*/,
+					"Mobile": ""  /*收货联系电话*/,
+					"Amount": 0.0  /*合计金额*/,
+					"Creator": ""  /*录入人*/,
+					"CreatorName": ""  /*录入人姓名*/,
+					"CreateTime": "2020-02-07T19:04:14.2061478+08:00"  /*录入时间*/,
+					"LastModifier": ""  /*最后修改人*/,
+					"LastModifierName": ""  /*最后修改人姓名*/,
+					"LastModifyTime": "2020-02-07T19:04:14.2061478+08:00"  /*最后修改时间*/,
+					"StateChanged": false  /*状态是否发生过改变*/,
+					"DealerIdSend": ""  /*发货经销商Id*/,
+					"DealerCodeSend": ""  /*发货经销商编号*/,
+					"DealerNameSend": ""  /*发货经销商姓名*/,
+					"FreightInfo": ""  /*发货货运信息*/,
+					"ReturnTime": "2020-02-07T19:04:14.2061478+08:00"  /*退货发起时间*/,
+					"ReturnReason": ""  /*退货原因*/,
+					"ReturnFreightInfo": ""  /*退货货运信息*/,
+					"ReturnConfirmTime": "2020-02-07T19:04:14.2061478+08:00"  /*退货确认时间*/,
+					"SendTime": "2020-02-07T19:04:14.2061478+08:00"  /*发货时间*/,
+					"ReceiveConfirmTime": "2020-02-07T19:04:14.2061478+08:00"  /*收货确认时间*/,
+					"IsPay": false  /*是否付款*/,
+					"IsPayReturn": false  /*是否退款*/,
+					"PayType": 0  /*付款方式*/,
+					"ReceiveAccountInfo": ""  /*收款方账户信息*/,
+					"PayBank": ""  /*付款银行*/,
+					"PayAccountNo": ""  /*付款账户*/,
+					"PayAccountName": ""  /*付款户名*/,
+					"PayAccountInfo": ""  /*付款方账户信息*/,
+					"TimeStamp": ""  /*时间戳*/,
+					"State": 1  /*单据状态*/,
+					"LevelId": ""  /*当前订单满足的上级经销商等级*/,
+					"ChangeType": 0,
+					"IdValues": [
+					  ""
+					],
+					"iState": 1
 				} /*订单 [Order]*/
 			}
 		},
@@ -233,6 +236,8 @@
 		},
 		methods: {
 			async init(id) {
+				util.showLoading();
+				await this.getDefaultAddr();
 				if(id) {
 					// 商品详情进入结算
 					let CartItemIds = this.orderLs.map(item => item.Id);
@@ -245,6 +250,7 @@
 							usertoken: this.openid
 						}
 					}).then(res => {
+						util.hideLoading();
 						let data = res.data.result;
 						console.log('生成默认订单：', data);
 						this.billObj = data;
@@ -262,6 +268,7 @@
 							usertoken: this.openid
 						}
 					}).then(res => {
+						util.hideLoading();
 						let data = res.data.result;
 						console.log('生成默认订单：', data);
 						this.billObj = data;
@@ -272,19 +279,43 @@
 					this.showImg = true;
 				}, 400);
 			},
+			getDefaultAddr() {
+				util.ajax({
+					method: 'Basic.DealerAddressDAL.QueryList',
+					params: {
+						filter: {
+							PageIndex: 1,
+							PageSize: 20
+						}
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					let addr = res.data.result.data.find(item => {
+						return item.IsDefault;
+					});
+					if (addr) {
+						this.addr = addr;
+					}
+				});
+			},
 			selectAddr() {
 				util.goUrl({
 					url: '../addr/addr?mode=select'
 				});
 			},
 			goMyOrder() {
-				if (this.addr.name === '' && this.addr.phone === '') {
+				if (this.addr.PersonName === '' && this.addr.Mobile === '') {
 					util.showToast({
 						title: '请选择收货地址'
 					});
 					return;
 				}
-				this.billObj.Address = this.addr.detail;
+				console.log(this.addr);
+				this.billObj.Address = this.addr.Address;
+				this.billObj.LinkMan = this.addr.PersonName;
+				this.billObj.Mobile = this.addr.Mobile;
 				if (this.billObj.PayType === 1) {
 					if (this.billObj.PayBank === '' || this.billObj.PayAccountName === '') {
 						util.showToast({
@@ -302,6 +333,7 @@
 					}
 				}
 				// 生成订单
+				util.showLoading();
 				util.ajax({
 					method: 'Businese.OrderDAL.Create',
 					params: {
@@ -311,6 +343,7 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
+					util.hideLoading();
 					// util.goUrl({
 					// 	url: './myOrder'
 					// });
@@ -326,6 +359,7 @@
 			},
 			onIsPayChange(e){
 				this.$set(this.billObj, 'IsPay', !this.billObj.IsPay);
+				this.getDefaultPayInfo();
 			},
 			changeMoneyType(e) {
 				// 付款方式
@@ -336,6 +370,49 @@
 					this.placeholder = '请输入付款人支付宝账号';
 				} else if (e.target.value === '1') {
 					this.placeholder = '请输入付款人银行账号';
+				}
+				this.getDefaultPayInfo();
+			},
+			getDefaultPayInfo() {
+				// 生成默认支付信息
+				if (this.billObj.IsPay) {
+					util.showLoading();
+					util.ajax({
+						method: 'Businese.OrderDAL.GetDefaultPayInfo',
+						params: {
+							PayType: this.billObj.PayType,
+							DealerIdSend: this.billObj.DealerIdSend
+						},
+						tags: {
+							usertoken: this.openid
+						}
+					}).then(res => {
+						util.hideLoading();
+						console.log('默认支付信息: ', res.data.result);
+						// me.billObj.PayType = res.data.result.PayType === 0 ? res.data.result.PayType : (res.data.result.PayType || 1);
+						// me.billObj.ReceiveAccountInfo = res.data.result.ReceiveAccountInfo || '';
+						// me.billObj.PayBank = res.data.result.PayBank || '';
+						// me.billObj.PayAccountNo = res.data.result.PayAccountNo || '';
+						// me.billObj.PayAccountName = res.data.result.PayAccountName || '';
+						this.billObj = util.extend(this.billObj, res.data.result);
+						// this.$set(this.billObj, 'PayType', (res.data.result.PayType === 0 ? res.data.result.PayType : (res.data.result.PayType || 1)));
+						this.$set(this.billObj, 'ReceiveAccountInfo', (res.data.result.ReceiveAccountInfo || ''));
+						if(res.data.result.ReceiveAccountInfo) {
+							this.$refs.ReceiveAccountInfo.setValue(res.data.result.ReceiveAccountInfo);
+						}
+						this.$set(this.billObj, 'PayBank', (res.data.result.PayBank || ''));
+						if(res.data.result.PayBank) {
+							this.$refs.PayBank.setValue(res.data.result.PayBank);
+						}
+						this.$set(this.billObj, 'PayAccountNo', (res.data.result.PayAccountNo || ''));
+						if(res.data.result.PayAccountNo) {
+							this.$refs.PayAccountNo.setValue(res.data.result.PayAccountNo);
+						}
+						this.$set(this.billObj, 'PayAccountName', (res.data.result.PayAccountName || ''));
+						if(res.data.result.PayAccountName) {
+							this.$refs.PayAccountName.setValue(res.data.result.PayAccountName);
+						}
+					})
 				}
 			},
 			imageError(e) {

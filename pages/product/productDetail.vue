@@ -9,7 +9,7 @@
 					<swiper class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
 						<swiper-item v-for="(item, index) in imgLs" :key="index">
 							<view class="swiper-item">
-								<image style="width: 100%;" :mode="mode" :src="item" @error="imageError"></image>
+								<image style="width: 100%;" mode="scaleToFit" :src="item" @error="imageError"></image>
 							</view>
 						</swiper-item>                        
 					</swiper>
@@ -115,7 +115,6 @@
 				autoplay: true,
 				interval: 50000,
 				duration: 500,
-				mode: 'scaleToFit',
 				imgLs: ['/static/img/2X1_6.jpg',
 					'/static/img/2X1_2.jpg',
 					'/static/img/2X1_1.jpg',
@@ -128,10 +127,7 @@
 			}
 		},
 		onLoad(option) {
-			this.getDetail(option.id)
-		},
-		mounted() {
-			this.imgLs = [];
+			this.getDetail(option.id);
 		},
 		methods: {
 			getDetail(id) {
@@ -147,8 +143,7 @@
 					}
 				}).then(res => {
 					util.hideLoading();
-					console.log('产品详情: ', res.data.result);
-					this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
+					this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ' && res.data.result.BigImageBase64 !== '') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
 					this.detail = res.data.result;
 					this.$nextTick(() => {
 						let me = this;

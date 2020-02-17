@@ -3,14 +3,14 @@
 		<view class="con">
 			<scroll-view scroll-y="true" style="width: 100%; height: 100%;" scroll-with-animation>
 				<view class="input-group">
-					<view class="input-row border" v-if="title === '确定'">
+					<!-- <view class="input-row border" v-if="title === '确定'">
 						<text class="title">密码：</text>
 						<input-box type="password" ref="password" :verification="['isNull']" :verificationTip="['密码不能为空']" v-model="password" placeholder="请输入密码"></input-box>
 					</view>
 					<view class="input-row border" v-if="title === '确定'">
 						<text class="title">确认密码：</text>
 						<input-box type="password" v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
-					</view>
+					</view> -->
 					<view class="input-row border">
 						<text class="title">编号：</text>
 						<text class="info">{{modifyUserInfo.DealerNo}}</text>
@@ -42,7 +42,7 @@
 								<label class="radio"><radio value="0" color="#f23030" :checked="modifyUserInfo.Sex === 0" />男</label>
 								<label class="radio"><radio value="1" color="#f23030" :checked="modifyUserInfo.Sex === 1" />女</label>
 							</radio-group>
-							<text v-else>{{modifyUserInfo.Sex}}</text>
+							<text v-else>{{['男', '女'][modifyUserInfo.Sex]}}</text>
 						</view>
 					</view>
 					<view class="input-row border">
@@ -121,7 +121,6 @@
 							<text v-else>{{modifyUserInfo.AlipayAccNo}}</text>
 						</view>
 						<text class="title">微信帐号：</text>
-						<text class="info">{{modifyUserInfo.MicromsgNo}}</text>
 						<view :class="'info' + (title === '确定' ? ' input_box' : '')">
 							<input-box v-if="title === '确定'" type="text" ref="micromsgNo" clearable :inputValue="modifyUserInfo.MicromsgNo" v-model="modifyUserInfo.MicromsgNo" placeholder="请输入微信帐号"></input-box>
 							<text v-else>{{modifyUserInfo.MicromsgNo}}</text>
@@ -278,8 +277,6 @@
             }
         },
 		onNavigationBarButtonTap(e) {  
-			console.log("点击了自定义按钮: " + JSON.stringify(e));
-			
 			if (this.title === '修改') {	
 				// 进入修改
 				this.title = '确定';
@@ -291,13 +288,13 @@
 				// #endif 
 			} else {
 				// 确定保存
-				if(this.$refs.password.getValue()) {
+				// if(this.$refs.password.getValue()) {
 					// 验证通过
-					if (this.password !== this.confirmPassword) {
-						util.showToast({
-							title: '密码不一致'
-						});
-					} else {
+					// if (this.password !== this.confirmPassword) {
+					// 	util.showToast({
+					// 		title: '密码不一致'
+					// 	});
+					// } else {
 						this.title = '修改';
 						// #ifdef APP-PLUS
 						let webView = this.$mp.page.$getAppWebview();
@@ -306,8 +303,8 @@
 						});
 						// #endif 
 						this.save();
-					}
-				}
+				// 	}
+				// }
 			}
 		},
 		mounted() {
@@ -331,6 +328,7 @@
 			}
 		},
         methods: {
+			...mapMutations(['setUserInfo']),
 			changeSex(e) {
 				// 性别
 				this.modifyUserInfo.Sex = Number(e.detail.value);
@@ -351,8 +349,9 @@
 				this.modifyUserInfo.DimissionDate = value;
 			},
 			save() {
-				this.modifyUserInfo.Password = this.password;
-				this.modifyUserInfo.ChangePassword = true;
+				let me = this;
+				// this.modifyUserInfo.Password = this.password;
+				// this.modifyUserInfo.ChangePassword = true;
 				util.showLoading();
 				util.ajax({
 					method: 'SYS.DealerDAL.Update',
@@ -363,9 +362,12 @@
 					util.hideLoading();
 					util.dialog({
 						content: '保存成功',
-						showCancel: false
+						showCancel: false,
+						success(e) {
+							console.log(e);
+							me.setUserInfo(res.data.result);
+						}
 					});
-					console.log('更新经销商：', res);
 				});
 			},
 			selectCalendar() {

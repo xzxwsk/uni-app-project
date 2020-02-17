@@ -9,14 +9,14 @@
                     <swiper style="height: 350upx;" class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
                         <swiper-item v-for="(item, index) in imgLs" :key="index">
                             <view class="swiper-item">
-								<image style="width: 100%;" :mode="mode" :src="item" @click="goDetail(index)" @error="imageError"></image>
+								<image style="width: 100%;" mode="aspectFill" :src="item" @click="goDetail(index)" @error="imageError"></image>
 							</view>
                         </swiper-item>                        
                     </swiper>
                 </view>
             </view>
         </view>
-		<view class="uni-product-list">
+		<view class="uni-product-list" v-if="productList.length > 0">
 			<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail(index)">
 				<view class="image-view">
 					<image v-if="renderImage" mode="aspectFit" class="uni-product-image" :src="product.image"></image>
@@ -26,7 +26,8 @@
 						<view>{{product.title}}</view>
 						<text>{{product.remark}}</text>
 					</view>
-					<view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view></view>
+					<view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view>
+				</view>
 				<view class="uni-product-price">
 					<!-- <text class="uni-product-price-favour">￥{{product.originalPrice}}</text> -->
 					<text class="uni-product-price-original">￥{{product.favourPrice}}</text>
@@ -34,11 +35,12 @@
 				</view>
 			</view>
 		</view>
-		<!-- <view class="uni-padding-wrap uni-common-pb">
-			<view class="index">
-				<view v-html="sysInfo"></view>
+		<view class="no-data" v-else>
+			<view class="no-img">
+				<image style="width: 100%;" mode="widthFix" :src="imgSrc" @error="imageError"></image>
 			</view>
-		</view> -->
+			<view class="txt"><text>亲，还没有宝贝哦~</text></view>
+		</view>
 		<share-menu ref="shareMenu"></share-menu>
 	</view>
 </template>
@@ -62,7 +64,7 @@
 				autoplay: true,
 				interval: 50000,
 				duration: 500,
-				mode: 'widthFix',
+				imgSrc: '/static/images/no_data_d.png',
 				imgLs: [
 					// '/static/img/09b56be258853ac27ec6ecc946453b65.jpg',
 					// '/static/img/56da50eddd39e1089c0724e40443c850.png',
@@ -282,7 +284,7 @@
 					}
 					this.productList = this.productList.concat(ls);
 				});
-			    const data = [
+			    /* const data = [
 			        {
 			            image: 'https://img-cdn-qiniu.dcloud.net.cn/uploads/example/product1.jpg',
 			            title: 'Apple iPhone X 256GB 深空灰色 移动联通电信4G手机',
@@ -339,7 +341,7 @@
 						}
 						return img;
 					});
-				}
+				} */
 			}
 		}
 	}

@@ -6,24 +6,24 @@
 				<text class="title sub_txt" @click="selectAddr">{{ addr.Address }}</text>
 			</view>
 		</view>
-		<view class="uni-list">
-			<view class="uni-list-cell" v-for="(value,key) in billObj.Items" :key="key">
-				<view class="uni-media-list">
-					<!-- <view class="uni-media-list-logo">
-						<image v-if="showImg" mode="aspectFit" @error="imageError" :src="value.img"></image>
-					</view> -->
-					<view class="uni-media-list-body">
-						<view>
-							<view class="uni-media-list-text-top">{{value.ProductName}}</view>
-							<view class="uni-media-list-text-top sub_txt">计量单位: {{value.UnitName}}</view>
-							<view class="uni-media-list-text-top sub_txt">数量: {{value.Qty}}件</view>
+		<scroll-view class="box" scroll-y :scroll-top="scrolltop">
+			<view class="uni-list">
+				<view class="uni-list-cell" v-for="(value,key) in billObj.Items" :key="key">
+					<view class="uni-media-list">
+						<!-- <view class="uni-media-list-logo">
+							<image v-if="showImg" mode="aspectFit" @error="imageError" :src="value.img"></image>
+						</view> -->
+						<view class="uni-media-list-body">
+							<view>
+								<view class="uni-media-list-text-top">{{value.ProductName}}</view>
+								<view class="uni-media-list-text-top sub_txt">计量单位: {{value.UnitName}}</view>
+								<view class="uni-media-list-text-top sub_txt">数量: {{value.Qty}}件</view>
+							</view>
+							<view class="uni-media-list-text-bottom uni-ellipsis price">￥{{value.Amount}}</view>
 						</view>
-						<view class="uni-media-list-text-bottom uni-ellipsis price">￥{{value.Amount}}</view>
 					</view>
 				</view>
 			</view>
-		</view>
-		<scroll-view class="box" scroll-y>
 			<view class="uni-list count">
 				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
@@ -167,6 +167,7 @@
 					Mobile: '',
 					Address: '请选择收获地址'
 				},
+				scrolltop: 0,
 				showImg: false,
 				placeholder: '请输入收款人微信账号',
 				orderLs: [],
@@ -360,6 +361,7 @@
 			onIsPayChange(e){
 				this.$set(this.billObj, 'IsPay', !this.billObj.IsPay);
 				this.getDefaultPayInfo();
+				this.scrolltop = util.random(500, 1000);
 			},
 			changeMoneyType(e) {
 				// 付款方式
@@ -371,6 +373,7 @@
 				} else if (e.target.value === '1') {
 					this.placeholder = '请输入付款人银行账号';
 				}
+				this.scrolltop = util.random(500, 1000);
 				this.getDefaultPayInfo();
 			},
 			getDefaultPayInfo() {

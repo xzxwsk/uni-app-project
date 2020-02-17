@@ -1,41 +1,41 @@
 <template>
 	<view class="quit_order">			
 		<view class="uni-tab-bar">
-			<block v-for="(itemLs, indexLs) in dataArr" :key="indexLs">
-				<view class="list">
-					<block v-if="itemLs.data.length<1">
-						<view class="no-data">
-							<view class="no-img cart">
-								<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
-							</view>
-							<view class="txt"><text>亲，还没有相关付款单哦~</text></view>
+			<view class="list">
+				<block v-if="dataArr.length<1">
+					<view class="no-data">
+						<view class="no-img cart">
+							<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
 						</view>
-					</block>
-					<view v-else="" class="box">
-						<view>
-							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(item.RecordId)">
-								<view class="ls_item_top">
-									<view class="title">
-										<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
-										<view><text class="gray">姓名:</text>{{item.CreatorName}}</view>
-										<view><text class="gray">保证金:</text><text class="price">￥{{item.price}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{item.payType}}</text></view>
-										<view><text class="gray">经销商编号:</text>{{item.DealerCode}}</view>
-										<view><text class="gray">经销商姓名:</text>{{item.DealerName}}</view>
-										<view><text class="gray">注销原因:</text>{{item.Remark}}</view>
-									</view>
-									<view class="status">
-										<text>{{item.status}}</text>
-									</view>
-								</view>
-								<view class="ls_item_bottom">
-									<button v-if="item.State === 0" class="btn" @click="bindDel(item.RecordId)">删除</button>
-									<button v-if="item.State === 1" class="btn" @click="bindConfirm(item.RecordId)">确认退款</button>
-								</view>
+						<view class="txt"><text>亲，还没有相关注销单哦~</text></view>
+					</view>
+				</block>
+				<view v-else class="box">
+					<view class="ls_item" v-for="(item, index) in dataArr" :key="index">
+						<view class="ls_item_top" @click="goDetail(item.RecordId)">
+							<view class="title">
+								<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
+								<view><text class="gray">姓名:</text>{{item.DealerName}}</view>
+								<block v-for="(subItem, subIndex) in item.PayReturnItems">
+									<blcok v-if="subItem.DealerId === userInfo.DealerId && subItem.AccountType === 0">
+										<view><text class="gray">保证金:</text><text class="price">￥{{subItem.Amount}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{item.PayTypeStr}}</text></view>
+										<view><text class="gray">经销商编号:</text>{{subItem.DealerCode}}</view>
+										<view><text class="gray">经销商姓名:</text>{{subItem.DealerName}}</view>
+									</blcok>
+								</block>
+								<view><text class="gray">注销原因:</text>{{item.Remark}}</view>
 							</view>
+							<view class="status">
+								<text>{{item.status}}</text>
+							</view>
+						</view>
+						<view class="ls_item_bottom" v-if="item.State === 0 || item.State === 2">
+							<button v-if="item.State === 0" class="btn" @click="bindDel(item.RecordId)">删除</button>
+							<button v-if="item.State === 2" class="btn" @click="bindConfirm(item.RecordId)">确认退款</button>
 						</view>
 					</view>
 				</view>
-			</block>
+			</view>
 		</view>
 	</view>
 </template>
@@ -46,55 +46,61 @@
 	import util from '@/common/util.js';
 	import noImg from '@/static/images/no_data_d.png';
 	import {mapState, mapMutations} from 'vuex';
-	const list = [{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已审核',
-		payType: '微信',
-		count: 1,
-		price: 16.28
-	}];
 	export default {
 		components: {
 			inputBox
 		},
-		computed: mapState(['openid']),
+		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
 				imgSrc: noImg,
-				mode: 'widthFix',
-				scrollLeft: 0,
-				tabIndex: 0,
-				dataArr: [],
-				renderImage: false,
-				tabBars: [{
-					name: '全部',
-					id: 'all'
-				}, {
-					name: '已退货款',
-					id: 'guanzhu'
-				}, {
-					name: '已审核',
-					id: 'tuijian'
-				}, {
-					name: '已确认退款',
-					id: 'tiyu'
-				}],
-				isScroll: false,
-				loadingText: '加载更多...',
-				dateValue: '',
-				searchKey: '',
-				startDate: '2010-01-01',
-				endDate: '2199-12-31',
-				ls: list
+				dataArr: [{
+					"RecordId": ""  /*单据Id*/,
+					"BillCode": ""  /*单据编号*/,
+					"BillDate": "2020-02-15T14:12:51.1542856+08:00"  /*单据日期*/,
+					"DealerId": ""  /*经销商Id*/,
+					"DealerCode": ""  /*经销商编号*/,
+					"DealerName": ""  /*经销商姓名*/,
+					"Remark": ""  /*备注*/,
+					"State": 1  /*State*/,
+					"Creator": ""  /*录入人*/,
+					"CreatorName": ""  /*录入人姓名*/,
+					"CreateTime": "2020-02-15T14:12:51.1542856+08:00"  /*录入时间*/,
+					"LastModifier": ""  /*最后修改人*/,
+					"LastModifierName": ""  /*最后修改人姓名*/,
+					"LastModifyTime": "2020-02-15T14:12:51.1542856+08:00"  /*最后修改时间*/,
+					"StateChanged": false  /*状态是否发生过改变*/,
+					"TimeStamp": ""  /*时间戳*/,
+					"ChangeType": 0,
+					"IdValues": [
+					  ""
+					],
+					"iState": 1,
+					"PayReturnItems": [
+					  {
+						"DtlId": ""  /*FId*/,
+						"RecordId": ""  /*单据Id*/,
+						"AccountType": 0  /*退款类别*/,
+						"Amount": 0.0  /*退款金额*/,
+						"DealerId": ""  /*退款经销商Id*/,
+						"DealerCode": ""  /*退款经销商编号*/,
+						"DealerName": ""  /*退款经销商名称*/,
+						"PayType": 0  /*退款方式*/,
+						"ReceiveAccountInfo": ""  /*收款方账户信息*/,
+						"PayBank": ""  /*付款银行*/,
+						"PayAccountNo": ""  /*付款账户*/,
+						"PayAccountName": ""  /*付款户名*/,
+						"Creator": ""  /*录入人*/,
+						"CreatorName": ""  /*录入人姓名*/,
+						"CreateTime": "2020-02-15T14:12:51.1542856+08:00"  /*录入时间*/,
+						"ChangeType": 0
+					  }
+					]
+				}]
 			}
 		},
 		onLoad() {
 			this.init();
-			// this.dataArr = this.randomfn();
-			// setTimeout(()=> {
-			//     this.dataArr[0].renderImage = true;
-			// }, 300);
 		},		
 		onNavigationBarButtonTap(e) {
 			util.goUrl({
@@ -103,86 +109,72 @@
 		},
 		methods: {
 			init() {
-				this.getAllData([0, 1, 2, 3, 4]);
+				this.getData();
 			},
-			async getAllData(arr) {
+			getData(arr) {
 				util.showLoading();
 				// 获取全部状态的数据
-				var promiseArray = [];
-				arr.forEach(item => {
-					promiseArray.push(util.ajax({
-						method: 'Businese.BillLeaveDAL.QueryMyList',
-						params: {
-							Filter: {
-								StartDate: '',
-								EndDate: '',
-								BillNoLike: '',
-								State: item,
-								PageIndex: 1,
-								PageSize: 20
-							}
-						},
-						tags: {
-							usertoken: this.openid
-						}
-					}));
-				});
-				await Promise.all(promiseArray)
-				.then(values => {
-					util.hideLoading();
-					this.dataArr = [{
-						isLoading: false,
-						searchKey: '',
-						dateValue: '',
-						data: [],
-						isScroll: false,
-						loadingText: '加载更多...',
-						renderImage: false
-					}];
-					values.forEach((item, index) => {
-						this.dataArr.push({
-							isLoading: false,
-							searchKey: '',
-							dateValue: '',
-							data: [],
-							isScroll: false,
-							loadingText: '加载更多...',
-							renderImage: false
-						});
-						if(item.data.hasOwnProperty('result')) {
-							this.dataArr[index+1].data = item.data.result.data;
-						}
-					});
-				});
-				let _arr = [];
-				this.dataArr.forEach(item => {
-					item.data.forEach(dataItem => {
-						dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-						_arr = _arr.concat(dataItem);
-					});
-				});
-				this.dataArr[0].data = _arr;
-				this.dataArr.splice(1);
-			},
-			bindDel(RecordId) {
-				util.showLoading();
-				let me = this;
 				util.ajax({
-					method: 'Businese.BillLeaveDAL.Cancel',
+					method: 'Businese.BillLeaveDAL.QueryMyList',
 					params: {
-						RecordId: RecordId
+						Filter: {
+							StartDate: '',
+							EndDate: '',
+							BillNoLike: '',
+							State: null,
+							PageIndex: 1,
+							PageSize: 20
+						}
 					},
 					tags: {
 						usertoken: this.openid
 					}
-				}).then(res => {
+				})
+				.then(res => {
 					util.hideLoading();
-					util.showToast({
-						title: '删除注销单成功',
-						success() {
-							me.init();
+					if(res.data.hasOwnProperty('result')) {
+						res.data.result.data.forEach(item => {
+							item.billDateStr = util.formatDate(item.BillDate, 'yyyy-MM-dd');
+							item.status = ['已取消', '申请', '已退货款', '已退保证金', '已收款确认', '退货款中'][item.State + 1];
+							item.PayReturnItems.forEach(subItem => {
+								subItem.PayTypeStr = ['现金', '银行转账', '支付宝', '微信'][subItem.PayType];
+							});
+						});
+						this.dataArr = res.data.result.data;
+						console.log(this.dataArr)
+						console.log(this.userInfo)
+					}
+				});
+				
+			},
+			bindDel(RecordId) {
+				let me = this;
+				util.dialog({
+					content: '确定要删除吗？',
+					success (e) {
+						if(e.confirm) {
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.BillLeaveDAL.Cancel',
+								params: {
+									RecordId: RecordId
+								},
+								tags: {
+									usertoken: this.openid
+								}
+							}).then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '删除注销单成功',
+									success() {
+										setTimeout(() => {
+											me.init();
+										}, 1000);
+									}
+								});
+							});
 						}
-					});
+					}
 				});
 			},
 			bindConfirm(RecordId) {
@@ -206,103 +198,7 @@
 			},
 			goDetail(id) {
 				// 查看订单详情
-				console.log(index);
-				util.goUrl({
-					url: './orderDetail?id=' + id
-				});
-			},
-			query() {
-				console.log(this.dataArr[this.tabIndex].searchKey, this.dataArr[this.tabIndex].dateValue);
-			},
-			loadMore(e) {
-				this.dataArr[this.tabIndex].isScroll = true;
-			},
-			bindDateChange(value) {
-				console.log('bindDateChange: ', value);
-				this.dataArr[this.tabIndex].dateValue = value;
-			},
-			addData(e) {
-				this.dataArr[e].isLoading = true;
-				this.dataArr[e].data = list.slice(0, util.random(4));
-				setTimeout(()=> {
-				    this.dataArr[e].renderImage = true;
-				}, 300);
-				// if (this.dataArr[e].data.length > 30) {
-				// 	this.dataArr[e].loadingText = '没有更多了';
-				// 	return;
-				// }
-			},
-			getElSize(id) { //得到元素的size
-				return new Promise((res, rej) => {
-					uni.createSelectorQuery().select("#" + id).fields({
-						size: true,
-						scrollOffset: true
-					}, (data) => {
-						res(data);
-					}).exec();
-				})
-			},
-			async changeTab(e) {
-				let index;
-				if (!e.target.hasOwnProperty('current')) {
-					return;
-				}
-				index = e.target.current;
-                this.tabIndex = index;
-				if (!this.dataArr[index].isLoading) {
-					this.addData(index)
-				}
-				let tabBar = await this.getElSize("tab-bar"),
-					tabBarScrollLeft = tabBar.scrollLeft;
-				let width = 0;
-
-				for (let i = 0; i < index; i++) {
-					let result = await this.getElSize(this.tabBars[i].id);
-					width += result.width;
-				}
-				let winWidth = uni.getSystemInfoSync().windowWidth,
-					nowElement = await this.getElSize(this.tabBars[index].id),
-					nowWidth = nowElement.width;
-				if (width + nowWidth - tabBarScrollLeft > winWidth) {
-					this.scrollLeft = width + nowWidth - winWidth;
-				}
-				if (width < tabBarScrollLeft) {
-					this.scrollLeft = width;
-				}
-			},
-			async tapTab(e) { //点击tab-bar
-				let tabIndex = e.target.dataset.current;
-				if (!this.dataArr[tabIndex].isLoading) {
-					this.addData(tabIndex)
-				}
-				if (this.tabIndex === tabIndex) {
-					return false;
-				} else {
-					let tabBar = await this.getElSize("tab-bar"),
-						tabBarScrollLeft = tabBar.scrollLeft; //点击的时候记录并设置scrollLeft
-					this.scrollLeft = tabBarScrollLeft;
-					this.tabIndex = tabIndex;
-				}
-			},
-			randomfn() {
-				let ary = [];
-				for (let i = 0, length = 1; i < length; i++) {
-					let aryItem = {
-						isLoading: false,
-						searchKey: '',
-						dateValue: '',
-						data: [],
-						isScroll: false,
-						loadingText: '加载更多...',
-						renderImage: false
-					};
-					if (i < 1) {
-						aryItem.isLoading = true;
-						aryItem.data = list.slice(0, util.random(1));
-					}
-					ary.push(aryItem);
-				}
-				return ary;
+				console.log(id);
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

@@ -118,6 +118,7 @@
 			return {
 				imgSrc: '/static/images/no_data_d.png',
 				mode: 'widthFix',
+				isLoaded: false,
 				scrollLeft: 0,
 				tabIndex: 0,
 				dataArr: [],
@@ -149,7 +150,17 @@
 		onLoad() {
 			// this.dataArr = this.randomfn();
 			// this.displayDataArr = util.deepCopy(this.dataArr);
-			this.init();
+			if (!this.isLoaded) {
+				this.init();
+				setTimeout(() => {
+					this.isLoaded = true;
+				}, 1000);
+			}
+		},
+		onShow() {
+			if (this.isLoaded) {
+				this.init();
+			}
 		},
 		methods: {
 			init() {

@@ -10,11 +10,11 @@
 		<block v-else>
 			<scroll-view scroll-y="true" style="width: 100%; height: 100%;">
 				<view class="uni-list">
-					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @click="goDetail(index)" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
+					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
 						<view class="uni-media-list">
 							<radio class="radio" color="#f23030" @click.stop="checkboxChange(index)" :value="item.title" :checked="item.selected" />
 							<!-- <image class="uni-media-list-logo" mode="aspectFit" :src="item.img" @error="imageError"></image> -->
-							<view class="uni-media-list-body">
+							<view class="uni-media-list-body" @click="goDetail(index)">
 								<view class="uni-media-list-text-top">{{ item.ProductName }}</view>
 								<view class="uni-media-list-text-bottom">
 									<text class="price">${{ item.Price.toFixed(2) }}</text>

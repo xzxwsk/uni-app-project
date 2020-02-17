@@ -113,6 +113,7 @@ uni-toast{z-index: 100000;}
 	.uni-product{
 		.image-view{border: 1px #ccc solid;}
 	}
+	.no-data{margin: 200upx 0 0;}
 }
 .cart_ls{position: relative; display: flex; flex-direction: column; justify-content: center; width: 100%; height: 100%; text-align: center;
 	.uni-list{margin: 0 2% 160upx; width: 96%; background: transparent;
@@ -204,9 +205,10 @@ uni-toast{z-index: 100000;}
 		}
 	}
 }
-.create_order{padding: 160upx 0 100upx;
+.create_order{
 	.uni-list-cell-navigate{padding: 20upx;}
-	.menu_txt{flex: 1; display: flex; flex-direction: column; background: #fff; border-radius: 0 0 4px 4px; border-top: 10px #f0f2f5 solid; border-bottom: 3px solid #ff0036; padding: 10px;
+	.box{height: calc(100vh - 300upx);}
+	.menu_txt{flex: 1; display: flex; flex-direction: column; background: #fff; border-radius: 0 0 4px 4px; border-bottom: 3px solid #ff0036; padding: 10px;
 		.title{flex: 1; display: flex; flex-direction: row;}
 		.uni-icon{margin: 0 20upx 0 0;}
 		.txt{display: block;}
@@ -227,7 +229,7 @@ uni-toast{z-index: 100000;}
 			}
 		}
 		&.count{
-			.uni-list-cell{
+			.uni-list-cell{padding: 0 20upx 0 0;
 				&:after{left: 0; right: 0;}
 			}
 		}
@@ -236,7 +238,6 @@ uni-toast{z-index: 100000;}
 		.count{margin: 0 0 0 20upx; flex: 1; display: flex; flex-direction: row; justify-content: flex-start; align-items: center;}
 		.btn{margin: 10upx 20upx 10upx 0; font-size: 30upx; height: 80upx; line-height: 80upx;}
 	}
-	&>.uni-list-cell-navigate{position: fixed; left: 0; top: 60upx; z-index: 3; width: 100%;}
 }
 .order_detail{display: flex; flex-direction: column; height: 100%; position: relative;
 	.top{position: relative;
@@ -381,7 +382,7 @@ uni-toast{z-index: 100000;}
 }
 .baseInfo{height: 100%;
 	.con{height: 100%; overflow: hidden;}
-	.input-row{
+	.input-row{padding: 0 5px 0 0;
 		.search_box{
 			.date_picker_box{width: 180upx;}
 		}
@@ -389,8 +390,8 @@ uni-toast{z-index: 100000;}
 			.radio{padding: 0 5px 0 0; white-space:nowrap;
 				&:last-child{padding: 0;}
 			}
-			&.input_box{padding: 0; height: 60upx; border: 1px #ccc solid;
-				.input-box-all{padding: 0 5px !important;}
+			&.input_box{position: relative; padding: 0; width: 100%; height: 60upx; border: 1px #ccc solid;
+				.input-box-all{position: absolute; left: 0; top: 0; z-index: 2; padding: 0 5px !important; width: 100%; height: 100%;}
 			}
 			&.text_area_box{margin: 5px 0 5px 20upx; padding: 10px; border: 1px #ccc solid;
 				.text_area{width: calc(95% - 20px);}

@@ -197,7 +197,7 @@
 						</view>
 						<view class="input-row border">
 							<text class="title">退货原因：</text>
-							<textarea v-model="reson" class="text_area" disabled />
+							<textarea v-model="billObj.ReturnReason" class="text_area" disabled />
 						</view>
 						<block v-if="billObj.IsPay">
 							<view class="input-row border">
@@ -342,7 +342,6 @@
 				trackingNo2: '', // 退货确认单号
 				trackingNo3: '', // 退货单号
 				transportCompany: '', // 货运公司
-				reson: '', // 退货原因
 				addr: {
 					PersonName: '',
 					Mobile: '',

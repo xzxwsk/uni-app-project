@@ -11,7 +11,8 @@
 	<body>
 		<div class="content">
 			<div class="con">
-				<img id="img" src="../imgs/advertise.jpg">
+				<!-- <img id="img" src="../imgs/advertise.jpg"> -->
+				<img id="img" src="">
 			</div>
 			<div class="btn" id="timer">
 				<div id="info">跳过</div>
@@ -27,11 +28,63 @@
 		</div>
 	</body>
 	<script>
-		const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 		document.addEventListener('UniAppJSBridgeReady', function() {
+			var methods = 'SYS.OptionsDAL.GetOptions';
+			var ajaxFun = function(method, callback) {
+				var baseUrl = 'http://47.104.226.115/qcdm/' + 'json.rpc/webapi';
+				var xhr = new plus.net.XMLHttpRequest();
+				xhr.onreadystatechange = function () {
+					switch ( xhr.readyState ) {
+						case 0:
+							console.log( "xhr请求已初始化" );
+						break;
+						case 1:
+							console.log( "xhr请求已打开" );
+						break;
+						case 2:
+							console.log( "xhr请求已发送" );
+						break;
+						case 3:
+							console.log( "xhr请求已响应");
+							break;
+						case 4:
+							if ( xhr.status == 200 ) {
+								// console.log( "xhr请求成功："+xhr.responseText );
+								// console.log(xhr.response);
+								callback(xhr.response);
+							} else {
+								console.log( "xhr请求失败："+xhr.readyState );
+							}
+							break;
+						default :
+							break;
+					}
+				}
+				xhr.responseType = 'json';
+				xhr.open( "POST", baseUrl);
+				xhr.send(JSON.stringify({
+					jsonrpc: '2.0',
+					method: method,
+					params: {},
+					id: 1,
+					tags: {
+						usertoken: ''
+					}
+				}));
+			}
+			ajaxFun(methods, function(res) {
+				if(res.hasOwnProperty('result')) {
+					var img = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64;
+					document.getElementById('img').setAttribute('src', img);
+				}
+			});
 			document.querySelector('.btn').addEventListener('click', function(e) {
-				console.log('click e: ' + JSON.stringify(e));
-				if (e.isTrusted) {
+				if (e.hasOwnProperty('isTrusted') && e.isTrusted) {
+					plus.webview.currentWebview().close();
+					uni.getEnv(function(res) {
+						console.log('当前环境：' + JSON.stringify(res));
+					});
+				} else if(!e.hasOwnProperty('isTrusted')){
 					plus.webview.currentWebview().close();
 					uni.getEnv(function(res) {
 						console.log('当前环境：' + JSON.stringify(res));

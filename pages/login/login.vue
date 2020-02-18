@@ -114,9 +114,9 @@
 			autoLogin(sessionId) {
 				let me = this;
 				this.setOpenid(sessionId);
-				util.showLoading({
-					title: '自动登录中'
-				});
+				// util.showLoading({
+				// 	title: '自动登录中'
+				// });
 				console.log(this.interfaceAddr + 'json.rpc/webapi')
 				uni.request({
 					url: this.interfaceAddr + 'json.rpc/webapi',
@@ -135,8 +135,12 @@
 					responseType: 'text',
 					success(res) {
 						util.hideLoading();
-						if (res.statusCode === 200 && !res.data.hasOwnProperty('error')) {
-							if (res.data.hasOwnProperty('result')) {
+						if (res.statusCode === 200) {
+							if (res.data.hasOwnProperty('error')) {
+								// util.showToast({
+								// 	title: '登录已过期，请重新登录'
+								// });
+							} else if (res.data.hasOwnProperty('result')) {
 								res.data.result = util.jsonReplace(res.data.result, 'null', '""');
 								me.setUserInfo(res.data.result);
 								me.toMain(res.data.result.DealerName);

@@ -1,23 +1,15 @@
 <script>
 	export default {
 		onLaunch: function() {
-			console.log('App Launch');
 			const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 			// #ifdef APP-PLUS
 			// 锁定屏幕方向
 			plus.screen.lockOrientation('portrait-primary'); //锁定
-			plus.nativeUI.closeWaiting();
 			//app启动时打开启动广告页
-			let w = plus.webview.open(
-				'hybrid/html/advertise/advertise.html',
-				'本地地址',
-				{ top: 0, bottom: 0, zindex: 999 },
-				'fade-in',
-				500,
-				function() {
-					plus.nativeUI.closeWaiting();
-				}
-			);
+			// plus.webview.open( url, id, styles, aniShow, duration, showedCB );
+			let w = plus.webview.open('hybrid/html/advertise/advertise.html', '本地地址', { top: 0, bottom: 0, zindex: 999 }, 'fade-in', 500, function() {
+				plus.nativeUI.closeWaiting();
+			});
 			
 			// android 更新
 			let wgtWaiting;
@@ -178,7 +170,7 @@
 				plus.webview.close(w);
 				console.log('app.vue close');
 				checkUpdate();
-			}, 7000);
+			}, 7500);
 			plus.push.addEventListener('click', function(msg){  
 				//处理透传消息的业务逻辑代码
 				uni.showModal({

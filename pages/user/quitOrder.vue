@@ -5,7 +5,7 @@
 				<block v-if="dataArr.length<1">
 					<view class="no-data">
 						<view class="no-img cart">
-							<image style="width: 100%;" :mode="mode" :src="imgSrc" @error="imageError"></image>
+							<image style="width: 100%;" mode="widthFix" :src="imgSrc" @error="imageError"></image>
 						</view>
 						<view class="txt"><text>亲，还没有相关注销单哦~</text></view>
 					</view>
@@ -16,12 +16,17 @@
 							<view class="title">
 								<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
 								<view><text class="gray">姓名:</text>{{item.DealerName}}</view>
-								<block v-for="(subItem, subIndex) in item.PayReturnItems">
-									<blcok v-if="subItem.DealerId === userInfo.DealerId && subItem.AccountType === 0">
-										<view><text class="gray">保证金:</text><text class="price">￥{{subItem.Amount}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{item.PayTypeStr}}</text></view>
-										<view><text class="gray">经销商编号:</text>{{subItem.DealerCode}}</view>
-										<view><text class="gray">经销商姓名:</text>{{subItem.DealerName}}</view>
-									</blcok>
+								<block v-for="(subItem, subIndex) in item.PayReturnItems" v-if="item.State === 2">
+									<view><text class="gray">金额:</text><text class="price">￥{{subItem.Amount}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{subItem.PayTypeStr}}</text></view>
+									<view><text class="gray">退款经销商编号:</text>{{subItem.DealerCode}}</view>
+									<view><text class="gray">退款经销商姓名:</text>{{subItem.DealerName}}</view>
+									<view><text class="gray">退款类型:</text>{{['货款','保证金','代交保证金'][subItem.AccountType]}}</view>
+									<view><text class="gray">付款账户:</text>{{subItem.PayAccountNo}}</view>
+									<block v-if="subItem.PayType === 1">
+										<view><text class="gray">付款银行:</text>{{subItem.PayBank}}</view>
+										<view><text class="gray">付款户名:</text>{{subItem.PayAccountName}}</view>
+									</block>
+									<view><text class="gray">收款账户信息:</text>{{subItem.ReceiveAccountInfo}}</view>
 								</block>
 								<view><text class="gray">注销原因:</text>{{item.Remark}}</view>
 							</view>
@@ -113,7 +118,6 @@
 			},
 			getData(arr) {
 				util.showLoading();
-				// 获取全部状态的数据
 				util.ajax({
 					method: 'Businese.BillLeaveDAL.QueryMyList',
 					params: {
@@ -181,9 +185,9 @@
 				// (5)	退款确认：注销单审核后，可以进行退款确认操作。确认退款后，经销商成为注销状态，不能再登录系统，不能再进行任何操作
 				util.showLoading();
 				util.ajax({
-					method: 'Businese.OrderDAL.PayReturnConfirm',
+					method: 'Businese.BillLeaveDAL.Confirm',
 					params: {
-						"OrderId" : RecordId /*订单Id [String]*/
+						"RecordId" : RecordId /*订单Id [String]*/
 					},
 					tags: {
 						usertoken: this.openid

@@ -301,7 +301,7 @@ uni-toast{z-index: 100000;}
 .quit_order{height: 100%; background: #fff;
 	.no-data{display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center;}
 	.list{
-		.box{padding: 10px 0; height: calc(100% - 160upx); background: #f5f5f5;
+		.box{padding: 10px 0; height: calc(100% - 10px); background: #f5f5f5;
 			.ls_item{display: flex; flex-direction: column; margin: 0 15upx 10px; padding: 10px 0; background: #fff;
 				.count{margin: 0 0 0 15upx;}
 				.gray{margin: 0 5px 0 0; color: #666;}

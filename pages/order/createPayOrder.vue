@@ -33,7 +33,7 @@
 					<text class="title">付款方帐号：</text>
 					<input-box ref="payAccountNo" v-model="billObj.PayAccountNo" :placeholder="placeholder"></input-box>
 				</view>
-				<view class="input-row">
+				<view class="input-row" v-if="billObj.PayType === 1">
 					<text class="title">付款方银行：</text>
 					<input-box ref="payBank" v-model="billObj.PayBank" placeholder="请输入付款方银行"></input-box>
 				</view>

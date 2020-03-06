@@ -16,7 +16,7 @@
 							<view class="title">
 								<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
 								<view><text class="gray">姓名:</text>{{item.DealerName}}</view>
-								<block v-for="(subItem, subIndex) in item.PayReturnItems" v-if="item.State === 2">
+								<view class="return_info" v-for="(subItem, subIndex) in item.PayReturnItems" v-if="item.State === 2 || item.State === 3">
 									<view><text class="gray">金额:</text><text class="price">￥{{subItem.Amount}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{subItem.PayTypeStr}}</text></view>
 									<view><text class="gray">退款经销商编号:</text>{{subItem.DealerCode}}</view>
 									<view><text class="gray">退款经销商姓名:</text>{{subItem.DealerName}}</view>
@@ -27,7 +27,7 @@
 										<view><text class="gray">付款户名:</text>{{subItem.PayAccountName}}</view>
 									</block>
 									<view><text class="gray">收款账户信息:</text>{{subItem.ReceiveAccountInfo}}</view>
-								</block>
+								</view>
 								<view><text class="gray">注销原因:</text>{{item.Remark}}</view>
 							</view>
 							<view class="status">
@@ -113,6 +113,7 @@
 			})
 		},
 		methods: {
+			...mapMutations(['logout']),
 			init() {
 				this.getData();
 			},

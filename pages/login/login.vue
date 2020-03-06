@@ -65,7 +65,7 @@
 		computed: mapState(['sessionId', 'openid']),
 		data() {
 			return {
-				initAddr: false,
+				initAddr: true,
 				interfaceAddr: '',
 				providerList: [],
 				hasProvider: false,
@@ -103,11 +103,11 @@
 		mounted() {
 			console.log('mounted');
 			this.interfaceAddr = util.getBaseUrl();
-			this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
+			// this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
 			let sessionId = util.getStorageSync('session_id');
-			if (sessionId) {
-				this.autoLogin(sessionId);
-			}
+			// if (sessionId) {
+			// 	this.autoLogin(sessionId);
+			// }
 		},
 		methods: {
 			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),

@@ -229,6 +229,7 @@
 </style>
 <style lang="scss">
     /* #ifndef APP-PLUS-NVUE */
+	@import './static/iconfont/iconfont.css';
 	@import './common/app.scss';
     /* #endif*/
 </style>

@@ -41,7 +41,7 @@
 						</block>
 						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
 							<view>
-								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
+								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(item.RecordId)">
 									<view class="ls_item_top">
 										<view class="title">
 											<view><text class="gray">日期:</text>{{item.billDateStr}}</view>

@@ -7,7 +7,7 @@
 					<view class="txt" v-if="hasLogin">
 						<view class="user_info">
 							<view class="user_name">{{loginProvider}}</view>
-							<text>{{userInfo.Remark}}</text>
+							<text>{{userInfo.Remark || ''}}</text>
 						</view>
 						<view class="uni-icon uni-icon-gear" @click="goMyInfo"></view>
 					</view>

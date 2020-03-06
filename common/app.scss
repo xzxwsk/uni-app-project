@@ -99,8 +99,10 @@ uni-toast{z-index: 100000;}
 }
 
 .login_page{
-	.voli_code_ipt{
-		.input-box-clear{margin: 0 220upx 0 5px;}
+	.content{
+		.voli_code_ipt{
+			.input-box-clear{margin: 0 220upx 0 5px;}
+		}
 	}
 }
 .index{
@@ -322,8 +324,18 @@ uni-toast{z-index: 100000;}
 }
 .create_pay_order{height: 100%; background: #fff;
 	.search_box{flex: 1; margin: 0 20upx 0 0;}
+	.input-row{
+		.title{
+			.price{margin: 0 5px 0 0;}
+		}
+	}
 	.date_picker_box{position: relative; margin: 0; padding: 0; width: 250upx; height: 10vw; overflow: hidden;
 		.date_picker{position: absolute; left: 20upx; top: 50%; z-index: 2; transform: translateY(-50%); white-space: nowrap; font-size: 28upx;}
+	}
+	.uni-uploader__files{
+		.uni-uploader__file{
+			.uni-uploader__img{width: 104px; height: 104px; border: 1px solid #D9D9D9;}
+		}
 	}
 	.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 	.input-box-all{flex: 1;}
@@ -366,7 +378,9 @@ uni-toast{z-index: 100000;}
 	}
 	.menu_txt{flex: 1; display: flex; flex-direction: column; position: relative;
 		.title{flex: 1; display: flex; flex-direction: row;}
-		.uni-icon{margin: 0 20upx 0 0;}
+		.iconfont{margin: 0 20upx 0 0; line-height: 1; font-size: 50upx;
+			&.receive_icon{color: #666;}
+		}
 		.txt{display: block;}
 		.sub_txt{display: block; font-size: 20upx; color: #888;}
 		.uni-badge{position: absolute; right: 20upx; top: 5px;}

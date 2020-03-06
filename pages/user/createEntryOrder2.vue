@@ -2,15 +2,15 @@
 	<view class="create_pay_order">
 		<view class="input-group">
 			<view class="input-row">
-				<text class="title">身份证号：</text>
+				<text class="title"><text class="price">*</text>身份证号：</text>
 				<input-box ref="iDCardNo" v-model="billObj.IDCardNo" placeholder="身份证号"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">身份证正面照：</text>
+				<text class="title"><text class="price">*</text>身份证正面照：</text>
 				<view class="uni-uploader-body">
 					<view class="uni-uploader__files">
 						<view class="uni-uploader__file" v-if="frontImg != ''">
-							<image class="uni-uploader__img" :src="frontImg" :data-src="frontImg" @tap="previewImage"></image>
+							<image mode="aspectFit" class="uni-uploader__img" :src="frontImg" :data-src="frontImgSrc" @tap="previewImage"></image>
 						</view>
 						<view class="uni-uploader__input-box">
 							<view class="uni-uploader__input" @tap="chooseImage"></view>
@@ -19,11 +19,11 @@
 				</view>
 			</view>
 			<view class="input-row">
-				<text class="title">身份证反面照：</text>
+				<text class="title"><text class="price">*</text>身份证反面照：</text>
 				<view class="uni-uploader-body">
 					<view class="uni-uploader__files">
 						<view class="uni-uploader__file" v-if="backImg != ''">
-							<image class="uni-uploader__img" :src="backImg" :data-src="backImg" @tap="previewImage"></image>
+							<image mode="aspectFit" class="uni-uploader__img" :src="backImg" :data-src="backImgSrc" @tap="previewImage2"></image>
 						</view>
 						<view class="uni-uploader__input-box">
 							<view class="uni-uploader__input" @tap="chooseImage2"></view>
@@ -32,7 +32,7 @@
 				</view>
 			</view>
 			<view class="input-row">
-				<text class="title">手机：</text>
+				<text class="title"><text class="price">*</text>手机：</text>
 				<input-box ref="mobile" v-model="billObj.Mobile" placeholder="手机"></input-box>
 			</view>
 			<view class="input-row">
@@ -40,11 +40,11 @@
 				<input-box ref="email" v-model="billObj.Email" placeholder="EMAIL"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">紧急联系人：</text>
+				<text class="title"><text class="price">*</text>紧急联系人：</text>
 				<input-box ref="linkMan" v-model="billObj.LinkMan" placeholder="紧急联系人"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">联系人电话：</text>
+				<text class="title"><text class="price">*</text>联系人电话：</text>
 				<input-box ref="linkManTel" v-model="billObj.LinkManTel" placeholder="联系人电话"></input-box>
 			</view>
 			<view class="input-row">
@@ -80,8 +80,10 @@
 				startDate: '1900-01',
 				endDate: '2199-12',
 				protocal: false,
-				frontImg: frontImg,
-				backImg: backImg,
+				frontImg: '',
+				frontImgSrc: '',
+				backImg: '',
+				backImgSrc: '',
 				pickerValueArray: [],
 				mode: '',
 				deepLength: 0,
@@ -160,90 +162,201 @@
 		},
 		methods: {
 			...mapMutations(['setBillJoinDAL']),
+			scaleImg(src) {
+				return new Promise((resolve, reject) => {
+					uni.getImageInfo({
+						src: src,
+						success(res) {
+							console.log('image info: ', res);
+							resolve(res);
+							/* 
+							let scale = 1;
+							const standard = 800;
+							img.src = res.path;
+							let imgWidHeight = {
+								width: res.width,
+								height: res.height;
+							}
+							if(res.width > res.height) {
+								if(res.width > standard) {
+									imgWidHeight.width = standard;
+									scale = standard/res.width;
+									imgWidHeight.height = res.height*scale;
+								}
+							} else {
+								if(res.height > standard) {
+									imgWidHeight.height = standard;
+									scale = standard/res.height;
+									imgWidHeight.width = res.width*scale;
+								}
+							}
+							resolve(imgWidHeight);
+							 */
+						},
+						fail(err) {
+							reject(err);
+						}
+					});
+				});
+			},
+			compressImage(src, imgScale) {
+				return new Promise((resolve, reject) => {
+					let arr = src.split('/');
+					let fileName = arr[arr.length-1];
+					let fileNameArr = fileName.split('.');
+					let path = arr.slice(0, arr.length-1);
+					let width = imgScale.width;
+					let height = imgScale.height;
+					const standard = '800px';
+					if(width > height) {
+						width = standard;
+						height = 'auto';
+					} else {
+						width = 'auto';
+						height = standard;
+					}
+					console.log('width:', width, ' height:', height);
+					plus.zip.compressImage({
+						src: src,
+						dst: path.join('/') + '/' + fileNameArr.slice(0, fileNameArr.length-1).join('.') + '_compress.' + fileNameArr[fileNameArr.length-1],
+						overwrite: true,
+						quality: 70,
+						width: width,
+						height: height
+					}, res => {
+						console.log('plus zip compressImage: ', res);
+						resolve(res);
+					}, err => {
+						console.log('plus zip compressImage err: ', err);
+						reject(err);
+					});
+					// uni.compressImage要报err
+					/* 
+					uni.compressImage({
+						src: src,
+						quality: 60,
+						success: tempFilePath => {
+							resolve(tempFilePath);
+						},
+						fail(err) {
+							reject(err);
+						}
+					});
+					 */
+				});
+			},
 			previewImage(e) {
 				var current = e.target.dataset.src
 				uni.previewImage({
-					current: current,
-					urls: [this.frontImg]
+					current: 0,
+					urls: [current]
 				})
 			},
 			async chooseImage() {
 				uni.chooseImage({
 					sourceType: ['album', 'camera'],
-					sizeType: ['compressed'],
+					sizeType: ['original'],
 					count: 1,
 					success: res => {
-						console.log(res, res.tempFiles[0].size, res.tempFiles[0].size > 512000);
-						if(res.tempFiles[0].size > 512000){
-							util.showToast({
-								title: '图片太大了，请选择500K内的图片',
-							});
+						console.log(res, res.tempFiles[0].size, res.tempFiles[0].size > 204800);
+						// if(res.tempFiles[0].size > 204800){
+						// 	util.showToast({
+						// 		title: '图片太大了，请选择200K内的图片',
+						// 	});
+						// } else {
 							// #ifdef APP-PLUS
-								
+							// 获取图片宽高
+							this.scaleImg(res.tempFilePaths[0])
+							.then(imgScaled => {
+								// 并设置缩放比例进行压缩
+								this.compressImage(res.tempFilePaths[0], imgScaled)
+								.then(tempFilePath => {
+									console.log(tempFilePath);
+									console.log(tempFilePath.size, res.tempFiles[0].size, tempFilePath.size > res.tempFiles[0].size);
+									let useImage = '';
+									if(tempFilePath.size > res.tempFiles[0].size) {
+										// 压缩后比原来还大
+										// 使用原来的
+										useImage = res.tempFilePaths[0];
+									} else {
+										// 使用新图片
+										useImage = tempFilePath.target;
+									}
+									console.log('useImage: ', useImage);
+									
+									this.urlToBase64(useImage).then(baseRes => {
+									  // 转化后的base64图片地址
+									  this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes);
+									  this.frontImg = baseRes;
+									  this.frontImgSrc = useImage;
+									});
+								})
+								.catch(err => {
+									console.log('err: ', err);
+								});
+							});
 							// #endif
 							// #ifdef H5
-							// plus.zip.compressImage({
-							// 	src: res.tempFilePaths[0],
-							// 	dst: res.tempFilePaths[0],
-							// 	overwrite: true,
-							// 	quality: 60
-							// }, res => {
-							// 	console.log(res);
-							// }, err => {
-							// 	console.log(err);
-							// });
-							// uni.compressImage({
-							// 	src: res.tempFilePaths[0],
-							// 	quality: 60,
-							// 	success: tempFilePath => {
-							// 		console.log(tempFilePath);
-							// 		this.urlToBase64(tempFilePath).then(baseRes => {
-							// 		  // 转化后的base64图片地址
-							// 		  this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes);
-							// 		  this.frontImg = baseRes;
-							// 		});
-							// 	},
-							// 	fail: err => {
-							// 		console.log('err: ', err);
-							// 	}
-							// });
-							// #endif
-						} else {
-							// this.frontImg = res.tempFilePaths[0];
 							this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
 							    // 转化后的base64图片地址
 							    this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes.split(',')[1]);
 							    this.frontImg = baseRes;
 							});
-						}
+							// #endif
+						// }
 					}
 				});
-			},			
+			},
 			previewImage2(e) {
 				var current = e.target.dataset.src
 				uni.previewImage({
-					current: current,
-					urls: [this.backImg]
+					current: 0,
+					urls: [current]
 				})
 			},
 			async chooseImage2() {
 				uni.chooseImage({
 					sourceType: ['album', 'camera'],
-					sizeType: ['compressed'],
+					sizeType: ['original'],
 					count: 1,
 					success: res => {
 						console.log(res);
-						if(res.tempFiles[0].size > 512000){
-							util.showToast({
-								title: '图片太大了，请选择500K内的图片',
+						// #ifdef APP-PLUS
+						// 获取图片宽高
+						this.scaleImg(res.tempFilePaths[0])
+						.then(imgScaled => {
+							// 并设置缩放比例进行压缩
+							this.compressImage(res.tempFilePaths[0], imgScaled)
+							.then(tempFilePath => {
+								let useImage = '';
+								if(tempFilePath.size > res.tempFiles[0].size) {
+									// 压缩后比原来还大
+									// 使用原来的
+									useImage = res.tempFilePaths[0];
+								} else {
+									// 使用新图片
+									useImage = tempFilePath.target;
+								}
+								console.log('useImage: ', useImage);
+								this.urlToBase64(useImage).then(baseRes => {
+								    // 转化后的base64图片地址
+								    this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
+								    this.backImg = baseRes;
+									this.backImgSrc = useImage;
+								});
+							})
+							.catch(err => {
+								console.log('err: ', err);
 							});
-						} else {
-							this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
-							  // 转化后的base64图片地址
-							  this.$set(this.billObj, 'IDCardNo_BackImage', baseRes.split(',')[1]);
-							  this.backImg = baseRes;
-							});
-						}
+						});
+						// #endif
+						// #ifdef H5
+						this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
+							// 转化后的base64图片地址
+							this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
+							this.backImg = baseRes;
+						});
+						// #endif
 					}
 				});
 			},
@@ -271,6 +384,8 @@
 					});
 					return;
 				}
+				this.billObj.IDCardNo_FrontImage = this.frontImg.split(',')[1];
+				this.billObj.IDCardNo_BackImage = this.backImg.split(',')[1];
 				this.setBillJoinDAL(this.billObj);
 				util.goUrl({
 					url: './createEntryOrder3'

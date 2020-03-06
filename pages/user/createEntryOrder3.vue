@@ -3,15 +3,15 @@
 		<view class="box">
 			<view class="input-group">
 				<view class="input-row">
-					<text class="title">开户银行：</text>
+					<text class="title"><text class="price">*</text>开户银行：</text>
 					<input-box ref="bank" v-model="billObj.Bank" placeholder="开户银行"></input-box>
 				</view>
 				<view class="input-row">
-					<text class="title">银行帐号：</text>
+					<text class="title"><text class="price">*</text>银行帐号：</text>
 					<input-box ref="accountNo" v-model="billObj.AccountNo" placeholder="银行帐号"></input-box>
 				</view>
 				<view class="input-row">
-					<text class="title">户名：</text>
+					<text class="title"><text class="price">*</text>户名：</text>
 					<input-box ref="accountName" v-model="billObj.AccountName" placeholder="户名"></input-box>
 				</view>
 				<view class="input-row">
@@ -121,7 +121,6 @@
 				this.$refs.alipayAccNo.setValue(this.billObj.AlipayAccNo);
 				this.$refs.micromsgNo.setValue(this.billObj.MicromsgNo);
 				this.$refs.remark.setValue(this.billObj.Remark);
-				this.protocal = true;
 			},
 			bindDateChange(value) {
 				console.log('bindDateChange: ', value);
@@ -145,7 +144,7 @@
 					} else if (key === 'HasMarried' || key === 'StateChanged') {
 						this.billObj[key] = eval(this.billObj[key]);
 					} else if (key === 'IdValues') {
-						this.billObj[key] = [this.billObj[key]];
+						this.billObj[key] = this.billObj[key];
 					} else if(util.getType(this.billObj[key]) === 'string'){
 						this.billObj[key] = this.billObj[key].trim();
 					} else {
@@ -162,6 +161,7 @@
 				if(this.billObj.BirthDay === '请选择日期') {
 					this.billObj.BirthDay = '';
 				}
+				console.log('this.billObj: ', this.billObj);
 				util.ajax({
 					method: method,
 					params: {

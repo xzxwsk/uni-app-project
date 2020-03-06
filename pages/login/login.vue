@@ -1,6 +1,6 @@
 <template>
 	<view class="login_page">
-		<view class="status_bar">
+		<view class="status_bar" :style="{ height: statusBarHeight }">
 		    <!-- 这里是状态栏 -->
 		</view>
 		<view class="uni-padding-wrap uni-common-pb login_top">
@@ -52,6 +52,7 @@
 	</view>
 </template>
 <script>
+	var statusBarHeight = uni.getSystemInfoSync().statusBarHeight + 'px'
 	import service from '../../service.js';
 	import {mapState, mapMutations} from 'vuex';
 	// http://ext.dcloud.net.cn/plugin?id=449
@@ -66,11 +67,13 @@
 		data() {
 			return {
 				initAddr: true,
+				statusBarHeight: statusBarHeight,
 				interfaceAddr: '',
+				uuid: '',
 				providerList: [],
 				hasProvider: false,
 				account: 'A0000002',
-				password: '1234',
+				password: '',
 				voliCode: '',
 				voliCodeSrc: '',
 				positionTop: 0
@@ -78,7 +81,7 @@
 		},
 		onLoad() {
 			console.log('onLoad');
-			// this.getSessionId();
+			this.getSessionId();
 			// #ifdef APP-PLUS
 			// plus.nativeUI.showWaiting('加载中……');
 			// this.getSystemInfo();
@@ -108,6 +111,8 @@
 			// if (sessionId) {
 			// 	this.autoLogin(sessionId);
 			// }
+			console.log('sessionId: ', sessionId);
+			this.getDeviceId();
 		},
 		methods: {
 			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),
@@ -284,8 +289,25 @@
 					this.getSessionId();
 				});
 			},
+			getDeviceId() {
+				let me = this;
+				try{
+					plus.device.getInfo({
+						success(e) {
+							console.log('plus.device.getInfo: ', e);
+							me.uuid = e.uuid;
+						}
+					});
+				}catch(e){
+					
+				}
+			},
 			async bindLogin() {
 				let me = this;
+				console.log(this.$refs);
+				if(!this.$refs.input1) {
+					return;
+				}
 				const data = {
 				    account: this.$refs.input1.getValue(),
 				    password: this.$refs.input2.getValue(),
@@ -303,7 +325,7 @@
 								ClientType: 1,
 								ClientVersion: '1.0.0.1',
 								EncyptType: 0,
-								ForceLogin: false
+								DeviceId: this.uuid
 							}
 						},
 						tags: {

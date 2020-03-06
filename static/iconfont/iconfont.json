@@ -1,0 +1,86 @@
+{
+  "id": "1674180",
+  "name": "纤畅",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7008884",
+      "name": "activity",
+      "font_class": "activity",
+      "unicode": "e6de",
+      "unicode_decimal": 59102
+    },
+    {
+      "icon_id": "7008885",
+      "name": "activity_fill",
+      "font_class": "activity_fill",
+      "unicode": "e6df",
+      "unicode_decimal": 59103
+    },
+    {
+      "icon_id": "7008912",
+      "name": "coupons_fill",
+      "font_class": "coupons_fill",
+      "unicode": "e6ed",
+      "unicode_decimal": 59117
+    },
+    {
+      "icon_id": "7008913",
+      "name": "coupons",
+      "font_class": "coupons",
+      "unicode": "e6ee",
+      "unicode_decimal": 59118
+    },
+    {
+      "icon_id": "7008990",
+      "name": "qrcode_fill",
+      "font_class": "qrcode_fill",
+      "unicode": "e71c",
+      "unicode_decimal": 59164
+    },
+    {
+      "icon_id": "7008991",
+      "name": "qrcode",
+      "font_class": "qrcode",
+      "unicode": "e71d",
+      "unicode_decimal": 59165
+    },
+    {
+      "icon_id": "7008992",
+      "name": "redpacket_fill",
+      "font_class": "redpacket_fill",
+      "unicode": "e71e",
+      "unicode_decimal": 59166
+    },
+    {
+      "icon_id": "7008993",
+      "name": "redpacket",
+      "font_class": "redpacket",
+      "unicode": "e71f",
+      "unicode_decimal": 59167
+    },
+    {
+      "icon_id": "7009034",
+      "name": "unlock_fill",
+      "font_class": "unlock_fill",
+      "unicode": "e73a",
+      "unicode_decimal": 59194
+    },
+    {
+      "icon_id": "7009035",
+      "name": "unlock",
+      "font_class": "unlock",
+      "unicode": "e73b",
+      "unicode_decimal": 59195
+    },
+    {
+      "icon_id": "7009051",
+      "name": "financial_fill",
+      "font_class": "financial_fill",
+      "unicode": "e74b",
+      "unicode_decimal": 59211
+    }
+  ]
+}

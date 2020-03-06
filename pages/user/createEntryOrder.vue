@@ -14,7 +14,7 @@
 				<input-box disabled ref="dealerNo" :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">姓名：</text>
+				<text class="title"><text class="price">*</text>姓名：</text>
 				<input-box ref="dealerName" v-model="billObj.DealerName" placeholder="请输入姓名"></input-box>
 			</view>
 			<view class="input-row">
@@ -179,7 +179,7 @@
 						} else if (key === 'HasMarried' || key === 'StateChanged') {
 							this.billObj[key] = eval(this.billObj[key]);
 						} else if (key === 'IdValues') {
-							this.billObj[key] = [this.billObj[key]];
+							this.billObj[key] = this.billObj[key];
 						} else if(util.getType(this.billObj[key]) === 'string'){
 							this.billObj[key] = this.billObj[key].trim();
 						} else {

@@ -31,7 +31,7 @@
 		document.addEventListener('UniAppJSBridgeReady', function() {
 			var methods = 'SYS.OptionsDAL.GetOptions';
 			var ajaxFun = function(method, callback) {
-				var baseUrl = 'http://47.104.226.115/qcdm/' + 'json.rpc/webapi';
+				var baseUrl = 'http://118.163.201.227/qcdm/' + 'json.rpc/webapi';
 				var xhr = new plus.net.XMLHttpRequest();
 				xhr.onreadystatechange = function () {
 					switch ( xhr.readyState ) {
@@ -49,7 +49,7 @@
 							break;
 						case 4:
 							if ( xhr.status == 200 ) {
-								// console.log( "xhr请求成功："+xhr.responseText );
+								console.log( "xhr请求成功："+xhr.responseText );
 								// console.log(xhr.response);
 								callback(xhr.response);
 							} else {

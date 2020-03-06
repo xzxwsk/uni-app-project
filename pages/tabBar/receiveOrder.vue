@@ -13,7 +13,7 @@
 					<view class="uni-list-cell-navigate uni-navigate-right">
 						<view class="menu_txt">
 							<view class="title">
-								<view :class="'uni-icon ' + (item.icon ? ('uni-icon-' + item.icon) : '')"></view>
+								<view :class="'iconfont receive_icon ' + (item.icon ? ('icon-' + item.icon) : '')"></view>
 								<text class="txt">{{ item.name }}</text>
 							</view>
 							<text v-if="item.subName" class="title sub_txt">{{ item.subName }}</text>
@@ -43,22 +43,22 @@
 						name: '我收到的订单',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
 						url: 'order/myReceiveOrder',
-						icon: 'paperplane'
+						icon: 'activity_fill'
 					},
 					{
 						name: '我收到的付款单',
 						url: 'order/myReceivePayOrder',
-						icon: 'location-filled'
+						icon: 'coupons_fill'
 					},
 					{
 						name: '我收到的退款单',
 						url: 'order/myReceiveRefundOrder',
-						icon: 'map'
+						icon: 'redpacket_fill'
 					},
 					{
 						name: '我收到的注销单',
 						url: 'order/myReceiveQuitOrder',
-						icon: 'location-filled'
+						icon: 'qrcode_fill'
 					}
 				]
 			}

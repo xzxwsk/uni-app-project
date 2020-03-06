@@ -173,6 +173,12 @@
 				}).then(res => {
 					util.hideLoading();
 					console.log('加盟单详情: ', res);
+					for(let key in res.data.result) {
+						if(res.data.result[key] === null) {
+							res.data.result[key] = ''
+						}
+					}
+					res.data.result.BirthDay = util.formatDate(res.data.result.BirthDay, 'yyyy-MM-dd');
 					this.billObj = res.data.result;
 					// 初始化显示值
 					this.setInfo();
@@ -194,7 +200,7 @@
 			},
 			setInfo() {
 				this.$refs.billCode.setValue(this.billObj.BillCode);
-				this.$refs.billDate.setValue(this.billObj.BillDate);
+				this.$refs.billDate.setValue(util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd'));
 				this.$refs.dealerNo.setValue(this.billObj.DealerNo);
 				this.$refs.dealerName.setValue(this.billObj.DealerName);
 				this.$refs.educationLevel.setValue(this.billObj.EducationLevel);

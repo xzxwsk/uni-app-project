@@ -45,13 +45,19 @@
 			</view>
 			<view class="btn" @click="stock">
 				<view>
-					<view class="uni-icon uni-icon-paperplane"></view>
+					<view class="uni-icon uni-icon-navigate"></view>
 				</view>
 				我的库存查询
 			</view>
+			<view class="btn" @click="cunsume">
+				<view>
+					<view class="uni-icon uni-icon-list"></view>
+				</view>
+				消费/零售记录
+			</view>
 			<view class="btn" @click="subordinateInfo">
 				<view>
-					<view class="uni-icon uni-icon-paperplane"></view>
+					<view class="uni-icon uni-icon-upload"></view>
 				</view>
 				我的下属资料
 			</view>
@@ -309,6 +315,12 @@
 				// 下属资料
 				util.goUrl({
 					url: '/pages/user/mySubordinateInfo'
+				})
+			},
+			cunsume() {
+				// 消费/零售记录
+				util.goUrl({
+					url: '/pages/user/consumeRecord'
 				})
 			}
 		}

@@ -9,22 +9,28 @@
 			</view>
 		</view>
 		<view class="box" v-else>
-			<t-table border="0">
-				<t-tr font-size="14" color="#000" align="left">
-					<t-th align="left"><text class="first_col">商品编号</text></t-th>
-					<t-th align="left">商品名称</t-th>
-					<t-th align="left">规格</t-th>
-					<t-th align="left">计量单位</t-th>
-					<t-th align="left">库存数量</t-th>
-				</t-tr>
-				<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList" :key="item.id">
-					<t-td align="left"><text>{{item.ProductNo}}</text></t-td>
-					<t-td align="left">{{item.ProductName}}</t-td>
-					<t-td align="left">{{item.Spec}}</t-td>
-					<t-td align="left">{{item.Unit}}</t-td>
-					<t-td align="left">{{item.Qty}}</t-td>
-				</t-tr>
-			</t-table>
+			<view class="table_box">
+				<t-table border="0">
+					<t-tr font-size="14" color="#000" align="left">
+						<t-th align="left"><text class="first_col">商品编号</text></t-th>
+						<t-th align="center">商品名称</t-th>
+						<t-th align="center">规格</t-th>
+						<t-th align="center">计量单位</t-th>
+						<t-th align="center">库存数量</t-th>
+					</t-tr>
+					<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList" :key="item.id">
+						<t-td align="left"><label><radio :checked="item.checked" color="#f23030" @click="checkboxChange(item)" />{{item.ProductNo}}</label></t-td>
+						<t-td align="left">{{item.ProductName}}</t-td>
+						<t-td align="left">{{item.Spec}}</t-td>
+						<t-td align="left">{{item.Unit}}</t-td>
+						<t-td align="left">{{item.Qty}}</t-td>
+					</t-tr>
+				</t-table>
+			</view>
+			<view class="result">
+				<label class="radio" @click="onAllSelect"><radio color="#f23030" :checked="allSelect" />全选</label>
+				<button class="btn" type="warn" :disabled="selectedArr.length < 1" @click="toPay">添加消费/零售记录</button>
+			</view>
 		</view>
     </view>
 </template>
@@ -38,32 +44,33 @@
     import tTr from '@/components/t-table/t-tr.vue';
     import tTd from '@/components/t-table/t-td.vue';
 	import imgSrc from '@/static/images/no_data_d.png';
+	import {mapMutations} from 'vuex';
 	
 	const tableList = [{
-                        id: 0,
-                        name: '张三',
-                        age: '19',
-                        hobby: '游泳'
-                    },
-                    {
-                        id: 1,
-                        name: '李四',
-                        age: '21',
-                        hobby: '绘画'
-                    },
-                    {
-                        id: 2,
-                        name: '王二',
-                        age: '29',
-                        hobby: '滑板'
-                    },
-                    {
-                        id: 3,
-                        name: '码字',
-                        age: '20',
-                        hobby: '蹦极'
-                    }
-                ]
+			ProductId: 0,
+			name: '张三',
+			age: '19',
+			hobby: '游泳'
+		},
+		{
+			ProductId: 1,
+			name: '李四',
+			age: '21',
+			hobby: '绘画'
+		},
+		{
+			ProductId: 2,
+			name: '王二',
+			age: '29',
+			hobby: '滑板'
+		},
+		{
+			ProductId: 3,
+			name: '码字',
+			age: '20',
+			hobby: '蹦极'
+		}
+	];
 
     export default {
         components: {
@@ -73,6 +80,8 @@
             return {
 				loaded: false,
 				tableList: [],
+				selectedArr: [],
+				allSelect: false,
 				imgSrc: imgSrc
             }
         },
@@ -82,10 +91,15 @@
 			// #endif 
 		},
 		mounted() {
-			util.showLoading();
-			this.init();
+			// util.showLoading();
+			this.tableList.forEach(item => {
+				item.checked = false;
+			});
+			this.loaded = true;
+			// this.init();
 		},
         methods: {
+			...mapMutations(['setConsumeSelected']),
 			init() {
 				util.showLoading();
 				util.ajax({
@@ -100,6 +114,41 @@
 					console.log('我的库存: ', data);
 					this.loaded = true;
 					this.tableList = data;
+				});
+			},
+			checkboxChange(item) {
+				this.$set(item, 'checked', !item.checked);
+				let selectIndex = -1;
+				this.selectedArr.some((selectItem, index) => {
+					if(selectItem.ProductId === item.ProductId) {
+						selectIndex = index;
+						return true;
+					}
+				});
+				console.log(selectIndex);
+				if(selectIndex !== -1) {
+					this.selectedArr.splice(selectIndex, 1);
+				} else {
+					this.selectedArr.push(item);
+				}
+				this.allSelect = this.selectedArr.length === this.tableList.length;
+			},
+			onAllSelect() {
+				this.allSelect = !this.allSelect;
+				let hasNoneSelect = this.tableList.some(item => !item.checked);
+				this.selectedArr = [];
+				this.tableList.forEach(item => {
+					item.checked = hasNoneSelect;
+					if(item.checked) {
+						this.selectedArr.push(item);
+					}
+				});
+				console.log(this.selectedArr);
+			},
+			toPay() {
+				this.setConsumeSelected(this.selectedArr);
+				util.goUrl({
+					url: './createConsume'
 				});
 			},
 			imageError(e) {

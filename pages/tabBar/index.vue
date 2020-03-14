@@ -271,7 +271,8 @@
 					let ls = res.data.result.data.map(item => {
 						return {
 							id: item.RecordId,
-							image: (item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg,
+							// image: (item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg,
+							image: item.SmallImageBase64 ? util.getBaseUrl() + 'files/downloadfile?filename=' + item.SmallImageBase64 : '',
 							title: item.Name + ' ' + item.Spec + '/' + item.Unit, // Spec, 规格   Unit, 计量单位,
 							originalPrice: item.Price,
 							favourPrice: item.FactPrice, // 实际单价， 折扣后单价

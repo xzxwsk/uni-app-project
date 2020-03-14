@@ -128,7 +128,7 @@
 					</view>
 					<view class="input-row border">
 						<text class="title">经销商等级：</text>
-						<text class="info">{{modifyUserInfo.DealerLevel}}</text>
+						<text class="info">{{modifyUserInfo.DealerLevelName}}</text>
 						<text class="title">状态：</text>
 						<text class="info">{{stateStr}}</text>
 					</view>

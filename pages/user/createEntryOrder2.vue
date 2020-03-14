@@ -80,8 +80,8 @@
 				startDate: '1900-01',
 				endDate: '2199-12',
 				protocal: false,
-				frontImg: '',
-				frontImgSrc: '',
+				frontImg: '', // 小图
+				frontImgSrc: '', // 大图
 				backImg: '',
 				backImgSrc: '',
 				pickerValueArray: [],
@@ -149,6 +149,12 @@
 			this.billObj = this.billJoinDAL;
 			if (this.billObj.Password !== '') {
 				this.confirmPassword = this.billObj.Password;
+			}
+			if (this.billObj.IDCardNo_FrontImage) {
+				this.frontImg = util.getBaseUrl() + 'files/downloadfile?filename=' + this.billObj.IDCardNo_FrontImage;
+			}
+			if (this.billObj.IDCardNo_BackImage) {
+				this.backImg = util.getBaseUrl() + 'files/downloadfile?filename=' + this.billObj.IDCardNo_BackImage;
 			}
 		},
 		onNavigationBarButtonTap(e) {
@@ -252,6 +258,27 @@
 					urls: [current]
 				})
 			},
+			uploadFile(file) {
+				return new Promise((resolve, reject) => {
+					uni.uploadFile({
+						url: util.getBaseUrl() + 'files/uploadfile',
+						filePath: file,
+						name: 'file',
+						formData: {},
+						success: data => {
+							let uploadFileRes = JSON.parse(data.data);
+							if(uploadFileRes.state === 0) {
+								resolve(uploadFileRes.fileName);
+							} else {
+								reject(data.data);
+							}
+						},
+						fail(err) {
+							reject(err);
+						}
+					});
+				});
+			},
 			async chooseImage() {
 				uni.chooseImage({
 					sourceType: ['album', 'camera'],
@@ -283,21 +310,31 @@
 										useImage = tempFilePath.target;
 									}
 									console.log('useImage: ', useImage);
-									
-									this.urlToBase64(useImage).then(baseRes => {
-									  // 转化后的base64图片地址
-									  this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes);
-									  this.frontImg = baseRes;
-									  this.frontImgSrc = useImage;
+									this.uploadFile(useImage)
+									.then(uploadFileRes => {
+										this.$set(this.billObj, 'IDCardNo_FrontImage', uploadFileRes);
+										this.urlToBase64(useImage)
+										.then(baseRes => {
+										    // 转化后的base64图片地址
+										    this.frontImg = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes;
+										    this.frontImgSrc = useImage;
+										});
+									})
+									.catch(err => {
+										console.log('err: ', err);
 									});
 								})
 								.catch(err => {
 									console.log('err: ', err);
 								});
+							})
+							.catch(err => {
+								console.log('err: ', err);
 							});
 							// #endif
 							// #ifdef H5
-							this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
+							this.urlToBase64(res.tempFilePaths[0])
+							.then(baseRes => {
 							    // 转化后的base64图片地址
 							    this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes.split(',')[1]);
 							    this.frontImg = baseRes;
@@ -338,20 +375,31 @@
 									useImage = tempFilePath.target;
 								}
 								console.log('useImage: ', useImage);
-								this.urlToBase64(useImage).then(baseRes => {
-								    // 转化后的base64图片地址
-								    this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
-								    this.backImg = baseRes;
-									this.backImgSrc = useImage;
+								this.uploadFile(useImage)
+								.then(uploadFileRes => {
+									this.$set(this.billObj, 'IDCardNo_BackImage', uploadFileRes);
+									this.urlToBase64(useImage)
+									.then(baseRes => {
+										// 转化后的base64图片地址
+										this.backImg = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes;
+										this.backImgSrc = useImage;
+									});
+								})
+								.catch(err => {
+									console.log('err: ', err);
 								});
 							})
 							.catch(err => {
 								console.log('err: ', err);
 							});
+						})
+						.catch(err => {
+							console.log('err: ', err);
 						});
 						// #endif
 						// #ifdef H5
-						this.urlToBase64(res.tempFilePaths[0]).then(baseRes => {
+						this.urlToBase64(res.tempFilePaths[0])
+						.then(baseRes => {
 							// 转化后的base64图片地址
 							this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
 							this.backImg = baseRes;

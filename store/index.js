@@ -11,7 +11,8 @@ const store = new Vuex.Store({
 		openid: null,
 		userInfo: {},
 		changeNum: null,
-		billJoinDAL: null // 缓存经销商加盟单信息
+		billJoinDAL: null, // 缓存经销商加盟单信息
+		consumeSelected: [] // 创建消费/零售记录时，保存
 	},
 	mutations: {
 		login(state, provider) {
@@ -36,6 +37,9 @@ const store = new Vuex.Store({
 		},
 		setBillJoinDAL(state, billJoinDALData) {
 			state.billJoinDAL = billJoinDALData
+		},
+		setConsumeSelected(state, val) {
+			state.consumeSelected = val
 		}
 	},
 	actions: {

@@ -27,6 +27,15 @@
 			<view class="uni-list count">
 				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>提货方式</text></text>
+						<radio-group class="dilivery_mode" name="diliveryMode" @change="changeDiliveryMode">
+							<label class="label"><radio value="0" :checked="billObj.DiliveryMode === 0" color="#f23030" />快递</label>
+							<label class="label"><radio value="1" :checked="billObj.DiliveryMode === 1" color="#f23030" />自提</label>
+						</radio-group>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>订单编号</text></text>
 						<text class="item-content"><text>{{billObj.BillCode}}</text></text>
 					</view>
@@ -375,6 +384,10 @@
 				}
 				this.scrolltop = util.random(500, 1000);
 				this.getDefaultPayInfo();
+			},
+			changeDiliveryMode(e) {
+				// 提货方式
+				this.billObj.DiliveryMode = Number(e.target.value);
 			},
 			getDefaultPayInfo() {
 				// 生成默认支付信息

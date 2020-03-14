@@ -392,6 +392,22 @@
 				}
 			}
 		}, {
+			"path": "pages/user/consumeRecord",
+			"style": {
+				"navigationBarTitleText": "消费/零售记录",
+				"app-plus": {
+					"bounce": "vertical"
+				}
+			}
+		}, {
+			"path": "pages/user/createConsume",
+			"style": {
+				"navigationBarTitleText": "新增消费/零售记录",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/user/mySubordinateInfo",
 			"style": {
 				"navigationBarTitleText": "我的下属资料",

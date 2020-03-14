@@ -226,6 +226,7 @@ uni-toast{z-index: 100000;}
 			}
 			.uni-list-cell-navigate{padding: 20upx 0 20upx 20upx; font-size: 22upx;
 				.item-title{margin: 0 20upx 0 0; white-space: nowrap;}
+				.dilivery_mode{display: flex; flex-direction: row; justify-content: flex-end;}
 				.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 				uni-input, .uni-input-input{font-size: 14px; text-align: right;}
 			}
@@ -386,7 +387,7 @@ uni-toast{z-index: 100000;}
 		.uni-badge{position: absolute; right: 20upx; top: 5px;}
 	}
 	.btn_box{display: flex; flex-direction: row; justify-content: space-around; flex-wrap:wrap; margin: 20upx 0; padding:20uxp; background: #fff; line-height: 60upx;
-		.btn{margin: 10upx 20upx; text-align: center; color: #666;}
+		.btn{margin: 10upx 20upx; width: 200upx; text-align: center; color: #666;}
 	}
 	.uni-list{flex: 1;
 		.uni-list-cell-navigate{padding: .7rem 16px;}
@@ -424,9 +425,17 @@ uni-toast{z-index: 100000;}
 .stock{height: 100%;
 	.con{display: flex; flex-direction: column; justify-content: center; height: 100%; background: #fff;}
 	.box{background: #fff;
-		.t-th{padding: 26upx 5upx;
-			.first_col{padding: 0 0 0 10upx;}
+		.table_box{width: 100%; overflow-x: auto;
+			.t-table{min-width: 1200upx;}
 		}
+		.t-th{padding: 26upx 5upx;
+			.first_col{padding: 0 0 0 80upx;}
+		}
+	}
+	.result{position: absolute; bottom: 0; left: 0; z-index: 2; width: 100%; height: 100upx; background: #fff; display: flex; justify-content: space-between; box-shadow: 0px 1px 3px 1px #ddd;
+		.radio{width: 200upx; display: flex; flex-direction: row; justify-content: center; align-items: center;}
+		.count{flex: 1; display: flex; flex-direction: row; justify-content: flex-start; align-items: center;}
+		.btn{margin: 10upx 20upx 10upx 0; padding: 0 20upx; font-size: 30upx; height: 80upx; line-height: 80upx;}
 	}
 }
 .my_subordinate_info{height: 100%; background: #fff;

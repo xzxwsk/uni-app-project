@@ -111,7 +111,7 @@
 			// if (sessionId) {
 			// 	this.autoLogin(sessionId);
 			// }
-			console.log('sessionId: ', sessionId);
+			// console.log('sessionId: ', sessionId);
 			this.getDeviceId();
 		},
 		methods: {

@@ -6,7 +6,6 @@
 				<radio-group class="uni-flex" name="nature" @change="changeMoneyNature">
 					<label><radio value="0" :checked="billObj.AccountType === 0" color="#f23030" />货款</label>
 					<label><radio value="1" :checked="billObj.AccountType === 1" color="#f23030" />保证金</label>
-					<label><radio value="2" :checked="billObj.AccountType === 2" color="#f23030" />代交保证金</label>
 				</radio-group>
 			</view>
 			<view class="input-row" v-if="billObj.AccountType === 2">
@@ -115,14 +114,17 @@
 			
 		},
 		mounted() {
-			this.getDefault();
+			this.getDefault(0);
 		},
 		methods: {
-			getDefault() {
+			getDefault(accountType) {
 				// 生成默认付款单
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.BillPayDAL.CreateDefault',
+					params: {
+						AccountType: accountType
+					},
 					tags: {
 						usertoken: this.openid
 					}
@@ -131,8 +133,8 @@
 					if(this.$refs.amount){
 						this.$refs.amount.setValue(this.billObj.Amount);
 					}
-					this.getRepayDealerLs();
-					this.getDefaultPayInfo();
+					// this.getRepayDealerLs();
+					this.getDefaultPayInfo(accountType);
 				});
 			},
 			getRepayDealerLs() {
@@ -146,11 +148,12 @@
 					this.repayDealer = res.data.result;
 				});
 			},
-			getDefaultPayInfo() {
+			getDefaultPayInfo(accountType) {
 				util.ajax({
 					method: 'Businese.BillPayDAL.GetDefaultPayInfo',
 					params: {
-						PayType: this.billObj.PayType
+						PayType: this.billObj.PayType,
+						AccountType: accountType
 					},
 					tags: {
 						usertoken: this.openid
@@ -176,12 +179,17 @@
 			changeMoneyNature(e) {
 				// 款项性质
 				this.billObj.AccountType = Number(e.target.value);
+				console.log(this.billObj.AccountType);
+				debugger;
+				this.getDefault(this.billObj.AccountType);
+				/* 
 				if(this.billObj.AccountType === 2) {
 					if(this.$refs.amount && this.selectRepayDealer.Amount) {
 						this.$refs.amount.setValue(this.selectRepayDealer.Amount);
 						this.billObj.Amount = this.selectRepayDealer.Amount;
 					}
 				}
+				 */
 			},
 			changeMoneyType(e) {
 				// 付款方式
@@ -196,7 +204,9 @@
 					this.placeholder = '请输入付款人银行帐号';
 					this.placeholder2 = '请输入收款人银行帐号';
 				}
-				this.getDefaultPayInfo();
+				console.log(this.billObj.AccountType);
+				debugger;
+				this.getDefaultPayInfo(this.billObj.AccountType);
 			},
 			changeRepayDealer(e) {
 				// 选择代支付经销商

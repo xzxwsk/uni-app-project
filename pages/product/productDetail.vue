@@ -143,7 +143,8 @@
 					}
 				}).then(res => {
 					util.hideLoading();
-					this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ' && res.data.result.BigImageBase64 !== '') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
+					// this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ' && res.data.result.BigImageBase64 !== '') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
+					this.imgLs.push((res.data.result.BigImageBase64 && res.data.result.BigImageBase64 !== ' ') ? util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.BigImageBase64 : '');
 					this.detail = res.data.result;
 					this.$nextTick(() => {
 						let me = this;

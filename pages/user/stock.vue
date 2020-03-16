@@ -18,8 +18,8 @@
 						<t-th align="center">计量单位</t-th>
 						<t-th align="center">库存数量</t-th>
 					</t-tr>
-					<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList" :key="item.id">
-						<t-td align="left"><label><radio :checked="item.checked" color="#f23030" @click="checkboxChange(item)" />{{item.ProductNo}}</label></t-td>
+					<t-tr font-size="12" color="#5d6f61" align="right" v-for="(item, index) in tableList" :key="item.id">
+						<t-td align="left"><label><radio :checked="item.checked" color="#f23030" :data-index="index" @click="checkboxChange" />{{item.ProductNo}}</label></t-td>
 						<t-td align="left">{{item.ProductName}}</t-td>
 						<t-td align="left">{{item.Spec}}</t-td>
 						<t-td align="left">{{item.Unit}}</t-td>
@@ -29,7 +29,7 @@
 			</view>
 			<view class="result">
 				<label class="radio" @click="onAllSelect"><radio color="#f23030" :checked="allSelect" />全选</label>
-				<button class="btn" type="warn" :disabled="selectedArr.length < 1" @click="toPay">添加消费/零售记录</button>
+				<button class="btn" type="warn" :disabled="toPayBtnDisabled" @click="toPay">添加消费/零售记录</button>
 			</view>
 		</view>
     </view>
@@ -76,6 +76,11 @@
         components: {
             tTable, tTh, tTr, tTd
         },
+		computed: {
+			toPayBtnDisabled() {
+				return this.selectedArr.length < 1;
+			}
+		},
         data() {
             return {
 				loaded: false,
@@ -91,12 +96,8 @@
 			// #endif 
 		},
 		mounted() {
-			// util.showLoading();
-			this.tableList.forEach(item => {
-				item.checked = false;
-			});
 			this.loaded = true;
-			// this.init();
+			this.init();
 		},
         methods: {
 			...mapMutations(['setConsumeSelected']),
@@ -110,13 +111,17 @@
 				})
 				.then(res => {
 					util.hideLoading();
+					res.data.result.forEach(item => {
+						item.checked = false;
+					});
 					let data = res.data.result;
 					console.log('我的库存: ', data);
 					this.loaded = true;
 					this.tableList = data;
 				});
 			},
-			checkboxChange(item) {
+			checkboxChange(e) {
+				let item = this.tableList[Number(e.currentTarget.dataset.index)];
 				this.$set(item, 'checked', !item.checked);
 				let selectIndex = -1;
 				this.selectedArr.some((selectItem, index) => {
@@ -125,7 +130,6 @@
 						return true;
 					}
 				});
-				console.log(selectIndex);
 				if(selectIndex !== -1) {
 					this.selectedArr.splice(selectIndex, 1);
 				} else {

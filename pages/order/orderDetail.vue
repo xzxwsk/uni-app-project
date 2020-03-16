@@ -568,30 +568,21 @@
 					}
 				} else if (str === 'receiveConfirm') {
 					// 发货弹窗确认收款
-					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
-						this.$refs.popup.close();
-						util.dialog({
-							content: '请确认收款？',
-							success (e) {
-								if(e.confirm) {
-									util.showLoading();
-									me.sendOrder();
-								}
-							}
-						});
-						// util.showLoading();
-						// util.ajax({
-						// 	method: 'Businese.BillPayDAL.ReceiveConfirm',
-						// 	params: {
-						// 		RecordId: this.billObj.RecordId
-						// 	},
-						// 	tags: {
-						// 		usertoken: this.openid
-						// 	}
-						// }).then(res => {
-						// 	this.sendOrder();
-						// });
+					if (this.billObj.DiliveryMode !== 1) {
+						if (!(this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue())) {
+							return;
+						}
 					}
+					this.$refs.popup.close();
+					util.dialog({
+						content: '请确认收款？',
+						success (e) {
+							if(e.confirm) {
+								util.showLoading();
+								me.sendOrder();
+							}
+						}
+					});
 				} else {
 					this.$refs.popup.close();
 				}

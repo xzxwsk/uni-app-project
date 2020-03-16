@@ -1,9 +1,9 @@
 <template>
 	<view class="create_pay_order">
-		<view class="input-group">
+		<view :class="['input-group', {'last': index === arr.length-1}]" v-for="(billObj, index) in arr" :key="index">
 			<view class="input-row">
 				<text class="title">消费类别：</text>
-				<radio-group class="uni-flex" name="gender" @change="changeConsumeType">
+				<radio-group class="uni-flex" name="gender" @change="changeConsumeType(index)">
 					<label><radio value="0" :checked="billObj.ConsumeType === 0" color="#f23030" />自用</label>
 					<label><radio value="1" :checked="billObj.ConsumeType === 1" color="#f23030" />零售</label>
 				</radio-group>
@@ -30,11 +30,11 @@
 			</view>
 			<view class="input-row">
 				<text class="title">单价：</text>
-				<input-box ref="qty" type="number" v-model="billObj.Price" :inputValue="billObj.Price" placeholder="请输入单价"></input-box>
+				<input-box type="number" v-model="billObj.Price" :inputValue="billObj.Price" placeholder="请输入单价"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">金额：</text>
-				<input-box ref="qty" type="number" disabled v-model="billObj.Amount" :inputValue="billObj.Amount"></input-box>
+				<input-box type="number" disabled v-model="billObj.Amount" :inputValue="billObj.Amount"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">备注：</text>
@@ -56,43 +56,19 @@
 		components: {
 			inputBox
 		},
-		computed: mapState(['openid', 'userInfo', 'consumeSelected']),
+		computed: {
+			...mapState(['openid', 'userInfo', 'consumeSelected']),
+			consumeSelectedId() {
+				return this.consumeSelected.map(item => item.ProductId);
+			}
+		},
 		data() {
 			return {
-				edit: false,
-				billObj: {
-					"RecordId": ""  /*单据Id*/,
-				    "BillCode": ""  /*单据编号*/,
-					"BillDate": ""  /*单据日期*/,
-					"DealerId": ""  /*经销商Id*/,
-					"DealerCode": ""  /*经销商编号*/,
-					"DealerName": ""  /*经销商姓名*/,
-					"Remark": ""  /*备注*/,
-					"State": 1  /*State*/,
-					"Creator": ""  /*录入人*/,
-					"CreatorName": ""  /*录入人姓名*/,
-					"CreateTime": ""  /*录入时间*/,
-				    "LastModifier": ""  /*最后修改人*/,
-					"LastModifierName": ""  /*最后修改人姓名*/,
-					"LastModifyTime": ""  /*最后修改时间*/,
-					"StateChanged": false  /*状态是否发生过改变*/,
-					"TimeStamp": ""  /*时间戳*/,
-					"ChangeType": 0,
-					"IdValues": [
-						""
-					],
-					"iState": 1
-				}
+				arr: []
 			}
 		},
 		onLoad(option) {
-			if (option.hasOwnProperty('id')) {
-				let id = option.id;
-				this.edit = true;
-				this.init(id);
-			} else {
-				this.createDefault();
-			}
+			this.createDefault();
 		},
 		methods: {
 			createDefault() {
@@ -100,7 +76,7 @@
 				util.ajax({
 					method: 'Businese.BillConsumeDAL.CreateDefault',
 					params: {
-						ProductIds: this.consumeSelected
+						ProductIds: this.consumeSelectedId
 					},
 					tags: {
 						usertoken: this.openid
@@ -108,54 +84,37 @@
 				}).then(res => {
 					util.hideLoading();
 					res.data.result = util.jsonReplace(res.data.result, 'null', '""');
-					this.billObj.BillDate = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
-					this.billObj = res.data.result;
+					res.data.result.forEach(item => {
+						item.BillDate = util.formatDate(item.BillDate, 'yyyy-MM-dd');
+					});
+					
+					this.arr = res.data.result;
 				});
 			},
-			init(id) {
-				util.ajax({
-					method: 'Businese.BillConsumeDAL.GetById',
-					params: {
-						RecordId: id
-					},
-					tags: {
-						usertoken: this.openid
-					}
-				}).then(res => {
-					util.hideLoading();
-					res.data.result = util.jsonReplace(res.data.result, 'null', '""');
-					this.billObj = res.data.result;
-					if(this.$refs.dealerCode) {
-						this.$refs.dealerCode.setValue(this.billObj.DealerNo);
-					}
-					if(this.$refs.dealerName) {
-						this.$refs.dealerName.setValue(this.billObj.DealerName);
-					}
-				});
-			},
-			changeConsumeType() {
+			changeConsumeType(index) {
 				// 消费类别
-				this.$set(this.billObj, 'ConsumeType', Number(e.detail.value));
+				this.$set(this.arr[index], 'ConsumeType', Number(e.detail.value));
 			},
 			saveOrder() {
-				// this.billObj.BillDate = this.billObj.CreateTime = this.billObj.LastModifyTime = util.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
 				util.showLoading();
+				// 批量创建
 				util.ajax({
-					method: 'Businese.BillLeaveDAL.Create',
+					method: 'Businese.BillConsumeDAL.Create',
 					params: {
-						Bill: this.billObj
+						Bills: this.arr
 					},
 					tags: {
 						usertoken: this.openid
-					}
-				}).then(res => {
+					},
+				})
+				.then(res => {
 					util.hideLoading();
 					util.showToast({
-						title: '创建注销单成功',
+						title: '创建消费/零售记录成功',
 						success() {
 							setTimeout(() => {
-								util.goUrl({
-									url: '../user/quitOrder'
+								util.goTab({
+									url: '../tabBar/user'
 								});
 							}, 1000);
 						}

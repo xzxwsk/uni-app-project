@@ -595,30 +595,34 @@
 					}
 				} else if (str === 'receiveConfirm') {
 					// 发货弹窗确认收款
-					if (this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue()) {
-						this.$refs.popup.close();
-						// 直接调用发货接口，表示确认收款
-						util.dialog({
-							content: '请确认收款？',
-							success (e) {
-								if(e.confirm) {
-									util.showLoading();
-									me.sendOrder();
-								}
-							}
-						});
-						// util.ajax({
-						// 	method: 'Businese.BillPayDAL.ReceiveConfirm',
-						// 	params: {
-						// 		RecordId: this.curSelected.RecordId
-						// 	},
-						// 	tags: {
-						// 		usertoken: this.openid
-						// 	}
-						// }).then(res => {
-						// 	this.sendOrder();
-						// });
+					// 如果是自提，发货的时候不要检查货运单号和快递公司
+					if(me.curSelected.DiliveryMode !== 1) {
+						if (!(this.$refs.trackingNo.getValue() && this.$refs.transportCompany.getValue())) {
+							return;
+						}
 					}
+					this.$refs.popup.close();
+					// 直接调用发货接口，表示确认收款
+					util.dialog({
+						content: '请确认收款？',
+						success (e) {
+							if(e.confirm) {
+								util.showLoading();
+								me.sendOrder();
+							}
+						}
+					});
+					// util.ajax({
+					// 	method: 'Businese.BillPayDAL.ReceiveConfirm',
+					// 	params: {
+					// 		RecordId: this.curSelected.RecordId
+					// 	},
+					// 	tags: {
+					// 		usertoken: this.openid
+					// 	}
+					// }).then(res => {
+					// 	this.sendOrder();
+					// });
 				} else {
 					this.$refs.popup.close();
 				}

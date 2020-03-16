@@ -1,4 +1,4 @@
-// const baseUrlGlobal = 'http://47.104.226.115/qcdm/'; 
+// const baseUrlGlobal = 'http://47.104.226.115/qcdm/'; // 开发
 const baseUrlGlobal = 'http://118.163.201.227/qcdm/'; // 生产环境
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 let baseUrl = '';

@@ -60,7 +60,7 @@
 										</view>
 									</view>
 									<view class="ls_item_bottom">
-										<button class="btn" @click.stop="del(item.RecordId)" v-if="item.State === 0">删除</button><button class="btn" @click.stop="edit(item.RecordId)" v-if="item.State === 0">修改</button><button class="btn" @click.stop="goDetail(item.RecordId)">详情</button>
+										<button class="btn" @click.stop="del(item.RecordId)" v-if="item.State === 0">取消</button>
 									</view>
 								</view>
 							</view>
@@ -101,21 +101,15 @@
 					name: '全部',
 					id: 'all'
 				}, {
-					name: '草稿',
+					name: '正常',
 					id: 'guanzhu'
 				}, {
-					name: '审核中',
-					id: 'tuijian'
-				}, {
-					name: '已审核',
-					id: 'tuijian1'
-				}, {
-					name: '已完成',
+					name: '已取消',
 					id: 'tuijian2'
 				}],
 				startDate: '2010-01-01',
 				endDate: '2199-12-31',
-				stateArr: [null, 0, 1, 2, 3]
+				stateArr: [null, 0, -1]
 			}
 		},
 		onLoad() {
@@ -175,7 +169,7 @@
 					if (res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-							dataItem.stateStr = ['已作废', '草稿', '审核中', '已审核', '已完成'][dataItem.State+1];
+							dataItem.stateStr = ['取消', '正常', '审核中', '已审核', '已完成'][dataItem.State+1];
 						});
 						this.dataArr[index].data = res.data.result.data;
 						this.displayDataArr[index].data = res.data.result.data;

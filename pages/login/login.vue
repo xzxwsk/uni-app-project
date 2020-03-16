@@ -304,7 +304,7 @@
 			},
 			async bindLogin() {
 				let me = this;
-				console.log(this.$refs);
+				console.log(this.$refs.input1);
 				if(!this.$refs.input1) {
 					return;
 				}

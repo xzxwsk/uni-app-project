@@ -165,7 +165,7 @@
 									RecordId: RecordId
 								},
 								tags: {
-									usertoken: this.openid
+									usertoken: me.openid
 								}
 							}).then(res => {
 								util.hideLoading();

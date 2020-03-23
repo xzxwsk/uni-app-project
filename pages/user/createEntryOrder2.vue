@@ -89,57 +89,7 @@
 				deepLength: 0,
 				pickerValueDefault: [],
 				confirmPassword: '',
-				billObj: {
-					"RecordId": '',
-					"BillCode": '',
-					"BillDate": '',
-					"AboveDealerId": '',
-					"DealerNo": "",
-					"DealerName": '',
-					"BirthDay": '',
-					"NativePlace": '',
-					"IDCardNo": '',
-					"Sex": 0,
-					"HasMarried": false,
-					"SpouseName": '',
-					"SpouseIDCard": '',
-					"EducationLevel": '',
-					"HomeAddress": '',
-					"PostCode": '',
-					"Tel": '',
-					"Email": '',
-					"Mobile": '',
-					"LinkMan": '',
-					"LinkManTel": '',
-					"Relationship": '',
-					"Bank": '',
-					"AccountNo": '',
-					"AccountName": '',
-					"AlipayAccNo": '',
-					"MicromsgNo": '',
-					"Password": '',
-					"Remark": '',
-					"DealerId": '',
-					"State": 0,
-					"Creator": '',
-					"CreatorName": '',
-					"CreateTime": '',
-					"LastModifier": '',
-					"LastModifierName": '',
-					"LastModifyTime": '',
-					"Auditor": '',
-					"AuditorName": '',
-					"AuditTime": '',
-					"StateChanged": false,
-					"TimeStamp": '',
-					"IDCardNo_FrontImage": '',
-					"IDCardNo_BackImage": '',
-					"ChangeType": 0,
-					"IdValues": [
-						''
-					],
-					"iState": 0
-				}
+				billObj: {}
 			}
 		},
 		onLoad(option) {
@@ -312,7 +262,7 @@
 									console.log('useImage: ', useImage);
 									this.uploadFile(useImage)
 									.then(uploadFileRes => {
-										this.$set(this.billObj, 'IDCardNo_FrontImage', uploadFileRes);
+										this.$set(this.billObj, 'FrontImageFileName', uploadFileRes);
 										this.urlToBase64(useImage)
 										.then(baseRes => {
 										    // 转化后的base64图片地址
@@ -336,7 +286,7 @@
 							this.urlToBase64(res.tempFilePaths[0])
 							.then(baseRes => {
 							    // 转化后的base64图片地址
-							    this.$set(this.billObj, 'IDCardNo_FrontImage', baseRes.split(',')[1]);
+							    this.$set(this.billObj, 'FrontImageFileName', baseRes.split(',')[1]);
 							    this.frontImg = baseRes;
 							});
 							// #endif
@@ -377,7 +327,7 @@
 								console.log('useImage: ', useImage);
 								this.uploadFile(useImage)
 								.then(uploadFileRes => {
-									this.$set(this.billObj, 'IDCardNo_BackImage', uploadFileRes);
+									this.$set(this.billObj, 'BackImageFileName', uploadFileRes);
 									this.urlToBase64(useImage)
 									.then(baseRes => {
 										// 转化后的base64图片地址
@@ -401,7 +351,7 @@
 						this.urlToBase64(res.tempFilePaths[0])
 						.then(baseRes => {
 							// 转化后的base64图片地址
-							this.$set(this.billObj, 'IDCardNo_BackImage', baseRes);
+							this.$set(this.billObj, 'BackImageFileName', baseRes);
 							this.backImg = baseRes;
 						});
 						// #endif

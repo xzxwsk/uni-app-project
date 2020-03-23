@@ -50,61 +50,12 @@
 		data() {
 			return {
 				protocal: false,
-				billObj: {
-					"RecordId": '',
-					"BillCode": '',
-					"BillDate": '',
-					"AboveDealerId": '',
-					"DealerNo": "",
-					"DealerName": '',
-					"BirthDay": '',
-					"NativePlace": '',
-					"IDCardNo": '',
-					"Sex": 0,
-					"HasMarried": false,
-					"SpouseName": '',
-					"SpouseIDCard": '',
-					"EducationLevel": '',
-					"HomeAddress": '',
-					"PostCode": '',
-					"Tel": '',
-					"Email": '',
-					"Mobile": '',
-					"LinkMan": '',
-					"LinkManTel": '',
-					"Relationship": '',
-					"Bank": '',
-					"AccountNo": '',
-					"AccountName": '',
-					"AlipayAccNo": '',
-					"MicromsgNo": '',
-					"Password": '',
-					"Remark": '',
-					"DealerId": '',
-					"State": 0,
-					"Creator": '',
-					"CreatorName": '',
-					"CreateTime": '',
-					"LastModifier": '',
-					"LastModifierName": '',
-					"LastModifyTime": '',
-					"Auditor": '',
-					"AuditorName": '',
-					"AuditTime": '',
-					"StateChanged": false,
-					"TimeStamp": '',
-					"IDCardNo_FrontImage": '',
-					"IDCardNo_BackImage": '',
-					"ChangeType": 0,
-					"IdValues": [
-						''
-					],
-					"iState": 0
-				}
+				billObj: {}
 			}
 		},
 		onLoad(option) {
 			this.billObj = this.billJoinDAL;
+			console.log('3: ', this.billObj)
 		},
 		mounted() {
 			this.$nextTick(() => {

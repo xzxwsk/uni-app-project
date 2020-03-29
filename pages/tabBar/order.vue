@@ -29,18 +29,21 @@
 <script>
 	import uniBadge from '@/components/uni-badge/uni-badge.vue';
 	import util from '@/common/util.js';
-	import {mapState, mapMutations} from 'vuex';
+	import {mapState, mapMutations, mapGetters} from 'vuex';
 	export default {
 		components: {
 			uniBadge
 		},
-		computed: mapState(['hasLogin', 'changeNum']),
+		computed: {
+			...mapState(['hasLogin', 'changeNum'])
+		},
 		data() {
 			return {
 				imgSrcHead: '/static/images/avatar_member.gif',
 				modeHead: 'widthFix',
 				imgSrc: '/static/images/member_bg.png',
 				mode: 'widthFix',
+				isLoad: false,
 				pages: [
 					{
 						name: '订单',
@@ -64,34 +67,115 @@
 				]
 			}
 		},
-		mounted() {
-			console.log('order mounted');
-			this.getMenu();
-			console.log(this.hasLogin, this.changeNum);
-			if (this.hasLogin && this.changeNum !== null) {
+		onLoad() {
+			if (!this.isLoad && this.hasLogin && this.changeNum !== null) {
 				this.init();
+				this.isLoad = true;
+			}
+		},
+		onShow() {
+			console.log('order show:', this.isLoad);
+			if(this.isLoad) {
+				this.reGetChangeNum();
 			}
 		},
 		methods: {
+			...mapMutations(['setChangeNum']),
 			getMenu() {
 				util.showLoading();
-				util.ajax({
+				return util.ajax({
 					method: 'SYS.DealerDAL.CanPay',
 					tags: {
 						usertoken: '',
 						sessionid: this.sessionId
 					}
-				}).then(res => {
+				});
+			},
+			showChangeNum(changeNum) {
+				if(this.pages.length > 2) {
+					this.pages[0].changeNum = changeNum.myOrderChangeNum;
+					this.pages[1].changeNum = changeNum.myPayOrderChangeNum;
+					this.pages[2].changeNum = changeNum.myRefundOrderChangeNum;
+				} else {
+					this.pages[0].changeNum = changeNum.myOrderChangeNum;
+					this.pages[1].changeNum = changeNum.myRefundOrderChangeNum;
+				}
+			},
+			async init() {
+				await this.getMenu()
+				.then(res => {
 					util.hideLoading();
 					if(!res.data.result) {
 						this.pages.splice(1, 1);
 					}
 				});
+				this.showChangeNum(this.changeNum);
 			},
-			init() {
-				this.pages[0].changeNum = this.changeNum.myOrderChangeNum;
-				this.pages[1].changeNum = this.changeNum.myPayOrderChangeNum;
-				this.pages[2].changeNum = this.changeNum.myRefundOrderChangeNum;
+			async reGetChangeNum() {
+				let num = 0;
+				let myOrderChangeNum = 0;
+				let myPayOrderChangeNum = 0;
+				let myRefundOrderChangeNum = 0;
+				// 我的订单
+				await util.ajax({
+					method: 'Businese.OrderDAL.GetChangedListCount',
+					params: {
+						State: null
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				// 我的付款单
+				await util.ajax({
+					method: 'Businese.BillPayDAL.GetChangedListCount',
+					params: {
+						State: null
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myPayOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				// 我的退款单
+				await util.ajax({
+					method: 'Businese.BillPayReturnDAL.GetChangedListCount',
+					params: {
+						State: null
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					myRefundOrderChangeNum = res.data.result;
+					num += res.data.result;
+				});
+				console.log({
+					myOrderChangeNum: 1,
+					myPayOrderChangeNum,
+					myRefundOrderChangeNum
+				});
+				this.setChangeNum({
+					myOrderChangeNum,
+					myPayOrderChangeNum,
+					myRefundOrderChangeNum
+				});
+				if (num > 0) {
+					uni.setTabBarBadge({
+						index: 2,
+						text: String(num)
+					});
+				}
+				this.showChangeNum({
+					myOrderChangeNum,
+					myPayOrderChangeNum,
+					myRefundOrderChangeNum
+				});
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

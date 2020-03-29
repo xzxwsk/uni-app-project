@@ -4,12 +4,12 @@
 			<text :class="'txt' + (tabCur===0 ? ' cur' : '')" @click="goTop">商品</text><text :class="'txt' + (tabCur===1 ? ' cur' : '')" @click="goDetail">详情</text>
 		</view>
 		<view class="center">
-			<scroll-view scroll-y :scroll-top="scrollTop" style="height: 1130upx;" @scroll="scroll" scroll-with-animation>
+			<scroll-view scroll-y :scroll-top="scrollTop" style="border: 1px re solid;" :style="{height: scrollHeight + 'px'}" @scroll="scroll" @scrolltolower="loadMore" scroll-with-animation>
 				<view class="swiper_box">
 					<swiper class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
 						<swiper-item v-for="(item, index) in imgLs" :key="index">
 							<view class="swiper-item">
-								<image style="width: 100%;" mode="scaleToFit" :src="item" @error="imageError"></image>
+								<image style="width: 100%; height: 100%;" mode="aspectFit" :src="item" @error="imageError"></image>
 							</view>
 						</swiper-item>                        
 					</swiper>
@@ -45,13 +45,17 @@
 						</view>
 					</view>
 				</view>
-				<view class="detail" id="detail">
+				<view class="detail" :style="{'min-height': detailHeight + 'px'}" id="detail">
 					<view class="title">--商品详情--</view>
 					<view>{{detail.Description}}</view>
+					<view v-for="(imgItem, imgIndex) in showImgArr" :key="imgIndex">
+						<image style="width: 100%;" mode="widthFix" :src="imgItem" @error="imageError"></image>
+					</view>
+					<uni-load-more :status="status" v-if="status !== 'noMore'" />
 				</view>
 			</scroll-view>
 		</view>
-		<view class="result">
+		<view class="result" ref="bar">
 			<button class="btn btn_yellow" @click="goCartLs">加入购物车</button>
 			<button class="btn" type="warn" @click="goCreateOrder">立即付款</button>
 		</view>
@@ -92,14 +96,28 @@
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	import defaultImg from '@/static/img/2X1_1.jpg';
 	import util from '@/common/util.js';
+	import uniLoadMore from '@/components/uni-load-more/uni-load-more';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
-			uniPopup
+			uniPopup, uniLoadMore
 		},
-		computed: mapState(['openid']),
+		computed: {
+			...mapState(['openid']),
+			scrollHeight() {
+				let limit = 150;
+				if(this.screen.screenWidth < 415) {
+					limit = 125;
+				}
+				return this.screen.screenHeight - this.screen.statusBarHeight - this.barHeight - limit;
+			},
+			detailHeight() {
+				return this.screen.screenHeight - this.screen.statusBarHeight - this.barHeight - 52;
+			}
+		},
 		data() {
 			return {
+				screen: {},
 				detail: {},
 				tabCur: 0,
 				topHeight: 0,
@@ -107,7 +125,8 @@
 				old: {
 					scrollTop: 0
 				},
-				loca1: 0,				
+				loca1: 0,
+				barHeight: 0,
 				isClick: false,
 				indicatorDots: true,
 				indicatorColor: '#fff',
@@ -123,17 +142,25 @@
 				modeLs: ['54 * 4g/袋（共54袋）', '125 * 4g/袋（共500g）', '24 * 4g/袋（共24袋）'],
 				selectItem: 0,
 				num: 1,
-				clickType: ''
+				clickType: '',
+				status: 'more', // 'noMore', 'more'
+				imgArr: [],
+				showImgArr: []
 			}
 		},
 		onLoad(option) {
 			this.getDetail(option.id);
+			this.screen = uni.getSystemInfoSync();
+			console.log(this.screen);
+		},
+		mounted() {
+			this.barHeight = this.$refs.bar.$el.offsetHeight;
 		},
 		methods: {
-			getDetail(id) {
+			async getDetail(id) {
 				this.imgLs = [];
 				util.showLoading();
-				util.ajax({
+				await util.ajax({
 					method: 'Basic.ProductDAL.GetById',
 					params: {
 						RecordId: id
@@ -142,9 +169,8 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					util.hideLoading();
 					// this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ' && res.data.result.BigImageBase64 !== '') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
-					this.imgLs.push((res.data.result.BigImageBase64 && res.data.result.BigImageBase64 !== ' ') ? util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.BigImageBase64 : '');
+					this.imgLs.push((res.data.result.SmallImageFileName && res.data.result.SmallImageFileName !== ' ') ? util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.SmallImageFileName : '');
 					this.detail = res.data.result;
 					this.$nextTick(() => {
 						let me = this;
@@ -157,6 +183,25 @@
 						});
 						this.topHeight = 42;
 					})
+				});
+				util.ajax({
+					method: 'Basic.ProductDAL.GetDescriptionFileNames',
+					params: {
+						ProductId: id
+					},
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					util.hideLoading();
+					this.imgArr = res.data.result;
+					let showImgArr = res.data.result.map(item => {
+						return util.getBaseUrl() + 'files/downloadfile?filename=' + item;
+					});
+					this.showImgArr = showImgArr.slice(0, 2);
+					if(this.showImgArr.length === this.imgArr.length) {
+						this.status = 'noMore';
+					}
 				});
 			},
 			async goCartLs() {
@@ -214,6 +259,26 @@
 				} else {
 					this.tabCur = 0;
 				}
+			},
+			loadMore() {
+				console.log('滚动到底部');
+				if(this.status === 'loading' || this.status === 'noMore') {
+					return;
+				}
+				this.status = 'loading';
+				setTimeout(() => {
+					let showLen = this.showImgArr.length;
+					let showImgArr = this.imgArr.slice(showLen, showLen+2);
+					showImgArr = showImgArr.map(item => {
+						return util.getBaseUrl() + 'files/downloadfile?filename=' + item;
+					});
+					this.showImgArr = this.showImgArr.concat(showImgArr);
+					if(this.showImgArr.length === this.imgArr.length) {
+						this.status = 'noMore';
+					} else {
+						this.status = 'more';
+					}
+				}, 2000);
 			},
 			openPopup(){
 				this.$refs.popup.open()

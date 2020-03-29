@@ -72,8 +72,8 @@
 				uuid: '',
 				providerList: [],
 				hasProvider: false,
-				account: 'A0000002',
-				password: '',
+				account: 'A0000002', // A0000002
+				password: '1234',
 				voliCode: '',
 				voliCodeSrc: '',
 				positionTop: 0
@@ -81,6 +81,7 @@
 		},
 		onLoad() {
 			console.log('onLoad');
+			console.log(uni.getSystemInfoSync());
 			this.getSessionId();
 			// #ifdef APP-PLUS
 			// plus.nativeUI.showWaiting('加载中……');
@@ -106,11 +107,12 @@
 		mounted() {
 			console.log('mounted');
 			this.interfaceAddr = util.getBaseUrl();
+			this.initSetAccount();
 			// this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
 			let sessionId = util.getStorageSync('session_id');
-			// if (sessionId) {
-			// 	this.autoLogin(sessionId);
-			// }
+			if (sessionId) {
+				this.autoLogin(sessionId);
+			}
 			// console.log('sessionId: ', sessionId);
 			this.getDeviceId();
 		},
@@ -122,7 +124,6 @@
 				// util.showLoading({
 				// 	title: '自动登录中'
 				// });
-				console.log(this.interfaceAddr + 'json.rpc/webapi')
 				uni.request({
 					url: this.interfaceAddr + 'json.rpc/webapi',
 					data: {
@@ -304,7 +305,6 @@
 			},
 			async bindLogin() {
 				let me = this;
-				console.log(this.$refs.input1);
 				if(!this.$refs.input1) {
 					return;
 				}
@@ -332,15 +332,18 @@
 							usertoken: '',
 							sessionid: this.sessionId
 						}
-					}).then(res => {
-						// console.log('登录返回： ', res);
+					})
+					.then(res => {
+						console.log('登录返回： ', res);
 						util.setStorageSync({
 							key: 'session_id',
 							data: res.data.result
 						});
+						// 登录成功保留帐号下次使用
+						this.saveAccount(data.account);
 						this.setOpenid(res.data.result);
 					});
-					// console.log('openid: ', this.openid);
+					console.log('openid: ', this.openid);
 					await util.ajax({
 						method: 'SYS.UserDAL.GetDealerByToken',
 						tags: {
@@ -373,6 +376,20 @@
 					    // mask: true
 					});
 				}
+			},
+			initSetAccount() {
+				let account = util.getStorageSync('userName');
+				if(account) {
+					this.account = account;
+					this.$refs.input1.setValue(account);
+				}
+			},
+			saveAccount(account) {
+				// 登录成功保留帐号下次使用
+				util.setStorageSync({
+					key: 'userName',
+					data: account
+				});
 			},
 			getSystemInfo() {
 				uni.getSystemInfo({

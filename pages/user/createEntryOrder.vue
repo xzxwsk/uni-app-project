@@ -18,7 +18,7 @@
 				<input-box ref="dealerName" v-model="billObj.DealerName" placeholder="请输入姓名"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">生日：</text>
+				<text class="title">出生年月日：</text>
 				<view class="date_picker_box">
 					<view class="date_picker_box date_box">
 						<customDatePicker class="date_picker" @change="bindChangeBirthDay"

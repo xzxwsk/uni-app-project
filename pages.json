@@ -300,6 +300,7 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"app-plus": {
+					"bounce": "none",
 					"titleNView": {
 						"type": "default",
 						"buttons": [{

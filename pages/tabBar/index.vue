@@ -7,9 +7,12 @@
             <view class="page-section swiper">
                 <view class="page-section-spacing">
                     <swiper style="height: 350upx;" class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
+						<swiper-item class="no-img" v-if="imgLs.length < 1">
+							<image style="width: 100%; height: 100%;" mode="aspectFit" :src="imgSrc" @error="imageError"></image>
+						</swiper-item>
                         <swiper-item v-for="(item, index) in imgLs" :key="index">
                             <view class="swiper-item">
-								<image style="width: 100%;" mode="aspectFill" :src="item" @click="goDetail(index)" @error="imageError"></image>
+								<image style="width: 100%; height: 100%;" mode="aspectFit" :src="item" @click="goDetail(index)" @error="imageError"></image>
 							</view>
                         </swiper-item>                        
                     </swiper>
@@ -19,7 +22,7 @@
 		<view class="uni-product-list" v-if="productList.length > 0">
 			<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail(index)">
 				<view class="image-view">
-					<image v-if="renderImage" mode="aspectFit" class="uni-product-image" :src="product.image"></image>
+					<image v-if="renderImage" style="width: 100%; height: 100%;" mode="aspectFit" class="uni-product-image" :src="product.image"></image>
 				</view>
 				<view class="uni-product-title">
 					<view>
@@ -37,7 +40,7 @@
 		</view>
 		<view class="no-data" v-else>
 			<view class="no-img">
-				<image style="width: 100%;" mode="widthFix" :src="imgSrc" @error="imageError"></image>
+				<image style="width: 100%; height: 100%;" mode="aspectFit" :src="imgSrc" @error="imageError"></image>
 			</view>
 			<view class="txt"><text>亲，还没有宝贝哦~</text></view>
 		</view>
@@ -272,7 +275,7 @@
 						return {
 							id: item.RecordId,
 							// image: (item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg,
-							image: item.SmallImageBase64 ? util.getBaseUrl() + 'files/downloadfile?filename=' + item.SmallImageBase64 : '',
+							image: item.SmallImageFileName ? util.getBaseUrl() + 'files/downloadfile?filename=' + item.SmallImageFileName : '',
 							title: item.Name + ' ' + item.Spec + '/' + item.Unit, // Spec, 规格   Unit, 计量单位,
 							originalPrice: item.Price,
 							favourPrice: item.FactPrice, // 实际单价， 折扣后单价

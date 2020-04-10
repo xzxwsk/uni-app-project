@@ -6,7 +6,7 @@
 		<view class="uni-padding-wrap">
             <view class="page-section swiper">
                 <view class="page-section-spacing">
-                    <swiper style="height: 350upx;" class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
+                    <swiper style="height: 450upx;" class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
 						<swiper-item class="no-img" v-if="imgLs.length < 1">
 							<image style="width: 100%; height: 100%;" mode="aspectFit" :src="imgSrc" @error="imageError"></image>
 						</swiper-item>

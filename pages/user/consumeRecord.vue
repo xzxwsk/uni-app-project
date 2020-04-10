@@ -51,7 +51,6 @@
 											<view><text class="gray">计量单位:</text>{{item.UnitName}}</view>
 											<view><text class="gray">数量:</text>{{item.Qty}}</view>
 											<view><text class="gray">单价:</text>{{item.Price}}</view>
-											<view><text class="gray">金额:</text>{{item.Amount}}</view>
 											<view><text class="gray">消费类别:</text>{{['自用', '零售'][item.ConsumeType]}}</view>
 											<view><text class="gray">备注:</text>{{item.Remark}}</view>
 										</view>

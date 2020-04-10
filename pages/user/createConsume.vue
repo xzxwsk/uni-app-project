@@ -33,10 +33,6 @@
 				<input-box type="number" v-model="billObj.Price" :inputValue="billObj.Price" placeholder="请输入单价"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">金额：</text>
-				<input-box type="number" disabled v-model="billObj.Amount" :inputValue="billObj.Amount"></input-box>
-			</view>
-			<view class="input-row">
 				<text class="title">备注：</text>
 				<textarea v-model="billObj.Remark" style="padding: 10px 11px; height: 60px;" placeholder="请输入备注信息"/>
 			</view>

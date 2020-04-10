@@ -158,6 +158,7 @@
 		},
 		methods: {
 			async getDetail(id) {
+				let me = this;
 				this.imgLs = [];
 				util.showLoading();
 				await util.ajax({
@@ -194,10 +195,34 @@
 					}
 				}).then(res => {
 					util.hideLoading();
-					this.imgArr = res.data.result;
 					let showImgArr = res.data.result.map(item => {
 						return util.getBaseUrl() + 'files/downloadfile?filename=' + item;
 					});
+					this.imgArr = showImgArr.map(item => {
+						return {
+							load: false,
+							src: item
+						};
+					});
+					showImgArr.forEach((item, index) => {
+						(function(imgItem,i){
+							uni.downloadFile({
+								url: imgItem,
+								success(downImg) {
+									uni.getImageInfo({
+										src: downImg.tempFilePath,
+										success(resImg) {
+											me.imgArr[i] = {
+												load: true,
+												src: resImg.path
+											};
+										}
+									});
+								}
+							});
+						})(item, index);
+					});
+					
 					this.showImgArr = showImgArr.slice(0, 2);
 					if(this.showImgArr.length === this.imgArr.length) {
 						this.status = 'noMore';
@@ -270,7 +295,7 @@
 					let showLen = this.showImgArr.length;
 					let showImgArr = this.imgArr.slice(showLen, showLen+2);
 					showImgArr = showImgArr.map(item => {
-						return util.getBaseUrl() + 'files/downloadfile?filename=' + item;
+						return item.src;
 					});
 					this.showImgArr = this.showImgArr.concat(showImgArr);
 					if(this.showImgArr.length === this.imgArr.length) {

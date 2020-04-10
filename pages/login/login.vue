@@ -72,8 +72,8 @@
 				uuid: '',
 				providerList: [],
 				hasProvider: false,
-				account: 'A0000002', // A0000002
-				password: '1234',
+				account: '', // A0000002
+				password: '',
 				voliCode: '',
 				voliCodeSrc: '',
 				positionTop: 0
@@ -109,10 +109,10 @@
 			this.interfaceAddr = util.getBaseUrl();
 			this.initSetAccount();
 			// this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
-			let sessionId = util.getStorageSync('session_id');
-			if (sessionId) {
-				this.autoLogin(sessionId);
-			}
+			// let sessionId = util.getStorageSync('session_id');
+			// if (sessionId) {
+			// 	this.autoLogin(sessionId);
+			// }
 			// console.log('sessionId: ', sessionId);
 			this.getDeviceId();
 		},

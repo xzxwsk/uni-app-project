@@ -108,7 +108,7 @@ uni-toast{z-index: 100000;}
 .index{
 	height: 1500px;
 }
-.index_page{padding: 0 0 50px;
+.index_page{padding: 40px 0 50px;
 	.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; width: 330upx;
 		.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}
 	}
@@ -159,7 +159,7 @@ uni-toast{z-index: 100000;}
 		.cur{font-weight: bold;}
 	}
 	.center{flex: 1; overflow: hidden;}
-	.swiper{height: 400upx; background: #fff;}
+	.swiper{height: 560upx; background: #fff;}
 	.intro{margin: 20upx; padding: 10px 20upx; background: #fff; color: #777;
 		.title{font-size: 35upx; font-weight: bold; color: #333;}
 	}

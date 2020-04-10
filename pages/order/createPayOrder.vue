@@ -47,7 +47,7 @@
 			</block>
 		</view>
 		<view class="result">
-			<button class="btn" type="warn" @click="saveOrder">保存</button>
+			<button class="btn" :disabled="saving" type="warn" @click="saveOrder">保存</button>
 		</view>
 	</view>
 </template>
@@ -68,6 +68,7 @@
 				placeholder2: '请输入收款人微信帐号',
 				repayDealer: [], // 代支付经销商列表
 				selectRepayDealer: {},
+				saving: false,
 				billObj: {
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,
@@ -223,6 +224,8 @@
 				}
 			},
 			saveOrder() {
+				let me = this;
+				this.saving = true;
 				this.billObj.Amount = Number(this.billObj.Amount);
 				for(let key in this.billObj) {
 					if (typeof this.billObj[key] === 'string') {
@@ -244,6 +247,7 @@
 						title: '创建付款单成功',
 						success() {
 							setTimeout(() => {
+								me.saving = false;
 								util.goUrl({
 									url: '../order/payOrder'
 								});

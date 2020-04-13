@@ -42,7 +42,7 @@ uni-tabbar {
 		.ipt{flex: 1;}
 	}
 	.voli_code_ipt{flex: 1; margin: 0 20upx 0 0;}
-	.voli_code_img{position: absolute; right: 220upx; top: 26upx; z-index: 2; width: 150upx; height: 60upx; overflow: hidden; font-size: 0;}
+	.voli_code_img{position: absolute; left: 190upx; top: 0; z-index: 2; width: 360upx; overflow: hidden; font-size: 0;}
 	.right_txt{margin: 0 0 0 30upx !important;}
 }
 .btn-row{margin: 30upx 5% 0;}
@@ -100,9 +100,21 @@ uni-toast{z-index: 100000;}
 
 .login_page{
 	.content{
-		.voli_code_ipt{
-			.input-box-clear{margin: 0 220upx 0 5px;}
+		.input-row{
+			.title{font-size: 44upx;}
 		}
+		.input-box{
+			.input-box-center{height: 60px;}
+			.input-box-clear{font-size: 66upx;}
+			input{margin-top: 15px; height: 30px; font-size: 48upx;}
+		}
+		.uni-input-input, .uni-input-placeholder{height: 60px; font-size: 40upx;}
+		.voli_code_ipt{
+			input{margin-top: 15px; height: 30px; font-size: 48upx;}
+			.input-box-clear{margin: 0 20upx 0 5px;}
+			.right_txt{font-size: 44upx;}
+		}
+		.btn-row{margin: 40px 5% 0;}
 	}
 }
 .index{
@@ -110,6 +122,7 @@ uni-toast{z-index: 100000;}
 }
 .index_page{padding: 40px 0 50px;
 	.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; width: 330upx;
+		.remark{color: #999;}
 		.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}
 	}
 	.uni-product{

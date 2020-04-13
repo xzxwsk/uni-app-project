@@ -30,8 +30,11 @@
 					</view>
 					<view class="input-row">
 						<text class="title">验证码：</text>
-						<input-box class="voli_code_ipt" ref="input3" type="text" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
-						<view class="voli_code_img"><image style="width: 100%;" mode="widthFix" :src="voliCodeSrc" @click="resetVoliCode"></image></view>
+						<input-box class="voli_code_ipt" ref="input3" type="number" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
+					</view>
+					<view class="input-row" style="height: 60px;">
+						<text class="title"></text>
+						<view class="voli_code_img"><image style="width: 100%; height: 50px;" mode="aspectFill" :src="voliCodeSrc" @click="resetVoliCode"></image></view>
 					</view>
 				</view>
 				<view class="btn-row">

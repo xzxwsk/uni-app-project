@@ -10,9 +10,8 @@
 	</head>
 	<body>
 		<div class="content">
-			<div class="con">
+			<div class="con" id="img" style="background-image: url(../imgs/loading.gif);">
 				<!-- <img id="img" src="../imgs/advertise.jpg"> -->
-				<img id="img" src="">
 			</div>
 			<div class="btn" id="timer">
 				<div id="info">跳过</div>
@@ -45,11 +44,11 @@
 							console.log( "xhr请求已发送" );
 						break;
 						case 3:
-							console.log( "xhr请求已响应");
+							// console.log( "xhr请求已响应");
 							break;
 						case 4:
 							if ( xhr.status == 200 ) {
-								console.log( "xhr请求成功："+xhr.responseText );
+								console.log( "xhr请求成功：" );
 								// console.log(xhr.response);
 								callback(xhr.response);
 							} else {
@@ -75,7 +74,8 @@
 			ajaxFun(methods, function(res) {
 				if(res.hasOwnProperty('result')) {
 					var img = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64;
-					document.getElementById('img').setAttribute('src', img);
+					document.getElementById('img').style.backgroundSize = 'contain';
+					document.getElementById('img').style.backgroundImage = 'url(' + img + ')';
 				}
 			});
 			document.querySelector('.btn').addEventListener('click', function(e) {

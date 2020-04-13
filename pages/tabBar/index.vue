@@ -27,13 +27,13 @@
 				<view class="uni-product-title">
 					<view>
 						<view>{{product.title}}</view>
-						<text>{{product.remark}}</text>
+						<text class="remark">{{product.remark}}</text>
 					</view>
 					<view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view>
 				</view>
 				<view class="uni-product-price">
-					<!-- <text class="uni-product-price-favour">￥{{product.originalPrice}}</text> -->
-					<text class="uni-product-price-original">￥{{product.favourPrice}}</text>
+					<text class="uni-product-price-favour">￥{{product.Price}}</text>
+					<text class="uni-product-price-original">￥{{product.FactPrice}}</text>
 					<!-- <text class="uni-product-tip">{{product.tip}}</text> -->
 				</view>
 			</view>
@@ -277,9 +277,9 @@
 							// image: (item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg,
 							image: item.SmallImageFileName ? util.getBaseUrl() + 'files/downloadfile?filename=' + item.SmallImageFileName : '',
 							title: item.Name + ' ' + item.Spec + '/' + item.Unit, // Spec, 规格   Unit, 计量单位,
-							originalPrice: item.Price,
-							favourPrice: item.FactPrice, // 实际单价， 折扣后单价
-							remark: item.Remark
+							remark: item.Remark,
+							FactPrice: item.FactPrice,
+							Price: item.Price
 						}
 					});
 					this.recordsTotal = res.data.result.recordsTotal;

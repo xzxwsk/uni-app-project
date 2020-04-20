@@ -26,8 +26,17 @@
 					<text class="title">备注：</text>
 					<input-box ref="remark" v-model="billObj.Remark" placeholder="备注信息"></input-box>
 				</view>
-				<view class="input-row">
-					<radio class="protocal" value="0" @click="bindProtocal" color="#f23030" :checked="protocal" /><label @click="bindToProtocal" class="a">同意许可条款</label>
+				<view class="input-row protocal_row_radio">
+					<label @click="bindProtocal"><radio class="protocal" value="0" color="#f23030" :checked="protocal" />同意许可条款</label>
+				</view>
+				<view class="input-row protocal_row">
+					<label class="a protocal_a" @click="bindToProtocal">销售守则</label>
+				</view>
+				<view class="input-row protocal_row">
+					<label class="a protocal_a" @click="bindToProtocal(2)">市场销售准则</label>
+				</view>
+				<view class="input-row protocal_row">
+					<label class="a protocal_a" @click="bindToProtocal(3)">奖金与福利制度表</label>
 				</view>
 			</view>
 		</view>
@@ -83,8 +92,12 @@
 			},
 			bindToProtocal(e) {
 				// 查看许可条款
+				let str = '';
+				if(util.getType(e) !== 'object') {
+					str = e;
+				}
 				util.goUrl({
-					url: './protocal'
+					url: './protocal' + str
 				});
 			},
 			saveOrder() {

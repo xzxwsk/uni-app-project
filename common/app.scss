@@ -21,6 +21,9 @@ uni-tabbar {
 		}
 	}
 }
+uni-radio:not([disabled]) {
+	.uni-radio-input:hover{border-color: rgb(242, 48, 48);}
+}
 .status_bar {
 	height: var(--status-bar-height);
 	width: 100%;
@@ -361,6 +364,9 @@ uni-toast{z-index: 100000;}
 			&:last-child{border: none;}
 		}
 		.protocal{margin: 0 0 0 200upx;}
+		.protocal_a{margin: 0 0 0 260upx;}
+		.protocal_row_radio{border: none;}
+		.protocal_row{min-height: 70upx; border: none;}
 	}
 	.input-group{border-top: 20px rgb(248, 248, 248) solid;
 		&:first-child{border: none;}

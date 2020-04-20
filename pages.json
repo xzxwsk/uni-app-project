@@ -347,7 +347,23 @@
 		}, {
 			"path": "pages/user/protocal",
 			"style": {
-				"navigationBarTitleText": "许可协议",
+				"navigationBarTitleText": "销售守则",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/protocal2",
+			"style": {
+				"navigationBarTitleText": "市场销售准则",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/protocal3",
+			"style": {
+				"navigationBarTitleText": "奖金与福利制度表",
 				"app-plus": {
 					"bounce": "none"
 				}

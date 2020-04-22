@@ -22,7 +22,7 @@
 				<view class="input-group">
 					<view class="input-row border">
 						<text class="title">账号：</text>
-						<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['帐号不能为空']" class="input-box" clearable focus :inputValue="account" v-model="account" placeholder="请输入经销商编号或身份证号"></input-box>
+						<input-box ref="input1" type="text" :verification="['isNull']" :verificationTip="['帐号不能为空']" class="input-box" clearable focus :inputValue="account" v-model="account" placeholder="请输入身份证号"></input-box>
 					</view>
 					<view class="input-row">
 						<text class="title">密码：</text>

@@ -150,17 +150,19 @@
 					</view>
 					<view class="input-row border">
 						<text class="title">推荐人编号：</text>
-						<view :class="'info' + (title === '确定' ? ' input_box' : '')">
+						<text class="info">{{modifyUserInfo.AboveDealerNo}}</text>
+						<!-- <view :class="'info' + (title === '确定' ? ' input_box' : '')">
 							<input-box v-if="title === '确定'" type="text" ref="aboveDealerNo" clearable :inputValue="modifyUserInfo.AboveDealerNo" v-model="modifyUserInfo.AboveDealerNo" placeholder="请输入推荐人编号"></input-box>
 							<text v-else>{{modifyUserInfo.AboveDealerNo}}</text>
-						</view>
+						</view> -->
 					</view>
 					<view class="input-row border">
 						<text class="title">推荐人姓名：</text>
-						<view :class="'info' + (title === '确定' ? ' input_box' : '')">
+						<text class="info">{{modifyUserInfo.AboveDealerName}}</text>
+						<!-- <view :class="'info' + (title === '确定' ? ' input_box' : '')">
 							<input-box v-if="title === '确定'" type="text" ref="aboveDealerName" clearable :inputValue="modifyUserInfo.AboveDealerName" v-model="modifyUserInfo.AboveDealerName" placeholder="请输入推荐人姓名"></input-box>
 							<text v-else>{{modifyUserInfo.AboveDealerName}}</text>
-						</view>
+						</view> -->
 					</view>
 					<view class="input-row border">
 						<text class="title">备注：</text>

@@ -48,12 +48,17 @@
 					{
 						name: '密码修改',
 						url: 'login/pwd',
-						icon: 'paperplane'
+						icon: 'refreshempty'
 					},
 					{
 						name: '关于纤畅',
 						url: 'about/about',
-						icon: 'paperplane'
+						icon: 'info'
+					},
+					{
+						name: '联系客服',
+						url: 'about/contactus',
+						icon: 'gear'
 					}
 				]
 			}

@@ -94,15 +94,21 @@
 						<view class="uni-list-cell">
 							<view class="uni-list-cell-navigate">
 								<text class="item-title"><text>收款方账户</text></text>
-								<input-box v-model="billObj.ReceiveAccountInfo" ref="ReceiveAccountInfo" disabled></input-box>
+								<input-box v-model="billObj.ReceiveAccountInfo" ref="ReceiveAccountInfo" :clearShow="false" disabled></input-box>
 							</view>
 						</view>
-						<!-- <view class="uni-list-cell">
+						<view class="uni-list-cell">
 							<view class="uni-list-cell-navigate">
-								<text class="item-title"><text>付款方账户信息</text></text>
-								<input-box v-model="billObj.PayAccountInfo" ref="PayAccountInfo" placeholder="请输入付款方账户信息"></input-box>
+								<text class="item-title"><text>收款方联系方式</text></text>
+								<input-box v-model="billObj.ReceivorInfo" ref="ReceivorInfo" :clearShow="false" disabled></input-box>
 							</view>
-						</view> -->
+						</view>
+						<view class="uni-list-cell" v-if="billObj.PayType === 3">
+							<view class="uni-list-cell-navigate">
+								<text class="item-title"><text>收款二维码</text></text>
+								<image mode="aspectFit" class="uni-uploader__img" :src="qrcode" :data-src="qrcode" @tap="previewImage"></image>
+							</view>
+						</view>
 					</block>
 				</block>
 			</view>
@@ -180,7 +186,7 @@
 				showImg: false,
 				placeholder: '请输入收款人微信账号',
 				orderLs: [],
-				// freight: 212,
+				qrcode: '',
 				billObj: {
 					"Items": []  /*订单明细*/,
 					"RecordId": ""  /*单据Id*/,
@@ -428,8 +434,16 @@
 						if(res.data.result.PayAccountName) {
 							this.$refs.PayAccountName.setValue(res.data.result.PayAccountName);
 						}
+						this.qrcode = util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.PayCodeFileName;
 					})
 				}
+			},
+			previewImage(e) {
+				var current = e.target.dataset.src
+				uni.previewImage({
+					current: 0,
+					urls: [current]
+				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

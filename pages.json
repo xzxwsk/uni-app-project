@@ -377,6 +377,14 @@
 				}
 			}
 		}, {
+			"path": "pages/about/contactus",
+			"style": {
+				"navigationBarTitleText": "联系客服",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/user/baseInfo",
 			"style": {
 				"navigationBarTitleText": "基本信息",

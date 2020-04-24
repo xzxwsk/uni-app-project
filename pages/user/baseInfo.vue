@@ -126,10 +126,10 @@
 						<view class="info">
 							<view class="uni-uploader-body">
 								<view class="uni-uploader__files">
-									<view v-if="title === '确定'" class="uni-uploader__file">
+									<view v-if="alipayImg != ''" class="uni-uploader__file">
 										<image mode="aspectFit" class="uni-uploader__img" :src="alipayImg" :data-src="alipayImgSrc" @tap="previewImage"></image>
 									</view>
-									<view v-if="alipayImg != ''" class="uni-uploader__input-box">
+									<view v-if="title === '确定'" class="uni-uploader__input-box">
 										<view class="uni-uploader__input" @tap="chooseImage('alipay')"></view>
 									</view>
 								</view>
@@ -148,10 +148,10 @@
 						<view class="info">
 							<view class="uni-uploader-body">
 								<view class="uni-uploader__files">
-									<view v-if="title === '确定'" class="uni-uploader__file">
+									<view v-if="wxImg != ''" class="uni-uploader__file">
 										<image mode="aspectFit" class="uni-uploader__img" :src="wxImg" :data-src="wxImgSrc" @tap="previewImage"></image>
 									</view>
-									<view v-if="wxImg != ''" class="uni-uploader__input-box">
+									<view v-if="title === '确定'" class="uni-uploader__input-box">
 										<view class="uni-uploader__input" @tap="chooseImage('wx')"></view>
 									</view>
 								</view>
@@ -232,7 +232,12 @@
 		computed: {
 			...mapState(['hasLogin', 'userInfo']),
 			birthDayStr() {
-				return util.formatDate(this.modifyUserInfo.BirthDay, 'yyyy-MM-dd');
+				let dateStr = util.formatDate(this.modifyUserInfo.BirthDay, 'yyyy-MM-dd');
+				let year = Number(dateStr.split('-')[0]);
+				if(year < 1900) {
+					dateStr = util.formatDate(new Date(), 'yyyy-MM-dd');
+				}
+				return dateStr;
 			},
 			stateStr() {
 				let state = {

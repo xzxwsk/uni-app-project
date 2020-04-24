@@ -23,6 +23,19 @@
 					<input-box ref="micromsgNo" v-model="billObj.MicromsgNo" placeholder="微信帐号"></input-box>
 				</view>
 				<view class="input-row">
+					<text class="title">微信收款码：</text>
+					<view class="uni-uploader-body">
+						<view class="uni-uploader__files">
+							<view class="uni-uploader__file" v-if="wxQrcode != ''">
+								<image mode="aspectFit" class="uni-uploader__img" :src="wxQrcode" :data-src="wxQrcodeSrc" @tap="previewImage"></image>
+							</view>
+							<view class="uni-uploader__input-box">
+								<view class="uni-uploader__input" @tap="chooseImage"></view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="input-row">
 					<text class="title">备注：</text>
 					<input-box ref="remark" v-model="billObj.Remark" placeholder="备注信息"></input-box>
 				</view>
@@ -59,6 +72,7 @@
 		data() {
 			return {
 				protocal: false,
+				wxQrcode: '',
 				billObj: {}
 			}
 		},

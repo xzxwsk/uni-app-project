@@ -120,10 +120,42 @@
 							<input-box v-if="title === '确定'" type="text" ref="alipayAccNo" clearable :inputValue="modifyUserInfo.AlipayAccNo" v-model="modifyUserInfo.AlipayAccNo" placeholder="请输入支付宝帐号"></input-box>
 							<text v-else>{{modifyUserInfo.AlipayAccNo}}</text>
 						</view>
+					</view>
+					<view class="input-row border">
+						<text class="title">支付宝收款码：</text>
+						<view class="info">
+							<view class="uni-uploader-body">
+								<view class="uni-uploader__files">
+									<view v-if="title === '确定'" class="uni-uploader__file">
+										<image mode="aspectFit" class="uni-uploader__img" :src="alipayImg" :data-src="alipayImgSrc" @tap="previewImage"></image>
+									</view>
+									<view v-if="alipayImg != ''" class="uni-uploader__input-box">
+										<view class="uni-uploader__input" @tap="chooseImage('alipay')"></view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="input-row border">
 						<text class="title">微信帐号：</text>
 						<view :class="'info' + (title === '确定' ? ' input_box' : '')">
 							<input-box v-if="title === '确定'" type="text" ref="micromsgNo" clearable :inputValue="modifyUserInfo.MicromsgNo" v-model="modifyUserInfo.MicromsgNo" placeholder="请输入微信帐号"></input-box>
 							<text v-else>{{modifyUserInfo.MicromsgNo}}</text>
+						</view>
+					</view>
+					<view class="input-row border">
+						<text class="title">微信收款码：</text>
+						<view class="info">
+							<view class="uni-uploader-body">
+								<view class="uni-uploader__files">
+									<view v-if="title === '确定'" class="uni-uploader__file">
+										<image mode="aspectFit" class="uni-uploader__img" :src="wxImg" :data-src="wxImgSrc" @tap="previewImage"></image>
+									</view>
+									<view v-if="wxImg != ''" class="uni-uploader__input-box">
+										<view class="uni-uploader__input" @tap="chooseImage('wx')"></view>
+									</view>
+								</view>
+							</view>
 						</view>
 					</view>
 					<view class="input-row border">
@@ -230,6 +262,10 @@
 					Mobile: '',
 					Address: '请选择家庭地址'
 				},
+				alipayImg: '',
+				alipayImgSrc: '',
+				wxImg: '',
+				wxImgSrc: '',
 				modifyUserInfo: {
 					"DealerId": ""  /*经销商ID*/,
 					"AboveDealerId": ""  /*推荐人ID*/,
@@ -349,6 +385,185 @@
 			},
 			bindChangeDimissionDate(value) {
 				this.modifyUserInfo.DimissionDate = value;
+			},
+			scaleImg(src) {
+				return new Promise((resolve, reject) => {
+					uni.getImageInfo({
+						src: src,
+						success(res) {
+							console.log('scaleImg image info: ', res);
+							resolve(res);
+						},
+						fail(err) {
+							reject(err);
+						}
+					});
+				});
+			},
+			compressImage(src, imgScale) {
+				return new Promise((resolve, reject) => {
+					let arr = src.split('/');
+					let fileName = arr[arr.length-1];
+					let fileNameArr = fileName.split('.');
+					let path = arr.slice(0, arr.length-1);
+					let width = imgScale.width;
+					let height = imgScale.height;
+					const standard = '800px';
+					if(width > height) {
+						width = standard;
+						height = 'auto';
+					} else {
+						width = 'auto';
+						height = standard;
+					}
+					console.log('width:', width, ' height:', height);
+					plus.zip.compressImage({
+						src: src,
+						dst: path.join('/') + '/' + fileNameArr.slice(0, fileNameArr.length-1).join('.') + '_compress.' + fileNameArr[fileNameArr.length-1],
+						overwrite: true,
+						quality: 70,
+						width: width,
+						height: height
+					}, res => {
+						console.log('plus zip compressImage: ', res);
+						resolve(res);
+					}, err => {
+						console.log('plus zip compressImage err: ', err);
+						reject(err);
+					});
+				});
+			},
+			previewImage(e) {
+				var current = e.target.dataset.src
+				uni.previewImage({
+					current: 0,
+					urls: [current]
+				})
+			},
+			uploadFile(file) {
+				return new Promise((resolve, reject) => {
+					uni.uploadFile({
+						url: util.getBaseUrl() + 'files/uploadfile',
+						filePath: file,
+						name: 'file',
+						formData: {},
+						success: data => {
+							let uploadFileRes = JSON.parse(data.data);
+							if(uploadFileRes.state === 0) {
+								resolve(uploadFileRes.fileName);
+							} else {
+								reject(data.data);
+							}
+						},
+						fail(err) {
+							reject(err);
+						}
+					});
+				});
+			},
+			async chooseImage(e) {
+				uni.chooseImage({
+					sourceType: ['album', 'camera'],
+					sizeType: ['original'],
+					count: 1,
+					success: res => {
+						console.log(res, res.tempFiles[0].size, res.tempFiles[0].size > 204800);
+						// #ifdef APP-PLUS
+						// 获取图片宽高
+						this.scaleImg(res.tempFilePaths[0])
+						.then(imgScaled => {
+							// 并设置缩放比例进行压缩
+							this.compressImage(res.tempFilePaths[0], imgScaled)
+							.then(tempFilePath => {
+								console.log(tempFilePath);
+								console.log(tempFilePath.size, res.tempFiles[0].size, tempFilePath.size > res.tempFiles[0].size);
+								let useImage = '';
+								if(tempFilePath.size > res.tempFiles[0].size) {
+									// 压缩后比原来还大
+									// 使用原来的
+									useImage = res.tempFilePaths[0];
+								} else {
+									// 使用新图片
+									useImage = tempFilePath.target;
+								}
+								console.log('useImage: ', useImage);
+								this.uploadFile(useImage)
+								.then(uploadFileRes => {
+									if(e === 'alipay') {
+										this.$set(this.modifyUserInfo, 'AlipayPayCodeFileName', uploadFileRes);
+									} else if(e === 'wx') {
+										this.$set(this.modifyUserInfo, 'MicromsgPayCodeFileName', uploadFileRes);
+									}
+									this.urlToBase64(useImage)
+									.then(baseRes => {
+										// 转化后的base64图片地址
+										if(e === 'alipay') {
+											this.alipayImg = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes;
+											this.alipayImgSrc = useImage;
+										} else if(e === 'wx') {
+											this.wxImg = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes;
+											this.wxImgSrc = useImage;
+										}
+									});
+								})
+								.catch(err => {
+									console.log('err: ', err);
+								});
+							})
+							.catch(err => {
+								console.log('err: ', err);
+							});
+						})
+						.catch(err => {
+							console.log('err: ', err);
+						});
+						// #endif
+						// #ifdef H5
+						this.urlToBase64(res.tempFilePaths[0])
+						.then(baseRes => {
+							// 转化后的base64图片地址
+							if(e === 'alipay') {
+								this.alipayImg = baseRes;
+								this.alipayImgSrc = baseRes;
+							} else {
+								
+							}
+						});
+						// #endif
+					}
+				});
+			},
+			urlToBase64(url) {
+			  return new Promise ((resolve,reject) => {
+				// #ifdef APP-PLUS
+				plus.io.resolveLocalFileSystemURL(url, function(entry){
+				  	// 可通过entry对象操作test.html文件
+				  	entry.file( function(file){
+				  		let fileReader = new plus.io.FileReader();
+				  		fileReader.onloadend = function(evt) {
+				  			const data = fileReader.result;
+							console.log('APP-PLUS');
+				  			resolve(data);
+				  		}
+				  		fileReader.readAsDataURL( file );
+				  	});
+				});
+				// #endif
+				// #ifdef H5
+				fetch(url).then(data=>{
+					const blob = data.blob();
+					return blob;
+				}).then(blob=>{
+					let reader = new window.FileReader();
+					reader.onloadend = function() {
+						const data = reader.result;
+						console.log('H5');
+						resolve(data);
+					};
+					reader.readAsDataURL(blob);
+				});
+				// #endif
+			  });
 			},
 			save() {
 				let me = this;

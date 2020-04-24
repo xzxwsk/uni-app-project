@@ -97,19 +97,13 @@
 								<input-box v-model="billObj.ReceiveAccountInfo" ref="ReceiveAccountInfo" :clearShow="false" disabled></input-box>
 							</view>
 						</view>
-						<view class="uni-list-cell">
-							<view class="uni-list-cell-navigate">
-								<text class="item-title"><text>收款方联系方式</text></text>
-								<input-box v-model="billObj.ReceivorInfo" ref="ReceivorInfo" :clearShow="false" disabled></input-box>
-							</view>
-						</view>
-						<view class="uni-list-cell" v-if="billObj.PayType === 3">
-							<view class="uni-list-cell-navigate">
-								<text class="item-title"><text>收款二维码</text></text>
-								<image mode="aspectFit" class="uni-uploader__img" :src="qrcode" :data-src="qrcode" @tap="previewImage"></image>
-							</view>
-						</view>
 					</block>
+					<view class="uni-list-cell">
+						<view class="uni-list-cell-navigate">
+							<text class="item-title"><text>收款方联系方式</text></text>
+							<input-box v-model="billObj.ReceivorInfo" ref="ReceivorInfo" :clearShow="false" disabled></input-box>
+						</view>
+					</view>
 				</block>
 			</view>
 		</scroll-view>

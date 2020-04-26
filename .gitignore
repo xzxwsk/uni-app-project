@@ -1,4 +1,7 @@
 /效果图
-/unpackage
 ~$*.*
 /wxcomponents
+/unpackage/dist
+/unpackage/resources
+/unpackage/debug
+/unpackage/release

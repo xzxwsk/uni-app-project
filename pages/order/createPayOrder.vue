@@ -45,6 +45,14 @@
 					<text>{{billObj.ReceiveAccountInfo}}</text>
 				</view>
 			</block>
+			<view class="input-row">
+				<text class="title">对方联系方式：</text>
+				<text>{{billObj.ReceivorInfo}}</text>
+			</view>
+			<view class="input-row" v-if="billObj.PayType === 2 || billObj.PayType === 3">
+				<text class="title">收款码：</text>
+				<image mode="aspectFit" class="uni-uploader__img" :src="billObj.PayCodeFileNameStr" :data-src="billObj.PayCodeFileNameStr" @tap="previewImage"></image>
+			</view>
 		</view>
 		<view class="result">
 			<button class="btn" :disabled="saving" type="warn" @click="saveOrder">保存</button>
@@ -166,6 +174,8 @@
 					this.billObj.payBank = res.data.result.payBank;
 					this.billObj.PayAccountName = res.data.result.PayAccountName;
 					this.billObj.ReceiveAccountInfo = res.data.result.ReceiveAccountInfo;
+					this.billObj.ReceivorInfo = res.data.result.ReceivorInfo;
+					this.billObj.PayCodeFileNameStr = util.getBaseUrl() + 'files/downloadfile?filename=' + this.billObj.PayCodeFileName;
 					if (this.$refs.payAccountNo) {
 						this.$refs.payAccountNo.setValue(res.data.result.PayAccountNo);
 					}
@@ -205,8 +215,6 @@
 					this.placeholder = '请输入付款人银行帐号';
 					this.placeholder2 = '请输入收款人银行帐号';
 				}
-				console.log(this.billObj.AccountType);
-				debugger;
 				this.getDefaultPayInfo(this.billObj.AccountType);
 			},
 			changeRepayDealer(e) {
@@ -222,6 +230,13 @@
 				if(this.$refs.amount) {
 					this.$refs.amount.setValue(selectRepayDealer.Amount);
 				}
+			},
+			previewImage(e) {
+				var current = e.target.dataset.src
+				uni.previewImage({
+					current: 0,
+					urls: [current]
+				})
 			},
 			saveOrder() {
 				let me = this;

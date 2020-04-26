@@ -40,7 +40,7 @@ uni-radio:not([disabled]) {
 	height: 100%;
 }
 .input-row{display: flex; flex-direction: row; justify-content: flex-start; align-items: center; position: relative; min-height: 100upx; background-color: #FFF; border-bottom: solid #EEE 0.05rem;
-	.title{margin: 0 0 0 20upx; min-width: 150upx; display: flex; flex-direction: column; justify-content: center; color: #444; text-align: right;}
+	.title{margin: 0 20upx; min-width: 150upx; display: flex; flex-direction: column; justify-content: center; color: #444; text-align: right;}
 	.input_box{flex: 1; display: flex; flex-direction: row; justify-content: flex-start; align-items: center; padding: 0 11px;
 		.ipt{flex: 1;}
 	}
@@ -111,7 +111,7 @@ uni-toast{z-index: 100000;}
 			.input-box-clear{font-size: 66upx;}
 			input{margin-top: 15px; height: 30px; font-size: 48upx;}
 		}
-		.uni-input-input, .uni-input-placeholder{height: 60px; font-size: 40upx;}
+		.uni-input-input, .uni-input-placeholder{height: 60px; line-height: 60px; font-size: 40upx;}
 		.voli_code_ipt{
 			input{margin-top: 15px; height: 30px; font-size: 48upx;}
 			.input-box-clear{margin: 0 20upx 0 5px;}

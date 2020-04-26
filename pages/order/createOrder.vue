@@ -94,14 +94,20 @@
 						<view class="uni-list-cell">
 							<view class="uni-list-cell-navigate">
 								<text class="item-title"><text>收款方账户</text></text>
-								<input-box v-model="billObj.ReceiveAccountInfo" ref="ReceiveAccountInfo" :clearShow="false" disabled></input-box>
+								<text>{{billObj.ReceiveAccountInfo}}</text>
 							</view>
 						</view>
 					</block>
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">
 							<text class="item-title"><text>收款方联系方式</text></text>
-							<input-box v-model="billObj.ReceivorInfo" ref="ReceivorInfo" :clearShow="false" disabled></input-box>
+							<text>{{billObj.ReceivorInfo}}</text>
+						</view>
+					</view>
+					<view class="uni-list-cell" v-if="billObj.PayType === 2 || billObj.PayType === 3">
+						<view class="uni-list-cell-navigate">
+							<text class="item-title"><text>收款码</text></text>
+							<image mode="aspectFit" class="uni-uploader__img" :src="qrcode" :data-src="qrcode" @tap="previewImage"></image>
 						</view>
 					</view>
 				</block>
@@ -413,9 +419,7 @@
 						this.billObj = util.extend(this.billObj, res.data.result);
 						// this.$set(this.billObj, 'PayType', (res.data.result.PayType === 0 ? res.data.result.PayType : (res.data.result.PayType || 1)));
 						this.$set(this.billObj, 'ReceiveAccountInfo', (res.data.result.ReceiveAccountInfo || ''));
-						if(res.data.result.ReceiveAccountInfo) {
-							this.$refs.ReceiveAccountInfo.setValue(res.data.result.ReceiveAccountInfo);
-						}
+						this.$set(this.billObj, 'ReceivorInfo', (res.data.result.ReceivorInfo || ''));
 						this.$set(this.billObj, 'PayBank', (res.data.result.PayBank || ''));
 						if(res.data.result.PayBank) {
 							this.$refs.PayBank.setValue(res.data.result.PayBank);

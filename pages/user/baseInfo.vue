@@ -364,6 +364,10 @@
 					this.modifyUserInfo[key] = this.userInfo[key];
 				}
 			}
+			this.alipayImg = util.getBaseUrl() + 'files/downloadfile?filename=' + this.userInfo.AlipayPayCodeFileName;
+			this.alipayImgSrc = this.alipayImg;
+			this.wxImg = util.getBaseUrl() + 'files/downloadfile?filename=' + this.userInfo.MicromsgPayCodeFileName;
+			this.wxImgSrc = this.wxImg;
 		},
 		watch: {
 			addr(oldVal, newVal) {

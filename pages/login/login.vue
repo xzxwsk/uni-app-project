@@ -40,6 +40,9 @@
 				<view class="btn-row">
 					<button type="warn" @tap="bindLogin">登录</button>
 				</view>
+				<view class="btn-row">
+					<button type="default" @tap="bindReg">注册</button>
+				</view>
 				<!-- <view class="action-row">
 					<navigator url="./reg">注册账号</navigator>
 					<text class="split">|</text>
@@ -379,6 +382,19 @@
 					    // mask: true
 					});
 				}
+			},
+			bindReg() {
+				uni.scanCode({
+					scanType: 'qrCode',
+				    onlyFromCamera: true,
+				    success: function (res) {
+				        console.log('条码类型：' + res.scanType);
+				        console.log('条码内容：' + res.result);
+						util.goUrl({
+							url: res.result
+						});
+				    }
+				});
 			},
 			initSetAccount() {
 				let account = util.getStorageSync('userName');

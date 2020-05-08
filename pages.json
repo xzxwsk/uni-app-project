@@ -385,6 +385,14 @@
 				}
 			}
 		}, {
+			"path": "pages/about/qrcode",
+			"style": {
+				"navigationBarTitleText": "我的二维码",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/user/baseInfo",
 			"style": {
 				"navigationBarTitleText": "基本信息",

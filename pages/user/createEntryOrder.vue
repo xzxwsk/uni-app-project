@@ -152,6 +152,8 @@
 		onLoad(option) {
 			if(option.id) {
 				this.setDetail(option.id);
+			} else if(option.AboveDealerId) {
+				this.getDefault(option.AboveDealerId);
 			} else {
 				this.getDefault();
 			}
@@ -192,12 +194,19 @@
 					this.setInfo();
 				});
 			},
-			getDefault() {
+			getDefault(AboveDealerId) {
 				let me = this;
 				util.showLoading();
+				let prompt = {};
+				let method = 'Businese.BillJoinDAL.CreateDefault';
+				if(AboveDealerId) {
+					prompt.AboveDealerId = AboveDealerId;
+					method = 'Businese.BillJoinDAL.CreateDefaultByRegister';
+				}
 				// 单据ID初始化
 				util.ajax({
-					method: 'Businese.BillJoinDAL.CreateDefault',
+					method: method,
+					params: prompt,
 					tags: {
 						usertoken: this.openid
 					}

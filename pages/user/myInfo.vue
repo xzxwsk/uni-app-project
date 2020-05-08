@@ -59,6 +59,11 @@
 						name: '联系客服',
 						url: 'about/contactus',
 						icon: 'gear'
+					},
+					{
+						name: '我的二维码',
+						url: 'about/qrcode',
+						icon: 'pengyouquan'
 					}
 				]
 			}

@@ -34,14 +34,14 @@
 					</view>
 					<view class="input-row" style="height: 60px;">
 						<text class="title"></text>
-						<view class="voli_code_img"><image style="width: 100%; height: 50px;" mode="aspectFill" :src="voliCodeSrc" @click="resetVoliCode"></image></view>
+						<view class="voli_code_img"><image style="width: 100%; height: 60px;" mode="aspectFit" :src="voliCodeSrc" @click="resetVoliCode"></image></view>
 					</view>
 				</view>
 				<view class="btn-row">
 					<button type="warn" @tap="bindLogin">登录</button>
 				</view>
 				<view class="btn-row">
-					<button type="default" @tap="bindReg">注册</button>
+					<button type="default" @tap="bindReg">扫码注册</button>
 				</view>
 				<!-- <view class="action-row">
 					<navigator url="./reg">注册账号</navigator>
@@ -115,6 +115,7 @@
 			this.interfaceAddr = util.getBaseUrl();
 			this.initSetAccount();
 			// this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
+			
 			// let sessionId = util.getStorageSync('session_id');
 			// if (sessionId) {
 			// 	this.autoLogin(sessionId);
@@ -385,7 +386,7 @@
 			},
 			bindReg() {
 				uni.scanCode({
-					scanType: 'qrCode',
+					scanType: ['qrCode'],
 				    onlyFromCamera: true,
 				    success: function (res) {
 				        console.log('条码类型：' + res.scanType);

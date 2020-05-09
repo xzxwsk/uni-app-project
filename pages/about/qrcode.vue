@@ -24,7 +24,7 @@
 			}
 		},
 		onLoad() {
-			this.qrcodeStr = '../user/createEntryOrder?AboveDealerId' + this.userInfo.DealerId
+			this.qrcodeStr = '../user/createEntryOrder?AboveDealerId=' + this.userInfo.DealerId
 		},
 		methods: {
 			qrR(e) {

@@ -48,11 +48,11 @@
 				<input-box ref="linkManTel" v-model="billObj.LinkManTel" placeholder="联系人电话"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">密码：</text>
+				<text class="title"><text class="price">*</text>密码：</text>
 				<input-box type="password" ref="password" displayable v-model="billObj.Password" placeholder="请输入密码"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">确认密码：</text>
+				<text class="title"><text class="price">*</text>确认密码：</text>
 				<input-box type="password" ref="confirmPassword" displayable v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
 			</view>
 		</view>

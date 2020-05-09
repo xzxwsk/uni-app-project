@@ -150,6 +150,8 @@
 			}
 		},
 		onLoad(option) {
+			console.log('createEntryOrder option: ');
+			console.log(option);
 			if(option.id) {
 				this.setDetail(option.id);
 			} else if(option.AboveDealerId) {
@@ -216,6 +218,9 @@
 					me.billObj = res.data.result;
 					me.billObj.BillDate = util.formatDate(me.billObj.BillDate, 'yyyy-MM-dd');
 					me.billObj.BirthDay = me.billObj.BirthDay || '请选择日期';
+					if(AboveDealerId) {
+						me.billObj.isQrcode = true;
+					}
 					me.$refs.billCode.setValue(res.data.result.BillCode);
 					me.$refs.billDate.setValue(res.data.result.BillDate);
 					me.$refs.dealerNo.setValue(res.data.result.DealerNo);

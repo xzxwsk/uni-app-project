@@ -128,6 +128,7 @@
 				});
 			},
 			saveOrder() {
+				let me = this;
 				let arr = ['Sex', 'State', 'ChangeType', 'iState'];
 				for(let key in this.billObj) {
 					if (arr.indexOf(key) !== -1) {
@@ -145,14 +146,18 @@
 				util.showLoading();
 				let method = 'Businese.BillJoinDAL.Create';
 				let title = '创建成功';
-				if (this.billObj.RecordId !== '') {
+				if(this.billObj.isQrcode) {
+					title = '注册成功';
+				} else if (this.billObj.RecordId !== '') {
 					method = 'Businese.BillJoinDAL.Update';
 					title = '修改成功';
 				}
 				if(this.billObj.BirthDay === '请选择日期') {
 					this.billObj.BirthDay = '';
 				}
-				console.log('this.billObj: ', this.billObj);
+				console.log('this.billObj.isQrcode: ');
+				// console.log(this.billObj);
+				console.log(this.billObj.isQrcode)
 				util.ajax({
 					method: method,
 					params: {
@@ -168,9 +173,13 @@
 						title: title,
 						success() {
 							setTimeout(() => {
-								util.goUrl({
-									url: '../user/entryOrder'
-								});
+								if(me.billObj.isQrcode) {
+									uni.navigateTo();
+								} else {
+									util.redirectUrl({
+										url: '../user/entryOrder'
+									});
+								}
 							}, 1000);
 						}
 					});

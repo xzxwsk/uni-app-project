@@ -9,7 +9,7 @@
 				</radio-group>
 			</view>
 			<view class="input-row" v-if="billObj.AccountType === 2">
-				<text class="title">请选择经销商：</text>
+				<text class="title">请选择分销商：</text>
 				<radio-group class="pay_type" name="repayDealer" @change="changeRepayDealer">
 					<label class="label" v-for="(item, index) in repayDealer" :key="index"><radio :value="item.DealerId" :checked="billObj.RepayDealerId === item.DealerId" color="#f23030" />{{item.DealerName}}</label>
 				</radio-group>
@@ -74,7 +74,7 @@
 			return {
 				placeholder: '请输入收款人微信帐号',
 				placeholder2: '请输入收款人微信帐号',
-				repayDealer: [], // 代支付经销商列表
+				repayDealer: [], // 代支付分销商列表
 				selectRepayDealer: {},
 				saving: false,
 				billObj: {
@@ -82,9 +82,9 @@
 					"BillCode": ""  /*单据编号*/,
 					"BillDate": ""  /*单据日期*/,
 					"Amount": 0.0  /*付款金额*/,
-					"PayDealerId": ""  /*付款方经销商Id*/,
-					"PayDealerCode": ""  /*付款方经销商编号*/,
-					"PayDealerName": ""  /*付款方经销商姓名*/,
+					"PayDealerId": ""  /*付款方分销商Id*/,
+					"PayDealerCode": ""  /*付款方分销商编号*/,
+					"PayDealerName": ""  /*付款方分销商姓名*/,
 					"Remark": ""  /*备注*/,
 					"AccountType": 0  /*付款类别*/,
 					"PayType": 0  /*付款方式*/,
@@ -93,12 +93,12 @@
 					"PayBank": ""  /*付款银行*/,
 					"PayAccountNo": ""  /*付款账户*/,
 					"PayAccountName": ""  /*付款户名*/,
-					"RcvDealerId": ""  /*收款方经销商Id*/,
-					"RcvDealerCode": ""  /*收款方经销商编号*/,
-					"RcvDealerName": ""  /*收款方经销商姓名*/,
-					"RepayDealerId": ""  /*代付保证金经销商Id*/,
-					"RepayDealerCode": ""  /*代付保证金经销商编码*/,
-					"RepayDealerName": ""  /*代付保证金经销商名称*/,
+					"RcvDealerId": ""  /*收款方分销商Id*/,
+					"RcvDealerCode": ""  /*收款方分销商编号*/,
+					"RcvDealerName": ""  /*收款方分销商姓名*/,
+					"RepayDealerId": ""  /*代付保证金分销商Id*/,
+					"RepayDealerCode": ""  /*代付保证金分销商编码*/,
+					"RepayDealerName": ""  /*代付保证金分销商名称*/,
 					"State": 1  /*State*/,
 					"Creator": ""  /*录入人*/,
 					"CreatorName": ""  /*录入人姓名*/,
@@ -147,7 +147,7 @@
 				});
 			},
 			getRepayDealerLs() {
-				// 获取代支付经销商列表
+				// 获取代支付分销商列表
 				util.ajax({
 					method: 'Businese.BillPayDAL.GetDepositRepayDealer',
 					tags: {
@@ -218,7 +218,7 @@
 				this.getDefaultPayInfo(this.billObj.AccountType);
 			},
 			changeRepayDealer(e) {
-				// 选择代支付经销商
+				// 选择代支付分销商
 				let selectRepayDealer = this.repayDealer.find(item => {
 					return item.DealerId = e.target.value;
 				})

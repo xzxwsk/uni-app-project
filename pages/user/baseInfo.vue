@@ -159,7 +159,7 @@
 						</view>
 					</view>
 					<view class="input-row border">
-						<text class="title">经销商等级：</text>
+						<text class="title">分销商等级：</text>
 						<text class="info">{{modifyUserInfo.DealerLevelName}}</text>
 						<text class="title">状态：</text>
 						<text class="info">{{stateStr}}</text>
@@ -272,10 +272,10 @@
 				wxImg: '',
 				wxImgSrc: '',
 				modifyUserInfo: {
-					"DealerId": ""  /*经销商ID*/,
+					"DealerId": ""  /*分销商ID*/,
 					"AboveDealerId": ""  /*推荐人ID*/,
-					"DealerNo": ""  /*经销商编号*/,
-					"DealerName": ""  /*经销商姓名*/,
+					"DealerNo": ""  /*分销商编号*/,
+					"DealerName": ""  /*分销商姓名*/,
 					"BirthDay": "2020-02-15T10:18:41.13493+08:00"  /*生日*/,
 					"NativePlace": ""  /*籍贯*/,
 					"IDCardNo": ""  /*身份证号*/,
@@ -303,9 +303,9 @@
 					"State": 0  /*状态*/,
 					"Password": ""  /*登录密码*/,
 					"Locked": false  /*是否锁定*/,
-					"LevelId": ""  /*经销商等级*/,
+					"LevelId": ""  /*分销商等级*/,
 					"Used": false  /*是否已使用*/,
-					"LevelValidDate": "2020-02-15T10:18:41.13493+08:00"  /*经销商等级有效期*/,
+					"LevelValidDate": "2020-02-15T10:18:41.13493+08:00"  /*分销商等级有效期*/,
 					"DealerLevel": 1,
 					"AboveDealerNo": "",
 					"AboveDealerName": "",

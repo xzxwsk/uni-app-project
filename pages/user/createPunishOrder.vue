@@ -27,12 +27,12 @@
 				</radio-group>
 			</view>
 			<view class="input-row">
-				<text class="title">经销商编号：</text>
-				<input-box ref="dealerCode" v-model="billObj.DealerCode" :verification="['isNull']" :verificationTip="['经销商编号为空']"
-				 placeholder="经销商编号" @input="getNameOfCode"></input-box>
+				<text class="title">分销商编号：</text>
+				<input-box ref="dealerCode" v-model="billObj.DealerCode" :verification="['isNull']" :verificationTip="['分销商编号为空']"
+				 placeholder="分销商编号" @input="getNameOfCode"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">经销商姓名：</text>
+				<text class="title">分销商姓名：</text>
 				<input-box ref="dealerName" v-model="billObj.DealerName" placeholder="" disabled :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
@@ -77,9 +77,9 @@
 				  "RecordId": ""  /*单据Id*/,
 				  "BillCode": ""  /*单据编号*/,
 				  "BillDate": ""  /*单据日期*/,
-				  "DealerId": ""  /*经销商Id*/,
-				  "DealerCode": ""  /*经销商编号*/,
-				  "DealerName": ""  /*经销商姓名*/,
+				  "DealerId": ""  /*分销商Id*/,
+				  "DealerCode": ""  /*分销商编号*/,
+				  "DealerName": ""  /*分销商姓名*/,
 				  "Remark": ""  /*备注*/,
 				  "PenaliztionClassId": ""  /*处罚类别*/,
 				  "Description": ""  /*处罚说明*/,
@@ -170,7 +170,7 @@
 				console.log(value);
 			},
 			getNameOfCode(e) {
-				// 通过经销商编号获取姓名
+				// 通过分销商编号获取姓名
 				util.ajax({
 					method: 'SYS.DealerDAL.GetByCode',
 					params: {

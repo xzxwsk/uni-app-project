@@ -10,7 +10,7 @@
 				<input-box disabled ref="billDate" :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">经销商编号：</text>
+				<text class="title">分销商编号：</text>
 				<input-box disabled ref="dealerNo" :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">

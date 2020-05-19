@@ -10,7 +10,7 @@
 				<input-box disabled ref="billDate" :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">经销商编号：</text>
+				<text class="title">分销商编号：</text>
 				<input-box disabled ref="dealerNo" :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
@@ -99,8 +99,8 @@
 				  "BillCode": ""  /*单据编号*/,
 				  "BillDate": ""  /*单据日期*/,
 				  "AboveDealerId": ""  /*推荐人ID*/,
-				  "DealerNo": ""  /*经销商编号*/,
-				  "DealerName": ""  /*经销商姓名*/,
+				  "DealerNo": ""  /*分销商编号*/,
+				  "DealerName": ""  /*分销商姓名*/,
 				  "BirthDay": ""  /*生日*/,
 				  "NativePlace": ""  /*籍贯*/,
 				  "IDCardNo": ""  /*身份证号*/,
@@ -124,7 +124,7 @@
 				  "MicromsgNo": ""  /*微信账号*/,
 				  "Password": ""  /*登录密码*/,
 				  "Remark": ""  /*备注*/,
-				  "DealerId": ""  /*加盟后经销商Id*/,
+				  "DealerId": ""  /*加盟后分销商Id*/,
 				  "State": 0  /*State*/,
 				  "Creator": ""  /*录入人*/,
 				  "CreatorName": ""  /*录入人姓名*/,
@@ -155,6 +155,9 @@
 			if(option.id) {
 				this.setDetail(option.id);
 			} else if(option.AboveDealerId) {
+				uni.setNavigationBarTitle({
+					title: '分销商注册'
+				});
 				this.getDefault(option.AboveDealerId);
 			} else {
 				this.getDefault();
@@ -254,6 +257,7 @@
 			},
 			bindChangeBirthDay(value) {
 				// 生日
+				console.log(value);
 				this.$set(this.billObj, 'BirthDay', value);
 			},
 			changeSex(e) {

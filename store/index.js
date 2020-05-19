@@ -11,7 +11,7 @@ const store = new Vuex.Store({
 		openid: null,
 		userInfo: {},
 		changeNum: null,
-		billJoinDAL: null, // 缓存经销商加盟单信息
+		billJoinDAL: null, // 缓存分销商加盟单信息
 		consumeSelected: [] // 创建消费/零售记录时，保存
 	},
 	mutations: {

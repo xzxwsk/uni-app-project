@@ -97,6 +97,12 @@
 			// 	this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
 			// }
 			this.billObj = this.billJoinDAL;
+			console.log(this.billObj.isQrcode)
+			if(this.billObj.isQrcode) {
+				uni.setNavigationBarTitle({
+					title: '分销商注册'
+				});
+			}
 			if (this.billObj.Password !== '') {
 				this.confirmPassword = this.billObj.Password;
 			}

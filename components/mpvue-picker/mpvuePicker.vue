@@ -291,8 +291,8 @@
                             length; i++) {
                             pickerValueMulThreeThree.push(pickerValueArray[changeValue[0]].children[0].children[i]);
                         }
-                        changeValue[1] = 0;
-                        changeValue[2] = 0;
+						changeValue.splice(1, 1, 0);
+						changeValue.splice(2, 1, 0);
                         this.pickerValueMulThreeTwo = pickerValueMulThreeTwo;
                         this.pickerValueMulThreeThree = pickerValueMulThreeThree;
                     } else if (changeValue[1] !== this.pickerValue[1]) {
@@ -305,7 +305,7 @@
                             pickerValueMulThreeThree.push(pickerValueArray[changeValue[0]].children[changeValue[1]].children[
                                 i]);
                         }
-                        changeValue[2] = 0;
+						changeValue.splice(2, 1, 0);
                         this.pickerValueMulThreeThree = pickerValueMulThreeThree;
                     }
                     this.pickerValue = changeValue;

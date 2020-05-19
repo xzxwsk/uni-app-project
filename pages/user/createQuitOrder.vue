@@ -2,12 +2,12 @@
 	<view class="create_pay_order">
 		<view class="input-group">
 			<view class="input-row">
-				<text class="title">经销商编号：</text>
-				<input-box ref="dealerCode" v-model="billObj.DealerCode" placeholder="请输入经销商编号"></input-box>
+				<text class="title">分销商编号：</text>
+				<input-box ref="dealerCode" v-model="billObj.DealerCode" placeholder="请输入分销商编号"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">经销商姓名：</text>
-				<input-box ref="dealerName" v-model="billObj.DealerName" placeholder="请输入经销商姓名"></input-box>
+				<text class="title">分销商姓名：</text>
+				<input-box ref="dealerName" v-model="billObj.DealerName" placeholder="请输入分销商姓名"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">注销原因：</text>
@@ -36,9 +36,9 @@
 					"RecordId": ""  /*单据Id*/,
 				    "BillCode": ""  /*单据编号*/,
 					"BillDate": ""  /*单据日期*/,
-					"DealerId": ""  /*经销商Id*/,
-					"DealerCode": ""  /*经销商编号*/,
-					"DealerName": ""  /*经销商姓名*/,
+					"DealerId": ""  /*分销商Id*/,
+					"DealerCode": ""  /*分销商编号*/,
+					"DealerName": ""  /*分销商姓名*/,
 					"Remark": ""  /*备注*/,
 					"State": 1  /*State*/,
 					"Creator": ""  /*录入人*/,
@@ -62,7 +62,7 @@
 				let id = option.id;
 				this.init(id);
 				uni.setNavigationBarTitle({
-				    title: '修改经销商注销单'
+				    title: '修改分销商注销单'
 				});
 			} else {
 				this.createDefault();

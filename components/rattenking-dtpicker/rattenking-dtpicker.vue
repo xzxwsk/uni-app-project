@@ -158,6 +158,8 @@
 		methods: {
 			changeDate(e){
 			  let values = e.detail.value;
+			  console.log('changeDate: ');
+			  console.log(values);
 			  let times = this.times;
 			  let curarr = [];
 			  for (let i = 0, len = values.length; i < len; i++) {
@@ -167,6 +169,11 @@
 			  this.curValue = str;
 			},
 			columnchangeDate(e){
+				if(e.detail.value === 0) {
+					e.detail.value = 1;
+				}
+				console.log('columnchangeDate: ');
+				console.log(e.detail);
 				// 如果是年和月粒度，那么只需要改变时间格式的index，否则需要判断当月天数
 			  if ((this.fields === 'year' || this.fields === 'month')){
 					let timesIndex = GetDate.getNewArray(this.timesIndex);
@@ -180,21 +187,30 @@
 					if(e.detail.column === 0 || e.detail.column === 1){
 						let times = GetDate.getNewArray(this.times);
 						let timesIndex = GetDate.getNewArray(this.timesIndex);
-						timesIndex[e.detail.column] = e.detail.value;
+						console.log('timesIndex: ');
+						console.log(timesIndex);
+						// timesIndex[e.detail.column] = e.detail.value;
+						timesIndex.splice(e.detail.column, 1, e.detail.value);
 						let days = GetDate.getMonthDay(times[0][timesIndex[0]], times[1][timesIndex[1]]);
+						days.unshift('');
+						console.log('days: ');
+						console.log(days);
 						times[2] = days;
+						times.splice(2, 1, days);
 						if(timesIndex[2] > days.length - 1){
-							timesIndex[2] = days.length - 1;
+							timesIndex.splice(2, 1, days.length - 1);
 						}
 						this.times = times;
 						// let arr = GetDate.getCompare(GetDate.format(GetDate.getChooseArr(this.times,timesIndex)),this.start,this.end,this.times);
-						this.timesIndex = timesIndex;
+						console.log('timesIndex: ');
+						console.log(timesIndex);
+						this.timesIndex = GetDate.getNewArray(timesIndex);
 					}else{
 						let timesIndex = GetDate.getNewArray(this.timesIndex);
-						timesIndex[e.detail.column] = e.detail.value;
+						timesIndex.splice(e.detail.column, 1, e.detail.value);
 // 						let arr = GetDate.getCompare(GetDate.format(GetDate.getChooseArr(this.times,timesIndex)),this.start,this.end,this.times);
 // 						console.log(arr)
-						this.timesIndex = timesIndex;
+						this.timesIndex = GetDate.getNewArray(timesIndex);
 					}
 				}
 			},

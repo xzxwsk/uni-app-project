@@ -158,7 +158,7 @@
 		}, {
 			"path": "pages/user/entryOrder",
 			"style": {
-				"navigationBarTitleText": "经销商加盟单",
+				"navigationBarTitleText": "分销商加盟单",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -174,7 +174,7 @@
 		}, {
 			"path": "pages/user/entryOrderDetail",
 			"style": {
-				"navigationBarTitleText": "经销商加盟单详情",
+				"navigationBarTitleText": "分销商加盟单详情",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -190,7 +190,7 @@
 		}, {
 			"path": "pages/user/createEntryOrder",
 			"style": {
-				"navigationBarTitleText": "新增经销商加盟单",
+				"navigationBarTitleText": "新增分销商加盟单",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -206,7 +206,7 @@
 		}, {
 			"path": "pages/user/createEntryOrder2",
 			"style": {
-				"navigationBarTitleText": "新增经销商加盟单",
+				"navigationBarTitleText": "新增分销商加盟单",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -222,7 +222,7 @@
 		}, {
 			"path": "pages/user/createEntryOrder3",
 			"style": {
-				"navigationBarTitleText": "新增经销商加盟单",
+				"navigationBarTitleText": "新增分销商加盟单",
 				"app-plus": {
 					"bounce": "none"					
 				}
@@ -230,7 +230,7 @@
 		}, {
 			"path": "pages/user/quitOrder",
 			"style": {
-				"navigationBarTitleText": "经销商注销单",
+				"navigationBarTitleText": "分销商注销单",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -246,7 +246,7 @@
 		}, {
 			"path": "pages/user/createQuitOrder",
 			"style": {
-				"navigationBarTitleText": "新增经销商注销单",
+				"navigationBarTitleText": "新增分销商注销单",
 				"app-plus": {
 					"bounce": "none"
 				}

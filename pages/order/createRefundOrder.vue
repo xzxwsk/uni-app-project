@@ -59,9 +59,9 @@
 				  "BillCode": ""  /*单据编号*/,
 				  "BillDate": "2019-09-19T11:24:51.9472886+08:00"  /*单据日期*/,
 				  "Amount": 0.0  /*付款金额*/,
-				  "RcvDealerId": ""  /*收款方经销商Id*/,
-				  "RcvDealerCode": ""  /*收款方经销商编号*/,
-				  "RcvDealerName": ""  /*收款方经销商姓名*/,
+				  "RcvDealerId": ""  /*收款方分销商Id*/,
+				  "RcvDealerCode": ""  /*收款方分销商编号*/,
+				  "RcvDealerName": ""  /*收款方分销商姓名*/,
 				  "AccountType": 0  /*付款类别*/,
 				  "PayType": 0  /*付款方式*/,
 				  "ReceiveAccountInfo": ""  /*收款方账户信息*/,
@@ -80,9 +80,9 @@
 				  "AuditorName": ""  /*审核人姓名*/,
 				  "AuditTime": ""  /*审核时间*/,
 				  "StateChanged": false  /*状态是否发生过改变*/,
-				  "PayDealerId": ""  /*付款方经销商Id*/,
-				  "PayDealerCode": ""  /*付款方经销商编号*/,
-				  "PayDealerName": ""  /*付款方经销商姓名*/,
+				  "PayDealerId": ""  /*付款方分销商Id*/,
+				  "PayDealerCode": ""  /*付款方分销商编号*/,
+				  "PayDealerName": ""  /*付款方分销商姓名*/,
 				  "TimeStamp": ""  /*时间戳*/,
 				  "ChangeType": 0,
 				  "IdValues": [
@@ -134,7 +134,7 @@
 				});
 			},
 			getNameOfCode(e) {
-				// 通过经销商编号获取姓名
+				// 通过分销商编号获取姓名
 				util.ajax({
 					method: 'SYS.DealerDAL.GetByCode',
 					params: {

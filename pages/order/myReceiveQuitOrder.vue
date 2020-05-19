@@ -11,7 +11,7 @@
 				<swiper-item v-for="(itemLs, indexLs) in displayDataArr" :key="indexLs">
 					<view class="list">
 						<view class="search_box">
-							<!-- <input-box style="width: 200upx;" v-model="itemLs.searchKeyNo" placeholder="经销商编号"></input-box>
+							<!-- <input-box style="width: 200upx;" v-model="itemLs.searchKeyNo" placeholder="分销商编号"></input-box>
 							<input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box> -->
 							<view class="date_picker_box">
 								<customDatePicker class="date_picker" :ref="'startDate' + indexLs"
@@ -54,7 +54,7 @@
 									</view>
 									<view class="ls_item_top">
 										<view class="title">
-											<view><text class="gray">经销商编号:</text>{{item.DealerCode}}</view>
+											<view><text class="gray">分销商编号:</text>{{item.DealerCode}}</view>
 											<view><text class="gray">姓名:</text>{{item.DealerName}}</view>
 											<view><text class="gray">注销原因:</text>{{item.Remark}}</view>
 										</view>

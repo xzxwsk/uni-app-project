@@ -18,8 +18,8 @@
 								<view><text class="gray">姓名:</text>{{item.DealerName}}</view>
 								<view class="return_info" v-for="(subItem, subIndex) in item.PayReturnItems" v-if="item.State === 2 || item.State === 3">
 									<view><text class="gray">金额:</text><text class="price">￥{{subItem.Amount}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{subItem.PayTypeStr}}</text></view>
-									<view><text class="gray">退款经销商编号:</text>{{subItem.DealerCode}}</view>
-									<view><text class="gray">退款经销商姓名:</text>{{subItem.DealerName}}</view>
+									<view><text class="gray">退款分销商编号:</text>{{subItem.DealerCode}}</view>
+									<view><text class="gray">退款分销商姓名:</text>{{subItem.DealerName}}</view>
 									<view><text class="gray">退款类型:</text>{{['货款','保证金','代交保证金'][subItem.AccountType]}}</view>
 									<view><text class="gray">付款账户:</text>{{subItem.PayAccountNo}}</view>
 									<block v-if="subItem.PayType === 1">
@@ -63,9 +63,9 @@
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,
 					"BillDate": "2020-02-15T14:12:51.1542856+08:00"  /*单据日期*/,
-					"DealerId": ""  /*经销商Id*/,
-					"DealerCode": ""  /*经销商编号*/,
-					"DealerName": ""  /*经销商姓名*/,
+					"DealerId": ""  /*分销商Id*/,
+					"DealerCode": ""  /*分销商编号*/,
+					"DealerName": ""  /*分销商姓名*/,
 					"Remark": ""  /*备注*/,
 					"State": 1  /*State*/,
 					"Creator": ""  /*录入人*/,
@@ -87,9 +87,9 @@
 						"RecordId": ""  /*单据Id*/,
 						"AccountType": 0  /*退款类别*/,
 						"Amount": 0.0  /*退款金额*/,
-						"DealerId": ""  /*退款经销商Id*/,
-						"DealerCode": ""  /*退款经销商编号*/,
-						"DealerName": ""  /*退款经销商名称*/,
+						"DealerId": ""  /*退款分销商Id*/,
+						"DealerCode": ""  /*退款分销商编号*/,
+						"DealerName": ""  /*退款分销商名称*/,
 						"PayType": 0  /*退款方式*/,
 						"ReceiveAccountInfo": ""  /*收款方账户信息*/,
 						"PayBank": ""  /*付款银行*/,
@@ -183,7 +183,7 @@
 				});
 			},
 			bindConfirm(RecordId) {
-				// (5)	退款确认：注销单审核后，可以进行退款确认操作。确认退款后，经销商成为注销状态，不能再登录系统，不能再进行任何操作
+				// (5)	退款确认：注销单审核后，可以进行退款确认操作。确认退款后，分销商成为注销状态，不能再登录系统，不能再进行任何操作
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.BillLeaveDAL.Confirm',

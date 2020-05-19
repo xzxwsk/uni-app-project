@@ -10,7 +10,7 @@
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
 				<swiper-item>
 					<view class="search_box">
-						<input-box type="text" clearable focus v-model="searchKey" placeholder="请输入经销商编号或姓名"></input-box>
+						<input-box type="text" clearable focus v-model="searchKey" placeholder="请输入分销商编号或姓名"></input-box>
 						<button class="btn" type="warn" @click="query">查询</button>
 					</view>
 					<view class="con" v-if="tableList.length < 1">
@@ -49,7 +49,7 @@
 				</swiper-item>
 				<swiper-item>
 					<view class="search_box">
-						<input-box type="text" clearable focus v-model="searchKey2" placeholder="请输入经销商编号或姓名"></input-box>
+						<input-box type="text" clearable focus v-model="searchKey2" placeholder="请输入分销商编号或姓名"></input-box>
 						<view class="date_picker_box">
 							<customDatePicker class="date_picker"
 								fields="month"

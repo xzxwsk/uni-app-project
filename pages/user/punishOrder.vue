@@ -47,8 +47,8 @@
 										<view class="title">
 											<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
 											<view><text class="gray">处罚类别:</text>{{item.penaliztionClassStr}}</view>
-											<view><text class="gray">经销商编号:</text>{{item.DealerCode}}</view>
-											<view><text class="gray">经销商姓名:</text>{{item.DealerName}}</view>
+											<view><text class="gray">分销商编号:</text>{{item.DealerCode}}</view>
+											<view><text class="gray">分销商姓名:</text>{{item.DealerName}}</view>
 										</view>
 										<view class="status">
 											<text>{{item.stateStr}}</text>

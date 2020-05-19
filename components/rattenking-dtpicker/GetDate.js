@@ -119,6 +119,8 @@ const GetDate = {
     var seconds = GetDate.getLoopArray(0, 59);
     var times = null;
 
+	months.unshift('');
+	days.unshift('');
     switch (opts.fields) {
       case 'year':
         times = [years]

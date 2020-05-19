@@ -91,6 +91,11 @@
 		},
 		onLoad(option) {
 			this.billObj = this.billJoinDAL;
+			if(this.billObj.isQrcode) {
+				uni.setNavigationBarTitle({
+					title: '分销商注册'
+				});
+			}
 			console.log('3: ', this.billObj)
 		},
 		mounted() {
@@ -174,7 +179,9 @@
 						success() {
 							setTimeout(() => {
 								if(me.billObj.isQrcode) {
-									uni.navigateTo();
+									util.redirectUrl({
+										url: '../login/login'
+									});
 								} else {
 									util.redirectUrl({
 										url: '../user/entryOrder'

@@ -103,13 +103,13 @@
 				mode: 'widthFix',
 				pages: [
 					{
-						name: '经销商加盟单',
+						name: '分销商加盟单',
 						// subName: '显示个人资料，可以修改部分资料(卡号、身份证号、姓名不能修改)',
 						url: 'user/entryOrder',
 						changeNum: 0,
 					},
 					{
-						name: '经销商注销单',
+						name: '分销商注销单',
 						url: 'user/quitOrder',
 						changeNum: 0,
 					},
@@ -203,7 +203,7 @@
 				this.getCurPageChangeNum();
 			},
 			async getCurPageChangeNum() {
-				// 经销商加盟单
+				// 分销商加盟单
 				await util.ajax({
 					method: 'Businese.BillJoinDAL.GetChangedListCount',
 					params: {
@@ -215,7 +215,7 @@
 				}).then(res => {
 					this.pages[0].changeNum = res.data.result;
 				});
-				// 经销商注销单
+				// 分销商注销单
 				await util.ajax({
 					method: 'Businese.BillLeaveDAL.GetChangedListCount',
 					params: {
@@ -289,7 +289,7 @@
 						if (str !== '') {
 							str += '\n\n';
 						}
-						str += '类别： ' + ['货款','保证金','代交保证金'][item.AccountType] + '\n经销商名称：' + item.DealerName + '\n余额：' + item.Amount + '\n预留金额：' + item.ReservedAmount + '\n可用余额：' + item.AmountCanUse;
+						str += '类别： ' + ['货款','保证金','代交保证金'][item.AccountType] + '\n分销商名称：' + item.DealerName + '\n余额：' + item.Amount + '\n预留金额：' + item.ReservedAmount + '\n可用余额：' + item.AmountCanUse;
 					});
 					// 帐户余额
 					util.dialog({

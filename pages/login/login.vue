@@ -41,7 +41,7 @@
 					<button type="warn" @tap="bindLogin">登录</button>
 				</view>
 				<view class="btn-row">
-					<button type="default" @tap="bindReg">扫码注册</button>
+					<button type="default" @tap="bindReg">分销商注册</button>
 				</view>
 				<!-- <view class="action-row">
 					<navigator url="./reg">注册账号</navigator>
@@ -358,7 +358,7 @@
 						}
 					}).then(res => {
 						util.hideLoading();
-						console.log('经销商信息：', res.data);
+						console.log('分销商信息：', res.data);
 						res.data.result = util.jsonReplace(res.data.result, 'null', '""');
 						me.setUserInfo(res.data.result);
 						me.toMain(res.data.result.DealerName);
@@ -387,7 +387,6 @@
 			bindReg() {
 				uni.scanCode({
 					scanType: ['qrCode'],
-				    onlyFromCamera: true,
 				    success: function (res) {
 				        console.log('条码类型：' + res.scanType);
 				        console.log('条码内容：' + res.result);

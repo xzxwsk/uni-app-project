@@ -30,6 +30,7 @@
 									:start="startDate"
 									:end="endDate"
 									:value="birthDayStr"
+									@change="bindChangeBirthDay"
 								></customDatePicker>
 							</view>
 						</view>
@@ -604,6 +605,9 @@
 			},
 			confirmCalendar(e) {
 				this.modifyUserInfo.BirthDay = e.fulldate;
+			},
+			bindChangeBirthDay(e) {
+				this.modifyUserInfo.BirthDay = e;
 			}
         }
     }

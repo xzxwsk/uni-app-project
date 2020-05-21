@@ -169,9 +169,9 @@
 			  this.curValue = str;
 			},
 			columnchangeDate(e){
-				if(e.detail.value === 0) {
-					e.detail.value = 1;
-				}
+				// if(e.detail.value === 0) {
+				// 	e.detail.value = 1;
+				// }
 				console.log('columnchangeDate: ');
 				console.log(e.detail);
 				// 如果是年和月粒度，那么只需要改变时间格式的index，否则需要判断当月天数
@@ -192,7 +192,7 @@
 						// timesIndex[e.detail.column] = e.detail.value;
 						timesIndex.splice(e.detail.column, 1, e.detail.value);
 						let days = GetDate.getMonthDay(times[0][timesIndex[0]], times[1][timesIndex[1]]);
-						days.unshift('');
+						// days.unshift('');
 						console.log('days: ');
 						console.log(days);
 						times[2] = days;

@@ -14,6 +14,10 @@
 				<input-box disabled ref="dealerNo" :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
+				<text class="title">推荐人姓名：</text>
+				<input-box disabled ref="aboveName" :clearShow="false"></input-box>
+			</view>
+			<view class="input-row">
 				<text class="title"><text class="price">*</text>姓名：</text>
 				<input-box ref="dealerName" v-model="billObj.DealerName" placeholder="请输入姓名"></input-box>
 			</view>
@@ -227,6 +231,7 @@
 					me.$refs.billCode.setValue(res.data.result.BillCode);
 					me.$refs.billDate.setValue(res.data.result.BillDate);
 					me.$refs.dealerNo.setValue(res.data.result.DealerNo);
+					me.$refs.aboveName.setValue(res.data.result.AboveName);
 				});
 			},
 			setInfo() {

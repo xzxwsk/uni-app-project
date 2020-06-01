@@ -1,6 +1,6 @@
 <template>
 	<view class="qrimg">
-		<tki-qrcode ref="qrcode" :size="600" background="#fff" foreground="#000" :val="qrcodeStr" loadMake @result="qrR" />
+		<tki-qrcode ref="qrcode" :size="600" background="#fff" foreground="#000" pdground="#fff" :val="qrcodeStr" loadMake @result="qrR" />
 		<view class="btn-row">
 			<button type="warn" @tap="bindSave">下载</button>
 		</view>

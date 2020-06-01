@@ -6,7 +6,12 @@
 		<!-- #ifdef MP-ALIPAY -->
 		<canvas :id="cid" :width="cpSize" :height="cpSize" class="tki-qrcode-canvas" />
 		<!-- #endif -->
+		<!-- #ifndef APP-PLUS -->
+		<canvas class="tki-qrcode-canvas" :canvas-id="cid" :style="{width:cpSize+'px',height:cpSize+'px'}" />
+		<!-- #endif -->
+		<!-- #ifdef APP-PLUS -->
 		<image v-show="show" :src="result" :style="{width:cpSize+'px',height:cpSize+'px'}" />
+		<!-- #endif -->
 	</view>
 </template>
 
@@ -123,6 +128,17 @@ export default {
 		_saveCode() {
 			let that = this;
 			if (this.result != "") {
+				uni.canvasToTempFilePath({
+					width: cpSize,
+					height: cpSize,
+					destWidth: cpSize - 10,
+					destHeight: cpSize - 10,
+					canvasId: this.cid,
+					success: function(res) {
+					    // 在H5平台下，tempFilePath 为 base64
+					    console.log(res.tempFilePath)
+					} 
+				});
 				uni.saveImageToPhotosAlbum({
 					filePath: that.result,
 					success: function () {

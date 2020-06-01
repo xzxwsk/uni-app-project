@@ -393,6 +393,23 @@
 				}
 			}
 		}, {
+			"path": "pages/about/barcode",
+			"style": {
+				"navigationBarTitleText": "扫码",
+				"app-plus": {
+					"bounce": "vertical",
+					"background": "#fff",
+					"titleNView": {
+						"buttons": [{
+							"text": "相册",
+							"fontSize": "14px",
+							"color": "#333",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		}, {
 			"path": "pages/user/baseInfo",
 			"style": {
 				"navigationBarTitleText": "基本信息",

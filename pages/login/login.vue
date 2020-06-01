@@ -385,6 +385,10 @@
 				}
 			},
 			bindReg() {
+				util.goUrl({
+					url: '../about/barcode'
+				});
+				/* 
 				uni.scanCode({
 					scanType: ['qrCode'],
 				    success: function (res) {
@@ -395,6 +399,7 @@
 						});
 				    }
 				});
+				 */
 			},
 			initSetAccount() {
 				let account = util.getStorageSync('userName');

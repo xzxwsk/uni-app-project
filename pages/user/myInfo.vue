@@ -88,7 +88,7 @@
 				}).then(res => {
 					util.hideLoading();
 					this.logout();
-					util.clearStorageSync();
+					// util.clearStorageSync();
 					util.goTab({
 						url: '../tabBar/user'
 					});

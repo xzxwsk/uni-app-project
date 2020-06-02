@@ -2,21 +2,17 @@
 	<view class="tki-qrcode">
 		<!-- #ifndef MP-ALIPAY -->
 		<canvas class="tki-qrcode-canvas" :canvas-id="cid" :style="{width:cpSize+'px',height:cpSize+'px'}" />
+		<canvas class="tki-qrcode-canvas" canvas-id="cidCache" :style="{width:cpSize+'px',height:cpSize+'px'}" />
 		<!-- #endif -->
 		<!-- #ifdef MP-ALIPAY -->
-		<canvas :id="cid" :width="cpSize" :height="cpSize" class="tki-qrcode-canvas" />
+		<canvas class="tki-qrcode-canvas" :id="cid" :width="cpSize" :height="cpSize" />
 		<!-- #endif -->
-		<!-- #ifndef APP-PLUS -->
-		<canvas class="tki-qrcode-canvas" :canvas-id="cid" :style="{width:cpSize+'px',height:cpSize+'px'}" />
-		<!-- #endif -->
-		<!-- #ifdef APP-PLUS -->
-		<image v-show="show" :src="result" :style="{width:cpSize+'px',height:cpSize+'px'}" />
-		<!-- #endif -->
+		<image v-show="show" ref="img" :src="result" :style="{width:cpSize+'px',height:cpSize+'px'}" />
 	</view>
 </template>
 
 <script>
-import QRCode from "./qrcode.js"
+import QRCode from "./qrcode"
 let qrcode
 export default {
 	name: "tki-qrcode",
@@ -92,12 +88,29 @@ export default {
 		}
 	},
 	methods: {
+		_drawBorder(img) {
+			let me = this;
+			let ctx = uni.createCanvasContext('cidCache');
+			// ctx.save();
+			ctx.setFillStyle('#fff');
+			ctx.fillRect(0, 0, this.cpSize, this.cpSize);
+			// ctx.restore();
+			ctx.drawImage(img, 5, 5, this.cpSize-10, this.cpSize-10);
+			ctx.draw(true, function() {
+				uni.canvasToTempFilePath({
+					canvasId: 'cidCache',
+					success: function(res) {
+						me._result(res.tempFilePath);
+					}
+				});
+			});
+		},
 		_makeCode() {
 			let that = this
 			if (!this._empty(this.val)) {
 				qrcode = new QRCode({
 					context: that, // 上下文环境
-					canvasId:that.cid, // canvas-id
+					canvasId: that.cid, // canvas-id
 					usingComponents: that.usingComponents, // 是否是自定义组件
 					showLoading: that.showLoading, // 是否显示loading
 					loadingText: that.loadingText, // loading文字
@@ -110,7 +123,8 @@ export default {
 					image: that.icon, // 二维码图标
 					imageSize: that.iconSize,// 二维码图标大小
 					cbResult: function (res) { // 生成二维码的回调
-						that._result(res)
+						that._drawBorder(res);
+						// that._result(res);
 					},
 				});
 			} else {
@@ -128,17 +142,6 @@ export default {
 		_saveCode() {
 			let that = this;
 			if (this.result != "") {
-				uni.canvasToTempFilePath({
-					width: cpSize,
-					height: cpSize,
-					destWidth: cpSize - 10,
-					destHeight: cpSize - 10,
-					canvasId: this.cid,
-					success: function(res) {
-					    // 在H5平台下，tempFilePath 为 base64
-					    console.log(res.tempFilePath)
-					} 
-				});
 				uni.saveImageToPhotosAlbum({
 					filePath: that.result,
 					success: function () {

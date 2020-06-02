@@ -393,12 +393,12 @@
 				}
 			}
 		}, {
-			"path": "pages/about/barcode",
+			"path": "pages/about/scanCode",
 			"style": {
 				"navigationBarTitleText": "扫码",
 				"app-plus": {
-					"bounce": "vertical",
-					"background": "#fff",
+					"bounce": "none",
+					"background": "#000",
 					"titleNView": {
 						"buttons": [{
 							"text": "相册",

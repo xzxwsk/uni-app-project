@@ -71,6 +71,9 @@ export default {
 				});
 			}, function(error){
 				console.log(error);
+				util.showToast({
+					title: '识别失败'
+				});
 			}, [plus.barcode.QR]);
 		},
 		initScan() {
@@ -80,7 +83,8 @@ export default {
 				barcode = plus.barcode.create('barcode', [plus.barcode.QR], {
 				    width: '100%',  
 				    height: '100%',
-					scanbarColor: '#ffffff'
+					scanbarColor: '#fff',
+					frameColor: '#fff'
 				});
 				barcode.onmarked = function (type, code) {
 					var text = '未知: ';

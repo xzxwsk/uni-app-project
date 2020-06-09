@@ -12,8 +12,7 @@
 					<view class="list">
 						<view class="search_box">
 							<input-box v-model="itemLs.searchKeyNo" placeholder="请输入搜索关键字"></input-box>
-							<!-- <input-box style="width: 200upx;" v-model="itemLs.searchKeyName" placeholder="姓名"></input-box> -->
-							<view class="date_picker_box">
+							<view class="date_picker_box" style="width: 115upx;">
 								<customDatePicker class="date_picker" :ref="'startDate' + indexLs"
 									fields="month"
 									:start="startDate"
@@ -22,7 +21,7 @@
 									@change="bindStartDateChange"
 								></customDatePicker>
 							</view>
-							<view class="date_picker_box">
+							<view class="date_picker_box" style="width: 115upx;">
 								<customDatePicker class="date_picker" :ref="'endDate' + indexLs"
 									fields="month"
 									:start="startDate"
@@ -45,9 +44,6 @@
 							<view>
 								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(item.RecordId)">
 									<view class="ls_item_top">
-										<!-- <view class="img">
-											<image v-if="itemLs.renderImage" :src="item.src" style="width: 100%;" mode="widthFix"></image>
-										</view> -->
 										<text class="title">订单编号: {{item.BillCode}}</text>
 										<view class="status">
 											<text>{{item.stateStr}}</text>

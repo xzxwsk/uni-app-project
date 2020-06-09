@@ -11,7 +11,7 @@
 				<view class="list">
 					<view class="search_box">
 						<input-box v-model="itemLs.searchKey" placeholder="请输入搜索关键字"></input-box>
-						<view class="date_picker_box">
+						<view class="date_picker_box" style="width: 115upx;">
 							<customDatePicker class="date_picker" :ref="'startDate' + indexLs"
 								fields="month"
 								:start="startDate"
@@ -20,7 +20,7 @@
 								@change="bindStartDateChange"
 							></customDatePicker>
 						</view>
-						<view class="date_picker_box">
+						<view class="date_picker_box" style="width: 115upx;">
 							<customDatePicker class="date_picker" :ref="'endDate' + indexLs"
 								fields="month"
 								:start="startDate"

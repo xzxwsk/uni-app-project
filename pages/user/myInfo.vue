@@ -88,7 +88,11 @@
 				}).then(res => {
 					util.hideLoading();
 					this.logout();
-					// util.clearStorageSync();
+					console.log(localStorage);
+					util.setStorageSync({
+						key: 'session_id',
+						data: ''
+					});
 					util.goTab({
 						url: '../tabBar/user'
 					});

@@ -6,6 +6,7 @@
 				<text class="state">{{billObj.stateStr}}</text>
 				<view class="menu_txt">
 					<text class="title">{{ billObj.Address }}</text>
+					<text class="title">{{ billObj.LinkMan + ' ' + billObj.Mobile }}</text>
 					<text class="title sub_txt">{{ billObj.Remark }}</text>
 				</view>
 			</view>
@@ -91,14 +92,14 @@
 				<button class="btn" v-if="billObj.State === 4" type="warn" @click="bindCancelReturn">取消退货</button>
 				<button class="btn" v-if="billObj.State === 5 && billObj.IsPay" type="warn" @click="bindConfirmReturn">确认退款</button>
 			</block>
-			
+
 			<!-- 收到的订单 -->
 			<block v-else>
 				<button class="btn" type="warn" v-if="billObj.State === 0" @click="bindSend">发货</button>
 				<button class="btn" type="warn" v-if="billObj.State === 4" @click="bindReturnConfirm">确认退货</button>
 			</block>
 		</view>
-		
+
 		<uni-popup ref="popup" type="bottom">
 			<!-- 我收到的订单 发货 -->
 			<!--对于付款的订单，需要弹出窗口，显示付款方式、付款方账户信息、收款方账户信息，付款金额(等于订单金额)，确认收款和取消按钮。
@@ -349,7 +350,44 @@
 				},
 				company: '', // 退货货运公司
 				billObj: {
-					"Items": []  /*订单明细*/,
+					"Items": [
+						// {
+						// 	ProductCode: "sdfdsf",
+						// 	ProductName: "sdfdsf",
+						// 	Spec: "sdfdsf",
+						// 	UnitName: "sdfdsf",
+						// 	Qty: 5,
+						// 	Price: 20,
+						// 	Amount: 100
+						// },
+						// {
+						// 	ProductCode: "sdfdsf",
+						// 	ProductName: "sdfdsf",
+						// 	Spec: "sdfdsf",
+						// 	UnitName: "sdfdsf",
+						// 	Qty: 5,
+						// 	Price: 20,
+						// 	Amount: 100
+						// },
+						// {
+						// 	ProductCode: "sdfdsf",
+						// 	ProductName: "sdfdsf",
+						// 	Spec: "sdfdsf",
+						// 	UnitName: "sdfdsf",
+						// 	Qty: 5,
+						// 	Price: 20,
+						// 	Amount: 100
+						// },
+						// {
+						// 	ProductCode: "sdfdsf",
+						// 	ProductName: "sdfdsf",
+						// 	Spec: "sdfdsf",
+						// 	UnitName: "sdfdsf",
+						// 	Qty: 5,
+						// 	Price: 20,
+						// 	Amount: 100
+						// }
+					]  /*订单明细*/,
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,
 					"BillDate": "2019-09-17T17:07:55.3032242+08:00"  /*单据日期*/,
@@ -727,6 +765,9 @@
 					this.addr.PersonName = res.data.result.LinkMan;
 					this.addr.Mobile = res.data.result.Mobile;
 				});
+			},
+			onIsPayReturnChange() {
+				this.$set(this.billObj, 'IsPayReturn', this.billObj.IsPayReturn)
 			},
 			async bindReturn() {
 				// 退货

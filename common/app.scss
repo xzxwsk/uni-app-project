@@ -111,7 +111,7 @@ uni-toast{z-index: 100000;}
 			.input-box-clear{font-size: 66upx;}
 			input{margin-top: 15px; height: 30px; font-size: 48upx;}
 		}
-		.uni-input-input, .uni-input-placeholder{height: 60px; line-height: 60px; font-size: 40upx;}
+		.uni-input-input, .uni-input-placeholder{height: 30px; line-height: 30px; font-size: 40upx;}
 		.voli_code_ipt{
 			input{margin-top: 15px; height: 30px; font-size: 48upx;}
 			.input-box-clear{margin: 0 20upx 0 5px;}
@@ -260,7 +260,7 @@ uni-toast{z-index: 100000;}
 }
 .order_detail{display: flex; flex-direction: column; height: 100%; position: relative;
 	.top{position: relative;
-		.con{position: absolute; left: 60upx; right: 60upx; top: 20%; color: #fff; font-size: 35upx; font-weight: bold;}
+		.con{position: absolute; left: 40upx; right: 40upx; top: 10%; color: #fff; font-size: 35upx; font-weight: bold;}
 	}
 	.center{flex: 1; overflow: hidden;}
 	.uni-list-cell-navigate{

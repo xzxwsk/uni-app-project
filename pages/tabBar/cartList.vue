@@ -328,6 +328,9 @@
 				util.goTab({
 					url: './index'
 				});
+				// util.goUrl({
+				// 	url: '../order/orderDetail'
+				// });
 			},
 			// 去结算
 			toPay() {

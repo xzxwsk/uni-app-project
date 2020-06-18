@@ -88,6 +88,10 @@
 		onLoad() {
 			console.log('onLoad');
 			console.log(uni.getSystemInfoSync());
+			util.setStorageSync({
+				key: 'session_id',
+				data: ''
+			});
 			this.getSessionId();
 			// #ifdef APP-PLUS
 			// plus.nativeUI.showWaiting('加载中……');

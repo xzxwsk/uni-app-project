@@ -186,6 +186,10 @@
 		},
 		methods: {
 			getLs() {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.CartDAL.GetUserCart',
@@ -222,6 +226,20 @@
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
+			},
+			goLogin() {
+				uni.showModal({
+					title: '未登录',
+					content: '您未登录，需要登录后才能继续',
+					showCancel: false,
+					success: (res) => {
+						if (res.confirm) {
+							uni.reLaunch({
+								url: '../login/login'
+							});
+						}
+					}
+				});
 			},
 			countPriceFun() {
 				this.countPrice = 0;

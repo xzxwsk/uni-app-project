@@ -57,6 +57,9 @@
 									<!-- <text>合计：￥{{item.Amount}}</text> -->
 									<text>收货地址：{{item.Address}}</text>
 								</view>
+								<view class="ls_item_center">
+									<text>确认收货时间：{{item.receiveConfirmTimeStr}}</text>
+								</view>
 								<view class="ls_item_bottom">
 									<button v-if="item.State===0" class="btn" @click.stop="bindClose(item.RecordId)">关闭</button>
 									<button v-if="item.State===1" class="btn" @click.stop="bindConfirmReceive(item.RecordId)">收货确认</button>
@@ -233,17 +236,17 @@
 		},
 		onLoad(option) {
 			console.log('onLoad');
-			if (!this.isLoaded) {
-				this.init();
-				setTimeout(() => {
-					this.isLoaded = true;
-				}, 1000);
-			}
-			// this.dataArr = this.randomfn();
-			// this.displayDataArr = util.deepCopy(this.dataArr);
-			// setTimeout(()=> {
-			//     this.displayDataArr[0].renderImage = true;
-			// }, 300);
+			// if (!this.isLoaded) {
+			// 	this.init();
+			// 	setTimeout(() => {
+			// 		this.isLoaded = true;
+			// 	}, 1000);
+			// }
+			this.dataArr = this.randomfn();
+			this.displayDataArr = util.deepCopy(this.dataArr);
+			setTimeout(()=> {
+			    this.displayDataArr[0].renderImage = true;
+			}, 300);
 		},
 		onShow() {
 			console.log('onShow');
@@ -310,6 +313,7 @@
 					if (res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+							dataItem.receiveConfirmTimeStr = util.formatDate(dataItem.ReceiveConfirmTime, 'yyyy-MM-dd');
 							dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认', '退款确认'][dataItem.State+1];
 						});
 						this.dataArr[index].data = res.data.result.data;

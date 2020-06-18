@@ -1,6 +1,6 @@
 {
-    "version": "1.2.1",
-    "code": 2,
+    "version": "1.2.5",
+    "code": 1,
     "edition":"正式版",
     "smallUpdate":"http://39.108.139.53/appSource/add.wgt",
     "bigUpdate":"http://39.108.139.53/appSource/qianchangAndroid.apk"

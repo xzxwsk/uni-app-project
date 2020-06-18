@@ -54,6 +54,9 @@
 										<text class="count">订货日期：{{item.billDateStr}}</text>
 									</view>
 									<view class="ls_item_center">
+										<text class="count">确认收货时间：{{item.receiveConfirmTimeStr}}</text>
+									</view>
+									<view class="ls_item_center">
 										<text class="count">会员编号：{{item.DealerCode}}</text>
 										<text class="count">姓名：{{item.DealerName}}</text>
 									</view>
@@ -381,6 +384,7 @@
 					if (res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
+							dataItem.receiveConfirmTimeStr = util.formatDate(dataItem.ReceiveConfirmTime, 'yyyy-MM-dd');
 							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType]
 							dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认'][dataItem.State + 1];
 							dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];

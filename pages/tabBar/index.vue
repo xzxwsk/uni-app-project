@@ -32,7 +32,7 @@
 					<view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view>
 				</view>
 				<view class="uni-product-price">
-					<text class="uni-product-price-favour">￥{{product.Price}}</text>
+					<text class="uni-product-price-favour" v-if="hasLogin">￥{{product.Price}}</text>
 					<text class="uni-product-price-original">￥{{product.FactPrice}}</text>
 					<!-- <text class="uni-product-tip">{{product.tip}}</text> -->
 				</view>
@@ -212,6 +212,20 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
+			goLogin() {
+				uni.showModal({
+					title: '未登录',
+					content: '您未登录，需要登录后才能继续',
+					showCancel: true,
+					success: (res) => {
+						if (res.confirm) {
+							uni.reLaunch({
+								url: '../login/login'
+							});
+						}
+					}
+				});
+			},
 			goDetail(index) {
 				if (this.productList[index].id) {
 					util.goUrl({
@@ -220,6 +234,10 @@
 				}
 			},
 			addCart(index) {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				// 加入购物车
 				util.showLoading();
 				util.ajax({

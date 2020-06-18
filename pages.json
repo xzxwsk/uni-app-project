@@ -19,7 +19,7 @@
 					"titleNView": {
 						"type": "transparent",
 						"searchInput": {
-							"placeholder": "春季踏青郊游必备"
+							"placeholder": "请输入搜索产品关键字"
 						},
 						"buttons": [{
 							"float": "right",

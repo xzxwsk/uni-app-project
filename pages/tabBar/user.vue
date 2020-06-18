@@ -241,11 +241,25 @@
 					this.pages[2].changeNum = res.data.result;
 				});
 			},
+			goLogin() {
+				uni.showModal({
+					title: '未登录',
+					content: '您未登录，需要登录后才能继续',
+					showCancel: false,
+					success: (res) => {
+						if (res.confirm) {
+							uni.reLaunch({
+								url: '../login/login'
+							});
+						}
+					}
+				});
+			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
 			updateHeadImg() {
-				this.chooseImage();
+				// this.chooseImage();
 			},
 			async chooseImage() {
 				uni.chooseImage({
@@ -258,6 +272,10 @@
 				});
 			},
 			goDetailPage(url) {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				util.goUrl({
 					url: '/pages/' + url
 				});
@@ -269,11 +287,19 @@
 				});
 			},
 			baseInfo() {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				util.goUrl({
 					url: '/pages/user/baseInfo'
 				});
 			},
 			accountBalance() {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.QueryAppDAL.QueryMyAccount',
@@ -300,27 +326,43 @@
 				});
 			},
 			bonus() {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				// 奖金查询
 				util.goUrl({
 					url: '/pages/user/bonus'
 				})
 			},
 			stock() {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				// 库存查询
 				util.goUrl({
 					url: '/pages/user/stock'
 				})
 			},
-			subordinateInfo() {
-				// 下属资料
-				util.goUrl({
-					url: '/pages/user/mySubordinateInfo'
-				})
-			},
 			cunsume() {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				// 消费/零售记录
 				util.goUrl({
 					url: '/pages/user/consumeRecord'
+				})
+			},
+			subordinateInfo() {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
+				// 下属资料
+				util.goUrl({
+					url: '/pages/user/mySubordinateInfo'
 				})
 			}
 		}

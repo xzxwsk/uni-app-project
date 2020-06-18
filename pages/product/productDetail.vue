@@ -16,7 +16,7 @@
 				</view>
 				<view class="intro">
 					<view class="price flex">
-						<view class="old_price"><text class="sub">￥</text>{{detail.Price}}<text class="sub">.00</text></view>
+						<view class="old_price" v-if="hasLogin"><text class="sub">￥</text>{{detail.Price}}<text class="sub">.00</text></view>
 						<view><text class="sub">￥</text>{{detail.FactPrice}}<text class="sub">.00</text></view>
 					</view>
 					<view class="title">{{detail.Name}}</view>
@@ -57,7 +57,7 @@
 		</view>
 		<view class="result" ref="bar">
 			<button class="btn btn_yellow" @click="goCartLs">加入购物车</button>
-			<button class="btn" type="warn" @click="goCreateOrder">立即付款</button>
+			<button class="btn" type="warn" v-if="hasLogin" @click="goCreateOrder">立即付款</button>
 		</view>
 		
 		<uni-popup ref="popup" type="bottom">
@@ -103,7 +103,7 @@
 			uniPopup, uniLoadMore
 		},
 		computed: {
-			...mapState(['openid']),
+			...mapState(['hasLogin', 'openid']),
 			scrollHeight() {
 				let limit = 150;
 				if(this.screen.screenWidth < 415) {
@@ -229,7 +229,25 @@
 					}
 				});
 			},
+			goLogin() {
+				uni.showModal({
+					title: '未登录',
+					content: '您未登录，需要登录后才能继续',
+					showCancel: true,
+					success: (res) => {
+						if (res.confirm) {
+							uni.reLaunch({
+								url: '../login/login'
+							});
+						}
+					}
+				});
+			},
 			async goCartLs() {
+				if (!this.hasLogin) {
+					this.goLogin();
+					return;
+				}
 				// 加入购物车
 				util.showLoading();
 				await util.ajax({

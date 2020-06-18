@@ -386,6 +386,10 @@ let postAjax = function(prompt) {
 					return;
 				} else if (res.data.hasOwnProperty('error')) {
 					if (res.data.error.code === 30000 || (res.data.error.message && getType(res.data.error.message) === 'string' && res.data.error.message.indexOf('令牌错误或用户没有登录') != -1)) {
+						setStorageSync({
+							key: 'session_id',
+							data: ''
+						});
 						redirectUrl({
 							url: '/pages/login/login'
 						});

@@ -236,17 +236,17 @@
 		},
 		onLoad(option) {
 			console.log('onLoad');
-			// if (!this.isLoaded) {
-			// 	this.init();
-			// 	setTimeout(() => {
-			// 		this.isLoaded = true;
-			// 	}, 1000);
-			// }
-			this.dataArr = this.randomfn();
-			this.displayDataArr = util.deepCopy(this.dataArr);
-			setTimeout(()=> {
-			    this.displayDataArr[0].renderImage = true;
-			}, 300);
+			if (!this.isLoaded) {
+				this.init();
+				setTimeout(() => {
+					this.isLoaded = true;
+				}, 1000);
+			}
+			// this.dataArr = this.randomfn();
+			// this.displayDataArr = util.deepCopy(this.dataArr);
+			// setTimeout(()=> {
+			//     this.displayDataArr[0].renderImage = true;
+			// }, 300);
 		},
 		onShow() {
 			console.log('onShow');

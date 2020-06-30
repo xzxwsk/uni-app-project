@@ -11,16 +11,16 @@
 		<view class="box" v-else>
 			<view class="table_box">
 				<t-table border="0">
-					<t-tr font-size="14" color="#000" align="left">
-						<t-th align="left"><text class="first_col">商品编号</text></t-th>
-						<t-th align="center">商品名称</t-th>
-						<t-th align="center">规格</t-th>
-						<t-th align="center">计量单位</t-th>
-						<t-th align="center">库存数量</t-th>
+					<t-tr font-size="14" color="#000">
+						<t-th align="left" style="flex: none; width: 200upx;"><text class="first_col">商品编号</text></t-th>
+						<t-th align="left" style="flex: none; width: 300upx; padding: 26upx 30upx 26upx 60upx;">商品名称</t-th>
+						<t-th align="left">规格</t-th>
+						<t-th align="left">计量单位</t-th>
+						<t-th align="left">库存数量</t-th>
 					</t-tr>
 					<t-tr font-size="12" color="#5d6f61" align="right" v-for="(item, index) in tableList" :key="item.id">
-						<t-td align="left"><label><radio :checked="item.checked" color="#f23030" :data-index="index" @click="checkboxChange" />{{item.ProductNo}}</label></t-td>
-						<t-td align="left">{{item.ProductName}}</t-td>
+						<t-td align="left" style="flex: none; width: 200upx;"><label><radio :checked="item.checked" color="#f23030" :data-index="index" @click="checkboxChange" />{{item.ProductNo}}</label></t-td>
+						<t-td style="flex: none; width: 300upx; padding: 14upx 30upx;" align="left">{{item.ProductName}}</t-td>
 						<t-td align="left">{{item.Spec}}</t-td>
 						<t-td align="left">{{item.Unit}}</t-td>
 						<t-td align="left">{{item.Qty}}</t-td>

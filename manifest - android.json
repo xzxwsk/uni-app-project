@@ -18,7 +18,9 @@
             "autoclose" : true,
             "delay" : 0
         },
-        "modules" : {},
+        "modules" : {
+            "Push" : {}
+        },
         /* 应用发布信息 */
         "distribute" : {
             /* android打包配置 */
@@ -67,7 +69,9 @@
             /* SDK配置 */
             "sdkConfigs" : {
                 "speech" : {},
-                "push" : {},
+                "push" : {
+                    "unipush" : {}
+                },
                 "ad" : {}
             },
             "orientation" : [ "portrait-primary" ],

@@ -59,7 +59,6 @@
 		flex: 1;
 		display: flex;
 		align-items: center;
-		width: 100%;
 		padding: 14upx;
 		border-top: 1px #d0dee5 solid;
 		border-left: 1px #d0dee5 solid;

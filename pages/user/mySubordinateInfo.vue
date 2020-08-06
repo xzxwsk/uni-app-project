@@ -32,14 +32,13 @@
 										<t-th align="left">资金类别</t-th>
 										<t-th align="left">余额</t-th>
 									</t-tr>
-									<t-tr font-size="12" color="#5d6f61" align="right" v-for="(item,index) in tableList" :key="item.id">
-										<!-- <t-td align="left"><text class="first_col">{{item.Year + '-' + item.Month}}</text></t-td> -->
-										<t-td align="left">{{item.SubDealerNo}}</t-td>
-										<t-td align="left">{{item.SubDealerName}}</t-td>
-										<t-td align="left">{{ ['货款', '保证金', '代交保证金'][item.AccountType] }}</t-td>
-										<t-td align="left">{{item.Amount}}</t-td>
-									</t-tr>
 								</t-table>
+								<view style="display: flex; font-size: 28upx;" v-for="(item,index) in tableList" :key="item.id">
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerNo}}</view>
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerName}}</view>
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{ ['货款', '保证金', '代交保证金'][item.AccountType] }}</view>
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.Amount}}</view>
+								</view>
 							</view>
 							<view v-if="isScroll" class="uni-tab-bar-loading">
 								加载更多...
@@ -81,16 +80,21 @@
 										<t-th align="left">奖金</t-th>
 										<!-- <t-th align="left">操作</t-th> -->
 									</t-tr>
-									<t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList2" :key="item.id">
+									<!-- <t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList2" :key="item.id">
 										<t-td align="left"><text class="first_col">{{item.Year + '-' + item.Month}}</text></t-td>
 										
 										<t-td align="left">{{item.SubDealerNo}}</t-td>
 										<t-td align="left">{{item.SubDealerName}}</t-td>
 										<t-td align="left">{{ ['直推', '团队'][item.BonusType] }}</t-td>
 										<t-td align="left">{{item.Bonus}}</t-td>
-										<!-- <t-td align="left"><view @click="paymentGoodsDetail(item.id)" class="a">收支明细</view></t-td> -->
-									</t-tr>
+									</t-tr> -->
 								</t-table>
+								<view style="display: flex; font-size: 28upx;" v-for="(item,index) in tableList2" :key="item.id">
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;"><text class="first_col">{{item.Year + '-' + item.Month}}</text></view>
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerNo}}</view>
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerName}}</view>
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{ ['直推', '团队'][item.BonusType] }}</view>
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.Bonus}}</view>
 							</view>
 							<view v-if="isScroll2" class="uni-tab-bar-loading">
 								加载更多...

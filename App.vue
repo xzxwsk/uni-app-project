@@ -171,12 +171,12 @@
 				console.log('app.vue close');
 				checkUpdate();
 			}, 7500);
-			plus.push.addEventListener('click', function(msg){  
-				//处理透传消息的业务逻辑代码
-				uni.showModal({
-					content: JSON.stringify(msg)
-				});
-			}, false);
+			// plus.push.addEventListener('click', function(msg){  
+			// 	//处理透传消息的业务逻辑代码
+			// 	uni.showModal({
+			// 		content: JSON.stringify(msg)
+			// 	});
+			// }, false);
 			// #endif
 		},
 		onShow: function() {

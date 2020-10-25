@@ -13,19 +13,26 @@
 				<t-table border="0">
 					<t-tr font-size="14" color="#000">
 						<t-th align="left" style="flex: none; width: 200upx;"><text class="first_col">商品编号</text></t-th>
-						<t-th align="left" style="flex: none; width: 300upx; padding: 26upx 30upx 26upx 60upx;">商品名称</t-th>
+						<t-th align="left" style="flex: none; width: 300upx; padding: 15upx 30upx;">商品名称</t-th>
 						<t-th align="left">规格</t-th>
 						<t-th align="left">计量单位</t-th>
 						<t-th align="left">库存数量</t-th>
 					</t-tr>
-					<t-tr font-size="12" color="#5d6f61" align="right" v-for="(item, index) in tableList" :key="item.id">
+					<!-- <t-tr font-size="12" color="#5d6f61" align="right" v-for="(item, index) in tableList" :key="item.id">
 						<t-td align="left" style="flex: none; width: 200upx;"><label><radio :checked="item.checked" color="#f23030" :data-index="index" @click="checkboxChange" />{{item.ProductNo}}</label></t-td>
 						<t-td style="flex: none; width: 300upx; padding: 14upx 30upx;" align="left">{{item.ProductName}}</t-td>
 						<t-td align="left">{{item.Spec}}</t-td>
 						<t-td align="left">{{item.Unit}}</t-td>
 						<t-td align="left">{{item.Qty}}</t-td>
-					</t-tr>
+					</t-tr> -->
 				</t-table>
+				<view style="display: flex; align-items: center; min-width: 1200upx; font-size: 28upx;" v-for="(item,index) in tableList" :key="item.id">
+					<view style="width: 200upx;"><radio :checked="item.checked" color="#f23030" :data-index="index" @click="checkboxChange" />{{item.ProductNo}}</view>
+					<view style="width: 300upx; padding: 5upx 30upx; word-break:break-all; word-wrap: break-word;">{{item.ProductName}}</view>
+					<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.Spec}}</view>
+					<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{ item.Unit }}</view>
+					<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.Qty}}</view>
+				</view>
 			</view>
 			<view class="result">
 				<label class="radio" @click="onAllSelect"><radio color="#f23030" :checked="allSelect" />全选</label>
@@ -121,6 +128,7 @@
 				});
 			},
 			checkboxChange(e) {
+				console.log(e.currentTarget.dataset)
 				let item = this.tableList[Number(e.currentTarget.dataset.index)];
 				this.$set(item, 'checked', !item.checked);
 				let selectIndex = -1;

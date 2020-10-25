@@ -95,6 +95,7 @@
 									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerName}}</view>
 									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{ ['直推', '团队'][item.BonusType] }}</view>
 									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.Bonus}}</view>
+								</view>
 							</view>
 							<view v-if="isScroll2" class="uni-tab-bar-loading">
 								加载更多...

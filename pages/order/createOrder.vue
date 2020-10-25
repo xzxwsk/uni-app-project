@@ -19,7 +19,7 @@
 								<view class="uni-media-list-text-top sub_txt">计量单位: {{value.UnitName}}</view>
 								<view class="uni-media-list-text-top sub_txt">数量: {{value.Qty}}件</view>
 							</view>
-							<view class="uni-media-list-text-bottom uni-ellipsis price">￥{{value.Amount}}</view>
+							<view class="uni-media-list-text-bottom uni-ellipsis">单价：<text class="price">￥{{value.Price}}</text><text style="margin: 0 10px 0 0;">元</text> 共计：<text class="price">￥{{value.Amount}}</text>元</view>
 						</view>
 					</view>
 				</view>

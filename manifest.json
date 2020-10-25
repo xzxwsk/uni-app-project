@@ -2,8 +2,8 @@
     "name" : "纤畅App",
     "appid" : "__UNI__F960A47",
     "description" : "应用描述",
-    "versionName" : "1.2.6",
-    "versionCode" : 101,
+    "versionName" : "1.2.11",
+    "versionCode" : 104,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -61,8 +61,12 @@
             },
             /* ios打包配置 */
             "ios" : {
-                "UIBackgroundModes" : [ "audio" ],
-                "urlschemewhitelist" : [ "baidumap", "iosamap" ]
+                "urlschemewhitelist" : [ "baidumap", "iosamap" ],
+                "privacyDescription" : {
+                    "NSPhotoLibraryUsageDescription" : "是否允许此App访问相册，以便取得二维码并扫码",
+                    "NSPhotoLibraryAddUsageDescription" : "是否允许此App访问相册，以便保存二维码",
+                    "NSCameraUsageDescription" : "是否允许此App访问相机，以便上传您的用户头像或商品图片"
+                }
             },
             /* SDK配置 */
             "sdkConfigs" : {

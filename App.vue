@@ -128,10 +128,13 @@
 							console.log('当前版本: ' + curVersionArr);
 							console.log('服务器版本: ' + serverVersionArr);
 							let isUpdate = false, isBigUpdate = false;
-							if (Number(serverVersionArr[0]) > Number(curVersionArr[0]) || Number(serverVersionArr[1]) > Number(curVersionArr[1])){
+							if (Number(serverVersionArr[0]) > Number(curVersionArr[0])) {
 								isUpdate = true;
-								isBigUpdate = true;
-							} else if (Number(serverVersionArr[2]) > Number(curVersionArr[2])) {
+								isBigVersion = true;
+							} else if ((Number(serverVersionArr[0]) >= Number(curVersionArr[0])) && (Number(serverVersionArr[1]) > Number(curVersionArr[1]))) {
+								isUpdate = true;
+								isBigVersion = true;
+							} else if ((Number(serverVersionArr[0]) >= Number(curVersionArr[0])) && (Number(serverVersionArr[1]) >= Number(curVersionArr[1])) && (Number(serverVersionArr[2]) > Number(curVersionArr[2]))) {
 								isUpdate = true;
 							}
 							console.log('isUpdate: ' + isUpdate);

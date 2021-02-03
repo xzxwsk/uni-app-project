@@ -171,7 +171,7 @@
 					}
 				}).then(res => {
 					// this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ' && res.data.result.BigImageBase64 !== '') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
-					this.imgLs.push((res.data.result.SmallImageFileName && res.data.result.SmallImageFileName !== ' ') ? util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.SmallImageFileName : '');
+					this.imgLs.push((res.data.result.BigImageFileName && res.data.result.BigImageFileName !== ' ') ? util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.BigImageFileName : '');
 					this.detail = res.data.result;
 					this.$nextTick(() => {
 						let me = this;

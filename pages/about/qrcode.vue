@@ -34,6 +34,7 @@
 					usertoken: this.openid
 				}
 			}).then(({ data }) => {
+				// console.log(data.result)
 				this.src = data.result
 			})
 			// this.qrcodeStr = '../user/createEntryOrder?AboveDealerId=' + this.userInfo.DealerId
@@ -44,20 +45,6 @@
 			},
 			bindSave(e) {
 				// this.$refs.qrcode._saveCode();
-				// const downPath = plus.io.PUBLIC_DOWNLOADS;
-				// plus.io.requestFileSystem(downPath, function(fs) {
-				// 	console.log(JSON.stringify(fs))
-					// filePath: downPath + '/qrcode.jpg', // 指定图片的临时路径
-					// data: this.src, // 要写入的文本或二进制数据
-					// encoding: 'base64', // 指定写入文件的字符编码
-					// success: res => {
-					// 	console.log('写入文件成功', res)
-					// 	console.log(downPath + '/qrcode.jpg')
-					// },
-					// file: err => {
-					// 	console.log('写入文件失败', err)
-					// }
-				// })
 				const base64 = this.src;
 				const bitmap = new plus.nativeObj.Bitmap("test");
 				bitmap.loadBase64Data(base64, function() {

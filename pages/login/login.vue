@@ -86,8 +86,6 @@
 			}
 		},
 		onLoad() {
-			console.log('onLoad');
-			console.log(uni.getSystemInfoSync());
 			util.setStorageSync({
 				key: 'session_id',
 				data: ''
@@ -99,7 +97,6 @@
 			// #endif
 		},
 		onReady() {
-			console.log('onReady');
 			// #ifdef APP-PLUS
 			// plus.nativeUI.closeWaiting();
 			// #endif
@@ -115,7 +112,6 @@
 			// #endif
 		},
 		mounted() {
-			console.log('mounted');
 			this.interfaceAddr = util.getBaseUrl();
 			this.initSetAccount();
 			// this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
@@ -125,7 +121,7 @@
 			// 	this.autoLogin(sessionId);
 			// }
 			// console.log('sessionId: ', sessionId);
-			this.getDeviceId();
+			// this.getDeviceId();
 		},
 		methods: {
 			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),

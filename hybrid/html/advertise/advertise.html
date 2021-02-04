@@ -28,10 +28,10 @@
 	</body>
 	<script>
 		document.addEventListener('UniAppJSBridgeReady', function() {
-			var methods = 'SYS.OptionsDAL.GetOptions';
-			var ajaxFun = function(method, callback) {
-				var baseUrl = 'http://118.163.201.227/qcdm/' + 'json.rpc/webapi';
-				var xhr = new plus.net.XMLHttpRequest();
+			const methods = 'SYS.OptionsDAL.GetOptions';
+			const ajaxFun = function(callback) {
+				const baseUrl = 'http://118.163.201.227/qcdm/' + 'json.rpc/webapi';
+				const xhr = new plus.net.XMLHttpRequest();
 				xhr.onreadystatechange = function () {
 					switch ( xhr.readyState ) {
 						case 0:
@@ -63,7 +63,7 @@
 				xhr.open( "POST", baseUrl);
 				xhr.send(JSON.stringify({
 					jsonrpc: '2.0',
-					method: method,
+					method: methods,
 					params: {},
 					id: 1,
 					tags: {
@@ -71,13 +71,65 @@
 					}
 				}));
 			}
-			ajaxFun(methods, function(res) {
+			// 如果已有图片，则直接使用，等下载完成后再替换最新
+			const storagePath = localStorage.getItem('importpageimg')
+			console.log('storagePath: ', storagePath);
+			if (storagePath) {
+				// plus.io.resolveLocalFileSystemURL(storagePath, function(entry) {
+				// 	console.log('找到文件: ', JSON.stringify(entry))
+				// }, function(err) {
+				// 	console.log('未找到文件: ', JSON.stringify(err))
+				// })
+				document.getElementById('img').style.backgroundSize = 'contain';
+				document.getElementById('img').style.backgroundImage = 'url(' + storagePath + ')';
+			}
+			// 平台绝对路径
+            // let absolute_image_path = plus.io.convertLocalFileSystemURL(storagePath);
+			// console.log('absolute_image_path: ', absolute_image_path);
+			// 获取下载完整路径
+			const downPath = plus.io.PUBLIC_DOWNLOADS;
+			plus.io.requestFileSystem(downPath, function(fs) {
+				const downloadFullPath = fs.root.fullPath + 'importPageImg.png';
+				console.log('downloadFullPath: ', downloadFullPath)
+				const urlPath = plus.io.convertAbsoluteFileSystem(downloadFullPath)
+				console.log('urlPath: ', urlPath)
+				
+				// plus.io.resolveLocalFileSystemURL(urlPath, function(entry) {
+				// 	console.log('找到文件: ', JSON.stringify(entry))
+				// }, function(err) {
+				// 	console.log('未找到文件: ', JSON.stringify(err))
+				// })
+			})
+			ajaxFun(function(res) {
 				if(res.hasOwnProperty('result')) {
-					var img = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64;
+					const imgSrc = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64;
+					console.log('下载完成后替换最新')
 					document.getElementById('img').style.backgroundSize = 'contain';
-					document.getElementById('img').style.backgroundImage = 'url(' + img + ')';
+					document.getElementById('img').style.backgroundImage = 'url(' + imgSrc + ')';
+					// 下载完成后再替换最新
+					plus.io.requestFileSystem(downPath, function(fs) {
+						const downloadFullPath = fs.root.fullPath + 'importPageImg.png';
+						console.log('downloadFullPath: ', downloadFullPath)
+						const bitmap = new plus.nativeObj.Bitmap("test");
+						bitmap.loadBase64Data(imgSrc, function() {
+							bitmap.save(downloadFullPath, {
+								overwrite: true,  // 是否覆盖
+								quality: 100  // 图片清晰度
+							}, imgInfo => {
+								console.log('图片信息', imgInfo.target, ' size: ', imgInfo.size/1023)
+								localStorage.setItem('importpageimg', imgInfo.target)
+								bitmap.clear()
+							}, e => {
+								console.log('下载图片失败', e)
+								bitmap.clear()
+							})
+						}, e => {
+							console.log('下载图片失败', e)
+							bitmap.clear()
+						})
+					})
 				}
-			});
+			})
 			document.querySelector('.btn').addEventListener('click', function(e) {
 				if (e.hasOwnProperty('isTrusted') && e.isTrusted) {
 					plus.webview.currentWebview().close();

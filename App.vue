@@ -171,7 +171,6 @@
 			//设置定时器，关闭启动广告页
 			setTimeout(function() {
 				plus.webview.close(w);
-				console.log('app.vue close');
 				checkUpdate();
 			}, 7500);
 			// plus.push.addEventListener('click', function(msg){  

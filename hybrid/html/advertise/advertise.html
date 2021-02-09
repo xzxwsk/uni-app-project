@@ -11,7 +11,7 @@
 	<body>
 		<div class="content">
 			<div class="con" style="background-image: url(../imgs/loading.gif);">
-				<img id="img" style="display: none;">
+				<img id="img" style="display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;">
 			</div>
 			<div class="btn" id="timer">
 				<div id="info">跳过</div>
@@ -72,8 +72,8 @@
 				}));
 			}
 			// 如果已有图片，则直接使用，等下载完成后再替换最新
-			const storagePath = localStorage.getItem('importpageimg')
-			console.log('storagePath: ', storagePath);
+			// const storagePath = localStorage.getItem('importpageimg')
+			// console.log('storagePath: ', storagePath);
 			// if (storagePath) {
 			// 	plus.io.resolveLocalFileSystemURL(storagePath, function(entry) {
 			// 		console.log('找到文件: ')
@@ -83,46 +83,6 @@
 			// 		console.log('未找到文件: ', JSON.stringify(err))
 			// 	})
 			// }
-			const downPatht = plus.io.PUBLIC_DOWNLOADS;
-			plus.io.requestFileSystem(downPatht, function(fs) {
-				const downloadFullPath = fs.root.fullPath + '111.gif';
-				const picUrl = 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.08lr.cn%2Fuploads%2Fallimg%2F170513%2F1-1F513164126.jpg&refer=http%3A%2F%2Fwww.08lr.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg'
-				const dtask = plus.downloader.createDownload(picUrl, {
-					filename: downloadFullPath
-				}, function (d, status) {
-					// 下载完成
-					if(status == 200){ 
-						console.log("Download success: ", d.url, d.filename, d.totalSize/1024);
-						plus.io.resolveLocalFileSystemURL(d.filename, function(entry) {
-							console.log('找到文件: ', entry.fullPath, entry.toLocalURL())
-							const bitmap = new plus.nativeObj.Bitmap("test");
-							bitmap.load(entry.toLocalURL(), function() {
-								console.log('加载图片成功')
-								document.getElementById('img').setAttribute('src', entry.toLocalURL());
-								document.getElementById('img').style.display = '';
-								document.getElementById('img').style.position = 'absolute';
-								document.getElementById('img').style.width = '100%';
-								document.getElementById('img').style.height = '100%';
-								document.getElementById('img').style.zIndex = 2;
-							}, function(err) {
-								console.log('加载图片失败：', JSON.stringify(err))
-							})
-						}, function(err) {
-							console.log('未找到文件: ', JSON.stringify(err))
-						})
-						// 将本地URL路径转换成平台绝对路径
-						// let absolute_image_path = plus.io.convertLocalFileSystemURL(d.filename);
-						// console.log('absolute_image_path: ', absolute_image_path);
-						// 将平台绝对路径转换成本地URL路径
-						// let image_path = plus.io.convertAbsoluteFileSystem(entry.fullPath);
-						// console.log('image_path: ', image_path);
-					}else{
-						console.log("Download failed: " + status); 
-					}  
-				})
-				dtask.start(); 
-			})
-			
 			// ajaxFun(function(res) {
 			// 	if(res.hasOwnProperty('result')) {
 			// 		const imgSrc = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64;
@@ -141,6 +101,12 @@
 			// 				}, imgInfo => {
 			// 					console.log('图片信息', imgInfo.target, ' size: ', imgInfo.size/1023)
 			// 					localStorage.setItem('importpageimg', imgInfo.target)
+			// 					document.getElementById('img').setAttribute('src', imgInfo.target);
+			// 					document.getElementById('img').style.display = '';
+			// 					document.getElementById('img').style.position = 'absolute';
+			// 					document.getElementById('img').style.width = '100%';
+			// 					document.getElementById('img').style.height = '100%';
+			// 					document.getElementById('img').style.zIndex = 2;
 			// 					bitmap.clear()
 			// 				}, e => {
 			// 					console.log('下载图片失败', e)
@@ -153,6 +119,164 @@
 			// 		})
 			// 	}
 			// })
+			const downPatht = plus.io.PUBLIC_DOWNLOADS;
+			// 显示图片
+			const showImg = function() {
+				try{
+					const imgLocal = localStorage.getItem('importpageimg')
+					console.log('imgLocal: ', imgLocal)
+					if (imgLocal) {
+						document.getElementById('img').setAttribute('src', imgLocal);
+						document.getElementById('img').style.display = '';
+					}
+				}catch(e){
+					console.log('错误信息：', err)
+				}
+			}
+			// 如果找到下载文件，则删除后再下载
+			const findFile = function(callback) {
+				try {
+					plus.io.requestFileSystem(downPatht, function(fs) {
+						const downloadFullPath = fs.root.fullPath + 'importPageImg.gif';
+						plus.io.resolveLocalFileSystemURL('file://' + downloadFullPath, function(entry) {
+							console.log('找到下载到本地文件', entry.fullPath)
+							// 先备份，再删除
+							const pathArr = entry.fullPath.split('/')
+							const path = pathArr.slice(0, pathArr.length - 1)
+							console.log(path.join('/'))
+							entry.copyTo(path.join('/'), null, function(moveSuccessEntry){
+								console.log('拷贝图片成功')
+							}, function(err) {
+								console.log('拷贝图片失败：', JSON.stringify(err))
+							})
+							// 找到文件后，删除掉
+							entry.remove(function() {
+								console.log('删除成功：')
+							}, function(err) {
+								console.log('删除失败错误信息：', err)
+							})
+							callback && callback(entry.fullPath)
+						}, function(err) {
+							console.log('未找到下载到本地文件：', JSON.stringify(err))
+							callback && callback(downloadFullPath)
+						})
+					})
+				} catch(err) {
+					console.log('错误信息：', err)
+				}
+			}
+			// 保存图片
+			const saveImg = function(entry, path) {
+				// plus.io.getImageInfo({
+				// 	src: entry.toLocalURL(),
+				// 	success: function(e) {
+				// 		console.log('获取图片信息成功：')
+				// 	},
+				// 	fail: function() {
+				// 		console.log('获取图片信息失败')
+				// 	}
+				// })
+				plus.io.requestFileSystem(downPatht, function(fs) {
+					const downloadFullPath = fs.root.fullPath + '111.gif';
+					console.log('load 图片之前', downloadFullPath)
+					const bitmap = new plus.nativeObj.Bitmap("test");
+					bitmap.load(path, function() {
+						// 保存后只有一帧
+						bitmap.save(downloadFullPath, {
+							overwrite: true,  // 是否覆盖
+							quality: 100  // 图片清晰度
+						}, imgInfo => {
+							console.log('加载图片后save图片信息: ', imgInfo.target, ' size: ', imgInfo.size/1023);
+							let arr = imgInfo.target.split('/var')
+							console.log(arr, entry.fullPath)
+							if (plus.os.name == 'iOS') {
+								// 获取下载路径后，把原始下载图片移到该位置
+								try{
+									console.log('源文件：：', entry.toRemoteURL())
+									console.log('目标路径：', '/var' + arr[1] + fs.root.fullPath)
+									// entry.file().copyTo('/var' + arr[1] + fs.root.fullPath, null, function(moveSuccessEntry) {
+									// 	console.log('拷贝下载图片成功：', moveSuccessEntry.toLocalURL())
+									// 	localStorage.setItem('importpageimg', moveSuccessEntry.toLocalURL())
+									// }, function(err) {
+									// 	console.log('拷贝下载图片失败：', JSON.stringify(err))
+									// })
+								}catch(e){
+									console.log('拷贝图片：', e)
+								}
+							}
+							// 保存后只有一帧
+							bitmap.clear()
+						}, e => {
+							console.log('下载图片失败', e)
+							bitmap.clear()
+						})
+					}, function(err) {
+						console.log('加载图片失败：', JSON.stringify(err))
+					})
+				})
+			}
+			findFile(function(fullPath) {
+				const picUrl = 'https://n.sinaimg.cn/tech/transform/366/w216h150/20210203/70ad-kirmait4625391.gif' // https://pic.fhtp88.com/upload/art/07/14/04/wgvnto2i2gt.jpg
+				const option = {
+					filename: fullPath
+				}
+				const dtask = plus.downloader.createDownload(picUrl, option, function (d, status) {
+					// 下载完成
+					if(status == 200){ 
+						console.log("Download success: ", d.url, d.filename, d.totalSize/1024);
+						// 下载完成后用下载路径替换
+						// document.getElementById('img').setAttribute('src', picUrl);
+						plus.io.resolveLocalFileSystemURL(d.filename, function(entry) {
+							console.log('找到文件: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
+							// saveImg(entry, entry.toLocalURL())
+							try{
+								// const reader = new plus.io.FileReader();
+								// reader.onloadend = function ( e ) {
+								// 	plus.console.log( "Read success" );
+								// 	// Get data
+								// 	plus.console.log( e.target.result );
+								// };
+								// reader.onerror = function ( e ) {
+								// 	plus.console.log( "Read error" );
+								// 	plus.console.log( e );
+								// }
+								// reader.readAsDataURL( entry );
+								
+								// 与resolveLocalFileSystemURL获取的对象一样
+								// fs.root.getFile(entry.fullPath, {}, function(fileEntry){
+								// 	fileEntry.file( function ( file ) {
+								// 		console.log('读取文件', fileEntry.fullPath)
+								// 	}, function ( e ) {
+								// 		console.log( e.message );
+								// 	})
+								// })
+								// plus.gallery.save(entry.fullPath, function (e) {
+								// 	console.log( "保存图片到相册成功", e.path );
+								// })
+							}catch(err){
+								console.log('获取图片信息成功 错误信息：', err)
+							}
+						}, function(err) {
+							console.log('未找到文件: ', JSON.stringify(err))
+						})
+						// 将本地URL路径转换成平台绝对路径
+						// let absolute_image_path = plus.io.convertLocalFileSystemURL(d.filename);
+						// console.log('absolute_image_path: ', absolute_image_path);
+						// 将平台绝对路径转换成本地URL路径
+						// let image_path = plus.io.convertAbsoluteFileSystem(entry.fullPath);
+						// console.log('image_path: ', image_path);
+					}else{
+						console.log("Download failed: " + status); 
+					}  
+				})
+				// dtask.addEventListener("statechanged", function(d, status) {
+				// 	if (d.state === 3) {
+				// 		console.log(Math.round(d.downloadedSize / d.totalSize * 100))
+				// 	}
+				// }, false);
+				dtask.start();
+			});
+			
 			document.querySelector('.btn').addEventListener('click', function(e) {
 				if (e.hasOwnProperty('isTrusted') && e.isTrusted) {
 					plus.webview.currentWebview().close();

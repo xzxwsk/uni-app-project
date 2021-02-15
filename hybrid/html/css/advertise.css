@@ -29,6 +29,7 @@ body {
 	position: fixed;
 	top: 40px;
 	right: 10px;
+	z-index: 3;
 }
 
 #info {

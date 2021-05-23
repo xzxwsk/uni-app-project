@@ -24,6 +24,7 @@
 									<view class="uni-media-list-text-top">{{value.ProductName}}</view>
 									<view class="uni-media-list-text-top sub_txt">计量单位: {{value.UnitName}} &nbsp; &nbsp; 数量: {{value.Qty}}件</view>
 									<view class="uni-media-list-text-top sub_txt">商品编号: {{value.ProductCode}}</view>
+									<view class="uni-media-list-text-top sub_txt">商品备注: {{value.Remark}}</view>
 								</view>
 								<view class="uni-media-list-text-bottom uni-ellipsis price">￥{{value.Amount}}</view>
 							</view>

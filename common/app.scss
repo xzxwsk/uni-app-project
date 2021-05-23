@@ -246,10 +246,16 @@ uni-toast{z-index: 100000;}
 				.pay_type{display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;}
 				uni-input, .uni-input-input{font-size: 14px; text-align: right;}
 			}
+			.remark{display: flex; align-items: center;
+				.textarea-placeholder,
+				.uni-textarea-textarea{text-align: right;}
+			}
 		}
 		&.count{
 			.uni-list-cell{padding: 0 20upx 0 0;
 				&:after{left: 0; right: 0;}
+				.textarea-placeholder,
+				.uni-textarea-textarea{text-align: right;}
 			}
 		}
 	}

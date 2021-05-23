@@ -1,4 +1,5 @@
 <script>
+	import { getUpdateUrl } from './common/util.js'
 	export default {
 		onLaunch: function() {
 			const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -112,7 +113,7 @@
 			function checkUpdate() {
 				// 检测升级
 				uni.request({
-					url: 'http://39.108.139.53/appSource/updateData.json?random=' + Math.random(), //检查更新的服务器地址
+					url: getUpdateUrl() + '?random=' + Math.random(), //检查更新的服务器地址
 					// data: {
 					// 	appid: plus.runtime.appid,
 					// 	version: plus.runtime.version,

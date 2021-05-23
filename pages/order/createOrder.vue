@@ -20,6 +20,7 @@
 								<view class="uni-media-list-text-top sub_txt">数量: {{value.Qty}}件</view>
 							</view>
 							<view class="uni-media-list-text-bottom uni-ellipsis">单价：<text class="price">￥{{value.Price}}</text><text style="margin: 0 10px 0 0;">元</text> 共计：<text class="price">￥{{value.Amount}}</text>元</view>
+							<view class="uni-media-list-text-bottom uni-ellipsis remark">备注：<textarea @blur="bindTextAreaBlurItem(key)" placeholder="请输入备注说明" v-model="value.Remark" auto-height /></view>
 						</view>
 					</view>
 				</view>
@@ -50,6 +51,12 @@
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>商品金额</text></text>
 						<text class="item-content"><text class="price">￥{{billObj.Amount}}</text></text>
+					</view>
+				</view>
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>备注</text></text>
+						<textarea @blur="bindTextAreaBlur" placeholder="请输入备注说明" v-model="billObj.Remark" auto-height />
 					</view>
 				</view>
 				<view class="uni-list-cell">
@@ -377,6 +384,12 @@
 				this.$set(this.billObj, 'IsPay', !this.billObj.IsPay);
 				this.getDefaultPayInfo();
 				this.scrolltop = util.random(500, 1000);
+			},
+			bindTextAreaBlurItem(e) {
+				this.$set(this.billObj.Items[e], 'Remark', this.billObj.Items[e].Remark);
+			},
+			bindTextAreaBlur(e) {
+				this.$set(this.billObj, 'Remark', this.billObj.Remark);
 			},
 			changeMoneyType(e) {
 				// 付款方式

@@ -2,12 +2,12 @@
     "name" : "纤畅App",
     "appid" : "__UNI__F960A47",
     "description" : "应用描述",
-    "versionName" : "1.2.15",
+    "versionName" : "1.2.16",
     "versionCode" : 104,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
-		"runmode": "liberate", // android读取本地路径
+        "runmode" : "liberate", // android读取本地路径
         "compatible" : {
             "ignoreVersion" : true //true表示忽略版本检查提示框，HBuilderX1.9.0及以上版本支持
         },

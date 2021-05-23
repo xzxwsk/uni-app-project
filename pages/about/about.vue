@@ -268,7 +268,7 @@
 				let me = this;
 				// 检测升级
 				uni.request({
-					url: 'http://39.108.139.53/appSource/updateData.json?random=' + Math.random(), //检查更新的服务器地址
+					url: util.getUpdateUrl() + '?random=' + Math.random(), //检查更新的服务器地址
 					// data: {
 					// 	appid: plus.runtime.appid,
 					// 	version: plus.runtime.version,

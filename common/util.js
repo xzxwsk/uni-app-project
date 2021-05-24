@@ -1,6 +1,6 @@
 // const baseUrlGlobal = 'http://47.104.226.115/qcdm/'; // 开发 测试帐号：A0000002 密码：1234
 const baseUrlGlobal = 'http://118.163.201.227/qcdm/'; // 生产环境
-const updateUrl = 'http://39.108.139.53/appSource/updateData.json'; // 更新地址
+const updateUrl = 'http://118.163.201.227/appdownload/updatedata.json'; // 更新地址
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 let baseUrl = '';
 

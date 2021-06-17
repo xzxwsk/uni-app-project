@@ -315,6 +315,7 @@
 		}, {
 			"path": "pages/tabBar/user",
 			"style": {
+				"navigationBarTitleText": "我的",
 				"app-plus": {
 					"bounce": "vertical",
 					"titleNView": false

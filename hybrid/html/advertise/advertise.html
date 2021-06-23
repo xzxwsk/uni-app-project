@@ -44,12 +44,11 @@
 							console.log( "xhr请求已发送" );
 						break;
 						case 3:
-							// console.log( "xhr请求已响应");
+							console.log( "xhr请求已响应");
 							break;
 						case 4:
 							if ( xhr.status == 200 ) {
 								console.log( "xhr请求成功：" );
-								// console.log(xhr.response);
 								callback(xhr.response);
 							} else {
 								console.log( "xhr请求失败："+xhr.readyState );
@@ -60,7 +59,7 @@
 					}
 				}
 				xhr.responseType = 'json';
-				xhr.open( "POST", baseUrl);
+				xhr.open("POST", baseUrl);
 				xhr.send(JSON.stringify({
 					jsonrpc: '2.0',
 					method: methods,
@@ -187,64 +186,70 @@
 					}
 				})
 			}
-			
-			// https://pic.fhtp88.com/upload/art/07/14/04/wgvnto2i2gt.jpg
-			const picUrl = 'https://n.sinaimg.cn/tech/transform/366/w216h150/20210203/70ad-kirmait4625391.gif'
-			if (plus.os.name !== 'iOS') {
-				findFile(function(fullPath) {
-					fullPath = fullPath.indexOf('111') !== -1 ? '_downloads/111.gif' : '_downloads/222.gif'
-					let option = {
-						filename: fullPath
-					}
-					const dtask = plus.downloader.createDownload(picUrl, option, function (d, status) {
-						// 下载完成
-						if(status == 200) {
-							console.log("Download success: ", d.filename, d.totalSize/1024);
-							// 下载完成后用下载路径替换，必须是_downloads路径
-							plus.io.resolveLocalFileSystemURL(d.filename.indexOf('111') !== -1 ? '_downloads/111.gif' : '_downloads/222.gif', function(entry) {
-								console.log('找到新下载文件: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
-								// 显示图片用 /storage路径
-								showImg(entry.fullPath, entry.fullPath)
-							}, function(err) {
-								console.log('未找到文件: ', JSON.stringify(err))
-							})
-						} else {
-							console.log("Download failed: " + status); 
-						}  
+			const showImportImg = function(picUrl) {
+				// https://pic.fhtp88.com/upload/art/07/14/04/wgvnto2i2gt.jpg
+				// const picUrl = 'https://n.sinaimg.cn/tech/transform/366/w216h150/20210203/70ad-kirmait4625391.gif'
+				if (plus.os.name !== 'iOS') {
+					findFile(function(fullPath) {
+						fullPath = fullPath.indexOf('111') !== -1 ? '_downloads/111.gif' : '_downloads/222.gif'
+						let option = {
+							filename: fullPath
+						}
+						const dtask = plus.downloader.createDownload(picUrl, option, function (d, status) {
+							// 下载完成
+							if(status == 200) {
+								console.log("Download success: ", d.filename, d.totalSize/1024);
+								// 下载完成后用下载路径替换，必须是_downloads路径
+								plus.io.resolveLocalFileSystemURL(d.filename.indexOf('111') !== -1 ? '_downloads/111.gif' : '_downloads/222.gif', function(entry) {
+									console.log('找到新下载文件: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
+									// 显示图片用 /storage路径
+									showImg(entry.fullPath, entry.fullPath)
+								}, function(err) {
+									console.log('未找到文件: ', JSON.stringify(err))
+								})
+							} else {
+								console.log("Download failed: " + status); 
+							}  
+						})
+						// dtask.addEventListener("statechanged", function(d, status) {
+						// 	if (d.state === 3) {
+						// 		console.log(Math.round(d.downloadedSize / d.totalSize * 100))
+						// 	}
+						// }, false);
+						dtask.start();
 					})
-					// dtask.addEventListener("statechanged", function(d, status) {
-					// 	if (d.state === 3) {
-					// 		console.log(Math.round(d.downloadedSize / d.totalSize * 100))
-					// 	}
-					// }, false);
-					dtask.start();
-				})
-			} else {
-				findFileiOS(function(fullPath) {
-					const option = {
-						filename: fullPath
-					}
-					const dtask = plus.downloader.createDownload(picUrl, option, function (d, status) {
-						// 下载完成
-						if(status == 200) {
-							console.log("Download success: ", d.filename, d.totalSize/1024);
-							// 下载完成后用下载路径替换
-							plus.io.resolveLocalFileSystemURL(d.filename, function(entry) {
-								console.log('找到新下载文件: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
-								// createView(entry.toLocalURL(), entry.toLocalURL())
-								// closeView()
-								// saveImg(entry, entry.toLocalURL())
-								showImg(entry.fullPath, entry.fullPath)
-							}, function(err) {
-								console.log('未找到文件: ', JSON.stringify(err))
-							})
-						} else {
-							console.log("Download failed: " + status); 
-						}  
+				} else {
+					findFileiOS(function(fullPath) {
+						const option = {
+							filename: fullPath
+						}
+						const dtask = plus.downloader.createDownload(picUrl, option, function (d, status) {
+							// 下载完成
+							if(status == 200) {
+								console.log("Download success: ", d.filename, d.totalSize/1024);
+								// 下载完成后用下载路径替换
+								plus.io.resolveLocalFileSystemURL(d.filename, function(entry) {
+									console.log('找到新下载文件: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
+									// createView(entry.toLocalURL(), entry.toLocalURL())
+									// closeView()
+									// saveImg(entry, entry.toLocalURL())
+									showImg(entry.fullPath, entry.fullPath)
+								}, function(err) {
+									console.log('未找到文件: ', JSON.stringify(err))
+								})
+							} else {
+								console.log("Download failed: " + status); 
+							}  
+						})
+						dtask.start();
 					})
-					dtask.start();
-				})
+				}
 			}
+			ajaxFun(function(res) {
+				// showImportImg(res.result.PictureSplashBase64)
+				document.getElementById('img').src = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64
+				document.getElementById('img').style.display = ''
+			})
 			
 			document.querySelector('.btn').addEventListener('click', function(e) {
 				console.log(e.isTrusted)

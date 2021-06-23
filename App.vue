@@ -170,10 +170,10 @@
 			}
 			
 			//设置定时器，关闭启动广告页
-			// setTimeout(function() {
-			// 	plus.webview.close(w);
-			// 	checkUpdate();
-			// }, 7500);
+			setTimeout(function() {
+				plus.webview.close(w);
+				checkUpdate();
+			}, 7500);
 			// plus.push.addEventListener('click', function(msg){  
 			// 	//处理透传消息的业务逻辑代码
 			// 	uni.showModal({

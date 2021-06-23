@@ -254,16 +254,15 @@
 				this.init();
 			} else if (option.hasOwnProperty('id')) {
 				// 商品详情进入结算
-				this.init(option.id);
+				this.init(option.id, option.num);
 			}
 		},
 		methods: {
-			async init(id) {
+			async init(id, num) {
 				util.showLoading();
 				await this.getDefaultAddr();
 				if(id) {
 					// 商品详情进入结算
-					let CartItemIds = this.orderLs.map(item => item.Id);
 					await util.ajax({
 						method: 'Businese.OrderDAL.CreateDefaultByProductId',
 						params: {
@@ -275,6 +274,10 @@
 					}).then(res => {
 						util.hideLoading();
 						let data = res.data.result;
+						// 把输入的数量带入，并计划金额
+						data.Items[0].Qty = num
+						data.Items[0].Amount = parseInt(data.Items[0].Price * data.Items[0].Qty * 100) / 100
+						data.Amount = data.Items[0].Amount
 						console.log('生成默认订单：', data);
 						this.billObj = data;
 					});
@@ -285,7 +288,7 @@
 					await util.ajax({
 						method: 'Businese.OrderDAL.CreateDefault',
 						params: {
-							CartItemIds: CartItemIds
+							CartItemIds
 						},
 						tags: {
 							usertoken: this.openid

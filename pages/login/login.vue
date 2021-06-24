@@ -78,7 +78,7 @@
 				uuid: '',
 				providerList: [],
 				hasProvider: false,
-				account: '', // A0000002 000000
+				account: '',
 				password: '',
 				voliCode: '',
 				voliCodeSrc: '',

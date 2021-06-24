@@ -269,7 +269,7 @@
 			},
 			goCreateOrder() {
 				util.goUrl({
-					url: '../order/createOrder?id=' + this.detail.RecordId + '&num' + this.num
+					url: '../order/createOrder?id=' + this.detail.RecordId + '&num=' + this.num
 				});
 			},
 			goTop() {

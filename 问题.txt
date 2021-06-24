@@ -1,8 +1,0 @@
-1.引导广告图  SYS.OptionsDAL.GetOptions    PictureSplashBase64
-2.已退保证金的注销单
- 退款类型，退款方式，金额，付款账户信息，收款账户信息
-
-3.
-4.
-5.
-6.

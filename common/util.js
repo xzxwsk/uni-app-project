@@ -458,6 +458,7 @@ let ajax = async function(prompt) {
 					err.data = err.errMsg;
 				}
 				ajaxReturn(err, _prompt);
+				reject(err);
 			});
 		} else {
 			postAjax(_prompt)
@@ -468,6 +469,7 @@ let ajax = async function(prompt) {
 					err.data = err.errMsg;
 				}
 				ajaxReturn(err, _prompt);
+				reject(err);
 			})
 		}
 	});

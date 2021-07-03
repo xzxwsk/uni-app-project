@@ -162,7 +162,8 @@
 					method: 'Businese.BillPayDAL.GetDefaultPayInfo',
 					params: {
 						PayType: this.billObj.PayType,
-						AccountType: accountType
+						AccountType: accountType,
+						Amount: this.billObj.Amount
 					},
 					tags: {
 						usertoken: this.openid
@@ -269,7 +270,10 @@
 							}, 1000);
 						}
 					});
-				});
+				}).catch(e => {
+					console.log(e)
+					me.saving = false;
+				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

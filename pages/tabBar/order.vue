@@ -184,7 +184,7 @@
 				uni.showModal({
 					title: '未登录',
 					content: '您未登录，需要登录后才能继续',
-					showCancel: false,
+					// showCancel: false,
 					success: (res) => {
 						if (res.confirm) {
 							uni.reLaunch({

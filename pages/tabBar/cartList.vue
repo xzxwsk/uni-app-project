@@ -186,10 +186,10 @@
 		},
 		methods: {
 			getLs() {
-				if (!this.hasLogin) {
-					this.goLogin();
-					return;
-				}
+				// if (!this.hasLogin) {
+				// 	this.goLogin();
+				// 	return;
+				// }
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.CartDAL.GetUserCart',
@@ -231,7 +231,7 @@
 				uni.showModal({
 					title: '未登录',
 					content: '您未登录，需要登录后才能继续',
-					showCancel: false,
+					// showCancel: false,
 					success: (res) => {
 						if (res.confirm) {
 							uni.reLaunch({

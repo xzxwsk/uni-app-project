@@ -40,6 +40,11 @@
 				<view class="btn-row">
 					<button type="warn" @tap="bindLogin">登录</button>
 				</view>
+				<!-- #ifdef MP-WEIXIN -->
+				<view class="btn-row">
+					<button type="default" class="uni-icon uni-icon-weixin chat-btn" @click="getUserInfo">微信一键登录</button>
+				</view>
+				<!-- #endif -->
 				<view class="btn-row">
 					<button type="default" @tap="bindReg">分销商注册</button>
 				</view>
@@ -82,7 +87,8 @@
 				password: '',
 				voliCode: '',
 				voliCodeSrc: '',
-				positionTop: 0
+				positionTop: 0,
+				code: '' // 微信code
 			}
 		},
 		onLoad() {
@@ -91,9 +97,12 @@
 				data: ''
 			});
 			this.getSessionId();
+			this.getSystemInfo();
 			// #ifdef APP-PLUS
 			// plus.nativeUI.showWaiting('加载中……');
-			// this.getSystemInfo();
+			// #endif
+			// #ifdef MP-WEIXIN
+			this.getCode()
 			// #endif
 		},
 		onReady() {
@@ -310,6 +319,50 @@
 					
 				}
 			},
+			getCode() {
+				// 微信登录，获得code
+				uni.login({
+					provider: 'weixin',
+					success: res => {
+						console.log('uni.login: ', res)
+						if (res.errMsg == "login:ok") {
+							this.code = res.code
+						}
+					}
+				})
+			},
+			getUserInfo(e){
+				uni.getUserProfile({
+					desc: '用于会员业务办理', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+					success: e => {
+						console.log('getUserProfile: ', e)
+						if(e.errMsg=='getUserProfile:ok'){
+							this.applet(e);
+						}else{
+							uni.showToast({icon: 'none',title:'你取消了登录'});
+							return false
+						}
+					}
+				})
+			},
+			//进行授权登录
+			async applet(e){
+				let res = await util.ajax({
+					method: 'SYS.UserDAL.WxLogin',
+					params: {
+						WxCode: this.code
+					}
+				})
+				console.log('applet: ', res, e)
+				// if(res.data.code==0){
+				//     let userInfo = {
+				// 	    userInfo1: e.userInfo,
+				// 	    token: res.data.data.token
+				//     }
+				//     uni.setStorageSync('userInfo', userInfo);
+				//     uni.setStorageSync('token', userInfo.token);
+				// }
+			},
 			async bindLogin() {
 				let me = this;
 				if(!this.$refs.input1) {
@@ -420,26 +473,27 @@
 			getSystemInfo() {
 				uni.getSystemInfo({
 					success (res) {
-						uni.showModal({
-							title: '系统信息',
-							content: 'model: ' + res.model + '\n'
-									+ 'pixelRatio: ' + res.pixelRatio + '\n'
-									+ 'windowWidth: ' + res.windowWidth + '\n'
-									+ 'windowHeight: ' + res.windowHeight + '\n'
-									+ 'language: ' + res.language + '\n'
-									+ 'version: ' + res.version + '\n'
-									+ 'platform: ' + res.platform + '\n'
-									+ 'SDKVersion: ' + res.SDKVersion + '\n'
-									+ 'system: ' + res.system + '\n'
-									+ 'statusBarHeight: ' + res.statusBarHeight,
-							success (resOperate) {
-								if (resOperate.confirm) {
-									console.log('用户点击确定');
-								} else if (resOperate.cancel) {
-									console.log('用户点击取消');
-								}
-							}
-						});
+						console.log(res)
+						// uni.showModal({
+						// 	title: '系统信息',
+						// 	content: 'model: ' + res.model + '\n'
+						// 			+ 'pixelRatio: ' + res.pixelRatio + '\n'
+						// 			+ 'windowWidth: ' + res.windowWidth + '\n'
+						// 			+ 'windowHeight: ' + res.windowHeight + '\n'
+						// 			+ 'language: ' + res.language + '\n'
+						// 			+ 'version: ' + res.version + '\n'
+						// 			+ 'platform: ' + res.platform + '\n'
+						// 			+ 'SDKVersion: ' + res.SDKVersion + '\n'
+						// 			+ 'system: ' + res.system + '\n'
+						// 			+ 'statusBarHeight: ' + res.statusBarHeight,
+						// 	success (resOperate) {
+						// 		if (resOperate.confirm) {
+						// 			console.log('用户点击确定');
+						// 		} else if (resOperate.cancel) {
+						// 			console.log('用户点击取消');
+						// 		}
+						// 	}
+						// });
 					}
 				});
 			}

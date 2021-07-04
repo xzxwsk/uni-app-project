@@ -87,6 +87,8 @@
 				this.getChangeNum();
 			}
 			this.getSystemInfo();
+			// 获取广告图
+			this.getAdLs()
 			setTimeout(()=> {
 			    this.renderImage = true;
 			}, 300);
@@ -212,6 +214,21 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
+			getAdLs() {
+				// 获取广告图
+				util.ajax({
+					method: 'SYS.OptionsDAL.GetOptions',
+					tags: {
+						usertoken: this.openid
+					}
+				}).then(res => {
+					this.imgLs = [];
+					let img = res.data.result.PictureTopBase64;
+					if (img) {
+						this.imgLs.push('data:image/jpeg;base64,' + img);
+					}
+				})
+			},
 			goLogin() {
 				uni.showModal({
 					title: '未登录',
@@ -261,19 +278,6 @@
 			},
 			async loadData(action = 'add', key = '') {
 				util.showLoading();
-				// 获取广告图
-				await util.ajax({
-					method: 'SYS.OptionsDAL.GetOptions',
-					tags: {
-						usertoken: this.openid
-					}
-				}).then(res => {
-					this.imgLs = [];
-					let img = res.data.result.PictureTopBase64;
-					if (img) {
-						this.imgLs.push('data:image/jpeg;base64,' + img);
-					}
-				});
 				// 获取产品列表
 				await util.ajax({
 					method: 'Basic.ProductDAL.QueryList',

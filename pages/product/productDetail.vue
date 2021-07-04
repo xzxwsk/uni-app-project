@@ -244,10 +244,10 @@
 				});
 			},
 			async goCartLs() {
-				if (!this.hasLogin) {
-					this.goLogin();
-					return;
-				}
+				// if (!this.hasLogin) {
+				// 	this.goLogin();
+				// 	return;
+				// }
 				// 加入购物车
 				util.showLoading();
 				await util.ajax({

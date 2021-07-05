@@ -418,6 +418,27 @@ let ajaxReturn = function(err, _prompt) {
 	// }
 	console.log('err: ', err);
 	hideLoading();
+	
+	// 如果是小程序端
+	// #ifdef MP-WEIXIN
+	if (err.code === 31000) {
+		dialog({
+			title: '错误信息',
+			content: err.message,
+			success: function(data) {
+				if(data.confirm) {
+					console.log('确定')
+					// 跳转绑定页
+					goUrl({
+						url: 'bind'
+					})
+				}
+			}
+		})
+		return
+	}
+	// #endif
+	
 	dialog({
 		title: '错误信息',
 		content: err.message,

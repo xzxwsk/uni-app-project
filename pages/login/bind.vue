@@ -5,7 +5,7 @@
 		    <!-- 这里是状态栏 -->
 		</view>
 		<view class="uni-padding-wrap uni-common-pb login_top">
-			<view class="return_btn" @tap="goMain"><text class="uni-icon uni-icon-home"></text></view> <button class="b login_title">帐号登录</button>
+			<view class="return_btn" @tap="goMain"><text class="uni-icon uni-icon-home"></text></view> <button class="b login_title">绑定帐号</button>
 		</view>
 		<!-- #endif -->
 		<view class="content">
@@ -40,15 +40,7 @@
 					</view>
 				</view>
 				<view class="btn-row">
-					<button type="warn" @tap="bindLogin">登录</button>
-				</view>
-				<!-- #ifdef MP-WEIXIN -->
-				<view class="btn-row">
-					<button type="default" class="uni-icon uni-icon-weixin chat-btn" @click="getUserInfo">微信一键登录</button>
-				</view>
-				<!-- #endif -->
-				<view class="btn-row">
-					<button type="default" @tap="bindReg">分销商注册</button>
+					<button type="warn" @tap="bindLogin">绑定</button>
 				</view>
 				<!-- <view class="action-row">
 					<navigator url="./reg">注册账号</navigator>
@@ -378,7 +370,7 @@
 				if(this.$refs.input1.getValue() && this.$refs.input2.getValue() && this.$refs.input3.getValue()){
 					util.showLoading();
 					await util.ajax({
-						method: 'SYS.UserDAL.Login',
+						method: 'SYS.UserDAL.BindWxUser',
 						params: {
 							UserName: data.account,
 							LoginInfo: {
@@ -388,7 +380,8 @@
 								ClientVersion: '1.0.0.1',
 								EncyptType: 0,
 								DeviceId: this.uuid
-							}
+							},
+							WxCode: this.code
 						},
 						tags: {
 							usertoken: '',

@@ -30,6 +30,15 @@
 				}
 			}
 		}, {
+			"path": "pages/login/bind",
+			"style": {
+				"navigationBarTitleText": "绑定帐号",
+				"app-plus": {
+					"bounce": "vertical",
+					"titleNView": false
+				}
+			}
+		}, {
 			"path": "pages/tabBar/cartList",
 			"style": {
 				"navigationBarTitleText": "购物车",

@@ -86,15 +86,11 @@
 			}
 		},
 		onLoad() {
-			util.setStorageSync({
-				key: 'session_id',
-				data: ''
-			});
-			this.getSessionId();
-			this.getSystemInfo();
 			// #ifdef APP-PLUS
 			// plus.nativeUI.showWaiting('加载中……');
 			// #endif
+		},
+		onShow() {
 			// #ifdef MP-WEIXIN
 			this.getCode()
 			// #endif

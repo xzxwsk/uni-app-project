@@ -93,6 +93,11 @@
 				code: '' // 微信code
 			}
 		},
+		onShow() {
+			// #ifdef MP-WEIXIN
+			this.getCode()
+			// #endif
+		},
 		onLoad() {
 			util.setStorageSync({
 				key: 'session_id',
@@ -102,9 +107,6 @@
 			this.getSystemInfo();
 			// #ifdef APP-PLUS
 			// plus.nativeUI.showWaiting('加载中……');
-			// #endif
-			// #ifdef MP-WEIXIN
-			this.getCode()
 			// #endif
 		},
 		onReady() {
@@ -356,14 +358,23 @@
 					}
 				})
 				console.log('applet: ', res, e)
-				// if(res.data.code==0){
-				//     let userInfo = {
-				// 	    userInfo1: e.userInfo,
-				// 	    token: res.data.data.token
-				//     }
-				//     uni.setStorageSync('userInfo', userInfo);
-				//     uni.setStorageSync('token', userInfo.token);
-				// }
+				if(res.data.result){
+				    util.setStorageSync({
+						key: 'session_id',
+						data: res.data.result
+					});
+					this.setOpenid(res.data.result);
+				    let resUserInfo = await util.ajax({
+				    	method: 'SYS.UserDAL.GetDealerByToken',
+				    	tags: {
+				    		usertoken: res.data.result
+				    	}
+				    })
+					console.log('resUserInfo: ', resUserInfo)
+					resUserInfo.data.result = util.jsonReplace(resUserInfo.data.result, 'null', '""');
+					this.setUserInfo(resUserInfo.data.result);
+					this.toMain(resUserInfo.data.result.DealerName);
+				}
 			},
 			async bindLogin() {
 				let me = this;

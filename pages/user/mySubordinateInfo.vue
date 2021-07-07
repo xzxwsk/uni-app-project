@@ -161,7 +161,7 @@
 					name: '下属奖金查询',
 					id: 'bonusQuery'
 				}],
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				tableList: [],
 				tableList2: [],
 				isScroll: false,

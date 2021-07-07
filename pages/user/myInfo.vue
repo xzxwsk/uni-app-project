@@ -34,9 +34,9 @@
 	export default {
 		data() {
 			return {
-				imgSrcHead: '/static/images/avatar_member.gif',
+				imgSrcHead: util.getImgUrl() + '/static/images/avatar_member.gif',
 				modeHead: 'widthFix',
-				imgSrc: '/static/images/member_bg.png',
+				imgSrc: util.getImgUrl() + '/static/images/member_bg.png',
 				mode: 'widthFix',
 				pages: [					
 					{

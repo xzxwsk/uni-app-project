@@ -128,54 +128,9 @@
 </template>
 
 <script>
-	const tpl = [{
-		selected: false,
-		img: '/static/img/H_9X10_1.jpg',
-		title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
-		price: 130.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_027_1.jpg',
-		title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
-		price: 148.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_023_180@200.JPG',
-		title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
-		price: 139.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_9X10_1.jpg',
-		title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
-		price: 130.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_027_1.jpg',
-		title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
-		price: 148.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_023_180@200.JPG',
-		title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
-		price: 139.00,
-		num: 1,
-		hoverClass: ''
-	}];
-	
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
-	import defaultImg from '@/static/img/2X1_1.jpg';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
@@ -248,9 +203,6 @@
 			if (option.hasOwnProperty('obj')) {
 				// 购物车进入结算
 				this.orderLs = JSON.parse(option.obj);
-				// this.orderLs.forEach(item => {
-				// 	item.img = (item.hasOwnProperty('SmallImageBase64') && item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg;
-				// });
 				this.init();
 			} else if (option.hasOwnProperty('id')) {
 				// 商品详情进入结算

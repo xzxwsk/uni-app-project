@@ -85,38 +85,14 @@
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
-	const list = [{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '申请',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已退货款',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已审核',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已确认收款',
-		count: 1,
-		price: 16.28
-	}];
+	const list = [];
 	export default {
 		components: {
 			inputBox, customDatePicker
 		},
 		data() {
 			return {
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				isLoaded: false,
 				scrollLeft: 0,

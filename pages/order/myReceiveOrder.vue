@@ -191,55 +191,7 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
-	const list = [{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '下单日期：2019-05-22',
-		status: '未发货',
-		count: 1,
-		price: 16.28,
-		IsPay: true,
-		IsPayReturn: true
-	}, {
-		src: '/static/img/H_023_180@200.JPG',
-		title: '下单日期：2019-05-22',
-		status: '已发货',
-		count: 1,
-		price: 16.28,
-		IsPay: true,
-		IsPayReturn: true
-	}, {
-		src: '/static/img/H_023_180@200.JPG',
-		title: '下单日期：2019-05-22',
-		status: '已收货确认',
-		count: 1,
-		price: 16.28,
-		IsPay: true,
-		IsPayReturn: true
-	}, {
-		src: '/static/img/H_023_180@200.JPG',
-		title: '下单日期：2019-05-22',
-		status: '退货中',
-		count: 1,
-		price: 16.28,
-		IsPay: true,
-		IsPayReturn: true
-	}, {
-		src: '/static/img/H_023_180@200.JPG',
-		title: '下单日期：2019-05-22',
-		status: '已确认退货',
-		count: 1,
-		price: 16.28,
-		IsPay: true,
-		IsPayReturn: true
-	}, {
-		src: '/static/img/H_023_180@200.JPG',
-		title: '下单日期：2019-05-22',
-		status: '已关闭',
-		count: 1,
-		price: 16.28,
-		IsPay: true,
-		IsPayReturn: true
-	}];
+	const list = [];
 	export default {
 		components: {
 			inputBox, customDatePicker, uniPopup
@@ -247,7 +199,7 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				isLoaded: false,
 				scrollLeft: 0,

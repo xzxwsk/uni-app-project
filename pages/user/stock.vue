@@ -50,7 +50,6 @@
     import tTh from '@/components/t-table/t-th.vue';
     import tTr from '@/components/t-table/t-tr.vue';
     import tTd from '@/components/t-table/t-td.vue';
-	import imgSrc from '@/static/images/no_data_d.png';
 	import {mapMutations} from 'vuex';
 	
 	const tableList = [{
@@ -94,7 +93,7 @@
 				tableList: [],
 				selectedArr: [],
 				allSelect: false,
-				imgSrc: imgSrc
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png'
             }
         },
 		onNavigationBarButtonTap(e) {

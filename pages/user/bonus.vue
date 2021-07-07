@@ -55,151 +55,8 @@
     import tTd from '@/components/t-table/t-td.vue';
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
-	import imgSrc from '@/static/images/no_data_d.png';
 	
-	const tableList = [{
-                        id: 0,
-                        name: '201908',
-                        age: '直推',
-                        hobby: '324'
-                    },
-                    {
-                        id: 1,
-                        name: '201908',
-                        age: '团队',
-                        hobby: '3432'
-                    },
-                    {
-                        id: 2,
-                        name: '201908',
-                        age: '直推',
-                        hobby: '3242'
-                    },
-                    {
-                        id: 3,
-                        name: '201908',
-                        age: '团队',
-                        hobby: '132'
-                    },
-					{
-						id: 0,
-						name: '201908',
-						age: '直推',
-						hobby: '324'
-					},
-					{
-						id: 1,
-						name: '201908',
-						age: '团队',
-						hobby: '3432'
-					},
-					{
-						id: 2,
-						name: '201908',
-						age: '直推',
-						hobby: '3242'
-					},
-					{
-						id: 3,
-						name: '201908',
-						age: '团队',
-						hobby: '132'
-					},{
-                        id: 0,
-                        name: '201908',
-                        age: '直推',
-                        hobby: '324'
-                    },
-                    {
-                        id: 1,
-                        name: '201908',
-                        age: '团队',
-                        hobby: '3432'
-                    },
-                    {
-                        id: 2,
-                        name: '201908',
-                        age: '直推',
-                        hobby: '3242'
-                    },
-                    {
-                        id: 3,
-                        name: '201908',
-                        age: '团队',
-                        hobby: '132'
-                    },
-					{
-						id: 0,
-						name: '201908',
-						age: '直推',
-						hobby: '324'
-					},
-					{
-						id: 1,
-						name: '201908',
-						age: '团队',
-						hobby: '3432'
-					},
-					{
-						id: 2,
-						name: '201908',
-						age: '直推',
-						hobby: '3242'
-					},
-					{
-						id: 3,
-						name: '201908',
-						age: '团队',
-						hobby: '132'
-					},{
-                        id: 0,
-                        name: '201908',
-                        age: '直推',
-                        hobby: '324'
-                    },
-                    {
-                        id: 1,
-                        name: '201908',
-                        age: '团队',
-                        hobby: '3432'
-                    },
-                    {
-                        id: 2,
-                        name: '201908',
-                        age: '直推',
-                        hobby: '3242'
-                    },
-                    {
-                        id: 3,
-                        name: '201908',
-                        age: '团队',
-                        hobby: '132'
-                    },
-					{
-						id: 0,
-						name: '201908',
-						age: '直推',
-						hobby: '324'
-					},
-					{
-						id: 1,
-						name: '201908',
-						age: '团队',
-						hobby: '3432'
-					},
-					{
-						id: 2,
-						name: '201908',
-						age: '直推',
-						hobby: '3242'
-					},
-					{
-						id: 3,
-						name: '201908',
-						age: '团队',
-						hobby: '132'
-					}
-                ]
+	const tableList = []
 
     export default {
         components: {
@@ -208,7 +65,7 @@
         data() {
             return {
 				loaded: false,
-				imgSrc: imgSrc,
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				isScroll: false,
 				tableList: tableList,
 				dateValue: '',

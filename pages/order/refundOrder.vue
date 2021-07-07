@@ -83,35 +83,7 @@
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
-	const list = [{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '退款中',
-		payType: '货款',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已退款',
-		payType: '货款',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '取消',
-		payType: '货款',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '取消',
-		payType: '货款',
-		count: 1,
-		price: 16.28
-	}];
+	const list = [];
 	export default {
 		components: {
 			inputBox, customDatePicker
@@ -119,7 +91,7 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				scrollLeft: 0,
 				tabIndex: 0,

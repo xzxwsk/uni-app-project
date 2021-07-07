@@ -49,7 +49,6 @@
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
-	import noImg from '@/static/images/no_data_d.png';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
@@ -58,7 +57,7 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				imgSrc: noImg,
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				dataArr: [{
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,

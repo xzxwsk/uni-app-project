@@ -76,28 +76,9 @@
 	import inputBox from '@/components/input-box/input-box';
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
-	import noImg from '@/static/images/no_data_d.png';
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
-	const list = [{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '申请',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已审核',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已审核',
-		count: 1,
-		price: 16.28
-	}];
+	const list = [];
 	export default {
 		components: {
 			inputBox, customDatePicker
@@ -105,7 +86,7 @@
 		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
-				imgSrc: noImg,
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				scrollLeft: 0,
 				tabIndex: 0,

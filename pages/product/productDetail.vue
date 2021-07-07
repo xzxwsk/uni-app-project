@@ -94,7 +94,6 @@
 
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
-	import defaultImg from '@/static/img/2X1_1.jpg';
 	import util from '@/common/util.js';
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more';
 	import {mapState, mapMutations} from 'vuex';
@@ -134,12 +133,9 @@
 				autoplay: true,
 				interval: 50000,
 				duration: 500,
-				imgLs: ['/static/img/2X1_6.jpg',
-					'/static/img/2X1_2.jpg',
-					'/static/img/2X1_1.jpg',
-					'/static/img/2X1_5.jpg'],
-				img: '/static/img/2X1_6.jpg',
-				modeLs: ['54 * 4g/袋（共54袋）', '125 * 4g/袋（共500g）', '24 * 4g/袋（共24袋）'],
+				imgLs: [],
+				img: util.getImgUrl() + '/static/img/2X1_6.jpg',
+				modeLs: [],
 				selectItem: 0,
 				num: 1,
 				clickType: '',
@@ -170,7 +166,6 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					// this.imgLs.push((res.data.result.BigImageBase64 !== null && res.data.result.BigImageBase64 !== ' ' && res.data.result.BigImageBase64 !== '') ? ('data:image/jpeg;base64,' + res.data.result.BigImageBase64) : defaultImg);
 					this.imgLs.push((res.data.result.BigImageFileName && res.data.result.BigImageFileName !== ' ') ? util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.BigImageFileName : '');
 					this.detail = res.data.result;
 					this.$nextTick(() => {

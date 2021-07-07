@@ -85,8 +85,6 @@
 
 <script>
 	import util from '@/common/util.js';
-	import imgSrcHead from "@/static/images/avatar_member.gif";
-	import imgSrc from "@/static/images/member_bg.png";
 	import uniBadge from '@/components/uni-badge/uni-badge.vue';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
@@ -97,9 +95,9 @@
 		data() {
 			return {
 				onLoadFlag: false,
-				imgSrcHead: imgSrcHead,
+				imgSrcHead: util.getImgUrl() + "/static/images/avatar_member.gif",
 				modeHead: 'widthFix',
-				imgSrc: imgSrc,
+				imgSrc: util.getImgUrl() + "/static/images/member_bg.png",
 				mode: 'widthFix',
 				pages: [
 					{

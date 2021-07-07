@@ -53,7 +53,7 @@
 		},
 		data() {
 			return {
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				dealerId: '',
 				person: '',

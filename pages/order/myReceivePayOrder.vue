@@ -90,28 +90,7 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
-	const list = [{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '未收款',
-		nature: '货款',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '已收款',
-		nature: '保证金',
-		count: 1,
-		price: 16.28
-	},{
-		src: '/static/img/H_023_180@200.JPG',
-		title: '水星MW150UH光驱版无线网卡接收器台式机笔记本电脑发射随身wifi',
-		status: '取消',
-		nature: '代交保证金',
-		count: 1,
-		price: 16.28
-	}];
+	const list = [];
 	export default {
 		components: {
 			inputBox, customDatePicker
@@ -119,7 +98,7 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				scrollLeft: 0,
 				tabIndex: 0,

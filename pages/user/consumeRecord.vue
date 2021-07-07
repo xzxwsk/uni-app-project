@@ -79,7 +79,6 @@
 	import inputBox from '@/components/input-box/input-box';
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
-	import noImg from '@/static/images/no_data_d.png';
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
@@ -89,7 +88,7 @@
 		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
-				imgSrc: noImg,
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				scrollLeft: 0,
 				tabIndex: 0,

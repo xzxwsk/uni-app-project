@@ -65,9 +65,6 @@
 	// https://ext.dcloud.net.cn/plugin?id=220
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
-	import frontImg from '@/static/img/H_027_1.jpg';
-	import backImg from '@/static/img/H_9X10_1.jpg';
-	import cityData from '@/common/city.data-3.js';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {

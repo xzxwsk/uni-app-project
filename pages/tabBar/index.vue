@@ -51,7 +51,6 @@
 <script>
 	import util from '@/common/util.js';
 	import shareMenu from '@/components/share-menu/index';
-	import defaultImg from '@/static/img/2X1_1.jpg';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
@@ -67,14 +66,8 @@
 				autoplay: true,
 				interval: 50000,
 				duration: 500,
-				imgSrc: '/static/images/no_data_d.png',
-				imgLs: [
-					// '/static/img/09b56be258853ac27ec6ecc946453b65.jpg',
-					// '/static/img/56da50eddd39e1089c0724e40443c850.png',
-					// '/static/img/18092294969201596540241d96bc0592.jpg',
-					// '/static/img/c1b03c41d7eeec63eece551efdeb03af.jpg',
-					// '/static/img/f3cd12cb76ff1be193dbc091b56fde2b.jpg'
-				],
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
+				imgLs: [],
 				productList: [],
 				recordsTotal: 0,
 				pageIndex: 1,
@@ -88,7 +81,7 @@
 			}
 			this.getSystemInfo();
 			// 获取广告图
-			this.getAdLs()
+			// this.getAdLs()
 			setTimeout(()=> {
 			    this.renderImage = true;
 			}, 300);
@@ -296,7 +289,6 @@
 					let ls = res.data.result.data.map(item => {
 						return {
 							id: item.RecordId,
-							// image: (item.SmallImageBase64 !== null && item.SmallImageBase64 !== ' ') ? ('data:image/jpeg;base64,' + item.SmallImageBase64) : defaultImg,
 							image: item.SmallImageFileName ? util.getBaseUrl() + 'files/downloadfile?filename=' + item.SmallImageFileName : '',
 							title: item.Name + ' ' + item.Spec + '/' + item.Unit, // Spec, 规格   Unit, 计量单位,
 							remark: item.Remark,

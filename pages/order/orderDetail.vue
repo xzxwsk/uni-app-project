@@ -281,53 +281,9 @@
 </template>
 
 <script>
-	const tpl = [{
-		selected: false,
-		img: '/static/img/H_9X10_1.jpg',
-		title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
-		price: 130.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_027_1.jpg',
-		title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
-		price: 148.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_023_180@200.JPG',
-		title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
-		price: 139.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_9X10_1.jpg',
-		title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
-		price: 130.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_027_1.jpg',
-		title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
-		price: 148.00,
-		num: 1,
-		hoverClass: ''
-	},{
-		selected: false,
-		img: '/static/img/H_023_180@200.JPG',
-		title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
-		price: 139.00,
-		num: 1,
-		hoverClass: ''
-	}];	
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
-	import bg from "@/static/images/cargo.png";
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
@@ -337,7 +293,7 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				bg: bg,
+				bg: util.getImgUrl() + 'static/images/cargo.png',
 				orderType: '',
 				isReturn: false, // 是否可以退货
 				trackingNo: '', // 发货单号
@@ -436,10 +392,6 @@
 				this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
 				this.getIsReturn();
 			}
-			// this.orderLs = tpl.slice(0, 2);
-			// setTimeout(() => {
-			// 	this.showImg = true;
-			// }, 400)
 		},
 		mounted() {
 			// this.$refs.popup3.open();

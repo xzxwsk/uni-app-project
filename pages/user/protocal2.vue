@@ -70,11 +70,10 @@
 </template>
 
 <script>
-	import img1 from '@/static/images/protocal_img1.jpg';
     export default {
         data() {
             return {
-				img1Src: img1
+				img1Src: util.getImgUrl() + 'static/images/protocal_img1.jpg'
             }
         },
 		onNavigationBarButtonTap(e) {

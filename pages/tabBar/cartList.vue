@@ -49,64 +49,19 @@
 <script>
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
-	import defaultImg from '@/static/img/H_9X10_1.jpg';
 	export default {
 		computed: mapState(['hasLogin', 'openid']),
 		data() {
 			return {
 				onLoadFlag: false,
 				titleBtn: '删除',
-				imgSrc: '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				allSelect: false,
 				countPrice: 0,
 				selectedArr: [],
 				getCartLs: [], // 保存取出来的源列表
-				cartLs: [ // 显示列表
-					// {
-					// 	selected: false,
-					// 	img: '/static/img/H_9X10_1.jpg',
-					// 	title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
-					// 	price: 130.00,
-					// 	num: 1,
-					// 	hoverClass: ''
-					// },{
-					// 	selected: false,
-					// 	img: '/static/img/H_027_1.jpg',
-					// 	title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
-					// 	price: 148.00,
-					// 	num: 1,
-					// 	hoverClass: ''
-					// },{
-					// 	selected: false,
-					// 	img: '/static/img/H_023_180@200.JPG',
-					// 	title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
-					// 	price: 139.00,
-					// 	num: 1,
-					// 	hoverClass: ''
-					// },{
-					// 	selected: false,
-					// 	img: '/static/img/H_9X10_1.jpg',
-					// 	title: '春·明前茶·4月5日  ,碧螺春,四品002,218g',
-					// 	price: 130.00,
-					// 	num: 1,
-					// 	hoverClass: ''
-					// },{
-					// 	selected: false,
-					// 	img: '/static/img/H_027_1.jpg',
-					// 	title: '飘雪·五品·027  54 * 4g/袋（共54袋）',
-					// 	price: 148.00,
-					// 	num: 1,
-					// 	hoverClass: ''
-					// },{
-					// 	selected: false,
-					// 	img: '/static/img/H_023_180@200.JPG',
-					// 	title: '绿·碧螺春·五品·023  54 * 4g/袋（共54袋）',
-					// 	price: 139.00,
-					// 	num: 1,
-					// 	hoverClass: ''
-					// }
-				]
+				cartLs: [] // 显示列表
 			}
 		},
 		onLoad() {
@@ -203,7 +158,6 @@
 					let ls = res.data.result.map((item, index) => {
 						let tempObj = JSON.parse(JSON.stringify(item));
 						tempObj.selected = false;
-						// tempObj.img = defaultImg;
 						tempObj.hoverClass = '';
 						return tempObj;
 					});

@@ -71,7 +71,6 @@
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	import util from '@/common/util.js';
-	import voliCodeImg from '@/static/img/makecaptcha.jpg';
 	export default {
 		components: {
 		    inputBox
@@ -114,7 +113,6 @@
 			// plus.nativeUI.closeWaiting();
 			// #endif
 			// this.initPosition();
-			// this.initProvider();
 			// #ifdef H5
 			document.onkeydown = e => {  
 			    //webview不需要兼容ie  
@@ -198,29 +196,6 @@
 			     */
 			    this.positionTop = uni.getSystemInfoSync().windowHeight - 100;
 				console.log('initPosition: ', this.positionTop);
-			},
-			initProvider() {
-			    const filters = ['weixin', 'qq', 'sinaweibo'];
-			    uni.getProvider({
-			        service: 'oauth',
-			        success: res => {
-						console.log('initProvider: ', res)
-			            if (res.provider && res.provider.length) {
-			                for (let i = 0; i < res.provider.length; i++) {
-			                    if (~filters.indexOf(res.provider[i])) {
-			                        this.providerList.push({
-			                            value: res.provider[i],
-			                            image: '../../static/img/' + res.provider[i] + '.png'
-			                        });
-			                    }
-			                }
-			                this.hasProvider = true;
-			            }
-			        },
-			        fail: (err) => {
-			            console.error('获取服务供应商失败：' + JSON.stringify(err));
-			        }
-			    });
 			},
 			oauth(value) {
 			    uni.login({

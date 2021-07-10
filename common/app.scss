@@ -136,6 +136,9 @@ uni-toast{z-index: 100000;}
 	}
 	.no-data{margin: 200upx 0 0;}
 }
+// #ifdef MP-WEIXIN
+.index_page{padding-top: 0}
+// #endif
 .cart_ls{position: relative; display: flex; flex-direction: column; justify-content: center; width: 100%; height: 100%; text-align: center;
 	.uni-list{margin: 0 2% 160upx; width: 96%; background: transparent;
 		&:before{content: none;}

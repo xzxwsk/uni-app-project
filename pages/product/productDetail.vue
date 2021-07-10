@@ -147,10 +147,9 @@
 		onLoad(option) {
 			this.getDetail(option.id);
 			this.screen = uni.getSystemInfoSync();
-			console.log(this.screen);
-		},
-		mounted() {
-			this.barHeight = this.$refs.bar.$el.offsetHeight;
+			if (Reflect.has(this.$refs, 'bar')) {
+				this.barHeight = this.$refs.bar.$el.offsetHeight;
+			}
 		},
 		methods: {
 			async getDetail(id) {

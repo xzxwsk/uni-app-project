@@ -1,8 +1,8 @@
 <template>
 	<view class="page index_page">
-		<view class="status_bar">
-            <!-- 这里是状态栏 -->
-        </view>
+		<!-- #ifdef APP-PLUS -->
+		<view class="status_bar"></view>
+		<!-- #endif -->
 		<view class="uni-padding-wrap">
             <view class="page-section swiper">
                 <view class="page-section-spacing">
@@ -60,7 +60,7 @@
 		data() {
 			return {
 				sysInfo: '',
-				indicatorDots: true,
+				indicatorDots: false,
 				indicatorColor: '#fff',
 				indicatorActiveColor: '#fff',
 				autoplay: true,
@@ -220,6 +220,7 @@
 					// if (img) {
 					// 	this.imgLs.push('data:image/jpeg;base64,' + img);
 					// }
+					this.imgLs.push(util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.PictureTopFileName)
 				})
 			},
 			goLogin() {

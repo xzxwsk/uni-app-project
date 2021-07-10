@@ -360,29 +360,14 @@
 						}
 					})
 					.then(res => {
-						console.log('登录返回： ', res);
+						console.log('绑定成功： ', res);
 						util.setStorageSync({
 							key: 'session_id',
 							data: res.data.result
-						});
-						// 登录成功保留帐号下次使用
-						this.saveAccount(data.account);
-						this.setOpenid(res.data.result);
+						})
+						
+						// 成功后跳转登录
 					});
-					console.log('openid: ', this.openid);
-					await util.ajax({
-						method: 'SYS.UserDAL.GetDealerByToken',
-						tags: {
-							usertoken: me.openid
-						}
-					}).then(res => {
-						util.hideLoading();
-						console.log('分销商信息：', res.data);
-						res.data.result = util.jsonReplace(res.data.result, 'null', '""');
-						me.setUserInfo(res.data.result);
-						me.toMain(res.data.result.DealerName);
-					});
-					console.log('登录成功');
 					// util.goTab({
 					// 	url: '../tabBar/user?logined=true',
 					// 	success: (e) => {

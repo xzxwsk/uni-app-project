@@ -50,6 +50,9 @@
 				<view class="btn-row">
 					<button type="default" @tap="bindReg">分销商注册</button>
 				</view>
+				<view class="btn-row" v-if="isEnabledUnbind">
+					<button type="default" @tap="onUnbind">解绑</button>
+				</view>
 				<!-- <view class="action-row">
 					<navigator url="./reg">注册账号</navigator>
 					<text class="split">|</text>
@@ -89,7 +92,8 @@
 				voliCode: '',
 				voliCodeSrc: '',
 				positionTop: 0,
-				code: '' // 微信code
+				code: '', // 微信code
+				isEnabledUnbind: false
 			}
 		},
 		onShow() {
@@ -443,6 +447,15 @@
 				    }
 				});
 				
+			},
+			async onUnbind() {
+				let res = await util.ajax({
+					method: 'SYS.UserDAL.UnBindWxUser',
+					params: {
+						UserName: ''
+					}
+				})
+				console.log(res)
 			},
 			initSetAccount() {
 				let account = util.getStorageSync('userName');

@@ -81,7 +81,7 @@
 			}
 			this.getSystemInfo();
 			// 获取广告图
-			// this.getAdLs()
+			this.getAdLs()
 			setTimeout(()=> {
 			    this.renderImage = true;
 			}, 300);
@@ -215,11 +215,11 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					this.imgLs = [];
-					let img = res.data.result.PictureTopBase64;
-					if (img) {
-						this.imgLs.push('data:image/jpeg;base64,' + img);
-					}
+					// this.imgLs = [];
+					// let img = res.data.result.PictureTopBase64;
+					// if (img) {
+					// 	this.imgLs.push('data:image/jpeg;base64,' + img);
+					// }
 				})
 			},
 			goLogin() {

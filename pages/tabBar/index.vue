@@ -1,8 +1,8 @@
 <template>
 	<view class="page index_page">
-		<view class="status_bar">
-            <!-- 这里是状态栏 -->
-        </view>
+		<!-- #ifdef APP-PLUS -->
+		<view class="status_bar"></view>
+		<!-- #endif -->
 		<view class="uni-padding-wrap">
             <view class="page-section swiper">
                 <view class="page-section-spacing">
@@ -60,7 +60,7 @@
 		data() {
 			return {
 				sysInfo: '',
-				indicatorDots: true,
+				indicatorDots: false,
 				indicatorColor: '#fff',
 				indicatorActiveColor: '#fff',
 				autoplay: true,
@@ -81,7 +81,7 @@
 			}
 			this.getSystemInfo();
 			// 获取广告图
-			// this.getAdLs()
+			this.getAdLs()
 			setTimeout(()=> {
 			    this.renderImage = true;
 			}, 300);
@@ -215,11 +215,12 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					this.imgLs = [];
-					let img = res.data.result.PictureTopBase64;
-					if (img) {
-						this.imgLs.push('data:image/jpeg;base64,' + img);
-					}
+					// this.imgLs = [];
+					// let img = res.data.result.PictureTopBase64;
+					// if (img) {
+					// 	this.imgLs.push('data:image/jpeg;base64,' + img);
+					// }
+					this.imgLs.push(util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.PictureTopFileName)
 				})
 			},
 			goLogin() {

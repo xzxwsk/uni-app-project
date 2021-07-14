@@ -2,6 +2,15 @@
 	"pages": [
 		// pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"app-plus": {
+					"bounce": "vertical",
+					"titleNView": false
+				}
+			}
+		}, {
 			"path": "pages/tabBar/index",
 			"style": {
 				"navigationBarTitleText": "纤畅业务系统",
@@ -18,15 +27,6 @@
 							"type": "share"
 						}]
 					}
-				}
-			}
-		}, {
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录",
-				"app-plus": {
-					"bounce": "vertical",
-					"titleNView": false
 				}
 			}
 		}, {

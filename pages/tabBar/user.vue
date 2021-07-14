@@ -313,7 +313,7 @@
 						if (str !== '') {
 							str += '\n\n';
 						}
-						str += '类别： ' + ['货款','保证金','代交保证金'][item.AccountType] + '\n分销商名称：' + item.DealerName + '\n余额：' + item.Amount + '\n预留金额：' + item.ReservedAmount + '\n可用余额：' + item.AmountCanUse;
+						str += '类别： ' + ['货款','保证金','积分'][item.AccountType] + '\n分销商名称：' + item.DealerName + '\n余额：' + item.Amount + '\n预留金额：' + item.ReservedAmount + '\n可用余额：' + item.AmountCanUse;
 					});
 					// 帐户余额
 					util.dialog({

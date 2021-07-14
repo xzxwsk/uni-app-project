@@ -59,12 +59,12 @@
 						<textarea @blur="bindTextAreaBlur" placeholder="请输入备注说明" v-model="billObj.Remark" auto-height />
 					</view>
 				</view>
-				<view class="uni-list-cell">
+				<!-- <view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>是否付款(不勾选表示使用帐户余额)</text></text>
 						<radio @tap="onIsPayChange" color="#f23030" :value="billObj.IsPay ? 'true' : 'false'" :checked="billObj.IsPay" />
 					</view>
-				</view>
+				</view> -->
 				<block v-if="billObj.IsPay">
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">

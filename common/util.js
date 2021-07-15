@@ -1,5 +1,6 @@
-const baseUrlGlobal = 'http://47.104.226.115/qcdm/'; // 开发 测试帐号：A0000002 密码：1234
+// const baseUrlGlobal = 'http://47.104.226.115/qcdm/'; // 开发 测试帐号：A0000002 密码：1234
 // const baseUrlGlobal = 'http://118.163.201.227/qcdm/'; // 生产环境
+const baseUrlGlobal = 'https://www.zzxianchang.cn/qcdm/'; // 小程序
 const updateUrl = 'http://118.163.201.227/appdownload/updatedata.json'; // 更新地址
 const imgUrl = 'http://rxfs.rtrh.net/qianchangyewu'; // 图片地址
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -459,7 +460,7 @@ let ajaxReturn = function(err, _prompt) {
 		}
 	});
 }
-let ajax = async function(prompt) {
+let ajax = function(prompt) {
 	let _prompt = {
 		jsonrpc: '2.0',
 		method: '',
@@ -471,9 +472,9 @@ let ajax = async function(prompt) {
 	};
 	extend(_prompt, prompt);
 	if (!_prompt.tags.usertoken || _prompt.tags.usertoken === '' || _prompt.tags.usertoken === 'null') {
-		_prompt.tags.usertoken = await getStorageSync('session_id');
+		_prompt.tags.usertoken = getStorageSync('session_id');
 	}
-	return await new Promise((resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		if(prompt.get) {
 			getAjax(_prompt)
 			.then(data => resolve(data))

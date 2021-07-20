@@ -98,6 +98,7 @@
 		},
 		onShow() {
 			// #ifdef MP-WEIXIN
+			console.log('show')
 			this.getCode()
 			// #endif
 		},
@@ -307,7 +308,7 @@
 				uni.login({
 					provider: 'weixin',
 					success: res => {
-						console.log('uni.login: ', res)
+						console.log('getCode: ', res)
 						if (res.errMsg == "login:ok") {
 							this.code = res.code
 						}
@@ -337,7 +338,7 @@
 					}
 				})
 				console.log('applet: ', res, e)
-				if(res.data.result){
+				if(res && res.data && res.data.result){
 				    util.setStorageSync({
 						key: 'session_id',
 						data: res.data.result

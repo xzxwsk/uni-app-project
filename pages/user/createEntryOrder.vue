@@ -69,6 +69,10 @@
 				<text class="title">邮编：</text>
 				<input-box type="number" ref="postCode" v-model="billObj.PostCode" placeholder="邮编"></input-box>
 			</view>
+			<view style="height: 50px;"></view>
+			<view class="input-row" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 2; background-color: #fff;">
+				<button @click="goNext" class="btn" type="warn" style="height: 35px; line-height: 35px;">下一步</button>
+			</view>
 		</view>
 		<!-- 地址选择器 此处仅保留-->
 		<mpvue-picker :themeColor="themeColor" ref="mpvuePicker" :pickerValueDefault="pickerValueDefault"

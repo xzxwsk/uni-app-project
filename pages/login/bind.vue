@@ -30,14 +30,14 @@
 						<text class="title">密码：</text>
 						<input-box ref="input2" type="password" :verification="['isNull','isChineseEnlishAndNumber']" :verificationTip="['密码不能为空','密码只能输入中文、数字和字母']" :inputValue="password" v-model="password" placeholder="请输入密码"></input-box>
 					</view>
-					<view class="input-row">
+					<!-- <view class="input-row">
 						<text class="title">验证码：</text>
 						<input-box class="voli_code_ipt" ref="input3" type="number" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
 					</view>
 					<view class="input-row" style="height: 60px;">
 						<text class="title"></text>
 						<view class="voli_code_img"><image style="width: 100%; height: 60px;" mode="aspectFit" :src="voliCodeSrc" @click="resetVoliCode"></image></view>
-					</view>
+					</view> -->
 				</view>
 				<view class="btn-row">
 					<button type="warn" @tap="bindLogin">绑定</button>
@@ -91,6 +91,7 @@
 		},
 		onShow() {
 			// #ifdef MP-WEIXIN
+			console.log('onshow bind')
 			this.getCode()
 			// #endif
 		},
@@ -286,14 +287,22 @@
 			},
 			getCode() {
 				// 微信登录，获得code
-				uni.login({
-					provider: 'weixin',
-					success: res => {
-						console.log('uni.login: ', res)
-						if (res.errMsg == "login:ok") {
-							this.code = res.code
+				return new Promise((resolve, reject) => {
+					uni.login({
+						provider: 'weixin',
+						success: res => {
+							console.log('bind getCode: ', res)
+							if (res.errMsg == "login:ok") {
+								this.code = res.code
+								resolve(res.code)
+							} else {
+								reject('微信登录失败')
+							}
+						},
+						fail(e) {
+							reject(e)
 						}
-					}
+					})
 				})
 			},
 			getUserInfo(e){
@@ -336,9 +345,8 @@
 				const data = {
 				    account: this.$refs.input1.getValue(),
 				    password: this.$refs.input2.getValue(),
-				    voliCode: this.$refs.input3.getValue()
 				}
-				if(this.$refs.input1.getValue() && this.$refs.input2.getValue() && this.$refs.input3.getValue()){
+				if(this.$refs.input1.getValue() && this.$refs.input2.getValue()){
 					util.showLoading();
 					await util.ajax({
 						method: 'SYS.UserDAL.BindWxUser',
@@ -361,12 +369,19 @@
 					})
 					.then(res => {
 						console.log('绑定成功： ', res);
-						util.setStorageSync({
-							key: 'session_id',
-							data: res.data.result
+						util.showToast({
+							title: '绑定成功',
+							success: () => {
+								// setTimeout(() => {
+								// 	// 成功后跳转登录
+								// 	util.redirectUrl({
+								// 		url: './login'
+								// 	})
+								// }, 1000)
+								// 调wxLogin
+								this.wxLogin()
+							}
 						})
-						
-						// 成功后跳转登录
 					});
 					// util.goTab({
 					// 	url: '../tabBar/user?logined=true',
@@ -387,6 +402,24 @@
 					    // mask: true
 					});
 				}
+			},
+			async wxLogin() {
+				await this.getCode()
+				util.ajax({
+					method: 'SYS.UserDAL.WxLogin',
+					params: {
+						WxCode: this.code
+					}
+				}).then(res => {
+					const { result } = res.data
+					if (result) {
+						util.setStorageSync({
+							key: 'session_id',
+							data: result
+						});
+						this.autoLogin(result)
+					}
+				})
 			},
 			bindReg() {
 				/* 

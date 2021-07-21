@@ -55,6 +55,10 @@
 				<text class="title"><text class="price">*</text>确认密码：</text>
 				<input-box type="password" ref="confirmPassword" displayable v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
 			</view>
+			<view style="height: 50px;"></view>
+			<view class="input-row" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 2; background-color: #fff;">
+				<button @click="goNext" class="btn" type="warn" style="height: 35px; line-height: 35px;">下一步</button>
+			</view>
 		</view>
 	</view>
 </template>

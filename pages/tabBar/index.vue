@@ -74,6 +74,16 @@
 				renderImage: false
 			}
 		},
+		onShareAppMessage() {
+			if (res.from === 'button') {
+				// 来自页面内分享按钮
+				console.log(res.target);
+			}
+			return {
+				title: '纤畅业务系统',
+				path: '/pages/tabBar/index'
+			};
+		},
 		onLoad() {
 			console.log(this.hasLogin, this.changeNum)
 			if (this.hasLogin && this.changeNum === null) {

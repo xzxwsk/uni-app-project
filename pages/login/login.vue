@@ -191,7 +191,7 @@
 			},
 			goMain() {
 				util.goTab({
-					url: '/pages/tabBar/index'
+					url: '../tabBar/index'
 				});
 			},
 			initPosition() {
@@ -453,7 +453,7 @@
 				let res = await util.ajax({
 					method: 'SYS.UserDAL.UnBindWxUser',
 					params: {
-						UserName: ''
+						UserName: this.account
 					}
 				})
 				console.log(res)

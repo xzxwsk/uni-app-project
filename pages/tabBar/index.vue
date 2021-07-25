@@ -86,6 +86,9 @@
 		},
 		onLoad() {
 			console.log(this.hasLogin, this.changeNum)
+			if (!this.hasLogin) {
+				this.getUserInfo()
+			}
 			if (this.hasLogin && this.changeNum === null) {
 				this.getChangeNum();
 			}
@@ -139,7 +142,42 @@
 			// #endif
 		},
 		methods: {
-			...mapMutations(['setChangeNum']),
+			...mapMutations(['setChangeNum', 'setUserInfo', 'setWxUserInfo', 'login', 'setOpenid']),
+			async getUserInfo() {
+				if (!this.openid) {
+					let wxUserInfo = util.getStorageSync('wx_user_info')
+					if (wxUserInfo) {
+						this.setWxUserInfo(wxUserInfo)
+						this.login('weixin')
+					}
+					let sessionId = util.getStorageSync('session_id')
+					if (sessionId) {
+						this.setOpenid(sessionId)
+					}
+					// 通过sessinId获取当前登录人信息
+					let tokenRes = await util.ajax({
+						method: 'SYS.UserDAL.GetDealerByToken'
+					})
+					let userInfo = tokenRes.data.result
+					console.log('tokenRes: ', userInfo)
+					if (userInfo) {
+						this.setUserInfo(userInfo)
+					}
+				}
+				let providerRes = await uni.getProvider({
+					service: 'oauth'
+				})
+				const provider = providerRes[providerRes.length - 1].provider[0]
+				let codeRes = await uni.login({
+				    provider: provider,
+				})
+				const userInfoRes = await uni.getUserInfo({
+					provider: provider,
+				})
+				const { code } = codeRes[codeRes.length - 1]
+				const wxUserInfo = userInfoRes[userInfoRes.length - 1]
+				console.log('wxUserInfo: ', wxUserInfo.userInfo)
+			},
 			async getChangeNum() {
 				let num = 0;
 				let myOrderChangeNum = 0;

@@ -89,10 +89,8 @@
 					util.hideLoading();
 					this.logout();
 					console.log(localStorage);
-					util.setStorageSync({
-						key: 'session_id',
-						data: ''
-					});
+					uni.removeStorageSync('session_id')
+					uni.removeStorageSync('wx_user_info')
 					util.goTab({
 						url: '../tabBar/user'
 					});

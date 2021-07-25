@@ -3,7 +3,7 @@
 		<view class="top">
 			<view class="login_box">
 				<view class="login_con">
-					<view class="head_img"><image style="width: 100%; height: 100%;" :mode="modeHead" :src="imgSrcHead" @error="imageError" @click="updateHeadImg"></image></view>
+					<view class="head_img"><image style="width: 100%; height: 100%;" :mode="modeHead" :src="wxUserInfo.avatarUrl || imgSrcHead" @error="imageError" @click="updateHeadImg"></image></view>
 					<view class="txt" v-if="hasLogin">
 						<view class="user_info">
 							<view class="user_name">{{loginProvider}}</view>
@@ -91,7 +91,7 @@
 		components: {
 			uniBadge
 		},
-		computed: mapState(['hasLogin', 'loginProvider', 'userInfo', 'changeNum', 'openid']),
+		computed: mapState(['hasLogin', 'loginProvider', 'userInfo', 'wxUserInfo', 'changeNum', 'openid']),
 		data() {
 			return {
 				onLoadFlag: false,

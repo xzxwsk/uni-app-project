@@ -10,6 +10,7 @@ const store = new Vuex.Store({
 		sessionId: null,
 		openid: null,
 		userInfo: {},
+		wxUserInfo: {},
 		changeNum: null,
 		billJoinDAL: null, // 缓存分销商加盟单信息
 		consumeSelected: [] // 创建消费/零售记录时，保存
@@ -32,6 +33,9 @@ const store = new Vuex.Store({
 		setUserInfo(state, userInfo) {
 			state.userInfo = userInfo
 		},
+		setWxUserInfo(state, userInfo) {
+			state.wxUserInfo = userInfo
+		},
 		setChangeNum(state, changeNum) {
 			state.changeNum = changeNum
 		},
@@ -44,11 +48,11 @@ const store = new Vuex.Store({
 	},
 	actions: {
 		// lazy loading openid
-		getUserOpenId: async function ({
+		getUserOpenId: function ({
 			commit,
 			state
 		}) {
-			return await new Promise((resolve, reject) => {
+			return new Promise((resolve, reject) => {
 				if (state.openid) {
 					resolve(state.openid)
 				} else {

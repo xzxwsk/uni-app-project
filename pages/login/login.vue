@@ -338,6 +338,11 @@
 					}
 				})
 				console.log('applet: ', res, e)
+				// 缓存微信授权后获得的用户信息
+				util.setStorageSync({
+					key: 'wx_user_info',
+					data: e.userInfo
+				})
 				if(res && res.data && res.data.result){
 				    util.setStorageSync({
 						key: 'session_id',

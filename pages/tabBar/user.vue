@@ -6,7 +6,7 @@
 					<view class="head_img"><image style="width: 100%; height: 100%;" :mode="modeHead" :src="wxUserInfo.avatarUrl || imgSrcHead" @error="imageError" @click="updateHeadImg"></image></view>
 					<view class="txt" v-if="hasLogin">
 						<view class="user_info">
-							<view class="user_name">{{loginProvider}}</view>
+							<view class="user_name">{{userInfo.AboveDealerName || wxUserInfo.nickName}}</view>
 							<text>{{userInfo.Remark || ''}}</text>
 						</view>
 						<view class="uni-icon uni-icon-gear" @click="goMyInfo"></view>
@@ -91,7 +91,7 @@
 		components: {
 			uniBadge
 		},
-		computed: mapState(['hasLogin', 'loginProvider', 'userInfo', 'wxUserInfo', 'changeNum', 'openid']),
+		computed: mapState(['hasLogin', 'userInfo', 'wxUserInfo', 'changeNum', 'openid']),
 		data() {
 			return {
 				onLoadFlag: false,
@@ -120,6 +120,7 @@
 			}
 		},
 		onLoad (option) {
+			console.log('wxUserInfo: ', this.wxUserInfo)
 			if (!this.onLoadFlag) {
 				if (this.hasLogin && this.changeNum === null) {
 					this.getChangeNum();

@@ -63,6 +63,9 @@
 						<image :src="provider.image" @tap="oauth(provider.value)"></image>
 					</view>
 				</view>
+				<view class="btn-row">
+					<button type="default" @tap="goMain"><text class="uni-icon uni-icon-home" style="vertical-align: middle;"></text>返回首页</button>
+				</view>
 			</block>
 		</view>
 	</view>
@@ -99,6 +102,7 @@
 		onShow() {
 			// #ifdef MP-WEIXIN
 			console.log('show')
+			uni.hideHomeButton()
 			this.getCode()
 			// #endif
 		},

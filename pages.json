@@ -31,7 +31,12 @@
 				"navigationBarTitleText": "登录",
 				"app-plus": {
 					"bounce": "vertical",
-					"titleNView": false
+					"titleNView": {
+						"buttons": [{
+							"float": "left",
+							"type": "home"
+						}]
+					}
 				}
 			}
 		}, {

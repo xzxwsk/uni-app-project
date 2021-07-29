@@ -212,15 +212,7 @@
 			"style": {
 				"navigationBarTitleText": "新增分销商加盟单",
 				"app-plus": {
-					"bounce": "none",
-					"titleNView": {
-						"buttons": [{
-							"text": "下一步",
-							"fontSize": "14px",
-							"color": "#333",
-							"width": "auto"
-						}]
-					}
+					"bounce": "none"
 				}
 			}
 		}, {

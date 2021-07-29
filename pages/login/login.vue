@@ -44,7 +44,7 @@
 				</view>
 				<!-- #ifdef MP-WEIXIN -->
 				<view class="btn-row">
-					<button type="default" class="uni-icon uni-icon-weixin chat-btn" @click="getUserInfo">微信一键登录</button>
+					<button type="default" class="uni-icon uni-icon-weixin chat-btn" @click="applet">微信一键登录</button>
 				</view>
 				<!-- #endif -->
 				<view class="btn-row">
@@ -319,40 +319,51 @@
 					}
 				})
 			},
-			getUserInfo(e){
-				uni.getUserProfile({
-					desc: '用于会员业务办理', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-					success: e => {
-						console.log('getUserProfile: ', e)
-						if(e.errMsg=='getUserProfile:ok'){
-							this.applet(e);
-						}else{
-							uni.showToast({icon: 'none',title:'你取消了登录'});
-							return false
+			//进行授权登录
+			getUserInfo(){
+				return new Promise((resolve, reject) => {
+					uni.getUserProfile({
+						lang: 'zh_CN',
+						desc: '用于会员业务办理', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+						success: res => {
+							console.log('getUserProfile: ', res)
+							if(res.errMsg=='getUserProfile:ok'){
+								// 缓存微信授权后获得的用户信息
+								util.setStorageSync({
+									key: 'wx_user_info',
+									data: res.userInfo
+								})
+								resolve(res)
+							}else{
+								uni.showToast({icon: 'none',title:'你取消了登录'});
+								reject(res)
+							}
+						},
+						fail: err => {
+							reject(err)
 						}
-					}
+					})
 				})
 			},
-			//进行授权登录
+			// 通过微信code获取后台token
 			async applet(e){
+				await this.getUserInfo()
 				let res = await util.ajax({
 					method: 'SYS.UserDAL.WxLogin',
 					params: {
 						WxCode: this.code
 					}
 				})
-				console.log('applet: ', res, e)
-				// 缓存微信授权后获得的用户信息
-				util.setStorageSync({
-					key: 'wx_user_info',
-					data: e.userInfo
-				})
+				console.log('applet: ', res)
+				
+				// 得到token
 				if(res && res.data && res.data.result){
 				    util.setStorageSync({
 						key: 'session_id',
 						data: res.data.result
 					});
 					this.setOpenid(res.data.result);
+					// 如果绑定过，则可以通过token得到用户详细信息
 				    let resUserInfo = await util.ajax({
 				    	method: 'SYS.UserDAL.GetDealerByToken',
 				    	tags: {
@@ -439,12 +450,14 @@
 					});
 				}
 			},
-			bindReg() {
-				/* 
+			async bindReg() {
+				// 测试自动跳转注册页
+				// 先授权获取微信信息，再跳转
+				await this.getUserInfo()
 				util.goUrl({
-					url: '../about/scanCode'
-				});
-				 */
+					url: '../user/createEntryOrder?AboveDealerId=54cf5a60-998d-4fdc-82a5-c860eb4e67b2'
+				})
+				return
 				
 				uni.scanCode({
 					scanType: ['qrCode'],
@@ -453,10 +466,9 @@
 				        console.log('条码内容：' + res.result);
 						util.goUrl({
 							url: res.result
-						});
+						})
 				    }
-				});
-				
+				})
 			},
 			async onUnbind() {
 				let res = await util.ajax({

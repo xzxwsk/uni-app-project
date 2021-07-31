@@ -439,15 +439,17 @@
 				
 				uni.scanCode({
 					scanType: ['qrCode'],
-				    success: function (res) {
-				        console.log('条码类型：' + res.scanType);
-				        console.log('条码内容：' + res.result);
+					success: function (res) {
+						console.log('条码类型：' + res.scanType);
+						console.log('条码内容：' + res.result);
+						const q = res.result;
+						const arr = q.split('/')
+						let AboveDealerId = arr[arr.length - 1]
 						util.goUrl({
-							url: res.result
-						});
-				    }
+							url: `../user/createQuickReg?AboveDealerId=${AboveDealerId}`
+						})
+					}
 				});
-				
 			},
 			async onUnbind() {
 				let res = await util.ajax({

@@ -232,6 +232,7 @@
 					me.$refs.billDate.setValue(res.data.result.BillDate);
 					me.$refs.dealerNo.setValue(res.data.result.DealerNo);
 					me.$refs.aboveName.setValue(res.data.result.AboveName);
+					me.$refs.dealerName.setValue(this.billObj.DealerName);
 				});
 			},
 			setInfo() {

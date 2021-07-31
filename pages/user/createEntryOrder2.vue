@@ -98,7 +98,6 @@
 			// 	this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
 			// }
 			this.billObj = this.billJoinDAL;
-			console.log(this.billObj.isQrcode)
 			if(this.billObj.isQrcode) {
 				uni.setNavigationBarTitle({
 					title: '分销商注册'
@@ -118,10 +117,8 @@
 			this.goNext();
 		},
 		mounted() {
-			this.$nextTick(() => {
-				// 初始化显示值
-				this.setInfo();
-			});
+			// 初始化显示值
+			this.setInfo();
 		},
 		methods: {
 			...mapMutations(['setBillJoinDAL']),
@@ -209,6 +206,7 @@
 				});
 			},
 			previewImage(e) {
+				console.log('previewImage: ', e)
 				var current = e.target.dataset.src
 				uni.previewImage({
 					current: 0,
@@ -289,12 +287,13 @@
 								console.log('err: ', err);
 							});
 							// #endif
-							// #ifdef H5
+							// #ifndef APP-PLUS
 							this.urlToBase64(res.tempFilePaths[0])
 							.then(baseRes => {
 							    // 转化后的base64图片地址
 							    this.$set(this.billObj, 'FrontImageFileName', baseRes.split(',')[1]);
 							    this.frontImg = baseRes;
+								this.frontImgSrc = baseRes
 							});
 							// #endif
 						// }
@@ -354,12 +353,13 @@
 							console.log('err: ', err);
 						});
 						// #endif
-						// #ifdef H5
+						// #ifndef APP-PLUS
 						this.urlToBase64(res.tempFilePaths[0])
 						.then(baseRes => {
 							// 转化后的base64图片地址
 							this.$set(this.billObj, 'BackImageFileName', baseRes);
 							this.backImg = baseRes;
+							this.backImgSrc = baseRes;
 						});
 						// #endif
 					}
@@ -367,8 +367,8 @@
 			},
 			setInfo() {
 				this.$refs.iDCardNo.setValue(this.billObj.IDCardNo);
-				this.frontImg = (this.billObj.IDCardNo_FrontImage !== '') ? ((this.billObj.IDCardNo_FrontImage.indexOf('data:image/jpeg;base64,') !== -1 ? '' : 'data:image/jpeg;base64,') + this.billObj.IDCardNo_FrontImage) : '';
-				this.backImg = (this.billObj.IDCardNo_BackImage !== '') ? ((this.billObj.IDCardNo_BackImage.indexOf('data:image/jpeg;base64,') !== -1 ? '' : 'data:image/jpeg;base64,') + this.billObj.IDCardNo_BackImage) : '';
+				this.frontImg = this.billObj.FrontImageFileName ? this.billObj.FrontImageFileName : '';
+				this.backImg = this.billObj.BackImageFileName ? this.billObj.BackImageFileName : '';
 				this.$refs.mobile.setValue(this.billObj.Mobile);
 				this.$refs.email.setValue(this.billObj.Email);
 				this.$refs.linkMan.setValue(this.billObj.LinkMan);
@@ -414,6 +414,7 @@
 				// #endif
 				// #ifdef H5
 				fetch(url).then(data=>{
+					console.log('fetch: ', data)
 					const blob = data.blob();
 					return blob;
 				}).then(blob=>{
@@ -426,7 +427,22 @@
 					reader.readAsDataURL(blob);
 				});
 				// #endif
+				// #ifdef  MP-WEIXIN
+				this.fetch(url).then(data=>{
+					const blob = 'data:image/jpeg;base64,' + data;
+					resolve(blob);
+				});
+				// #endif
 			  });
+			},
+			fetch(url) {
+				return new Promise((resolve, reject) => {
+					try{
+						resolve(wx.getFileSystemManager().readFileSync(url, "base64"))
+					}catch(e){
+						reject(e)
+					}
+				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

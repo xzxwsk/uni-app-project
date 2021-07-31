@@ -139,7 +139,7 @@
 					if (arr.indexOf(key) !== -1) {
 						this.billObj[key] = Number(this.billObj[key]);
 					} else if (key === 'HasMarried' || key === 'StateChanged') {
-						this.billObj[key] = eval(this.billObj[key]);
+						this.billObj[key] = !!(this.billObj[key]);
 					} else if (key === 'IdValues') {
 						this.billObj[key] = this.billObj[key];
 					} else if(util.getType(this.billObj[key]) === 'string'){

@@ -48,7 +48,7 @@
 				</view>
 				<!-- #endif -->
 				<view class="btn-row">
-					<button type="default" @tap="bindReg">分销商注册</button>
+					<button type="default" @click="bindReg">快速注册</button>
 				</view>
 				<view class="btn-row" v-if="isEnabledUnbind">
 					<button type="default" @tap="onUnbind">解绑</button>
@@ -144,7 +144,7 @@
 			// this.getDeviceId();
 		},
 		methods: {
-			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),
+			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo', 'setWxUserInfo']),
 			autoLogin(sessionId) {
 				let me = this;
 				this.setOpenid(sessionId);
@@ -309,14 +309,22 @@
 			},
 			getCode() {
 				// 微信登录，获得code
-				uni.login({
-					provider: 'weixin',
-					success: res => {
-						console.log('getCode: ', res)
-						if (res.errMsg == "login:ok") {
-							this.code = res.code
+				return new Promise((resolve, reject) => {
+					uni.login({
+						provider: 'weixin',
+						success: res => {
+							console.log('getCode: ', res)
+							if (res.errMsg == "login:ok") {
+								this.code = res.code
+								resolve()
+							} else {
+								reject()
+							}
+						},
+						fail: err => {
+							reject(err)
 						}
-					}
+					})
 				})
 			},
 			//进行授权登录
@@ -329,6 +337,7 @@
 							console.log('getUserProfile: ', res)
 							if(res.errMsg=='getUserProfile:ok'){
 								// 缓存微信授权后获得的用户信息
+								this.setWxUserInfo(res.userInfo)
 								util.setStorageSync({
 									key: 'wx_user_info',
 									data: res.userInfo
@@ -347,6 +356,7 @@
 			},
 			// 通过微信code获取后台token
 			async applet(e){
+				this.getCode()
 				await this.getUserInfo()
 				let res = await util.ajax({
 					method: 'SYS.UserDAL.WxLogin',
@@ -454,18 +464,22 @@
 				// 测试自动跳转注册页
 				// 先授权获取微信信息，再跳转
 				await this.getUserInfo()
-				util.goUrl({
-					url: '../user/createEntryOrder?AboveDealerId=54cf5a60-998d-4fdc-82a5-c860eb4e67b2'
-				})
-				return
+				// util.goUrl({
+				// 	url: '../user/createQuickReg?AboveDealerId=54cf5a60-998d-4fdc-82a5-c860eb4e67b2'
+				// })
+				// return
 				
+				// 先扫码，获取推荐人id
 				uni.scanCode({
 					scanType: ['qrCode'],
 				    success: function (res) {
 				        console.log('条码类型：' + res.scanType);
 				        console.log('条码内容：' + res.result);
+						const q = res.result;
+						const arr = q.split('/')
+						let AboveDealerId = arr[arr.length - 1]
 						util.goUrl({
-							url: res.result
+							url: `../user/createQuickReg?AboveDealerId=${AboveDealerId}`
 						})
 				    }
 				})

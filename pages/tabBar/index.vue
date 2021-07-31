@@ -153,6 +153,8 @@
 					let sessionId = util.getStorageSync('session_id')
 					if (sessionId) {
 						this.setOpenid(sessionId)
+					} else {
+						return
 					}
 					// 通过sessinId获取当前登录人信息
 					let tokenRes = await util.ajax({

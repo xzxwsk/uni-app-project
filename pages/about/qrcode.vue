@@ -1,8 +1,8 @@
 <template>
 	<view class="qrimg">
-		<!-- <tki-qrcode ref="qrcode" :size="600" :val="qrcodeStr" loadMake @result="qrR" /> -->
-		<image style="width: 600rpx; height: 600rpx; background-color: #eeeeee;" mode="widthFix" :src="src"
-		    @error="imageError"></image>
+		<tki-qrcode ref="qrcode" :size="600" :val="qrcodeStr" onval loadMake @result="qrR" />
+		<!-- <image style="width: 600rpx; height: 600rpx; background-color: #eeeeee;" mode="widthFix" :src="src"
+		    @error="imageError"></image> -->
 		<view class="btn-row">
 			<button type="warn" @tap="bindSave">下载</button>
 		</view>
@@ -27,24 +27,36 @@
 			}
 		},
 		onLoad() {
-			util.ajax({
-				method: 'SYS.DealerDAL.GetQRCode',
-				params: {},
-				tags: {
-					usertoken: this.openid
-				}
-			}).then(({ data }) => {
-				// console.log(data.result)
-				this.src = data.result
-			})
-			// this.qrcodeStr = '../user/createEntryOrder?AboveDealerId=' + this.userInfo.DealerId
+			// util.ajax({
+			// 	method: 'SYS.DealerDAL.GetQRCode',
+			// 	params: {},
+			// 	tags: {
+			// 		usertoken: this.openid
+			// 	}
+			// }).then(({ data }) => {
+			// 	// console.log(data.result)
+			// 	this.src = data.result
+			// })
+			this.getQrcode()
 		},
 		methods: {
+			async getQrcode() {
+				await util.ajax({
+					method: 'SYS.UserDAL.GetDealerByToken'
+				}).then(res => {
+					const { result } = res.data
+					console.log('GetDealerByToken: ', res, result)
+					this.qrcodeStr = `https://www.zzxianchang.cn/qcdm/${result.DealerId}`
+				})
+				// this.qrcodeStr = '../user/createEntryOrder?AboveDealerId=' + this.userInfo.DealerId
+				console.log(this.qrcodeStr)
+			},
 			qrR(e) {
 				this.qrcodeDatabase = e;
 			},
 			bindSave(e) {
-				// this.$refs.qrcode._saveCode();
+				this.$refs.qrcode._saveCode();
+				return;
 				const base64 = this.src;
 				const bitmap = new plus.nativeObj.Bitmap("test");
 				bitmap.loadBase64Data(base64, function() {

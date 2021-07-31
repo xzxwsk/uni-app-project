@@ -73,6 +73,13 @@
 				</swiper-item>
 			</swiper>
 		</view>
+		<view style="height: 50px;">
+			<view class="create_pay_order">
+				<view class="result">
+					<button class="btn" type="warn" @click="onAdd">新增</button>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -314,6 +321,11 @@
 					ary.push(aryItem);
 				}
 				return ary;
+			},
+			onAdd() {
+				util.goUrl({
+					url: './createRefundOrder'
+				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

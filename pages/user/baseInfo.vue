@@ -207,6 +207,13 @@
 				</view>
 			</scroll-view>
 		</view>
+		<view style="height: 50px;">
+			<view class="create_pay_order">
+				<view class="result">
+					<button class="btn" type="warn" @click="onModify">{{title}}</button>
+				</view>
+			</view>
+		</view>
 		<uni-calendar 
 			ref="calendar"
 			@confirm="confirmCalendar"
@@ -321,35 +328,7 @@
             }
         },
 		onNavigationBarButtonTap(e) {  
-			if (this.title === '修改') {	
-				// 进入修改
-				this.title = '确定';
-				// #ifdef APP-PLUS
-				let webView = this.$mp.page.$getAppWebview();
-				webView.setTitleNViewButtonStyle(0, {  
-					text: '确定' 
-				});
-				// #endif 
-			} else {
-				// 确定保存
-				// if(this.$refs.password.getValue()) {
-					// 验证通过
-					// if (this.password !== this.confirmPassword) {
-					// 	util.showToast({
-					// 		title: '密码不一致'
-					// 	});
-					// } else {
-						this.title = '修改';
-						// #ifdef APP-PLUS
-						let webView = this.$mp.page.$getAppWebview();
-						webView.setTitleNViewButtonStyle(0, {  
-							text: '修改' 
-						});
-						// #endif 
-						this.save();
-				// 	}
-				// }
-			}
+			this.onModify()
 		},
 		mounted() {
 			if(!this.hasLogin) {
@@ -608,6 +587,37 @@
 			},
 			bindChangeBirthDay(e) {
 				this.modifyUserInfo.BirthDay = e;
+			},
+			onModify() {
+				if (this.title === '修改') {
+					// 进入修改
+					this.title = '确定';
+					// #ifdef APP-PLUS
+					let webView = this.$mp.page.$getAppWebview();
+					webView.setTitleNViewButtonStyle(0, {  
+						text: '确定' 
+					});
+					// #endif 
+				} else {
+					// 确定保存
+					// if(this.$refs.password.getValue()) {
+						// 验证通过
+						// if (this.password !== this.confirmPassword) {
+						// 	util.showToast({
+						// 		title: '密码不一致'
+						// 	});
+						// } else {
+							this.title = '修改';
+							// #ifdef APP-PLUS
+							let webView = this.$mp.page.$getAppWebview();
+							webView.setTitleNViewButtonStyle(0, {  
+								text: '修改' 
+							});
+							// #endif 
+							this.save();
+					// 	}
+					// }
+				}
 			}
         }
     }

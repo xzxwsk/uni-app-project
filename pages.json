@@ -208,6 +208,14 @@
 				}
 			}
 		}, {
+			"path": "pages/user/createQuickReg",
+			"style": {
+				"navigationBarTitleText": "微信快速注册",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/user/createEntryOrder",
 			"style": {
 				"navigationBarTitleText": "新增分销商加盟单",
@@ -514,7 +522,7 @@
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "Hello uniapp",
+		"navigationBarTitleText": "轻盈纤畅",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
 		"backgroundColorTop": "#F4F5F6",

@@ -308,7 +308,7 @@ uni-modal{
 		.btn{margin: 10upx 20upx 10upx 0; font-size: 30upx; height: 80upx; line-height: 80upx;}
 	}
 }
-.pay_order{height: 100%; background: #fff;
+.pay_order{display: flex; flex-direction: column; height: 100%; background: #fff;
 	.tab_head{display: block;
 		.swiper-tab-list{display: inline-block; padding: 0 30upx; width: auto;}
 	}
@@ -434,8 +434,8 @@ uni-modal{
 		.btn{padding: 0 20upx; font-size: 30upx; height: 80upx; line-height: 80upx;}
 	}
 }
-.baseInfo{height: 100%;
-	.con{height: 100%; overflow: hidden;}
+.baseInfo{display: flex; flex-direction: column; height: 100%;
+	.con{flex: 1; overflow: hidden;}
 	.input-row{padding: 0 5px 0 0;
 		.search_box{
 			.date_picker_box{width: 180upx;}

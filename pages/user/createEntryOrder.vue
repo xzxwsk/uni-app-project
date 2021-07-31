@@ -22,8 +22,17 @@
 				<input-box ref="dealerName" v-model="billObj.DealerName" placeholder="请输入姓名"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title"><text class="price">*</text>电话：</text>
-				<input-box ref="phone" v-model="billObj.Phone" placeholder="请输入电话"></input-box>
+				<text class="title">出生年月日：</text>
+				<view class="date_picker_box">
+					<view class="date_picker_box date_box">
+						<customDatePicker class="date_picker" @change="bindChangeBirthDay"
+							fields="day"
+							:start="startDate"
+							:end="endDate"
+							:value="billObj.BirthDay"
+						></customDatePicker>
+					</view>
+				</view>
 			</view>
 			<view class="input-row">
 				<text class="title">性别：</text>
@@ -33,16 +42,36 @@
 				</radio-group>
 			</view>
 			<view class="input-row">
+				<text class="title">婚否：</text>
+				<radio-group class="uni-flex" name="marriage" @change="changeMarriage">
+					<label><radio value="0" :checked="billObj.HasMarried" color="#f23030" />是</label>
+					<label><radio value="1" :checked="!billObj.HasMarried" color="#f23030" />否</label>
+				</radio-group>
+			</view>
+			<view class="input-row">
+				<text class="title">学历：</text>
+				<input-box ref="educationLevel" v-model="billObj.EducationLevel" placeholder="请输入学历"></input-box>
+			</view>
+			<view class="input-row">
 				<text class="title">籍贯：</text>
-				<div style="flex: 1; display: flex;" @click="selectArea">
-					{{billObj.NativePlace}}
-					<uni-icons type="arrowdown" color="#8f8f94" size="25" />
-				</div>
-				<!-- <input-box ref="nativePlace" v-model="billObj.NativePlace" placeholder="请输入籍贯"></input-box> -->
+				<input-box ref="nativePlace" v-model="billObj.NativePlace" placeholder="请输入籍贯"></input-box>
+				<!-- <view class="input_box">
+				<view class="input_box" @tap="selectArea"> -->
+					<!-- <input class="ipt" type="text" disabled v-model="billObj.NativePlace" placeholder="请输入籍贯"></input> -->
+					<!-- <view class="uni-icon uni-icon-arrowright"></view>
+				</view> -->
+			</view>
+			<view class="input-row">
+				<text class="title">家庭地址：</text>
+				<input-box ref="homeAddress" v-model="billObj.HomeAddress" placeholder="请输入详细地址"></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">邮编：</text>
+				<input-box type="number" ref="postCode" v-model="billObj.PostCode" placeholder="邮编"></input-box>
 			</view>
 			<view style="height: 50px;"></view>
 			<view class="input-row" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 2; background-color: #fff;">
-				<button @click="goNext" class="btn" type="warn" style="height: 35px; line-height: 35px;">注 册</button>
+				<button @click="goNext" class="btn" type="warn" style="height: 35px; line-height: 35px;">下一步</button>
 			</view>
 		</view>
 		<!-- 地址选择器 此处仅保留-->
@@ -58,12 +87,11 @@
 	import customDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker';
 	import util from '@/common/util.js';
 	import mpvuePicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue';
-	import uniIcons from '@/components/uni-icon/uni-icon'
 	import cityData from '@/common/city.data-3.js';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
 		components: {
-			inputBox, customDatePicker, mpvuePicker, uniIcons
+			inputBox, customDatePicker, mpvuePicker
 		},
 		computed: mapState(['openid']),
 		data() {
@@ -81,7 +109,6 @@
 				  "AboveDealerId": ""  /*推荐人ID*/,
 				  "DealerNo": ""  /*分销商编号*/,
 				  "DealerName": ""  /*分销商姓名*/,
-				  "Phone": "",
 				  "BirthDay": ""  /*生日*/,
 				  "NativePlace": ""  /*籍贯*/,
 				  "IDCardNo": ""  /*身份证号*/,
@@ -184,12 +211,7 @@
 				let me = this;
 				util.showLoading();
 				let prompt = {};
-				let method = 'Businese.BillJoinDAL.CreateDefault';
-				// 扫码带的加盟id
-				if(AboveDealerId) {
-					prompt.AboveDealerId = AboveDealerId;
-					method = 'Businese.BillJoinDAL.CreateDefaultByRegister';
-				}
+				let method = 'Businese.BillJoinDAL.CreateDefaultByFullProfile';
 				// 单据ID初始化
 				util.ajax({
 					method: method,
@@ -210,12 +232,6 @@
 					me.$refs.billDate.setValue(res.data.result.BillDate);
 					me.$refs.dealerNo.setValue(res.data.result.DealerNo);
 					me.$refs.aboveName.setValue(res.data.result.AboveName);
-					// 自动带出微信信息(呢称、头像、性别、国家、省份、城市)
-					const wxUserInfo = util.getStorageSync('wx_user_info')
-					console.log('wxUserInfo: ', wxUserInfo)
-					this.billObj.DealerName = wxUserInfo.nickName
-					this.billObj.NativePlace = `${wxUserInfo.country}-${wxUserInfo.province}-${wxUserInfo.city}`
-					this.billObj.Sex = wxUserInfo.gender === 1 ? 0 : 1
 				});
 			},
 			setInfo() {
@@ -223,34 +239,43 @@
 				this.$refs.billDate.setValue(this.billObj.BillDate);
 				this.$refs.dealerNo.setValue(this.billObj.DealerNo);
 				this.$refs.dealerName.setValue(this.billObj.DealerName);
+				this.$refs.educationLevel.setValue(this.billObj.EducationLevel);
+				this.$refs.nativePlace.setValue(this.billObj.NativePlace);
+				this.$refs.homeAddress.setValue(this.billObj.HomeAddress);
+				this.$refs.postCode.setValue(this.billObj.PostCode);
 			},
 			goNext() {
 				this.setBillJoinDAL(this.billObj);
-				if(this.$refs.dealerName.getValue()){
-					
-				} else {
-					util.showToast({
-						title: '请输入姓名'
-					})
-					return
-				}
-				if(this.$refs.phone.getValue()){
-					
-				} else {
-					util.showToast({
-						title: '请输入电话号码'
-					})
-					return
-				}
+				// let str = '?';
+				// let n = 0;
+				// for(let key in this.billObj) {
+				// 	if (n > 0) {
+				// 		str += '&'
+				// 	}
+				// 	str += key + '=' + this.billObj[key];
+				// 	n++;
+				// }
+				util.goUrl({
+					// url: './createEntryOrder2' + str
+					url: './createEntryOrder2'
+				});
+			},
+			bindChangeBirthDay(value) {
+				// 生日
+				console.log(value);
+				this.$set(this.billObj, 'BirthDay', value);
 			},
 			changeSex(e) {
 				// 性别
 				this.$set(this.billObj, 'Sex', Number(e.detail.value));
 			},
+			changeMarriage(e) {
+				// 婚否
+				this.$set(this.billObj, 'HasMarried', (e.detail.value === '0'));
+			},
 			onConfirm(e) {
 				// 选择地址确定
 				console.log('确定： ', e);
-				this.billObj.NativePlace = e.label
 			},
 			onCancel(e) {
 				// 选择地址取消

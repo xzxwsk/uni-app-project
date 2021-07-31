@@ -141,10 +141,9 @@
 		},
 		methods: {
 			getLs() {
-				// if (!this.hasLogin) {
-				// 	this.goLogin();
-				// 	return;
-				// }
+				if (!this.hasLogin) {
+					return;
+				}
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.CartDAL.GetUserCart',

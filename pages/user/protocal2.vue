@@ -73,7 +73,7 @@
     export default {
         data() {
             return {
-				img1Src: util.getImgUrl() + 'static/images/protocal_img1.jpg'
+				img1Src: util.getImgUrl() + '/static/images/protocal_img1.jpg'
             }
         },
 		onNavigationBarButtonTap(e) {

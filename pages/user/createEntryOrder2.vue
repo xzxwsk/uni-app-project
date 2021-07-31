@@ -275,26 +275,27 @@
 										    this.frontImgSrc = useImage;
 										});
 									})
-									.catch(err => {
-										console.log('err: ', err);
-									});
 								})
-								.catch(err => {
-									console.log('err: ', err);
-								});
 							})
-							.catch(err => {
-								console.log('err: ', err);
-							});
+							.catch(e => {
+								util.showToast({
+									title: e.message
+								})
+							})
 							// #endif
 							// #ifndef APP-PLUS
-							this.urlToBase64(res.tempFilePaths[0])
-							.then(baseRes => {
+							this.uploadFile(res.tempFilePaths[0])
+							.then(uploadFileRes => {
 							    // 转化后的base64图片地址
-							    this.$set(this.billObj, 'FrontImageFileName', baseRes.split(',')[1]);
-							    this.frontImg = baseRes;
-								this.frontImgSrc = baseRes
-							});
+							    this.$set(this.billObj, 'FrontImageFileName', uploadFileRes);
+							    this.frontImg = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes;
+								this.frontImgSrc = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes
+							})
+							.catch(e => {
+								util.showToast({
+									title: e.message
+								})
+							})
 							// #endif
 						// }
 					}
@@ -341,34 +342,33 @@
 										this.backImgSrc = useImage;
 									});
 								})
-								.catch(err => {
-									console.log('err: ', err);
-								});
 							})
-							.catch(err => {
-								console.log('err: ', err);
-							});
 						})
 						.catch(err => {
 							console.log('err: ', err);
 						});
 						// #endif
 						// #ifndef APP-PLUS
-						this.urlToBase64(res.tempFilePaths[0])
-						.then(baseRes => {
+						this.uploadFile(res.tempFilePaths[0])
+						.then(uploadFileRes => {
 							// 转化后的base64图片地址
-							this.$set(this.billObj, 'BackImageFileName', baseRes);
-							this.backImg = baseRes;
-							this.backImgSrc = baseRes;
-						});
+							this.$set(this.billObj, 'BackImageFileName', uploadFileRes);
+							this.backImg = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes;
+							this.backImgSrc = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes
+						})
+						.catch(e => {
+							util.showToast({
+								title: e.message
+							})
+						})
 						// #endif
 					}
 				});
 			},
 			setInfo() {
 				this.$refs.iDCardNo.setValue(this.billObj.IDCardNo);
-				this.frontImg = this.billObj.FrontImageFileName ? this.billObj.FrontImageFileName : '';
-				this.backImg = this.billObj.BackImageFileName ? this.billObj.BackImageFileName : '';
+				this.frontImg = this.billObj.FrontImageFileName ? util.getBaseUrl() + 'files/downloadfile?filename=' + this.billObj.FrontImageFileName : '';
+				this.backImg = this.billObj.BackImageFileName ? util.getBaseUrl() + 'files/downloadfile?filename=' + this.billObj.BackImageFileName : '';
 				this.$refs.mobile.setValue(this.billObj.Mobile);
 				this.$refs.email.setValue(this.billObj.Email);
 				this.$refs.linkMan.setValue(this.billObj.LinkMan);

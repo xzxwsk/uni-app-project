@@ -82,6 +82,10 @@
 			if(this.isLoad) {
 				this.reGetChangeNum();
 			}
+			if (this.hasLogin) {
+				// 获取是否已完善信息
+				this.getIsComplete()
+			}
 		},
 		methods: {
 			...mapMutations(['setChangeNum']),
@@ -111,15 +115,23 @@
 					method: 'Businese.BillJoinDAL.HasFullProfile',
 				}).then(res => {
 					const { result } = res.data
+					let findIndex = this.pages.findIndex(item => item.url === 'user/createEntryOrder')
+					
 					console.log('getIsComplete: ', res, result)
 					if (!result) {
-						// 如果未完善
-						this.pages.push({
-							name: '完善个人信息',
-							url: 'user/createEntryOrder',
-							icon: 'qrcode',
-							changeNum: 0
-						})
+						if (findIndex === -1) {
+							// 如果未完善
+							this.pages.push({
+								name: '完善个人信息',
+								url: 'user/createEntryOrder',
+								icon: 'qrcode',
+								changeNum: 0
+							})
+						}
+					} else {
+						if (findIndex !== -1) {
+							this.pages.splice(findIndex, 1)
+						}
 					}
 				})
 			},

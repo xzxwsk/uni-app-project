@@ -25,9 +25,9 @@
 				</view>
 			</scroll-view>
 		</view>
-		<!-- <view class="add_btn">
+		<view class="add_btn">
 			<button type="warn" @tap="addAddr">添加地址</button>
-		</view> -->
+		</view>
 	</view>
 </template>
 

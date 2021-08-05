@@ -54,7 +54,7 @@
 						icon: 'coupons_fill'
 					},
 					{
-						name: '我收到的退款单',
+						name: '我收到的提现申请单',
 						url: 'order/myReceiveRefundOrder',
 						icon: 'redpacket_fill'
 					},

@@ -59,7 +59,7 @@
 						changeNum: 0
 					},
 					{
-						name: '退款单',
+						name: '提现申请单',
 						url: 'order/refundOrder',
 						icon: 'redpacket',
 						changeNum: 0

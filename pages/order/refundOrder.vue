@@ -61,7 +61,7 @@
 										<text class="count"><text class="gray">备注:</text>xxxx</text>
 									</view>
 									<view class="ls_item_bottom" v-if="item.State === 0">
-										<button class="btn" @click.stop="bindCancel(item.RecordId)">取消</button>
+										<button class="btn" @click.stop="bindCancel(item.RecordId)">取消</button><button class="btn" @click.stop="bindConfirm(item.RecordId)">收款确认</button>
 									</view>
 								</view>
 							</view>
@@ -209,6 +209,35 @@
 								util.hideLoading();
 								util.showToast({
 									title: '取消退款单成功',
+									success() {
+										me.init();
+									}
+								});
+							});
+						}
+					}
+				});
+				util.showLoading();
+			},
+			// 收款确认
+			bindConfirm(id) {
+				let me = this;
+				util.dialog({
+					content: '确定要收款确认吗？',
+					success (e) {
+						if(e.confirm) {
+							util.ajax({
+								method: 'Businese.BillPayReturnDAL.Cancel',
+								params: {
+									RecordId : id
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								util.hideLoading();
+								util.showToast({
+									title: '收款确认成功',
 									success() {
 										me.init();
 									}

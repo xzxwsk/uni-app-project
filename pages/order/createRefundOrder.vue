@@ -11,7 +11,15 @@
 			</view>
 			<view class="input-row border">
 				<text class="title">款项性质：</text>
-				<text class="txt">{{billObj.accountTypeStr}}</text>
+				<!-- <text class="txt">{{billObj.accountTypeStr}}</text> -->
+				<radio-group class="pay_type" name="payType" 
+					@change="changeKxxzType"
+					style="justify-content: flex-start;"
+				><label class="label" 
+					v-for="(item, index) in kxxzTypeArr"
+					:key="index"
+				><radio :value="item.value" color="#f23030" :checked="selectKxxzType === item.value" />{{item.txt}}</label>
+				</radio-group>
 			</view>
 			<view class="input-row">
 				<text class="title">付款方式：</text>
@@ -31,7 +39,7 @@
 				<input-box v-model="billObj.ReceiveAccountInfo" :placeholder="placeholder"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">付款金额：</text>
+				<text class="title">申请金额：</text>
 				<input-box type="number" v-model="billObj.Amount" placeholder="元"></input-box>
 			</view>
 		</view>
@@ -54,6 +62,11 @@
 		data() {
 			return {
 				placeholder: '请输入付款人微信帐号',
+				selectKxxzType: '0',
+				kxxzTypeArr: [
+					{txt: '货款', value: '0'},
+					{txt: '积分', value: '1'}
+				],
 				billObj: {
 				  "RecordId": ""  /*单据Id*/,
 				  "BillCode": ""  /*单据编号*/,
@@ -157,6 +170,12 @@
 				// 款项性质
 				console.log(e.target.value);
 				this.moneyNature = e.target.value;
+			},
+			// 修改款项性质
+			changeKxxzType(e) {
+				const { value } = e.detail
+				const result = Number(value)
+				console.log('changeKxxzType: ', e, value, typeof value)
 			},
 			changeMoneyType(e) {
 				// 付款方式

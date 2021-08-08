@@ -130,7 +130,7 @@
 		}, {
 			"path": "pages/order/refundOrder",
 			"style": {
-				"navigationBarTitleText": "退款单",
+				"navigationBarTitleText": "我的提现申请单",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -146,7 +146,7 @@
 		}, {
 			"path": "pages/order/createRefundOrder",
 			"style": {
-				"navigationBarTitleText": "新增退款单",
+				"navigationBarTitleText": "新增提现申请单",
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -154,7 +154,15 @@
 		}, {
 			"path": "pages/order/myReceiveRefundOrder",
 			"style": {
-				"navigationBarTitleText": "我收到的退款单",
+				"navigationBarTitleText": "我收到的提现申请单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/order/createPayRefundOrder",
+			"style": {
+				"navigationBarTitleText": "提现申请单付款",
 				"app-plus": {
 					"bounce": "none"
 				}

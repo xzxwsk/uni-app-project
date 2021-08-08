@@ -3,11 +3,11 @@
 		<view class="input-group">
 			<view class="input-row">
 				<text class="title"><text class="price">*</text>会员编号：</text>
-				<input-box v-model="billObj.RcvDealerCode" placeholder="请输入收款会员编号" @input="getNameOfCode"></input-box>
+				<input-box v-model="billObj.PayDealerCode" placeholder="请输入付款会员编号" @input="getNameOfCode"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">会员姓名：</text>
-				<input-box ref="rcvDealerName" v-model="billObj.RcvDealerName" placeholder="请输入收款会员姓名" disabled :clearShow="false"></input-box>
+				<input-box ref="payDealerName" v-model="billObj.PayDealerName" placeholder="请输入付款会员姓名" disabled :clearShow="false"></input-box>
 			</view>
 			<view class="input-row border">
 				<text class="title">款项性质：</text>
@@ -22,25 +22,8 @@
 				</radio-group>
 			</view>
 			<view class="input-row">
-				<text class="title">付款方式：</text>
-				<radio-group class="pay_type" name="payType" @change="changeMoneyType">
-					<label class="label"><radio value="3" color="#f23030" :checked="billObj.PayType === 3" />微信</label>
-					<label class="label"><radio value="2" color="#f23030" :checked="billObj.PayType === 2" />支付宝</label>
-					<label class="label"><radio value="1" color="#f23030" :checked="billObj.PayType === 1" />银行转账</label>
-					<label class="label"><radio value="0" color="#f23030" :checked="billObj.PayType === 0" />现金</label>
-				</radio-group>
-			</view>
-			<view class="input-row" v-if="billObj.PayType != 0">
-				<text class="title">付款方帐号：</text>
-				<input-box v-model="billObj.PayAccountNo" :placeholder="placeholder"></input-box>
-			</view>
-			<view class="input-row" v-if="billObj.PayType != 0">
-				<text class="title">对方帐号：</text>
-				<input-box v-model="billObj.ReceiveAccountInfo" :placeholder="placeholder"></input-box>
-			</view>
-			<view class="input-row">
 				<text class="title">申请金额：</text>
-				<input-box type="number" v-model="billObj.Amount" placeholder="元"></input-box>
+				<input-box type="number" v-model="billObj.ApplyAmount" placeholder="元"></input-box>
 			</view>
 		</view>
 		<view class="result">
@@ -65,43 +48,44 @@
 				selectKxxzType: '0',
 				kxxzTypeArr: [
 					{txt: '货款', value: '0'},
-					{txt: '积分', value: '1'}
+					{txt: '积分', value: '2'}
 				],
 				billObj: {
-				  "RecordId": ""  /*单据Id*/,
-				  "BillCode": ""  /*单据编号*/,
-				  "BillDate": "2019-09-19T11:24:51.9472886+08:00"  /*单据日期*/,
-				  "Amount": 0.0  /*付款金额*/,
-				  "RcvDealerId": ""  /*收款方分销商Id*/,
-				  "RcvDealerCode": ""  /*收款方分销商编号*/,
-				  "RcvDealerName": ""  /*收款方分销商姓名*/,
-				  "AccountType": 0  /*付款类别*/,
-				  "PayType": 0  /*付款方式*/,
-				  "ReceiveAccountInfo": ""  /*收款方账户信息*/,
-				  "PayBank": ""  /*付款银行*/,
-				  "PayAccountNo": ""  /*付款账户*/,
-				  "PayAccountName": ""  /*付款户名*/,
-				  "Remark": ""  /*备注*/,
-				  "State": 0  /*State*/,
-				  "Creator": ""  /*录入人*/,
-				  "CreatorName": ""  /*录入人姓名*/,
-				  "CreateTime": ""  /*录入时间*/,
-				  "LastModifier": ""  /*最后修改人*/,
-				  "LastModifierName": ""  /*最后修改人姓名*/,
-				  "LastModifyTime": ""  /*最后修改时间*/,
-				  "Auditor": ""  /*审核人*/,
-				  "AuditorName": ""  /*审核人姓名*/,
-				  "AuditTime": ""  /*审核时间*/,
-				  "StateChanged": false  /*状态是否发生过改变*/,
-				  "PayDealerId": ""  /*付款方分销商Id*/,
-				  "PayDealerCode": ""  /*付款方分销商编号*/,
-				  "PayDealerName": ""  /*付款方分销商姓名*/,
-				  "TimeStamp": ""  /*时间戳*/,
-				  "ChangeType": 0,
-				  "IdValues": [
-					""
-				  ],
-				  "iState": 1
+					"RecordId": ""  /*单据Id*/,
+				    "BillCode": ""  /*单据编号*/,
+				    "BillDate": "2021-08-08T09:28:22.6174426+08:00"  /*单据日期*/,
+				    "ApplyAmount": 0.0  /*申请金额*/,
+				    "Amount": 0.0  /*付款金额*/,
+				    "RcvDealerId": ""  /*收款方经销商Id*/,
+				    "RcvDealerCode": ""  /*收款方经销商编号*/,
+				    "RcvDealerName": ""  /*收款方经销商姓名*/,
+				    "AccountType": 0  /*付款类别*/,
+				    "PayType": 0  /*付款方式*/,
+				    "ReceiveAccountInfo": ""  /*收款方账户信息*/,
+				    "PayBank": ""  /*付款银行*/,
+				    "PayAccountNo": ""  /*付款账户*/,
+				    "PayAccountName": ""  /*付款户名*/,
+				    "Remark": ""  /*备注*/,
+				    "State": 1  /*State*/,
+				    "Creator": ""  /*录入人*/,
+				    "CreatorName": ""  /*录入人姓名*/,
+				    "CreateTime": "2021-08-08T09:28:22.6174426+08:00"  /*录入时间*/,
+				    "LastModifier": ""  /*最后修改人*/,
+				    "LastModifierName": ""  /*最后修改人姓名*/,
+				    "LastModifyTime": "2021-08-08T09:28:22.6174426+08:00"  /*最后修改时间*/,
+				    "Auditor": ""  /*审核人*/,
+				    "AuditorName": ""  /*审核人姓名*/,
+				    "AuditTime": "2021-08-08T09:28:22.6174426+08:00"  /*审核时间*/,
+				    "StateChanged": false  /*状态是否发生过改变*/,
+				    "PayDealerId": ""  /*付款方经销商Id*/,
+				    "PayDealerCode": ""  /*付款方经销商编号*/,
+				    "PayDealerName": ""  /*付款方经销商姓名*/,
+				    "TimeStamp": ""  /*时间戳*/,
+				    "ChangeType": 0,
+				    "IdValues": [
+				      ""
+				    ],
+				    "iState": 1
 				}
 			}
 		},
@@ -129,7 +113,7 @@
 					util.hideLoading();
 					this.billObj = res.data.result;
 					this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
-					this.billObj.accountTypeStr = ['货款', '保证金', '代交保证金'][this.billObj.AccountType];
+					this.billObj.accountTypeStr = ['货款', '保证金', '积分'][this.billObj.AccountType];
 				});
 			},
 			initDefault() {
@@ -143,7 +127,7 @@
 					util.hideLoading();
 					this.billObj = res.data.result;
 					this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
-					this.billObj.accountTypeStr = ['货款', '保证金', '代交保证金'][this.billObj.AccountType];
+					this.billObj.accountTypeStr = ['货款', '保证金', '积分'][this.billObj.AccountType];
 				});
 			},
 			getNameOfCode(e) {
@@ -158,24 +142,24 @@
 					}
 				}).then(res => {
 					if (res.data.hasOwnProperty('result')) {
-						this.billObj.RcvDealerName = res.data.result.DealerName;
-						this.$refs.rcvDealerName.setValue(res.data.result.DealerName);
+						this.billObj.PayDealerId = res.data.result.DealerId;
+						this.billObj.PayDealerCode = res.data.result.DealerNo;
+						this.billObj.PayDealerName = res.data.result.DealerName;
+						this.$refs.payDealerName.setValue(res.data.result.DealerName);
 					} else {
-						this.billObj.RcvDealerName = '';
-						this.$refs.rcvDealerName.setValue('');
+						this.billObj.PayDealerId = '';
+						this.billObj.PayDealerCode = '';
+						this.billObj.PayDealerName = '';
+						this.$refs.payDealerName.setValue('');
 					}
 				});
-			},
-			changeMoneyNature(e) {
-				// 款项性质
-				console.log(e.target.value);
-				this.moneyNature = e.target.value;
 			},
 			// 修改款项性质
 			changeKxxzType(e) {
 				const { value } = e.detail
 				const result = Number(value)
-				console.log('changeKxxzType: ', e, value, typeof value)
+				this.billObj.AccountType = result
+				this.selectKxxzType = result
 			},
 			changeMoneyType(e) {
 				// 付款方式
@@ -191,6 +175,8 @@
 			},
 			saveOrder() {
 				let me = this;
+				this.billObj.ApplyAmount = Number(this.billObj.ApplyAmount)
+				this.billObj.AccountType = Number(this.selectKxxzType)
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.BillPayReturnDAL.Create',
@@ -205,7 +191,14 @@
 					util.showToast({
 						title: '新建退款单成功',
 						success() {
-							uni.navigateBack();
+							const pages = getCurrentPages()
+							if (pages.length >= 2) {
+								const prevPage = pages[pages.length-2]
+								if (prevPage) {
+									prevPage.init()
+									uni.navigateBack();
+								}
+							}
 						}
 					});
 				});

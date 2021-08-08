@@ -13,7 +13,8 @@ const store = new Vuex.Store({
 		wxUserInfo: {},
 		changeNum: null,
 		billJoinDAL: null, // 缓存分销商加盟单信息
-		consumeSelected: [] // 创建消费/零售记录时，保存
+		consumeSelected: [], // 创建消费/零售记录时，保存
+		payRefund: null, // 提现申请单支付信息
 	},
 	mutations: {
 		login(state, provider) {
@@ -44,7 +45,10 @@ const store = new Vuex.Store({
 		},
 		setConsumeSelected(state, val) {
 			state.consumeSelected = val
-		}
+		},
+		setPayRefund(state, val) {
+			state.payRefund = val
+		},
 	},
 	actions: {
 		// lazy loading openid

@@ -181,12 +181,6 @@
 			// 	});
 			// }, false);
 			// #endif
-		},
-		onShow: function() {
-			console.log('App Show')
-		},
-		onHide: function() {
-			console.log('App Hide')
 		}
 	}
 </script>

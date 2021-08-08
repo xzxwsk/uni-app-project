@@ -109,15 +109,12 @@
 	    },
 	    data() {
 	        return {
-				value:this.inputValue,
+				value: this.inputValue,
 				marginTop: parseFloat(this.maTop) / 375 * 750 + 'rpx',
 				marginBottom: parseFloat(this.maBtm) / 375 * 750 + 'rpx',
 				isShowEye:false,//是否显示密码
 			};
 	    },
-		mounted() {
-			// console.log(inputVerification)
-		},
 		methods: {
 			  /**
 			 * @desc 密码显隐操作

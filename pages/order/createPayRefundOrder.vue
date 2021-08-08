@@ -2,12 +2,12 @@
 	<view class="create_pay_order">
 		<view class="input-group">
 			<view class="input-row">
-				<text class="title"><text class="price">*</text>收款人会员编号：</text>
-				<input-box :inputValue="billObj.RcvDealerCode" disabled :clearShow="false"></input-box>
+				<text class="title">收款人会员编号：</text>
+				<input-box ref="rcvDealerCodeRef" :inputValue="billObj.RcvDealerCode" disabled :clearShow="false"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">收款人会员姓名：</text>
-				<input-box :inputValue="billObj.RcvDealerName" disabled :clearShow="false"></input-box>
+				<input-box ref="rcvDealerNameRef" :inputValue="billObj.RcvDealerName" disabled :clearShow="false"></input-box>
 			</view>
 			<view class="input-row border">
 				<text class="title">款项性质：</text>
@@ -18,11 +18,11 @@
 			</view>
 			<view class="input-row">
 				<text class="title">申请金额：</text>
-				<input-box ref="applyAmountRef" type="number" disabled :clearShow="false" :inputValue="billObj.ApplyAmount + '元'"></input-box>
+				<input-box ref="applyAmountRef" type="number" disabled :clearShow="false" :inputValue="billObj.ApplyAmount ? String(billObj.ApplyAmount) : '0'"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">实付金额：</text>
-				<input-box ref="amount" type="number" :inputValue="billObj.Amount ? String(billObj.Amount) : ''" v-model="billObj.Amount" placeholder="元"></input-box>
+				<input-box ref="amountRef" type="number" :inputValue="billObj.Amount ? String(billObj.Amount) : '0'" v-model="billObj.Amount" placeholder="元"></input-box>
 			</view>
 			<view class="input-row">
 				<text class="title">付款方式：</text>
@@ -133,8 +133,11 @@
 						this.billObj[key] = this.payRefund[key]
 					}
 				}
-				console.log('ref: ', this.$refs.applyAmountRef, this.billObj.ApplyAmount + '元')
-				this.$refs.applyAmountRef.setValue(this.billObj.ApplyAmount + '元');
+				console.log('billObj.RcvDealerCode: ', this.billObj.RcvDealerCode)
+				this.$refs.rcvDealerCodeRef.setValue(this.billObj.RcvDealerCode)
+				this.$refs.rcvDealerNameRef.setValue(this.billObj.RcvDealerName)
+				this.$refs.applyAmountRef.setValue(this.billObj.ApplyAmount)
+				this.$refs.amountRef.setValue(this.billObj.Amount)
 			},
 			getRepayDealerLs() {
 				// 获取代支付分销商列表
@@ -182,7 +185,7 @@
 			changeMoneyNature(e) {
 				// 款项性质
 				this.billObj.AccountType = Number(e.target.value);
-				this.getDefault();
+				// this.getDefault();
 				/* 
 				if(this.billObj.AccountType === 2) {
 					if(this.$refs.amount && this.selectRepayDealer.Amount) {
@@ -233,6 +236,7 @@
 				let me = this;
 				this.saving = true;
 				this.billObj.Amount = Number(this.billObj.Amount);
+				console.log('amount: ', this.billObj.Amount)
 				for(let key in this.billObj) {
 					if (typeof this.billObj[key] === 'string') {
 						this.billObj[key] = this.billObj[key].trim();

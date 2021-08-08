@@ -234,19 +234,18 @@
 			},
 			saveOrder() {
 				let me = this;
-				this.saving = true;
 				this.billObj.Amount = Number(this.billObj.Amount);
-				console.log('amount: ', this.billObj.Amount)
 				for(let key in this.billObj) {
 					if (typeof this.billObj[key] === 'string') {
 						this.billObj[key] = this.billObj[key].trim();
 					}
 				}
+				this.saving = true;
 				util.showLoading();
 				util.ajax({
-					method: 'Businese.BillPayDAL.Create',
+					method: 'Businese.BillPayReturnDAL.Pay',
 					params: {
-						Bill: this.billObj
+						bill: this.billObj
 					},
 					tags: {
 						usertoken: this.openid
@@ -254,13 +253,18 @@
 				}).then(res => {
 					util.hideLoading();
 					util.showToast({
-						title: '创建付款单成功',
+						title: '付款成功',
 						success() {
 							setTimeout(() => {
 								me.saving = false;
-								util.goUrl({
-									url: '../order/payOrder'
-								});
+								const pages = getCurrentPages()
+								if (pages.length >= 2) {
+									const prevPage = pages[pages.length-2]
+									if (prevPage) {
+										prevPage.init()
+										uni.navigateBack();
+									}
+								}
 							}, 1000);
 						}
 					});

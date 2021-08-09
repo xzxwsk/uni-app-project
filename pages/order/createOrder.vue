@@ -118,9 +118,9 @@
 						</view>
 					</view>
 				</block>
-				<view style="height: 30px;"></view>
 			</view>
 		</scroll-view>
+		<view style="height: 10px;"></view>
 		<view class="result">
 			<view class="count b"><!-- <text class="price">￥{{(count+freight).toFixed(2)}}</text> --></view>
 			<button class="btn" type="warn" @click="goMyOrder">生成订单</button>

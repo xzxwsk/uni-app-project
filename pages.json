@@ -2,14 +2,10 @@
 	"pages": [
 		// pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录",
-				"app-plus": {
-					"bounce": "vertical",
-					"titleNView": false
-				}
-			}
+		    "path" : "pages/importAd/importAd",
+		    "style" : {
+		        "navigationStyle": "custom"
+		    }
 		}, {
 			"path": "pages/tabBar/index",
 			"style": {
@@ -25,6 +21,20 @@
 						"buttons": [{
 							"float": "right",
 							"type": "share"
+						}]
+					}
+				}
+			}
+		}, {
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"app-plus": {
+					"bounce": "vertical",
+					"titleNView": {
+						"buttons": [{
+							"float": "left",
+							"type": "home"
 						}]
 					}
 				}
@@ -120,7 +130,7 @@
 		}, {
 			"path": "pages/order/refundOrder",
 			"style": {
-				"navigationBarTitleText": "退款单",
+				"navigationBarTitleText": "我的提现申请单",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -136,7 +146,7 @@
 		}, {
 			"path": "pages/order/createRefundOrder",
 			"style": {
-				"navigationBarTitleText": "新增退款单",
+				"navigationBarTitleText": "新增提现申请单",
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -144,7 +154,15 @@
 		}, {
 			"path": "pages/order/myReceiveRefundOrder",
 			"style": {
-				"navigationBarTitleText": "我收到的退款单",
+				"navigationBarTitleText": "我收到的提现申请单",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/order/createPayRefundOrder",
+			"style": {
+				"navigationBarTitleText": "提现申请单付款",
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -198,19 +216,19 @@
 				}
 			}
 		}, {
+			"path": "pages/user/createQuickReg",
+			"style": {
+				"navigationBarTitleText": "微信快速注册",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/user/createEntryOrder",
 			"style": {
 				"navigationBarTitleText": "新增分销商加盟单",
 				"app-plus": {
-					"bounce": "none",
-					"titleNView": {
-						"buttons": [{
-							"text": "下一步",
-							"fontSize": "14px",
-							"color": "#333",
-							"width": "auto"
-						}]
-					}
+					"bounce": "none"
 				}
 			}
 		}, {
@@ -226,7 +244,7 @@
 							"color": "#333",
 							"width": "auto"
 						}]
-					}			
+					}
 				}
 			}
 		}, {
@@ -512,7 +530,7 @@
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "Hello uniapp",
+		"navigationBarTitleText": "轻盈纤畅",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
 		"backgroundColorTop": "#F4F5F6",

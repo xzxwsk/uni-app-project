@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
     "version": "1.2.23",
+=======
+    "version": "1.2.22",
+>>>>>>> 7fdccc47459aa076aaaf0a02219e2dfaf2cfb592
     "code": 1,
     "edition":"正式版",
     "smallUpdate":"http://118.163.201.227/appdownload/add.wgt",

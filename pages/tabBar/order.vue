@@ -59,24 +59,32 @@
 						changeNum: 0
 					},
 					{
-						name: '退款单',
+						name: '提现申请单',
 						url: 'order/refundOrder',
 						icon: 'redpacket',
 						changeNum: 0
-					}
+					},
 				]
 			}
 		},
 		onLoad() {
-			if (!this.isLoad && this.hasLogin && this.changeNum !== null) {
-				this.init();
-				this.isLoad = true;
+			if (this.hasLogin) {
+				// 获取是否已完善信息
+				this.getIsComplete()
+				if (!this.isLoad && this.changeNum !== null) {
+					this.init();
+					this.isLoad = true;
+				}
 			}
 		},
 		onShow() {
 			console.log('order show:', this.isLoad);
 			if(this.isLoad) {
 				this.reGetChangeNum();
+			}
+			if (this.hasLogin) {
+				// 获取是否已完善信息
+				this.getIsComplete()
 			}
 		},
 		methods: {
@@ -100,6 +108,32 @@
 					this.pages[0].changeNum = changeNum.myOrderChangeNum;
 					this.pages[1].changeNum = changeNum.myRefundOrderChangeNum;
 				}
+			},
+			// 获取是否已完善信息
+			getIsComplete() {
+				util.ajax({
+					method: 'Businese.BillJoinDAL.HasFullProfile',
+				}).then(res => {
+					const { result } = res.data
+					let findIndex = this.pages.findIndex(item => item.url === 'user/createEntryOrder')
+					
+					console.log('getIsComplete: ', res, result)
+					if (!result) {
+						if (findIndex === -1) {
+							// 如果未完善
+							this.pages.push({
+								name: '完善个人信息',
+								url: 'user/createEntryOrder',
+								icon: 'qrcode',
+								changeNum: 0
+							})
+						}
+					} else {
+						if (findIndex !== -1) {
+							this.pages.splice(findIndex, 1)
+						}
+					}
+				})
 			},
 			async init() {
 				await this.getMenu()
@@ -195,13 +229,20 @@
 				});
 			},
 			goDetailPage(url) {
+				// 完善个人信息，不用验证登录
+				if (url === 'user/createEntryOrder') {
+					uni.navigateTo({
+						url: '/pages/' + url
+					})
+					return
+				}
 				if (!this.hasLogin) {
 					this.goLogin();
 					return;
 				}
 				uni.navigateTo({
 					url: '/pages/' + url
-				});
+				})
 			}
 		}
 	}

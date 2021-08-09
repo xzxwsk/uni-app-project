@@ -49,7 +49,7 @@
 											<text class="gray">款项性质:</text>{{item.accountTypeStr}}</text>
 										<view class="status">
 											<text>{{item.stateStr}}</text>
-											<text class="price">￥{{item.Amount}}</text>
+											<text class="price">￥{{item.ApplyAmount}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
@@ -58,10 +58,10 @@
 									</view>
 									<view class="ls_item_center">
 										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
-										<text class="count"><text class="gray">备注:</text>xxxx</text>
+										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
 									</view>
 									<view class="ls_item_bottom" v-if="item.State === 0">
-										<button class="btn" @click.stop="bindCancel(item.RecordId)">取消</button>
+										<button class="btn" @click.stop="bindCancel(item.RecordId)">取消</button><button class="btn" @click.stop="bindConfirm(item.RecordId)">确认收款</button>
 									</view>
 								</view>
 							</view>
@@ -72,6 +72,13 @@
 					</view>
 				</swiper-item>
 			</swiper>
+		</view>
+		<view style="height: 50px;">
+			<view class="create_pay_order">
+				<view class="result">
+					<button class="btn" type="warn" @click="onAdd">新增</button>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -174,9 +181,19 @@
 					if (res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
-							dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State+1];
-							dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
+							const arr = [
+								{txt: '货款', value: '0'},
+								{txt: '保证金', value: '1'},
+								{txt: '积分', value: '2'}
+							]
+							arr.some(item => {
+								if (Number(item.value) === dataItem.AccountType) {
+									dataItem.accountTypeStr = item.txt
+									return true
+								}
+							})
+							dataItem.stateStr = ['已取消', '申请', '已付款', '已收款'][dataItem.State+1];
+							dataItem.payTypeStr = ['现金', '银行', '支付宝', '微信'][dataItem.PayType];
 						});
 						this.dataArr[index].data = res.data.result.data;
 						this.displayDataArr[index].data = res.data.result.data;
@@ -190,6 +207,7 @@
 					content: '确定要取消退款吗？',
 					success (e) {
 						if(e.confirm) {
+							util.showLoading();
 							util.ajax({
 								method: 'Businese.BillPayReturnDAL.Cancel',
 								params: {
@@ -199,18 +217,52 @@
 									usertoken: me.openid
 								}
 							}).then(res => {
-								util.hideLoading();
 								util.showToast({
 									title: '取消退款单成功',
 									success() {
-										me.init();
+										setTimeout(() => {
+											me.init();
+										}, 1000)
 									}
 								});
-							});
+							}).finally(() => {
+								util.hideLoading();
+							})
 						}
 					}
 				});
-				util.showLoading();
+			},
+			// 收款确认
+			bindConfirm(id) {
+				let me = this;
+				util.dialog({
+					content: '确定要收款确认吗？',
+					success (e) {
+						if(e.confirm) {
+							util.showLoading();
+							util.ajax({
+								method: 'Businese.BillPayReturnDAL.ReceiveConfirm',
+								params: {
+									RecordId : id
+								},
+								tags: {
+									usertoken: me.openid
+								}
+							}).then(res => {
+								util.showToast({
+									title: '收款确认成功',
+									success() {
+										setTimeout(() => {
+											me.init();
+										}, 1000)
+									}
+								});
+							}).finally(() => {
+								util.hideLoading();
+							})
+						}
+					}
+				});
 			},
 			goDetail(index) {
 				console.log(index);
@@ -314,6 +366,11 @@
 					ary.push(aryItem);
 				}
 				return ary;
+			},
+			onAdd() {
+				util.goUrl({
+					url: './createRefundOrder'
+				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

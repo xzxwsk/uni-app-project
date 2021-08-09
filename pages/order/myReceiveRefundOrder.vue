@@ -43,29 +43,30 @@
 						</block>
 						<scroll-view v-else="" class="box" scroll-y @scrolltolower="loadMore">
 							<view>
-								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(index)">
+								<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index">
 									<view class="ls_item_top">
 										<view class="title">
 											<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
 											<view><text class="gray">款项性质:</text>{{item.accountTypeStr}}</view>
-											<view><text class="gray">自己帐户:</text>{{item.PayAccountNo}}</view>
-											<view><text class="gray">对方帐户: </text>{{item.ReceiveAccountInfo}}</view>
 										</view>
 										<view class="status">
 											<text>{{item.stateStr}}</text>
-											<text class="price">￥{{item.Amount}}</text>
+											<text class="price">￥{{item.ApplyAmount}}</text>
 										</view>
 									</view>
 									<view class="ls_item_center">
-										<text class="count"><text class="gray">分销商编号:</text>{{item.PayDealerCode}}</text>
-										<text class="count"><text class="gray">姓名:</text>{{item.PayDealerName}}</text>
+										<text class="count"><text class="gray">收款会员编号:</text>{{item.RcvDealerCode}}</text>
+										<text class="count"><text class="gray">收款会员姓名:</text>{{item.RcvDealerName}}</text>
+									</view>
+									<view class="ls_item_center">
+										<text class="count"><text class="gray">收款会员帐户:</text>{{item.ReceiveAccountInfo}}</text>
 									</view>
 									<view class="ls_item_center">
 										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
 										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
 									</view>
 									<view class="ls_item_bottom" v-if="item.State === 0">
-										<button class="btn" @click="bindConfirm(item.RecordId)">退款确认</button>
+										<button class="btn" @click="bindConfirm(item)">付款</button>
 									</view>
 								</view>
 							</view>
@@ -134,6 +135,7 @@
 			this.init();
 		},
 		methods: {
+			...mapMutations(['setPayRefund']),
 			init() {
 				let day = util.formatDate(new Date(), 'yyyy-MM-dd');
 				let dayArr = day.split('-');
@@ -183,45 +185,30 @@
 					if (res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-							dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State + 1];
-							dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
-							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType];
+							const arr = [
+								{txt: '货款', value: '0'},
+								{txt: '保证金', value: '1'},
+								{txt: '积分', value: '2'}
+							]
+							arr.some(item => {
+								if (Number(item.value) === dataItem.AccountType) {
+									dataItem.accountTypeStr = item.txt
+									return true
+								}
+							})
+							dataItem.stateStr = ['已取消', '申请', '已付款', '已收款'][dataItem.State+1];
+							dataItem.payTypeStr = ['现金', '银行', '支付宝', '微信'][dataItem.PayType];
 						});
 						this.dataArr[index].data = res.data.result.data;
 						this.displayDataArr[index].data = res.data.result.data;
 					}
 				});
 			},
-			bindConfirm(id) {
-				let me = this;
-				util.dialog({
-					content: '确定要退款确认吗？',
-					success (e) {
-						if(e.confirm) {
-							util.showLoading();
-							util.ajax({
-								method: 'Businese.BillPayReturnDAL.ReceiveConfirm',
-								params: {
-									RecordId: id
-								},
-								tags: {
-									usertoken: me.openid
-								}
-							}).then(res => {
-								util.hideLoading();
-								util.showToast({
-									title: '退款确认成功',
-									success() {
-										me.query();
-									}
-								});
-							});
-						}
-					}
-				});
-			},
-			goDetail(index) {
-				console.log(index);
+			bindConfirm(item) {
+				this.setPayRefund(item)
+				util.goUrl({
+					url: './createPayRefundOrder'
+				})
 			},
 			query() {
 				this.getData(this.stateArr[this.tabIndex]);

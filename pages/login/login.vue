@@ -477,7 +477,9 @@
 				        console.log('条码内容：' + res.result);
 						const q = res.result;
 						const arr = q.split('/')
-						let AboveDealerId = arr[arr.length - 1]
+						const params = arr[arr.length - 1]
+						const arr2 = params.split('AboveDealerId=')
+						const AboveDealerId = arr2[arr2.length - 1]
 						util.goUrl({
 							url: `../user/createQuickReg?AboveDealerId=${AboveDealerId}`
 						})

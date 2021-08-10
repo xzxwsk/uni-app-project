@@ -25,7 +25,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="uni-list count">
+			<view class="uni-list count" style="margin-bottom: 0;">
 				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>提货方式</text></text>
@@ -56,7 +56,7 @@
 				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>备注</text></text>
-						<textarea @blur="bindTextAreaBlur" placeholder="请输入备注说明" v-model="billObj.Remark" auto-height />
+						<textarea @blur="bindTextAreaBlur" placeholder="请输入备注说明" v-model="billObj.Remark" style="height: 25px; line-height: 25px;" />
 					</view>
 				</view>
 				<view class="uni-list-cell">
@@ -71,7 +71,7 @@
 						<radio @click="onIsBonus" color="#f23030" :value="billObj.IsBonus ? 'true' : 'false'" :checked="billObj.IsBonus" />
 					</view>
 				</view>
-				<view class="uni-list-cell" v-if="billObj.IsBonus">
+				<view class="uni-list-cell" v-if="billObj.IsPay && billObj.IsBonus">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>实际抵扣积分</text></text>
 						<input-box type="number" v-model="billObj.FactUseBonus" ref="FactUseBonus" placeholder="请输入实际抵扣积分" 
@@ -79,10 +79,10 @@
 						></input-box>
 					</view>
 				</view>
-				<view class="uni-list-cell" v-if="billObj.IsBonus">
+				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>实际支付金额</text></text>
-						<text class="price" style="font-size: 40rpx;">{{Math.max((billObj.Amount - billObj.FactUseBonus), 0)}}</text>
+						<text class="price" style="font-size: 40rpx;">{{actualAmount}}</text>
 					</view>
 				</view>
 				<block v-if="billObj.IsPay">
@@ -169,6 +169,7 @@
 				placeholder: '请输入收款人微信账号',
 				orderLs: [],
 				qrcode: '',
+				actualAmount: 0,
 				billObj: {
 					"Items": []  /*订单明细*/,
 					"RecordId": ""  /*单据Id*/,
@@ -354,15 +355,15 @@
 					return
 				}
 				// 如果金额大于可用积分(抵扣金额不能大于可用积分)
-				if (this.billObj.Amount > this.billObj.CanUseBonus) {
-					this.billObj.Amount = this.billObj.Amount - this.billObj.FactUseBonus
-				}
 				// 生成订单
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.OrderDAL.Create',
 					params: {
-						Bill: this.billObj
+						Bill: {
+							...this.billObj,
+							Amount: this.actualAmount
+						}
 					},
 					tags: {
 						usertoken: this.openid
@@ -390,6 +391,7 @@
 					this.billObj.IsBonus = true
 				}
 				this.$nextTick(() => {
+					console.log('IsPay: ', this.billObj.IsPay)
 					if (this.billObj.IsPay) {
 						this.setFactUseBonus()
 					}
@@ -403,6 +405,8 @@
 				} else {
 					this.billObj.FactUseBonus = this.billObj.Amount
 				}
+				this.actualAmount = this.billObj.Amount - this.billObj.FactUseBonus
+				this.actualAmount = Math.max(this.actualAmount, 0)
 				this.$refs.FactUseBonus.setValue(this.billObj.FactUseBonus);
 			},
 			// 是否使用积分抵扣
@@ -412,6 +416,8 @@
 					console.log(this.$refs.FactUseBonus, this.billObj.FactUseBonus)
 					if (this.billObj.IsPay && this.billObj.IsBonus) {
 						this.setFactUseBonus()
+					} else {
+						this.actualAmount = this.billObj.Amount
 					}
 					this.scrolltop = util.random(600, 1000);
 				})
@@ -429,6 +435,8 @@
 					util.showToast({
 						title: `抵扣积分不能大于商品金额`
 					})
+				} else {
+					this.actualAmount = this.billObj.Amount - this.billObj.FactUseBonus
 				}
 			},
 			bindTextAreaBlurItem(e) {
@@ -437,7 +445,7 @@
 			bindTextAreaBlur(e) {
 				this.$set(this.billObj, 'Remark', this.billObj.Remark);
 			},
-			changeMoneyType(e) {
+			async changeMoneyType(e) {
 				// 付款方式
 				this.billObj.PayType = Number(e.target.value);
 				if (e.target.value === '3') {
@@ -447,8 +455,11 @@
 				} else if (e.target.value === '1') {
 					this.placeholder = '请输入付款人银行账号';
 				}
-				this.scrolltop = util.random(500, 1000);
-				this.getDefaultPayInfo();
+				
+				await this.getDefaultPayInfo();
+				this.$nextTick(() => {
+					this.scrolltop = util.random(500, 1000);
+				})
 			},
 			changeDiliveryMode(e) {
 				// 提货方式
@@ -509,3 +520,7 @@
 		}
 	}
 </script>
+
+<style scoped>
+	/deep/.count .input-box-center-text{text-align: right;}
+</style>

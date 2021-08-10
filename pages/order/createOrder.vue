@@ -54,17 +54,36 @@
 					</view>
 				</view>
 				<view class="uni-list-cell">
+					<view class="uni-list-cell-navigate" style="justify-content: flex-end;">
+						<text class="item-title price" style="margin-right: 0;"><text>{{billObj.AdvanceTitle ? '本订单使用晋级后的单价' : '本订单使用未晋级的单价'}}</text></text>
+					</view>
+				</view>
+				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>备注</text></text>
 						<textarea @blur="bindTextAreaBlur" placeholder="请输入备注说明" v-model="billObj.Remark" auto-height />
 					</view>
 				</view>
-				<!-- <view class="uni-list-cell">
+				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>是否付款(不勾选表示使用帐户余额)</text></text>
 						<radio @tap="onIsPayChange" color="#f23030" :value="billObj.IsPay ? 'true' : 'false'" :checked="billObj.IsPay" />
 					</view>
-				</view> -->
+				</view>
+				<view class="uni-list-cell" v-if="billObj.IsPay">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>是否使用积分抵扣</text></text>
+						<radio @click="onIsBonus" color="#f23030" :value="billObj.IsBonus ? 'true' : 'false'" :checked="billObj.IsBonus" />
+					</view>
+				</view>
+				<view class="uni-list-cell" v-if="billObj.IsBonus">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>实际抵扣积分</text></text>
+						<input-box type="number" v-model="billObj.FactUseBonus" ref="FactUseBonus" placeholder="请输入实际抵扣积分" 
+							@input="onBlurBonus"
+						></input-box>
+					</view>
+				</view>
 				<block v-if="billObj.IsPay">
 					<view class="uni-list-cell">
 						<view class="uni-list-cell-navigate">
@@ -191,6 +210,10 @@
 					"State": 1  /*单据状态*/,
 					"LevelId": ""  /*当前订单满足的上级分销商等级*/,
 					"ChangeType": 0,
+					"IsBonus": false, // 是否积分抵扣
+					"CanUseBonus": 0, // 可用积分
+					"FactUseBonus": 0, // 实际抵扣积分
+					"AdvanceTitle": 0, // 是否晋级
 					"IdValues": [
 					  ""
 					],
@@ -310,6 +333,16 @@
 						return;
 					}
 				}
+				if (this.FactUseBonus > this.billObj.CanUseBonus) {
+					util.showToast({
+						title: `您的可用积分为${this.billObj.CanUseBonus}, 抵扣金额不能大于可用积分`
+					})
+					return
+				}
+				// 如果金额大于可用积分(抵扣金额不能大于可用积分)
+				if (this.billObj.Amount > this.billObj.CanUseBonus) {
+					this.billObj.Amount = this.billObj.Amount - this.billObj.FactUseBonus
+				}
 				// 生成订单
 				util.showLoading();
 				util.ajax({
@@ -338,7 +371,28 @@
 			onIsPayChange(e){
 				this.$set(this.billObj, 'IsPay', !this.billObj.IsPay);
 				this.getDefaultPayInfo();
-				this.scrolltop = util.random(500, 1000);
+				this.$nextTick(() => {
+					this.scrolltop = util.random(600, 1000);
+				})
+			},
+			// 是否使用积分抵扣
+			onIsBonus(e) {
+				this.$set(this.billObj, 'IsBonus', !this.billObj.IsBonus);
+				this.$nextTick(() => {
+					this.scrolltop = util.random(600, 1000);
+				})
+			},
+			// 填写积分后
+			onBlurBonus(e) {
+				console.log('blurBouns: ', e, typeof e)
+				const val = Number(e)
+				this.FactUseBonus = val
+				if (val > this.billObj.CanUseBonus) {
+					util.showToast({
+						title: `您的可用积分为${this.billObj.CanUseBonus}, 抵扣金额不能大于可用积分`
+					})
+					return
+				}
 			},
 			bindTextAreaBlurItem(e) {
 				this.$set(this.billObj.Items[e], 'Remark', this.billObj.Items[e].Remark);
@@ -389,6 +443,7 @@
 						this.$set(this.billObj, 'ReceiveAccountInfo', (res.data.result.ReceiveAccountInfo || ''));
 						this.$set(this.billObj, 'ReceivorInfo', (res.data.result.ReceivorInfo || ''));
 						this.$set(this.billObj, 'PayBank', (res.data.result.PayBank || ''));
+						this.$set(this.billObj, 'FactUseBonus', (res.data.result.FactUseBonus || ''));
 						if(res.data.result.PayBank) {
 							this.$refs.PayBank.setValue(res.data.result.PayBank);
 						}

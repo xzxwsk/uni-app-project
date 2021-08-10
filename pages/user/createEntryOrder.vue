@@ -69,6 +69,10 @@
 				<text class="title">邮编：</text>
 				<input-box type="number" ref="postCode" v-model="billObj.PostCode" placeholder="邮编"></input-box>
 			</view>
+			<view style="height: 50px;"></view>
+			<view class="input-row" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 2; background-color: #fff;">
+				<button @click="goNext" class="btn" type="warn" style="height: 35px; line-height: 35px;">下一步</button>
+			</view>
 		</view>
 		<!-- 地址选择器 此处仅保留-->
 		<mpvue-picker :themeColor="themeColor" ref="mpvuePicker" :pickerValueDefault="pickerValueDefault"
@@ -207,11 +211,7 @@
 				let me = this;
 				util.showLoading();
 				let prompt = {};
-				let method = 'Businese.BillJoinDAL.CreateDefault';
-				if(AboveDealerId) {
-					prompt.AboveDealerId = AboveDealerId;
-					method = 'Businese.BillJoinDAL.CreateDefaultByRegister';
-				}
+				let method = 'Businese.BillJoinDAL.CreateDefaultByFullProfile';
 				// 单据ID初始化
 				util.ajax({
 					method: method,
@@ -232,6 +232,7 @@
 					me.$refs.billDate.setValue(res.data.result.BillDate);
 					me.$refs.dealerNo.setValue(res.data.result.DealerNo);
 					me.$refs.aboveName.setValue(res.data.result.AboveName);
+					me.$refs.dealerName.setValue(this.billObj.DealerName);
 				});
 			},
 			setInfo() {

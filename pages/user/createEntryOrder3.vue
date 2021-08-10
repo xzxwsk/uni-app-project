@@ -139,7 +139,7 @@
 					if (arr.indexOf(key) !== -1) {
 						this.billObj[key] = Number(this.billObj[key]);
 					} else if (key === 'HasMarried' || key === 'StateChanged') {
-						this.billObj[key] = eval(this.billObj[key]);
+						this.billObj[key] = !!(this.billObj[key]);
 					} else if (key === 'IdValues') {
 						this.billObj[key] = this.billObj[key];
 					} else if(util.getType(this.billObj[key]) === 'string'){
@@ -149,20 +149,11 @@
 					}
 				}
 				util.showLoading();
-				let method = 'Businese.BillJoinDAL.Create';
-				let title = '创建成功';
-				if(this.billObj.isQrcode) {
-					title = '注册成功';
-				} else if (this.billObj.RecordId !== '') {
-					method = 'Businese.BillJoinDAL.Update';
-					title = '修改成功';
-				}
+				let method = 'Businese.BillJoinDAL.Update';
+				let title = '完善信息成功';
 				if(this.billObj.BirthDay === '请选择日期') {
 					this.billObj.BirthDay = '';
 				}
-				console.log('this.billObj.isQrcode: ');
-				// console.log(this.billObj);
-				console.log(this.billObj.isQrcode)
 				util.ajax({
 					method: method,
 					params: {

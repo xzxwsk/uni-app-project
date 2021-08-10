@@ -50,12 +50,7 @@
 				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>商品金额</text></text>
-						<text class="item-content"><text class="price">￥{{billObj.Amount}}</text></text>
-					</view>
-				</view>
-				<view class="uni-list-cell">
-					<view class="uni-list-cell-navigate" style="justify-content: flex-end;">
-						<text class="item-title price" style="margin-right: 0;"><text>{{billObj.AdvanceTitle ? '本订单使用晋级后的单价' : '本订单使用未晋级的单价'}}</text></text>
+						<text class="item-content"><text class="price">{{billObj.AdvanceTitle ? '本订单使用晋级后的单价' : '本订单使用未晋级的单价'}} ￥{{billObj.Amount}}</text></text>
 					</view>
 				</view>
 				<view class="uni-list-cell">
@@ -72,7 +67,7 @@
 				</view>
 				<view class="uni-list-cell" v-if="billObj.IsPay">
 					<view class="uni-list-cell-navigate">
-						<text class="item-title"><text>是否使用积分抵扣</text></text>
+						<text class="item-title"><text>是否使用积分抵扣(可用积分{{billObj.CanUseBonus}}分)</text></text>
 						<radio @click="onIsBonus" color="#f23030" :value="billObj.IsBonus ? 'true' : 'false'" :checked="billObj.IsBonus" />
 					</view>
 				</view>
@@ -82,6 +77,12 @@
 						<input-box type="number" v-model="billObj.FactUseBonus" ref="FactUseBonus" placeholder="请输入实际抵扣积分" 
 							@input="onBlurBonus"
 						></input-box>
+					</view>
+				</view>
+				<view class="uni-list-cell" v-if="billObj.IsBonus">
+					<view class="uni-list-cell-navigate">
+						<text class="item-title"><text>实际支付金额</text></text>
+						<text class="price" style="font-size: 40rpx;">{{Math.max((billObj.Amount - billObj.FactUseBonus), 0)}}</text>
 					</view>
 				</view>
 				<block v-if="billObj.IsPay">
@@ -210,7 +211,7 @@
 					"State": 1  /*单据状态*/,
 					"LevelId": ""  /*当前订单满足的上级分销商等级*/,
 					"ChangeType": 0,
-					"IsBonus": false, // 是否积分抵扣
+					"IsBonus": true, // 是否积分抵扣
 					"CanUseBonus": 0, // 可用积分
 					"FactUseBonus": 0, // 实际抵扣积分
 					"AdvanceTitle": 0, // 是否晋级
@@ -272,6 +273,14 @@
 						util.hideLoading();
 						let data = res.data.result;
 						console.log('生成默认订单：', data);
+						if (data.CanUseBonus > 0) {
+							data.IsBonus = true
+							if (data.Amount > data.CanUseBonus) {
+								data.FactUseBonus = data.CanUseBonus
+							} else {
+								data.FactUseBonus = data.Amount
+							}
+						}
 						this.billObj = data;
 					});
 				}
@@ -338,6 +347,11 @@
 						title: `您的可用积分为${this.billObj.CanUseBonus}, 抵扣金额不能大于可用积分`
 					})
 					return
+				} else if (this.FactUseBonus > this.billObj.Amount) {
+					util.showToast({
+						title: `抵扣积分不能大于商品金额`
+					})
+					return
 				}
 				// 如果金额大于可用积分(抵扣金额不能大于可用积分)
 				if (this.billObj.Amount > this.billObj.CanUseBonus) {
@@ -368,17 +382,37 @@
 					});
 				});
 			},
-			onIsPayChange(e){
+			async onIsPayChange(e){
 				this.$set(this.billObj, 'IsPay', !this.billObj.IsPay);
 				this.getDefaultPayInfo();
+				
+				if (this.billObj.CanUseBonus > 0) {
+					this.billObj.IsBonus = true
+				}
 				this.$nextTick(() => {
+					if (this.billObj.IsPay) {
+						this.setFactUseBonus()
+					}
 					this.scrolltop = util.random(600, 1000);
 				})
+			},
+			// 设置抵扣积分
+			setFactUseBonus() {
+				if (this.billObj.Amount > this.billObj.CanUseBonus) {
+					this.billObj.FactUseBonus = this.billObj.CanUseBonus
+				} else {
+					this.billObj.FactUseBonus = this.billObj.Amount
+				}
+				this.$refs.FactUseBonus.setValue(this.billObj.FactUseBonus);
 			},
 			// 是否使用积分抵扣
 			onIsBonus(e) {
 				this.$set(this.billObj, 'IsBonus', !this.billObj.IsBonus);
 				this.$nextTick(() => {
+					console.log(this.$refs.FactUseBonus, this.billObj.FactUseBonus)
+					if (this.billObj.IsPay && this.billObj.IsBonus) {
+						this.setFactUseBonus()
+					}
 					this.scrolltop = util.random(600, 1000);
 				})
 			},
@@ -389,9 +423,12 @@
 				this.FactUseBonus = val
 				if (val > this.billObj.CanUseBonus) {
 					util.showToast({
-						title: `您的可用积分为${this.billObj.CanUseBonus}, 抵扣金额不能大于可用积分`
+						title: `您的可用积分为${this.billObj.CanUseBonus}, 抵扣积分不能大于可用积分`
 					})
-					return
+				} else if (val > this.billObj.Amount) {
+					util.showToast({
+						title: `抵扣积分不能大于商品金额`
+					})
 				}
 			},
 			bindTextAreaBlurItem(e) {
@@ -421,7 +458,7 @@
 				// 生成默认支付信息
 				if (this.billObj.IsPay) {
 					util.showLoading();
-					util.ajax({
+					return util.ajax({
 						method: 'Businese.OrderDAL.GetDefaultPayInfo',
 						params: {
 							PayType: this.billObj.PayType,

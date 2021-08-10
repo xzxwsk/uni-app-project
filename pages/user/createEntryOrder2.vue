@@ -55,6 +55,10 @@
 				<text class="title"><text class="price">*</text>确认密码：</text>
 				<input-box type="password" ref="confirmPassword" displayable v-model="confirmPassword" placeholder="请再次输入密码"></input-box>
 			</view>
+			<view style="height: 50px;"></view>
+			<view class="input-row" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 2; background-color: #fff;">
+				<button @click="goNext" class="btn" type="warn" style="height: 35px; line-height: 35px;">下一步</button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -94,7 +98,6 @@
 			// 	this.billObj[key] = option[key] !== 'null' ? option[key] : this.billObj[key];
 			// }
 			this.billObj = this.billJoinDAL;
-			console.log(this.billObj.isQrcode)
 			if(this.billObj.isQrcode) {
 				uni.setNavigationBarTitle({
 					title: '分销商注册'
@@ -114,10 +117,8 @@
 			this.goNext();
 		},
 		mounted() {
-			this.$nextTick(() => {
-				// 初始化显示值
-				this.setInfo();
-			});
+			// 初始化显示值
+			this.setInfo();
 		},
 		methods: {
 			...mapMutations(['setBillJoinDAL']),
@@ -205,6 +206,7 @@
 				});
 			},
 			previewImage(e) {
+				console.log('previewImage: ', e)
 				var current = e.target.dataset.src
 				uni.previewImage({
 					current: 0,
@@ -273,25 +275,27 @@
 										    this.frontImgSrc = useImage;
 										});
 									})
-									.catch(err => {
-										console.log('err: ', err);
-									});
 								})
-								.catch(err => {
-									console.log('err: ', err);
-								});
 							})
-							.catch(err => {
-								console.log('err: ', err);
-							});
+							.catch(e => {
+								util.showToast({
+									title: e.message
+								})
+							})
 							// #endif
-							// #ifdef H5
-							this.urlToBase64(res.tempFilePaths[0])
-							.then(baseRes => {
+							// #ifndef APP-PLUS
+							this.uploadFile(res.tempFilePaths[0])
+							.then(uploadFileRes => {
 							    // 转化后的base64图片地址
-							    this.$set(this.billObj, 'FrontImageFileName', baseRes.split(',')[1]);
-							    this.frontImg = baseRes;
-							});
+							    this.$set(this.billObj, 'FrontImageFileName', uploadFileRes);
+							    this.frontImg = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes;
+								this.frontImgSrc = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes
+							})
+							.catch(e => {
+								util.showToast({
+									title: e.message
+								})
+							})
 							// #endif
 						// }
 					}
@@ -338,33 +342,33 @@
 										this.backImgSrc = useImage;
 									});
 								})
-								.catch(err => {
-									console.log('err: ', err);
-								});
 							})
-							.catch(err => {
-								console.log('err: ', err);
-							});
 						})
 						.catch(err => {
 							console.log('err: ', err);
 						});
 						// #endif
-						// #ifdef H5
-						this.urlToBase64(res.tempFilePaths[0])
-						.then(baseRes => {
+						// #ifndef APP-PLUS
+						this.uploadFile(res.tempFilePaths[0])
+						.then(uploadFileRes => {
 							// 转化后的base64图片地址
-							this.$set(this.billObj, 'BackImageFileName', baseRes);
-							this.backImg = baseRes;
-						});
+							this.$set(this.billObj, 'BackImageFileName', uploadFileRes);
+							this.backImg = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes;
+							this.backImgSrc = util.getBaseUrl() + 'files/downloadfile?filename=' + uploadFileRes
+						})
+						.catch(e => {
+							util.showToast({
+								title: e.message
+							})
+						})
 						// #endif
 					}
 				});
 			},
 			setInfo() {
 				this.$refs.iDCardNo.setValue(this.billObj.IDCardNo);
-				this.frontImg = (this.billObj.IDCardNo_FrontImage !== '') ? ((this.billObj.IDCardNo_FrontImage.indexOf('data:image/jpeg;base64,') !== -1 ? '' : 'data:image/jpeg;base64,') + this.billObj.IDCardNo_FrontImage) : '';
-				this.backImg = (this.billObj.IDCardNo_BackImage !== '') ? ((this.billObj.IDCardNo_BackImage.indexOf('data:image/jpeg;base64,') !== -1 ? '' : 'data:image/jpeg;base64,') + this.billObj.IDCardNo_BackImage) : '';
+				this.frontImg = this.billObj.FrontImageFileName ? util.getBaseUrl() + 'files/downloadfile?filename=' + this.billObj.FrontImageFileName : '';
+				this.backImg = this.billObj.BackImageFileName ? util.getBaseUrl() + 'files/downloadfile?filename=' + this.billObj.BackImageFileName : '';
 				this.$refs.mobile.setValue(this.billObj.Mobile);
 				this.$refs.email.setValue(this.billObj.Email);
 				this.$refs.linkMan.setValue(this.billObj.LinkMan);
@@ -410,6 +414,7 @@
 				// #endif
 				// #ifdef H5
 				fetch(url).then(data=>{
+					console.log('fetch: ', data)
 					const blob = data.blob();
 					return blob;
 				}).then(blob=>{
@@ -422,7 +427,22 @@
 					reader.readAsDataURL(blob);
 				});
 				// #endif
+				// #ifdef  MP-WEIXIN
+				this.fetch(url).then(data=>{
+					const blob = 'data:image/jpeg;base64,' + data;
+					resolve(blob);
+				});
+				// #endif
 			  });
+			},
+			fetch(url) {
+				return new Promise((resolve, reject) => {
+					try{
+						resolve(wx.getFileSystemManager().readFileSync(url, "base64"))
+					}catch(e){
+						reject(e)
+					}
+				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

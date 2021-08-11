@@ -263,14 +263,23 @@
 					params: {
 						Bill: this.billObj
 					},
-				}).catch(err => {
-					util.hideLoading();
+				}).then(({ data }) => {
+					if (data.result) {
+						// 跳转登录
+						util.showToast({
+							title: '注册成功, 请登录',
+							success: () => {
+								setTimeout(() => {
+									util.redirectUrl({
+										url: '../login/login'
+									})
+								}, 1000)
+							}
+						})
+					}
 				})
-				// 注册成功后绑定微信
-				await this.getCode()
-				this.bindLogin({
-					account: this.billObj.Mobile,
-					password: this.billObj.Password
+				.finally(() => {
+					util.hideLoading();
 				})
 			},
 			changeSex(e) {

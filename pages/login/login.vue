@@ -4,6 +4,8 @@
 		<view class="status_bar" :style="{ height: statusBarHeight }">
 		    <!-- 这里是状态栏 -->
 		</view>
+		<!-- #endif -->
+		<!-- #ifdef MP-WEIXIN -->
 		<view class="uni-padding-wrap uni-common-pb login_top">
 			<view class="return_btn" @tap="goMain"><text class="uni-icon uni-icon-home"></text></view> <button class="b login_title">帐号登录</button>
 		</view>
@@ -44,7 +46,7 @@
 				</view>
 				<!-- #ifdef MP-WEIXIN -->
 				<view class="btn-row">
-					<button type="default" class="uni-icon uni-icon-weixin chat-btn" @click="getUserInfo">微信一键登录</button>
+					<button type="default" class="uni-icon uni-icon-weixin chat-btn" @click="applet">微信一键登录</button>
 				</view>
 				<!-- #endif -->
 				<view class="btn-row">
@@ -99,6 +101,7 @@
 		onShow() {
 			// #ifdef MP-WEIXIN
 			console.log('show')
+			uni.hideHomeButton()
 			this.getCode()
 			// #endif
 		},
@@ -140,7 +143,7 @@
 			// this.getDeviceId();
 		},
 		methods: {
-			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo']),
+			...mapMutations(['login', 'setSessionId', 'setOpenid', 'setUserInfo', 'setWxUserInfo']),
 			autoLogin(sessionId) {
 				let me = this;
 				this.setOpenid(sessionId);
@@ -191,7 +194,7 @@
 			},
 			goMain() {
 				util.goTab({
-					url: '/pages/tabBar/index'
+					url: '../tabBar/index'
 				});
 			},
 			initPosition() {
@@ -305,45 +308,71 @@
 			},
 			getCode() {
 				// 微信登录，获得code
-				uni.login({
-					provider: 'weixin',
-					success: res => {
-						console.log('getCode: ', res)
-						if (res.errMsg == "login:ok") {
-							this.code = res.code
+				return new Promise((resolve, reject) => {
+					uni.login({
+						provider: 'weixin',
+						success: res => {
+							console.log('getCode: ', res)
+							if (res.errMsg == "login:ok") {
+								this.code = res.code
+								resolve()
+							} else {
+								reject()
+							}
+						},
+						fail: err => {
+							reject(err)
 						}
-					}
-				})
-			},
-			getUserInfo(e){
-				uni.getUserProfile({
-					desc: '用于会员业务办理', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-					success: e => {
-						console.log('getUserProfile: ', e)
-						if(e.errMsg=='getUserProfile:ok'){
-							this.applet(e);
-						}else{
-							uni.showToast({icon: 'none',title:'你取消了登录'});
-							return false
-						}
-					}
+					})
 				})
 			},
 			//进行授权登录
+			getUserInfo(){
+				return new Promise((resolve, reject) => {
+					uni.getUserProfile({
+						lang: 'zh_CN',
+						desc: '用于会员业务办理', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+						success: res => {
+							console.log('getUserProfile: ', res)
+							if(res.errMsg=='getUserProfile:ok'){
+								// 缓存微信授权后获得的用户信息
+								this.setWxUserInfo(res.userInfo)
+								util.setStorageSync({
+									key: 'wx_user_info',
+									data: res.userInfo
+								})
+								resolve(res)
+							}else{
+								uni.showToast({icon: 'none',title:'你取消了登录'});
+								reject(res)
+							}
+						},
+						fail: err => {
+							reject(err)
+						}
+					})
+				})
+			},
+			// 通过微信code获取后台token
 			async applet(e){
+				this.getCode()
+				await this.getUserInfo()
 				let res = await util.ajax({
 					method: 'SYS.UserDAL.WxLogin',
 					params: {
 						WxCode: this.code
 					}
 				})
-				console.log('applet: ', res, e)
+				console.log('applet: ', res)
+				
+				// 得到token
 				if(res && res.data && res.data.result){
 				    util.setStorageSync({
 						key: 'session_id',
 						data: res.data.result
 					});
 					this.setOpenid(res.data.result);
+					// 如果绑定过，则可以通过token得到用户详细信息
 				    let resUserInfo = await util.ajax({
 				    	method: 'SYS.UserDAL.GetDealerByToken',
 				    	tags: {
@@ -430,18 +459,21 @@
 					});
 				}
 			},
-			bindReg() {
-				/* 
-				util.goUrl({
-					url: '../about/scanCode'
-				});
-				 */
+			async bindReg() {
+				// 测试自动跳转注册页
+				// 先授权获取微信信息，再跳转
+				await this.getUserInfo()
+				// util.goUrl({
+				// 	url: '../user/createQuickReg?AboveDealerId=54cf5a60-998d-4fdc-82a5-c860eb4e67b2'
+				// })
+				// return
 				
+				// 先扫码，获取推荐人id
 				uni.scanCode({
 					scanType: ['qrCode'],
-					success: function (res) {
-						console.log('条码类型：' + res.scanType);
-						console.log('条码内容：' + res.result);
+				    success: function (res) {
+				        console.log('条码类型：' + res.scanType);
+				        console.log('条码内容：' + res.result);
 						const q = res.result;
 						const arr = q.split('/')
 						const params = arr[arr.length - 1]
@@ -450,14 +482,14 @@
 						util.goUrl({
 							url: `../user/createQuickReg?AboveDealerId=${AboveDealerId}`
 						})
-					}
-				});
+				    }
+				})
 			},
 			async onUnbind() {
 				let res = await util.ajax({
 					method: 'SYS.UserDAL.UnBindWxUser',
 					params: {
-						UserName: ''
+						UserName: this.account
 					}
 				})
 				console.log(res)

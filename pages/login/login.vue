@@ -462,7 +462,7 @@
 			async bindReg() {
 				// 测试自动跳转注册页
 				// 先授权获取微信信息，再跳转
-				await this.getUserInfo()
+				// await this.getUserInfo()
 				// util.goUrl({
 				// 	url: '../user/createQuickReg?AboveDealerId=54cf5a60-998d-4fdc-82a5-c860eb4e67b2'
 				// })

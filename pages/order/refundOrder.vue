@@ -60,8 +60,8 @@
 										<text><text class="gray">付款方式:</text>{{item.payTypeStr}}</text>
 										<text class="count"><text class="gray">备注:</text>{{item.Remark}}</text>
 									</view>
-									<view class="ls_item_bottom" v-if="item.State === 0">
-										<button class="btn" @click.stop="bindCancel(item.RecordId)">取消</button><button class="btn" @click.stop="bindConfirm(item.RecordId)">确认收款</button>
+									<view class="ls_item_bottom">
+										<button class="btn" v-if="item.State === 0" @click.stop="bindCancel(item.RecordId)">取消</button><button class="btn" v-if="item.State === 1" @click.stop="bindConfirm(item.RecordId)">确认收款</button>
 									</view>
 								</view>
 							</view>

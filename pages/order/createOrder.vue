@@ -50,7 +50,7 @@
 				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>商品金额</text></text>
-						<text class="item-content"><text class="price">{{billObj.AdvanceTitle ? '本订单使用晋级后的单价' : '本订单使用未晋级的单价'}} ￥{{billObj.Amount}}</text></text>
+						<text class="item-content"><text class="price">{{billObj.AdvanceTitle ? '本订单使用晋级后的单价' : '本订单使用未晋级的单价'}} <text style="font-size: 40rpx; vertical-align: bottom;">￥{{billObj.Amount}}</text></text></text>
 					</view>
 				</view>
 				<view class="uni-list-cell">
@@ -285,8 +285,8 @@
 							}
 						}
 						this.actualAmount = data.Amount - data.FactUseBonus
-						console.log('actualAmount: ', this.actualAmount)
 						this.billObj = data;
+						console.log('actualAmount: ', this.actualAmount, data.FactUseBonus, this.billObj.FactUseBonus)
 					});
 				}
 				this.billObj.BillDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');;
@@ -331,6 +331,8 @@
 				this.billObj.Address = this.addr.Address;
 				this.billObj.LinkMan = this.addr.PersonName;
 				this.billObj.Mobile = this.addr.Mobile;
+				this.billObj.FactUseBonus = this.$refs.FactUseBonus.getValue()
+				const FactUseBonus = isNaN(Number(this.billObj.FactUseBonus)) ? 0 : Number(this.billObj.FactUseBonus)
 				if (this.billObj.PayType === 1) {
 					if (this.billObj.PayBank === '' || this.billObj.PayAccountName === '') {
 						util.showToast({
@@ -347,12 +349,12 @@
 						return;
 					}
 				}
-				if (this.FactUseBonus > this.billObj.CanUseBonus) {
+				if (FactUseBonus > this.billObj.CanUseBonus) {
 					util.showToast({
 						title: `您的可用积分为${this.billObj.CanUseBonus}, 抵扣金额不能大于可用积分`
 					})
 					return
-				} else if (this.FactUseBonus > this.billObj.Amount) {
+				} else if (FactUseBonus > this.billObj.Amount) {
 					util.showToast({
 						title: `抵扣积分不能大于商品金额`
 					})
@@ -366,7 +368,7 @@
 					params: {
 						Bill: {
 							...this.billObj,
-							Amount: this.actualAmount
+							FactUseBonus
 						}
 					},
 					tags: {

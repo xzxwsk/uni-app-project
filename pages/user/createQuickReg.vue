@@ -24,9 +24,11 @@
 			<view class="input-row">
 				<text class="title"><text class="price">*</text>电话：</text>
 				<input-box ref="phone" class="ipt" v-model="billObj.Mobile" placeholder="请输入电话"></input-box>
+				<!-- #ifdef MP-WEIXIN -->
 				<button class="btn" 
 					open-type="getPhoneNumber" @getphonenumber="getPhoneNumber"
 				>自动获取</button>
+				<!-- #endif -->
 			</view>
 			<!-- <view class="input-row">
 				<text class="title">性别：</text>

@@ -331,7 +331,11 @@
 				this.billObj.Address = this.addr.Address;
 				this.billObj.LinkMan = this.addr.PersonName;
 				this.billObj.Mobile = this.addr.Mobile;
-				this.billObj.FactUseBonus = this.$refs.FactUseBonus.getValue()
+				if (this.$refs.FactUseBonus) {
+					this.billObj.FactUseBonus = this.$refs.FactUseBonus.getValue()
+				} else {
+					this.billObj.FactUseBonus = ''
+				}
 				const FactUseBonus = isNaN(Number(this.billObj.FactUseBonus)) ? 0 : Number(this.billObj.FactUseBonus)
 				if (this.billObj.PayType === 1) {
 					if (this.billObj.PayBank === '' || this.billObj.PayAccountName === '') {

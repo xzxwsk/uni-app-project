@@ -529,4 +529,4 @@ module.exports = {
 	getStorageSync: getStorageSync,
 	clearStorageSync: clearStorageSync,
 	ajax: ajax
-}
+}

@@ -50,7 +50,7 @@
 				<view class="uni-list-cell">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>商品金额</text></text>
-						<text class="item-content"><text class="price">{{billObj.AdvanceTitle ? '本订单使用晋级后的单价' : '本订单使用未晋级的单价'}} ￥{{billObj.Amount}}</text></text>
+						<text class="item-content"><text class="price">{{billObj.AdvanceTitle ? '本订单使用晋级后的单价' : '本订单使用未晋级的单价'}} <text style="font-size: 40rpx; vertical-align: bottom;">￥{{billObj.Amount}}</text></text></text>
 					</view>
 				</view>
 				<view class="uni-list-cell">
@@ -74,12 +74,13 @@
 				<view class="uni-list-cell" v-if="billObj.IsPay && billObj.IsBonus">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>实际抵扣积分</text></text>
-						<input-box type="number" v-model="billObj.FactUseBonus" ref="FactUseBonus" placeholder="请输入实际抵扣积分" 
+						<input-box type="number" ref="FactUseBonus" placeholder="请输入实际抵扣积分" 
+							v-model="billObj.FactUseBonus"
 							@input="onBlurBonus"
 						></input-box>
 					</view>
 				</view>
-				<view class="uni-list-cell">
+				<view class="uni-list-cell" v-if="billObj.IsPay">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>实际支付金额</text></text>
 						<text class="price" style="font-size: 40rpx;">{{actualAmount}}</text>
@@ -255,7 +256,8 @@
 						data.Items[0].Qty = num
 						data.Items[0].Amount = parseInt(data.Items[0].Price * data.Items[0].Qty * 100) / 100
 						data.Amount = data.Items[0].Amount
-						console.log('生成默认订单：', data);
+						this.actualAmount = data.Amount - data.FactUseBonus
+						console.log('订单详情：', data);
 						this.billObj = data;
 					});
 				} else {
@@ -282,7 +284,9 @@
 								data.FactUseBonus = data.Amount
 							}
 						}
+						this.actualAmount = data.Amount - data.FactUseBonus
 						this.billObj = data;
+						console.log('actualAmount: ', this.actualAmount, data.FactUseBonus, this.billObj.FactUseBonus)
 					});
 				}
 				this.billObj.BillDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');;
@@ -327,6 +331,12 @@
 				this.billObj.Address = this.addr.Address;
 				this.billObj.LinkMan = this.addr.PersonName;
 				this.billObj.Mobile = this.addr.Mobile;
+				if (this.$refs.FactUseBonus) {
+					this.billObj.FactUseBonus = this.$refs.FactUseBonus.getValue()
+				} else {
+					this.billObj.FactUseBonus = ''
+				}
+				const FactUseBonus = isNaN(Number(this.billObj.FactUseBonus)) ? 0 : Number(this.billObj.FactUseBonus)
 				if (this.billObj.PayType === 1) {
 					if (this.billObj.PayBank === '' || this.billObj.PayAccountName === '') {
 						util.showToast({
@@ -343,12 +353,12 @@
 						return;
 					}
 				}
-				if (this.FactUseBonus > this.billObj.CanUseBonus) {
+				if (FactUseBonus > this.billObj.CanUseBonus) {
 					util.showToast({
 						title: `您的可用积分为${this.billObj.CanUseBonus}, 抵扣金额不能大于可用积分`
 					})
 					return
-				} else if (this.FactUseBonus > this.billObj.Amount) {
+				} else if (FactUseBonus > this.billObj.Amount) {
 					util.showToast({
 						title: `抵扣积分不能大于商品金额`
 					})
@@ -362,7 +372,7 @@
 					params: {
 						Bill: {
 							...this.billObj,
-							Amount: this.actualAmount
+							FactUseBonus
 						}
 					},
 					tags: {
@@ -407,7 +417,9 @@
 				}
 				this.actualAmount = this.billObj.Amount - this.billObj.FactUseBonus
 				this.actualAmount = Math.max(this.actualAmount, 0)
-				this.$refs.FactUseBonus.setValue(this.billObj.FactUseBonus);
+				if (this.billObj.IsBonus) {
+					this.$refs.FactUseBonus.setValue(this.billObj.FactUseBonus);
+				}
 			},
 			// 是否使用积分抵扣
 			onIsBonus(e) {
@@ -431,7 +443,7 @@
 					util.showToast({
 						title: `您的可用积分为${this.billObj.CanUseBonus}, 抵扣积分不能大于可用积分`
 					})
-				} else if (val > this.billObj.Amount) {
+				} else if (val > 0 && val > this.billObj.Amount) {
 					util.showToast({
 						title: `抵扣积分不能大于商品金额`
 					})
@@ -445,7 +457,7 @@
 			bindTextAreaBlur(e) {
 				this.$set(this.billObj, 'Remark', this.billObj.Remark);
 			},
-			changeMoneyType(e) {
+			async changeMoneyType(e) {
 				// 付款方式
 				this.billObj.PayType = Number(e.target.value);
 				if (e.target.value === '3') {
@@ -455,8 +467,11 @@
 				} else if (e.target.value === '1') {
 					this.placeholder = '请输入付款人银行账号';
 				}
-				this.scrolltop = util.random(500, 1000);
-				this.getDefaultPayInfo();
+				
+				await this.getDefaultPayInfo();
+				this.$nextTick(() => {
+					this.scrolltop = util.random(500, 1000);
+				})
 			},
 			changeDiliveryMode(e) {
 				// 提货方式

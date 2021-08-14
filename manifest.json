@@ -2,7 +2,7 @@
     "name" : "纤畅App",
     "appid" : "__UNI__F960A47",
     "description" : "应用描述",
-    "versionName" : "1.2.23",
+    "versionName" : "1.2.27",
     "versionCode" : 104,
     "transformPx" : false,
     /* 5+App特有相关 */
@@ -116,7 +116,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wxba5d4722564f6a06",
+        "appid" : "wxaf376d36626cae3a",
         "setting" : {
             "urlCheck" : false,
             "es6" : false,

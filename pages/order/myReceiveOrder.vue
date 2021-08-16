@@ -337,7 +337,7 @@
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
 							dataItem.receiveConfirmTimeStr = util.formatDate(dataItem.ReceiveConfirmTime, 'yyyy-MM-dd');
-							dataItem.accountTypeStr = ['货款', '保证金', '代交保证金'][dataItem.AccountType]
+							dataItem.accountTypeStr = ['货款', '合规金', '代交合规金'][dataItem.AccountType]
 							dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认'][dataItem.State + 1];
 							dataItem.payTypeStr = ['已取消', '未收款', '', '已收款'][dataItem.PayType];
 						});

@@ -487,9 +487,33 @@
 				}
 			}
 		}, {
+			"path": "pages/user/myAccount",
+			"style": {
+				"navigationBarTitleText": "我的账户余额",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/myAccountDetail",
+			"style": {
+				"navigationBarTitleText": "我的账户余额明细",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/user/mySubordinateInfo",
 			"style": {
 				"navigationBarTitleText": "我的下属资料",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/mySubordinateDetail",
+			"style": {
+				"navigationBarTitleText": "我的下属余额明细",
 				"app-plus": {
 					"bounce": "none"
 				}

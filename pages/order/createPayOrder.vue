@@ -5,7 +5,7 @@
 				<text class="title">款项性质：</text>
 				<radio-group class="uni-flex" name="nature" @change="changeMoneyNature">
 					<label><radio value="0" :checked="billObj.AccountType === 0" color="#f23030" />货款</label>
-					<label><radio value="1" :checked="billObj.AccountType === 1" color="#f23030" />保证金</label>
+					<label><radio value="1" :checked="billObj.AccountType === 1" color="#f23030" />合规金</label>
 				</radio-group>
 			</view>
 			<view class="input-row" v-if="billObj.AccountType === 2">
@@ -96,9 +96,9 @@
 					"RcvDealerId": ""  /*收款方分销商Id*/,
 					"RcvDealerCode": ""  /*收款方分销商编号*/,
 					"RcvDealerName": ""  /*收款方分销商姓名*/,
-					"RepayDealerId": ""  /*代付保证金分销商Id*/,
-					"RepayDealerCode": ""  /*代付保证金分销商编码*/,
-					"RepayDealerName": ""  /*代付保证金分销商名称*/,
+					"RepayDealerId": ""  /*代付合规金分销商Id*/,
+					"RepayDealerCode": ""  /*代付合规金分销商编码*/,
+					"RepayDealerName": ""  /*代付合规金分销商名称*/,
 					"State": 1  /*State*/,
 					"Creator": ""  /*录入人*/,
 					"CreatorName": ""  /*录入人姓名*/,

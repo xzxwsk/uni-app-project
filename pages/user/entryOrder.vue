@@ -47,7 +47,7 @@
 											<view><text class="gray">日期:</text>{{item.billDateStr}}</view>
 											<view><text class="gray">单据编号:</text>{{item.BillCode}}</view>
 											<view><text class="gray">联系人:</text>{{item.LinkMan}}</view>
-											<!-- <view><text class="gray">保证金:</text><text class="price">￥{{item.price}}</text></view> -->
+											<!-- <view><text class="gray">合规金:</text><text class="price">￥{{item.price}}</text></view> -->
 											<view><text class="gray">分销商编号:</text>{{item.DealerNo}}</view>
 											<view><text class="gray">分销商姓名:</text>{{item.DealerName}}</view>
 										</view>

@@ -22,8 +22,8 @@
 		<view style=" text-indent: 2em;">(5).分销商通过APP确认发货后，收货方10日内未确认收货，APP系统将自动确认收货(若因物流或快递因素，无法在10日内收货，可透过APP程式申请延迟收货)。</view>
 		<view style="text-indent: 2em;">4.因分销商等级不同，故进货成本会有差异，严格依据“<span style="color: red;">市场统一售价表</span>”实施，严禁乱价销售产品。</view>
 		<view style="text-indent: 2em;">5.各级别订货数量需按照“<span style="color: red;">市场统一售价表</span>”为最低订购金额，不可低于该级别金额。</view>
-		<view style="text-indent: 2em;">6.金钻总监与精英分销商的保证金透过APP申请提交付款单，由公司收取，公司确认收到保证金后即可在手机APP订购产品。</view>
-		<view style="text-indent: 2em;">7.经举报若有销售人员或分销商乱价销售，经调查无误后，视情节轻重，将处以没收保证金并取消当月销售奖励，若情节严重者，本公司有权解除该分销商权力。</view>
+		<view style="text-indent: 2em;">6.金钻总监与精英分销商的合规金透过APP申请提交付款单，由公司收取，公司确认收到合规金后即可在手机APP订购产品。</view>
+		<view style="text-indent: 2em;">7.经举报若有销售人员或分销商乱价销售，经调查无误后，视情节轻重，将处以没收合规金并取消当月销售奖励，若情节严重者，本公司有权解除该分销商权力。</view>
 		<view style="text-indent: 2em;">8.各级别分销商均可零售(针对新开发的消费者)。</view>
 		<view style="text-indent: 2em;">9.当公司举办驵消活动时，各分销商有义务配合公司促销，弹性配合进货价格调整。</view>
 		<view style="text-indent: 2em;">10.快递或物流之费用由各分销商自行负责</view>
@@ -41,10 +41,10 @@
 		<view style="text-indent: 2em;">梦想VIP：享受产品市场价格约9折优惠(以公告进货牌价为主)；一次姓下单满足780元(进货额)即可成为梦想VIP分销商(需一次性提货)。</view>
 		<view style="text-indent: 2em;">超越：享受产品市场价格约7折优惠(以公告进货牌价为主)；一次性下单满足4,100元(进货额)即可成为超越分销商(需一次性提货)。</view>
 		<view style="text-indent: 2em;">创新：享受产品市场价格约6折优惠(以公告进货牌价为主)；在超越分销商阶段满足2次下单后，且一次性下单足满14,000元(进货额)即可成为创新分销商(需一次性提货)。</view>
-		<view style="text-indent: 2em;">精英：享受产品市场价格约5折优惠(以公告进货牌价为主)；在创新分销商阶段满足2次下单后，且一次性下单足满36,000元(进货额)同时缴交保证金3,000元，即可成为精英分销商，除第一次一次性提货外，之后可单笔下单分批提货(一次下单需满足36,000元)。</view>
+		<view style="text-indent: 2em;">精英：享受产品市场价格约5折优惠(以公告进货牌价为主)；在创新分销商阶段满足2次下单后，且一次性下单足满36,000元(进货额)同时缴交合规金3,000元，即可成为精英分销商，除第一次一次性提货外，之后可单笔下单分批提货(一次下单需满足36,000元)。</view>
 		<view style="text-indent: 2em;">备注：为调整市场针对产品需求，每月1日与15日(假日或国定假日将顺延至上班日)开放不限额度下单订购产品。</view>
 		<view style="text-indent: 2em;">2.离职申请：</view>
-		<view style="text-indent: 2em;">(1).离职申请由公司确认方可生效，如有保证金，可向公司客服部门申请保证金退还。</view>
+		<view style="text-indent: 2em;">(1).离职申请由公司确认方可生效，如有合规金，可向公司客服部门申请合规金退还。</view>
 		<view style="text-indent: 2em;">(2).当月若产生奖金或奖励，经申请离职确认后，将视为弃权。</view>
 		<view style="text-indent: 2em;">(3).离职后将无法再次申请为会员。</view>
 		<view>五.福利制度</view>
@@ -52,19 +52,19 @@
 		<view style="margin: 10px 0 0; font-size: 18px; font-weight: bold; text-align: center;">发货中心(金钻总监)</view>
 		<view>1.直接辅导二级分销商，产生5个精英分销商，且在所属销售团队内共产生20位精英分销商即可成为金钻总监(发货中心)。</view>
 		<view>2.成为金钻总监必须成立公司成为发货中心，可直接向公司订货，货款直接汇给公司，订货金额每次不超过公司规定之金额。</view>
-		<view>3.成为金钻总监需缴交保证金10,000元。</view>
+		<view>3.成为金钻总监需缴交合规金10,000元。</view>
 		<view>4.金钻总监每月订货额不得少于180,000元，若连续2个月无法满足最低订货额，公司有权取消该发货中心资格。</view>
 		<view style="margin: 10px 0 0; font-size: 18px; font-weight: bold; text-align: center;">金钻/精英分销商重要补充</view>
 		<view><image style="width: 680upx;" mode="widthFix" :src="img1Src" /></view>
 		<view style="margin: 10px 0 0; font-size: 18px; font-weight: bold; text-align: center;">纤畅副总裁</view>
 		<view>1.直接辅导3个二级分销商成为金钻总监，且在所属销售团队内共产生金钻总监15人以上，并直接辅导二级分销商成为精英分销商达15人，所属团队精英分销商人数达300人。</view>
 		<view>2.考核个人能力，团队销售能力，招商能力以及团队管理能力。</view>
-		<view>3.纤畅副总裁需缴保证金100,000元。</view>
+		<view>3.纤畅副总裁需缴合规金100,000元。</view>
 		<view>4.由公司正式赋予纤畅副总裁称号。</view>
 		<view style="margin: 10px 0 0; font-size: 18px; font-weight: bold; text-align: center;">纤畅总裁</view>
 		<view>1.直接辅导5个二级分销商成为金钻总监，且在所属销售团队内共产生金钻总监20人以上，并直接辅导二级分销商成为精英分销商达30人，所属团队精英分销商人数达500人。</view>
 		<view>2.考核个人能力，团队销售能力，招商能力以及团队管理能力</view>
-		<view>3.纤畅总裁需缴保证金200,000元。</view>
+		<view>3.纤畅总裁需缴合规金200,000元。</view>
 		<view>4.由公司正式赋予纤畅总裁称号。</view>
     </view>
 </template>

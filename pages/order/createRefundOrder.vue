@@ -113,7 +113,7 @@
 					util.hideLoading();
 					this.billObj = res.data.result;
 					this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
-					this.billObj.accountTypeStr = ['货款', '保证金', '积分'][this.billObj.AccountType];
+					this.billObj.accountTypeStr = ['货款', '合规金', '积分'][this.billObj.AccountType];
 				});
 			},
 			initDefault() {
@@ -127,7 +127,7 @@
 					util.hideLoading();
 					this.billObj = res.data.result;
 					this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
-					this.billObj.accountTypeStr = ['货款', '保证金', '积分'][this.billObj.AccountType];
+					this.billObj.accountTypeStr = ['货款', '合规金', '积分'][this.billObj.AccountType];
 				});
 			},
 			getNameOfCode(e) {

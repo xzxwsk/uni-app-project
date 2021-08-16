@@ -183,7 +183,7 @@
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
 							const arr = [
 								{txt: '货款', value: '0'},
-								{txt: '保证金', value: '1'},
+								{txt: '合规金', value: '1'},
 								{txt: '积分', value: '2'}
 							]
 							arr.some(item => {

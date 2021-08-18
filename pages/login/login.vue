@@ -4,6 +4,8 @@
 		<view class="status_bar" :style="{ height: statusBarHeight }">
 		    <!-- 这里是状态栏 -->
 		</view>
+		<!-- #endif -->
+		<!-- #ifdef MP-WEIXIN -->
 		<view class="uni-padding-wrap uni-common-pb login_top">
 			<view class="return_btn" @tap="goMain"><text class="uni-icon uni-icon-home"></text></view> <button class="b login_title">帐号登录</button>
 		</view>

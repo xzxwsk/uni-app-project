@@ -12,7 +12,7 @@
 			<view class="input-row border">
 				<text class="title">款项性质：</text>
 				<radio-group class="uni-flex" name="nature" @change="changeMoneyNature">
-					<label><radio value="0" :checked="billObj.AccountType === 0" color="#f23030" disabled />货款</label>
+					<!-- <label><radio value="0" :checked="billObj.AccountType === 0" color="#f23030" disabled />货款</label> -->
 					<label><radio value="1" :checked="billObj.AccountType === 2" color="#f23030" disabled />积分</label>
 				</radio-group>
 			</view>
@@ -20,8 +20,12 @@
 				<text class="title">申请金额：</text>
 				<input-box ref="applyAmountRef" type="number" disabled :clearShow="false" :inputValue="billObj.ApplyAmount ? String(billObj.ApplyAmount) : '0'"></input-box>
 			</view>
+			<view class="input-row" v-if="billObj.ShowDeposit">
+				<text class="title">合规金金额：</text>
+				<input-box ref="depositRef" type="number" disabled :clearShow="false" :inputValue="billObj.DepositAmount ? String(billObj.DepositAmount) : '0'"></input-box>
+			</view>
 			<view class="input-row">
-				<text class="title">实付金额：</text>
+				<text class="title">合计付款金额：</text>
 				<input-box ref="amountRef" type="number" :inputValue="billObj.Amount ? String(billObj.Amount) : '0'" v-model="billObj.Amount" placeholder="元"></input-box>
 			</view>
 			<view class="input-row">
@@ -59,6 +63,15 @@
 				<text class="title">收款码：</text>
 				<image mode="aspectFit" class="uni-uploader__img" :src="billObj.PayCodeFileNameStr" :data-src="billObj.PayCodeFileNameStr" @tap="previewImage"></image>
 			</view>
+			<view class="input-row protocal_row_radio" style="flex-direction: column;" v-if="billObj.ShowDeposit">
+				<view style="padding: 10px 0 0;">
+					<text class="title"></text>
+					<label @click="bindProtocal"><radio class="protocal" value="0" color="#f23030" :checked="protocal" />是否同意经销商约定书条款</label>
+				</view>
+				<view class="protocal_row">
+					<label class="a protocal_a" style="display: block; padding: 0 0 5px;" @click="bindToProtocal">经销商约定书条款</label>
+				</view>
+			</view>
 		</view>
 		<view class="result">
 			<button class="btn" :disabled="saving" type="warn" @click="saveOrder">保存</button>
@@ -83,11 +96,14 @@
 				repayDealer: [], // 代支付分销商列表
 				selectRepayDealer: {},
 				saving: false,
+				protocal: false,
 				billObj: {
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,
 					"BillDate": "2021-08-07T21:31:25.2279456+08:00"  /*单据日期*/,
 					"ApplyAmount": 0.0  /*申请金额*/,
+					"DepositAmount": 0.0 /*合规金金额*/,
+					"ShowDeposit": false /*是否显示合规金*/,
 					"Amount": 0.0  /*付款金额*/,
 					"RcvDealerId": ""  /*收款方经销商Id*/,
 					"RcvDealerCode": ""  /*收款方经销商编号*/,
@@ -137,6 +153,11 @@
 				this.$refs.rcvDealerCodeRef.setValue(this.billObj.RcvDealerCode)
 				this.$refs.rcvDealerNameRef.setValue(this.billObj.RcvDealerName)
 				this.$refs.applyAmountRef.setValue(this.billObj.ApplyAmount)
+				if (this.billObj.ShowDeposit) {
+					this.$refs.depositRef.setValue(this.billObj.DepositAmount)
+					// 实际付款金额 = 申请金额 + 合规金金额
+					this.billObj.Amount = this.billObj.ApplyAmount + this.billObj.DepositAmount
+				}
 				this.$refs.amountRef.setValue(this.billObj.Amount)
 			},
 			getRepayDealerLs() {
@@ -232,7 +253,16 @@
 					urls: [current]
 				})
 			},
-			saveOrder() {
+			async saveOrder() {
+				if (this.billObj.ShowDeposit) {
+					// 如果 显示合规金，则必须勾选同意经销商约定书条款
+					if (!this.protocal) {
+						util.dialog({
+							content: '请勾选同意经销商约定书条款',
+						})
+						return
+					}
+				}
 				let me = this;
 				this.billObj.Amount = Number(this.billObj.Amount);
 				for(let key in this.billObj) {
@@ -242,16 +272,47 @@
 				}
 				this.saving = true;
 				util.showLoading();
+				// 先验证
+				const checkRes = await util.ajax({
+					method: 'Businese.OrderDAL.CreateCheck',
+					params: {
+						order: this.billObj
+					}
+				})
+				const { data } = checkRes
+				console.log('checkRes: ', data)
+				if (data.result) {
+					util.hideLoading();
+					me.saving = false;
+					// 如果验证要显示信息，则提示，并点击确认后才提交
+					util.dialog({
+						content: data.result,
+						success: e => {
+							if (e.confirm) {
+								me.saveFn()
+							} else {
+								console.log('不同意')
+							}
+						},
+						fail: () => {
+							console.log('不同意')
+						}
+					})
+				} else {
+					me.saveFn()
+				}
+			},
+			saveFn() {
+				let me = this
+				this.saving = true;
+				util.showLoading();
+				// 提交
 				util.ajax({
 					method: 'Businese.BillPayReturnDAL.Pay',
 					params: {
 						bill: this.billObj
-					},
-					tags: {
-						usertoken: this.openid
 					}
 				}).then(res => {
-					util.hideLoading();
 					util.showToast({
 						title: '付款成功',
 						success() {
@@ -268,14 +329,24 @@
 							}, 1000);
 						}
 					});
-				}).catch(e => {
-					console.log(e)
+				}).finally(() => {
 					me.saving = false;
+					util.hideLoading();
 				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
-			}
-		}
+			},
+			bindProtocal() {
+				// 许可条款
+				this.protocal = !this.protocal;
+			},
+			bindToProtocal(e) {
+				// 查看条款
+				util.goUrl({
+					url: '../user/protocalPay'
+				});
+			},
+		},
 	}
 </script>

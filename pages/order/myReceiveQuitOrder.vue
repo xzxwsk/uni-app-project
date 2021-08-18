@@ -109,7 +109,7 @@
 					name: '已退货款',
 					id: 'guanzhu1'
 				}, {
-					name: '已退保证金',
+					name: '已退合规金',
 					id: 'guanzhu2'
 				}, {
 					name: '已确认收款',
@@ -188,7 +188,7 @@
 					if (res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
-							dataItem.stateStr = ['已取消', '申请', '已退货款', '已退保证金', '已收款确认', '退货款中'][dataItem.State + 1];
+							dataItem.stateStr = ['已取消', '申请', '已退货款', '已退合规金', '已收款确认', '退货款中'][dataItem.State + 1];
 							if(dataItem.PayReturnItems.length > 0) {
 								dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayReturnItems[0].PayType];
 							}

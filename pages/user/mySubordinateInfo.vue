@@ -26,18 +26,21 @@
 							<view class="box">
 								<t-table border="0">
 									<t-tr font-size="14" color="#000" align="left">
-										<!-- <t-th align="left"><text class="first_col">年月</text></t-th> -->
-										<t-th align="left">编号</t-th>
-										<t-th align="left">姓名</t-th>
-										<t-th align="left">资金类别</t-th>
-										<t-th align="left">余额</t-th>
+										<t-th style="flex: none; width: 1px;"></t-th>
+										<t-th class="th" align="left">编号</t-th>
+										<t-th class="th" style="width: 120upx;" align="left">姓名</t-th>
+										<t-th class="th" align="left">资金类别</t-th>
+										<t-th class="th" style="width: 120upx;" align="left">余额</t-th>
+										<t-th style="flex: none;" align="left">操作</t-th>
 									</t-tr>
 								</t-table>
 								<view style="display: flex; font-size: 28upx;" v-for="(item,index) in tableList" :key="item.id">
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerNo}}</view>
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerName}}</view>
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{ ['货款', '保证金', '代交保证金'][item.AccountType] }}</view>
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.Amount}}</view>
+									<view style="flex: none; width: 10px;"></view>
+									<view class="td">{{item.SubDealerNo}}</view>
+									<view class="td" style="width: 120upx;">{{item.SubDealerName}}</view>
+									<view class="td">{{ ['货款', '合规金', '代交合规金'][item.AccountType] }}</view>
+									<view class="td" style="width: 120upx;">{{item.Amount}}</view>
+									<view class="td" @click="goDetail(item)"><text class="a">查看明细</text></view>
 								</view>
 							</view>
 							<view v-if="isScroll" class="uni-tab-bar-loading">
@@ -155,7 +158,7 @@
 				isClickChange: false,
 				tabIndex: 0,
 				tabBars: [{
-					name: '下属货款/保证金',
+					name: '下属货款/合规金',
 					id: 'accountBalance'
 				}, {
 					name: '下属奖金查询',
@@ -193,7 +196,6 @@
 				.then(res => {
 					util.hideLoading();
 					let data = res.data.result;
-					console.log('下属的货款: ', data);
 					this.tableList = data;
 				});
 			},
@@ -295,10 +297,17 @@
 			},
 			query2() {
 				this.getList2();
-			}
+			},
+			goDetail({ SubDealerId, AccountType }) {
+				util.goUrl({
+					url: './mySubordinateDetail?id=' + SubDealerId + '&type=' + AccountType
+				})
+			},
 		}
 	}
 </script>
 <style scoped>
 	.t-th, .t-td{padding: 3px;}
+	.th{flex: none; width: 150upx;}
+	.td{flex: none; padding: 3px; width: 150upx; word-break:break-all; word-wrap: break-word;}
 </style>

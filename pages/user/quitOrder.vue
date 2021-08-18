@@ -20,7 +20,7 @@
 									<view><text class="gray">金额:</text><text class="price">￥{{subItem.Amount}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{subItem.PayTypeStr}}</text></view>
 									<view><text class="gray">退款分销商编号:</text>{{subItem.DealerCode}}</view>
 									<view><text class="gray">退款分销商姓名:</text>{{subItem.DealerName}}</view>
-									<view><text class="gray">退款类型:</text>{{['货款','保证金','代交保证金'][subItem.AccountType]}}</view>
+									<view><text class="gray">退款类型:</text>{{['货款','合规金','代交合规金'][subItem.AccountType]}}</view>
 									<view><text class="gray">付款账户:</text>{{subItem.PayAccountNo}}</view>
 									<block v-if="subItem.PayType === 1">
 										<view><text class="gray">付款银行:</text>{{subItem.PayBank}}</view>
@@ -139,7 +139,7 @@
 					if(res.data.hasOwnProperty('result')) {
 						res.data.result.data.forEach(item => {
 							item.billDateStr = util.formatDate(item.BillDate, 'yyyy-MM-dd');
-							item.status = ['已取消', '申请', '已退货款', '已退保证金', '已收款确认', '退货款中'][item.State + 1];
+							item.status = ['已取消', '申请', '已退货款', '已退合规金', '已收款确认', '退货款中'][item.State + 1];
 							item.PayReturnItems.forEach(subItem => {
 								subItem.PayTypeStr = ['现金', '银行转账', '支付宝', '微信'][subItem.PayType];
 							});

@@ -71,6 +71,10 @@
 						<radio @click="onIsBonus" color="#f23030" :value="billObj.IsBonus ? 'true' : 'false'" :checked="billObj.IsBonus" />
 					</view>
 				</view>
+				<view class="input-row" v-if="billObj.ShowDeposit">
+					<text class="title">合规金金额：</text>
+					<input-box ref="depositRef" type="number" disabled :clearShow="false" :inputValue="billObj.DepositAmount ? String(billObj.DepositAmount) : '0'"></input-box>
+				</view>
 				<view class="uni-list-cell" v-if="billObj.IsPay && billObj.IsBonus">
 					<view class="uni-list-cell-navigate">
 						<text class="item-title"><text>实际抵扣积分</text></text>
@@ -139,6 +143,15 @@
 						</view>
 					</view>
 				</block>
+				<view class="input-row protocal_row_radio" style="flex-direction: column;" v-if="billObj.ShowDeposit">
+					<view style="padding: 10px 0 0;">
+						<text class="title"></text>
+						<label @click="bindProtocal"><radio class="protocal" value="0" color="#f23030" :checked="protocal" />是否同意经销商约定书条款</label>
+					</view>
+					<view class="protocal_row">
+						<label class="a protocal_a" style="display: block; padding: 0 0 5px;" @click="bindToProtocal">经销商约定书条款</label>
+					</view>
+				</view>
 			</view>
 		</scroll-view>
 		<view class="result">
@@ -171,6 +184,7 @@
 				orderLs: [],
 				qrcode: '',
 				actualAmount: 0,
+				protocal: false,
 				billObj: {
 					"Items": []  /*订单明细*/,
 					"RecordId": ""  /*单据Id*/,
@@ -184,6 +198,8 @@
 					"LinkMan": ""  /*收货联系人*/,
 					"Mobile": ""  /*收货联系电话*/,
 					"Amount": 0.0  /*合计金额*/,
+					"DepositAmount": 0.0 /*合规金金额*/,
+					"ShowDeposit": false /*是否显示合规金*/,
 					"Creator": ""  /*录入人*/,
 					"CreatorName": ""  /*录入人姓名*/,
 					"CreateTime": "2020-02-07T19:04:14.2061478+08:00"  /*录入时间*/,
@@ -320,7 +336,7 @@
 					url: '../addr/addr?mode=select'
 				});
 			},
-			goMyOrder() {
+			async goMyOrder() {
 				if (this.addr.PersonName === '' && this.addr.Mobile === '') {
 					util.showToast({
 						title: '请选择收货地址'
@@ -331,7 +347,11 @@
 				this.billObj.Address = this.addr.Address;
 				this.billObj.LinkMan = this.addr.PersonName;
 				this.billObj.Mobile = this.addr.Mobile;
-				this.billObj.FactUseBonus = this.$refs.FactUseBonus.getValue()
+				if (this.$refs.FactUseBonus) {
+					this.billObj.FactUseBonus = this.$refs.FactUseBonus.getValue()
+				} else {
+					this.billObj.FactUseBonus = ''
+				}
 				const FactUseBonus = isNaN(Number(this.billObj.FactUseBonus)) ? 0 : Number(this.billObj.FactUseBonus)
 				if (this.billObj.PayType === 1) {
 					if (this.billObj.PayBank === '' || this.billObj.PayAccountName === '') {
@@ -355,12 +375,52 @@
 					})
 					return
 				} else if (FactUseBonus > this.billObj.Amount) {
+					// 如果金额大于可用积分(抵扣金额不能大于可用积分)
 					util.showToast({
 						title: `抵扣积分不能大于商品金额`
 					})
 					return
 				}
-				// 如果金额大于可用积分(抵扣金额不能大于可用积分)
+				if (this.billObj.ShowDeposit) {
+					// 如果 显示合规金，则必须勾选同意经销商约定书条款
+					if (!this.protocal) {
+						util.dialog({
+							content: '请勾选同意经销商约定书条款',
+						})
+						return
+					}
+				}
+				// 先验证
+				const checkRes = await util.ajax({
+					method: 'Businese.OrderDAL.CreateCheck',
+					params: {
+						order: this.billObj
+					}
+				})
+				const { data } = checkRes
+				let me = this
+				console.log('checkRes: ', data)
+				if (data.result) {
+					util.hideLoading();
+					// 如果验证要显示信息，则提示，并点击确认后才提交
+					util.dialog({
+						content: data.result,
+						success: e => {
+							if (e.confirm) {
+								me.saveFn()
+							} else {
+								console.log('不同意')
+							}
+						},
+						fail: () => {
+							console.log('不同意')
+						}
+					})
+				} else {
+					me.saveFn()
+				}
+			},
+			saveFn() {
 				// 生成订单
 				util.showLoading();
 				util.ajax({
@@ -375,7 +435,6 @@
 						usertoken: this.openid
 					}
 				}).then(res => {
-					util.hideLoading();
 					// util.goUrl({
 					// 	url: './myOrder'
 					// });
@@ -387,7 +446,9 @@
 							}, 1000);
 						}
 					});
-				});
+				}).finally(() => {
+					util.hideLoading();
+				})
 			},
 			async onIsPayChange(e){
 				this.$set(this.billObj, 'IsPay', !this.billObj.IsPay);
@@ -510,6 +571,12 @@
 						this.$set(this.billObj, 'PayAccountName', (res.data.result.PayAccountName || ''));
 						if(res.data.result.PayAccountName) {
 							this.$refs.PayAccountName.setValue(res.data.result.PayAccountName);
+						}
+						// 是否显示合规金
+						if (res.data.result.ShowDeposit) {
+							this.$refs.depositRef.setValue(res.data.result.DepositAmount)
+							// 实际付款金额 = 申请金额 + 合规金金额
+							this.actualAmount = this.actualAmount + res.data.result.DepositAmount
 						}
 						this.qrcode = util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.PayCodeFileName;
 					})

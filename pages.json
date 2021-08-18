@@ -398,6 +398,14 @@
 				}
 			}
 		}, {
+			"path": "pages/user/protocalPay",
+			"style": {
+				"navigationBarTitleText": "经销商约定书条款",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/about/about",
 			"style": {
 				"navigationBarTitleText": "关于纤畅",
@@ -487,9 +495,33 @@
 				}
 			}
 		}, {
+			"path": "pages/user/myAccount",
+			"style": {
+				"navigationBarTitleText": "我的账户余额",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/myAccountDetail",
+			"style": {
+				"navigationBarTitleText": "我的账户余额明细",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/user/mySubordinateInfo",
 			"style": {
 				"navigationBarTitleText": "我的下属资料",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/mySubordinateDetail",
+			"style": {
+				"navigationBarTitleText": "我的下属余额明细",
 				"app-plus": {
 					"bounce": "none"
 				}

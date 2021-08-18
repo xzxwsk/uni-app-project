@@ -64,11 +64,6 @@
 						icon: 'gear'
 					},
 					{
-						name: '解除锁定',
-						url: 'unbind',
-						icon: 'locked'
-					},
-					{
 						name: '我的二维码',
 						url: 'about/qrcode',
 						icon: 'pengyouquan'

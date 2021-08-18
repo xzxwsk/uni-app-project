@@ -476,7 +476,7 @@ let ajax = function(prompt) {
 	}
 	return new Promise((resolve, reject) => {
 		if(prompt.get) {
-			getAjax(_prompt)
+			return getAjax(_prompt)
 			.then(data => resolve(data))
 			.catch(err => {
 				if (err.hasOwnProperty('errMsg')) {
@@ -484,10 +484,10 @@ let ajax = function(prompt) {
 					err.data = err.errMsg;
 				}
 				ajaxReturn(err, _prompt);
-				// reject(err);
+				reject(err);
 			});
 		} else {
-			postAjax(_prompt)
+			return postAjax(_prompt)
 			.then(data => resolve(data))
 			.catch(err => {
 				if (err.hasOwnProperty('errMsg')) {
@@ -495,7 +495,7 @@ let ajax = function(prompt) {
 					err.data = err.errMsg;
 				}
 				ajaxReturn(err, _prompt);
-				// reject(err);
+				reject(err);
 			})
 		}
 	});

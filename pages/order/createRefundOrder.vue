@@ -47,7 +47,7 @@
 				placeholder: '请输入付款人微信帐号',
 				selectKxxzType: '0',
 				kxxzTypeArr: [
-					{txt: '货款', value: '0'},
+					// {txt: '货款', value: '0'},
 					{txt: '积分', value: '2'}
 				],
 				billObj: {

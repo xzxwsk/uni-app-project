@@ -398,6 +398,14 @@
 				}
 			}
 		}, {
+			"path": "pages/user/protocalPay",
+			"style": {
+				"navigationBarTitleText": "经销商约定书条款",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/about/about",
 			"style": {
 				"navigationBarTitleText": "关于纤畅",

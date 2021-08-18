@@ -14,6 +14,10 @@
 					<label class="label" v-for="(item, index) in repayDealer" :key="index"><radio :value="item.DealerId" :checked="billObj.RepayDealerId === item.DealerId" color="#f23030" />{{item.DealerName}}</label>
 				</radio-group>
 			</view>
+			<view class="input-row" v-if="billObj.ShowDeposit">
+				<text class="title">合规金金额：</text>
+				<input-box ref="depositRef" type="number" disabled :clearShow="false" :inputValue="billObj.DepositAmount ? String(billObj.DepositAmount) : '0'"></input-box>
+			</view>
 			<view class="input-row">
 				<text class="title">付款金额：</text>
 				<input-box ref="amount" type="number" :disabled="billObj.AccountType === 2" :clearShow="billObj.AccountType !== 2" v-model="billObj.Amount" placeholder="元"></input-box>
@@ -53,6 +57,15 @@
 				<text class="title">收款码：</text>
 				<image mode="aspectFit" class="uni-uploader__img" :src="billObj.PayCodeFileNameStr" :data-src="billObj.PayCodeFileNameStr" @tap="previewImage"></image>
 			</view>
+			<view class="input-row protocal_row_radio" style="flex-direction: column;" v-if="billObj.ShowDeposit">
+				<view style="padding: 10px 0 0;">
+					<text class="title"></text>
+					<label @click="bindProtocal"><radio class="protocal" value="0" color="#f23030" :checked="protocal" />是否同意经销商约定书条款</label>
+				</view>
+				<view class="protocal_row">
+					<label class="a protocal_a" style="display: block; padding: 0 0 5px;" @click="bindToProtocal">经销商约定书条款</label>
+				</view>
+			</view>
 		</view>
 		<view class="result">
 			<button class="btn" :disabled="saving" type="warn" @click="saveOrder">保存</button>
@@ -77,11 +90,14 @@
 				repayDealer: [], // 代支付分销商列表
 				selectRepayDealer: {},
 				saving: false,
+				protocal: false,
 				billObj: {
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,
 					"BillDate": ""  /*单据日期*/,
 					"Amount": 0.0  /*付款金额*/,
+					"DepositAmount": 0.0 /*合规金金额*/,
+					"ShowDeposit": false /*是否显示合规金*/,
 					"PayDealerId": ""  /*付款方分销商Id*/,
 					"PayDealerCode": ""  /*付款方分销商编号*/,
 					"PayDealerName": ""  /*付款方分销商姓名*/,
@@ -139,9 +155,6 @@
 					}
 				}).then(res => {
 					this.billObj = res.data.result;
-					if(this.$refs.amount){
-						this.$refs.amount.setValue(this.billObj.Amount);
-					}
 					// this.getRepayDealerLs();
 					this.getDefaultPayInfo(accountType);
 				});
@@ -185,6 +198,15 @@
 					}
 					if (this.$refs.payAccountName) {
 						this.$refs.payAccountName.setValue(res.data.result.PayAccountName);
+					}
+					// 是否显示合规金
+					if (this.billObj.ShowDeposit) {
+						this.$refs.depositRef.setValue(this.billObj.DepositAmount)
+						// 实际付款金额 = 申请金额 + 合规金金额
+						this.billObj.Amount = this.billObj.Amount + this.billObj.DepositAmount
+					}
+					if(this.$refs.amount){
+						this.$refs.amount.setValue(this.billObj.Amount);
 					}
 				});
 			},
@@ -239,15 +261,58 @@
 					urls: [current]
 				})
 			},
-			saveOrder() {
-				let me = this;
-				this.saving = true;
+			async saveOrder() {
+				if (this.billObj.ShowDeposit) {
+					// 如果 显示合规金，则必须勾选同意经销商约定书条款
+					if (!this.protocal) {
+						util.dialog({
+							content: '请勾选同意经销商约定书条款',
+						})
+						return
+					}
+				}
 				this.billObj.Amount = Number(this.billObj.Amount);
 				for(let key in this.billObj) {
 					if (typeof this.billObj[key] === 'string') {
 						this.billObj[key] = this.billObj[key].trim();
 					}
 				}
+				let me = this;
+				this.saving = true;
+				util.showLoading();
+				// 先验证
+				const checkRes = await util.ajax({
+					method: 'Businese.OrderDAL.CreateCheck',
+					params: {
+						order: this.billObj
+					}
+				})
+				const { data } = checkRes
+				console.log('checkRes: ', data)
+				if (data.result) {
+					util.hideLoading();
+					me.saving = false;
+					// 如果验证要显示信息，则提示，并点击确认后才提交
+					util.dialog({
+						content: data.result,
+						success: e => {
+							if (e.confirm) {
+								me.saveFn()
+							} else {
+								console.log('不同意')
+							}
+						},
+						fail: () => {
+							console.log('不同意')
+						}
+					})
+				} else {
+					me.saveFn()
+				}
+			},
+			saveFn() {
+				let me = this
+				this.saving = true;
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.BillPayDAL.Create',
@@ -270,14 +335,24 @@
 							}, 1000);
 						}
 					});
-				}).catch(e => {
-					console.log(e)
+				}).finally(() => {
 					me.saving = false;
+					util.hideLoading();
 				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
-			}
+			},
+			bindProtocal() {
+				// 许可条款
+				this.protocal = !this.protocal;
+			},
+			bindToProtocal(e) {
+				// 查看条款
+				util.goUrl({
+					url: '../user/protocalPay'
+				});
+			},
 		}
 	}
 </script>

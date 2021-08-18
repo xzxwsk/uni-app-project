@@ -358,8 +358,8 @@
 			},
 			// 通过微信code获取后台token
 			async applet(e){
-				this.getCode()
 				await this.getUserInfo()
+				await this.getCode()
 				let res = await util.ajax({
 					method: 'SYS.UserDAL.WxLogin',
 					params: {

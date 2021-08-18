@@ -32,6 +32,9 @@
 	import util from '@/common/util.js';
 	import {mapState, mapMutations} from 'vuex';
 	export default {
+		computed: {
+			...mapState(['userInfo'])
+		},
 		data() {
 			return {
 				imgSrcHead: util.getImgUrl() + '/static/images/avatar_member.gif',
@@ -61,6 +64,11 @@
 						icon: 'gear'
 					},
 					{
+						name: '解除锁定',
+						url: 'unbind',
+						icon: 'locked'
+					},
+					{
 						name: '我的二维码',
 						url: 'about/qrcode',
 						icon: 'pengyouquan'
@@ -74,6 +82,10 @@
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
 			goDetailPage(url) {
+				if (url === 'unbind') {
+					this.unBind()
+					return
+				}
 				uni.navigateTo({
 					url: '/pages/' + url
 				});
@@ -95,6 +107,41 @@
 						url: '../tabBar/user'
 					});
 				});
+			},
+			unBind() {
+				util.dialog({
+					content: '确定要解除锁定吗？',
+					success: async e => {
+						if(e.confirm) {
+							console.log('this.userInfo: ', this.userInfo)
+							let UserName = ''
+							if (this.userInfo.AboveDealerNo) {
+								UserName = this.userInfo.AboveDealerNo
+							} else {
+								UserName = util.getStorageSync('userName')
+							}
+							let res = await util.ajax({
+								method: 'SYS.UserDAL.UnBindWxUser',
+								params: {
+									UserName
+								}
+							})
+							let { data } = res
+							if (!data.error) {
+								util.showToast({
+									title: '解绑成功',
+									success() {
+										setTimeout(() => {
+											util.redirectUrl({
+												url: '../login/login'
+											});
+										}, 1000);
+									}
+								});
+							}
+						}
+					}
+				})
 			}
 		}
 	}

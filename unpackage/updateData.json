@@ -1,7 +1,7 @@
 {
-    "version": "1.2.17",
-    "code": 2,
+    "version": "1.2.27",
+    "code": 1,
     "edition":"正式版",
-    "smallUpdate":"http://118.163.201.227/appdownload/add.wgt",
-    "bigUpdate":"http://118.163.201.227/appdownload/qianchangAndroid.apk"
+    "smallUpdate":"http://www.zzxianchang.cn/appdownload/add.wgt",
+    "bigUpdate":"http://www.zzxianchang.cn/appdownload/qianchangAndroid.apk"
 }

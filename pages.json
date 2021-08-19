@@ -513,7 +513,7 @@
 		}, {
 			"path": "pages/user/mySubordinateInfo",
 			"style": {
-				"navigationBarTitleText": "我的下属资料",
+				"navigationBarTitleText": "下属账户余额",
 				"app-plus": {
 					"bounce": "none"
 				}

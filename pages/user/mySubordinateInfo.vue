@@ -10,7 +10,7 @@
 			<swiper :current="tabIndex" class="swiper-box" :duration="300" @change="changeTab">
 				<swiper-item>
 					<view class="search_box">
-						<input-box type="text" clearable focus v-model="searchKey" placeholder="请输入分销商编号或姓名"></input-box>
+						<input-box type="text" style="flex: 1;" clearable focus v-model="searchKey" placeholder="请输入分销商编号或姓名"></input-box>
 						<button class="btn" type="warn" @click="query">查询</button>
 					</view>
 					<view class="con" v-if="tableList.length < 1">
@@ -34,13 +34,17 @@
 										<t-th style="flex: none;" align="left">操作</t-th>
 									</t-tr>
 								</t-table>
-								<view style="display: flex; font-size: 28upx;" v-for="(item,index) in tableList" :key="item.id">
+								<view style="display: flex; font-size: 28upx;" v-for="(item,index) in tableList" :key="item.id"
+									:data-subdealerid="item.SubDealerId"
+									:data-accounttype="item.AccountType"
+									@click="goDetail"
+								>
 									<view style="flex: none; width: 10px;"></view>
 									<view class="td">{{item.SubDealerNo}}</view>
 									<view class="td" style="width: 120upx;">{{item.SubDealerName}}</view>
 									<view class="td">{{ ['货款', '合规金', '代交合规金'][item.AccountType] }}</view>
 									<view class="td" style="width: 120upx;">{{item.Amount}}</view>
-									<view class="td" @click="goDetail(item)"><text class="a">查看明细</text></view>
+									<view class="td"><text class="a">查看明细</text></view>
 								</view>
 							</view>
 							<view v-if="isScroll" class="uni-tab-bar-loading">
@@ -298,9 +302,10 @@
 			query2() {
 				this.getList2();
 			},
-			goDetail({ SubDealerId, AccountType }) {
+			goDetail(e) {
+				const {subdealerid, accounttype} = e.currentTarget.dataset
 				util.goUrl({
-					url: './mySubordinateDetail?id=' + SubDealerId + '&type=' + AccountType
+					url: './mySubordinateDetail?id=' + subdealerid + '&type=' + accounttype
 				})
 			},
 		}

@@ -59,7 +59,7 @@
 				<view>
 					<view class="uni-icon uni-icon-upload"></view>
 				</view>
-				我的下属资料
+				下属帐户余额
 			</view>
 		</view>
 		<view class="uni-list">

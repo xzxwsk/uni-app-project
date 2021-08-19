@@ -8,7 +8,7 @@
 			<view class="txt a"><navigator open-type="switchTab" animation-type="pop-in" animation-duration="300" url="./index">去逛逛</navigator></view>
 		</view>
 		<block v-else>
-			<scroll-view scroll-y="true" style="width: 100%; height: 100%;">
+			<scroll-view scroll-y="true" style="width: 100%; height: calc(100% - 100rpx);">
 				<view class="uni-list">
 					<view :class="'uni-list-cell' + item.hoverClass" v-for="(item, index) in cartLs" :key="index" @touchstart="hoverClass(index)" @touchend="hoverClassEnd(index)">				
 						<view class="uni-media-list">
@@ -29,17 +29,20 @@
 					</view>
 				</view>
 			</scroll-view>
+			<view v-if="selectedArr.length > 0" class="count_box">
+				<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
+			</view>
 			<view class="result">
 				<label class="radio" @click="onAllSelect"><radio color="#f23030" :checked="allSelect" />全选</label>
 				<block v-if="selectedArr.length > 0">
-					<view class="count b">合计：<text class="price">￥{{countPrice.toFixed(2)}}</text></view>
+					<view class="count"></view>
+					<button class="btn" type="default" @click="bindDel">删除</button>
 					<button class="btn" type="default">加入收藏</button>
 					<button class="btn" type="warn" @click="toPay">去结算</button>
 				</block>
 				<block v-else>
 					<view class="count b"></view>
 					<button class="btn" @click="toIndex">继续购物</button>
-					<!-- <button class="btn" type="warn" @click="bindDel">删除</button> -->
 				</block>
 			</view>
 		</block>

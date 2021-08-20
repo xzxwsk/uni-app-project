@@ -64,7 +64,7 @@
 						icon: 'gear'
 					},
 					{
-						name: '解除锁定',
+						name: '解除绑定',
 						url: 'unbind',
 						icon: 'locked'
 					},

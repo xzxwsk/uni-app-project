@@ -394,7 +394,10 @@
 				const checkRes = await util.ajax({
 					method: 'Businese.OrderDAL.CreateCheck',
 					params: {
-						order: this.billObj
+						order: {
+							...this.billObj,
+							FactUseBonus
+						}
 					}
 				})
 				const { data } = checkRes
@@ -407,7 +410,7 @@
 						content: data.result,
 						success: e => {
 							if (e.confirm) {
-								me.saveFn()
+								me.saveFn(FactUseBonus)
 							} else {
 								console.log('不同意')
 							}
@@ -417,10 +420,10 @@
 						}
 					})
 				} else {
-					me.saveFn()
+					me.saveFn(FactUseBonus)
 				}
 			},
-			saveFn() {
+			saveFn(FactUseBonus) {
 				// 生成订单
 				util.showLoading();
 				util.ajax({

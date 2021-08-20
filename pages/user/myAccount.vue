@@ -26,13 +26,15 @@
 								</t-table>
 								<view style="display: flex; font-size: 28upx;" 
 									v-for="(item,index) in tableList" :key="item.id"
-									@click="goDetail(item)"
+									:data-dealerid="item.DealerId"
+									:data-accounttype="item.AccountType"
+									@click="goDetail"
 								>
 									<view style="flex: none; width: 10px;"></view>
 									<view class="td">{{item.DealerNo}}</view>
 									<view class="td">{{item.DealerName}}</view>
 									<view class="td">{{ ['货款', '合规金', '积分'][item.AccountType] }}</view>
-									<view class="td">{{item.AmountCanUse}}</view>
+									<view class="td"><text class="a">{{item.AmountCanUse}}</text></view>
 									<view class="td"><text class="a">查看明细</text></view>
 								</view>
 							</view>
@@ -92,9 +94,10 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
-			goDetail({ DealerId, AccountType }) {
+			goDetail(e) {
+				const {dealerid, accounttype} = e.currentTarget.dataset
 				util.goUrl({
-					url: './myAccountDetail?id=' + DealerId + '&type=' + AccountType
+					url: './myAccountDetail?id=' + dealerid + '&type=' + accounttype
 				})
 			},
 		}

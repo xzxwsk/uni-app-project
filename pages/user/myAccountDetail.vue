@@ -30,7 +30,7 @@
 								>
 									<view style="flex: none; width: 10px;"></view>
 									<view class="td">{{item.LogTimeStr}}</view>
-									<view class="td">{{item.Remark}}</view>
+									<view class="td">{{item.Remark || ''}}</view>
 									<view class="td">{{item.AMOUNT}}</view>
 									<view class="td">{{item.RESERVEDAMOUNT}}</view>
 									<view class="td">{{item.BILLTYPE}}</view>

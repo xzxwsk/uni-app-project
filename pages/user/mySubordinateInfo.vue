@@ -162,7 +162,7 @@
 				isClickChange: false,
 				tabIndex: 0,
 				tabBars: [{
-					name: '下属货款/合规金',
+					name: '下属账户余额',
 					id: 'accountBalance'
 				}, {
 					name: '下属奖金查询',

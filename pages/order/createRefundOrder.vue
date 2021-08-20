@@ -13,12 +13,12 @@
 				<text class="title">款项性质：</text>
 				<!-- <text class="txt">{{billObj.accountTypeStr}}</text> -->
 				<radio-group class="pay_type" name="payType" 
-					@change="changeKxxzType"
 					style="justify-content: flex-start;"
 				><label class="label" 
 					v-for="(item, index) in kxxzTypeArr"
 					:key="index"
-				><radio :value="item.value" color="#f23030" :checked="selectKxxzType === item.value" />{{item.txt}}</label>
+					@click="changeKxxzType"
+				><radio :value="item.value" color="#f23030" :checked="selectKxxzType === item.value"  />{{item.txt}}</label>
 				</radio-group>
 			</view>
 			<view class="input-row">
@@ -45,7 +45,7 @@
 		data() {
 			return {
 				placeholder: '请输入付款人微信帐号',
-				selectKxxzType: '0',
+				selectKxxzType: '',
 				kxxzTypeArr: [
 					// {txt: '货款', value: '0'},
 					{txt: '积分', value: '2'}
@@ -156,10 +156,15 @@
 			},
 			// 修改款项性质
 			changeKxxzType(e) {
-				const { value } = e.detail
-				const result = Number(value)
-				this.billObj.AccountType = result
-				this.selectKxxzType = result
+				let value = this.selectKxxzType
+				// if (value === '') {
+				// 	value = '2'
+				// } else {
+				// 	value = ''
+				// }
+				console.log('value: ', value, e)
+				this.billObj.AccountType = value
+				this.selectKxxzType = value
 			},
 			changeMoneyType(e) {
 				// 付款方式
@@ -176,7 +181,12 @@
 			saveOrder() {
 				let me = this;
 				this.billObj.ApplyAmount = Number(this.billObj.ApplyAmount)
-				this.billObj.AccountType = Number(this.selectKxxzType)
+				if (isNaN(this.billObj.ApplyAmount)) {
+					this.billObj.ApplyAmount = 0
+				}
+				if (this.selectKxxzType !== '') {
+					this.billObj.AccountType = Number(this.selectKxxzType)
+				}
 				util.showLoading();
 				util.ajax({
 					method: 'Businese.BillPayReturnDAL.Create',

@@ -20,7 +20,11 @@
 			</view>
 			<view class="input-row">
 				<text class="title">付款金额：</text>
-				<input-box ref="amount" type="number" :disabled="billObj.AccountType === 2" :clearShow="billObj.AccountType !== 2" v-model="billObj.Amount" placeholder="元"></input-box>
+				<input-box ref="amount" type="number" :disabled="billObj.AccountType === 2" :clearShow="billObj.AccountType !== 2" v-model="billObj.Amount" placeholder="元" @input="changeAmount"></input-box>
+			</view>
+			<view class="input-row">
+				<text class="title">合计付款金额：</text>
+				{{countAmount}}
 			</view>
 			<view class="input-row">
 				<text class="title">付款方式：</text>
@@ -91,6 +95,7 @@
 				selectRepayDealer: {},
 				saving: false,
 				protocal: false,
+				countAmount: 0, // 合计付款金额
 				billObj: {
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,
@@ -171,12 +176,16 @@
 				});
 			},
 			getDefaultPayInfo(accountType) {
+				let Amount = Number(this.billObj.Amount)
+				if (isNaN(Amount)) {
+					Amount = 0
+				}
 				util.ajax({
 					method: 'Businese.BillPayDAL.GetDefaultPayInfo',
 					params: {
 						PayType: this.billObj.PayType,
 						AccountType: accountType,
-						Amount: this.billObj.Amount
+						Amount
 					},
 					tags: {
 						usertoken: this.openid
@@ -189,6 +198,8 @@
 					this.billObj.PayAccountName = res.data.result.PayAccountName;
 					this.billObj.ReceiveAccountInfo = res.data.result.ReceiveAccountInfo;
 					this.billObj.ReceivorInfo = res.data.result.ReceivorInfo;
+					this.billObj.ShowDeposit = res.data.result.ShowDeposit;
+					this.billObj.DepositAmount = res.data.result.DepositAmount;
 					this.billObj.PayCodeFileNameStr = util.getBaseUrl() + 'files/downloadfile?filename=' + this.billObj.PayCodeFileName;
 					if (this.$refs.payAccountNo) {
 						this.$refs.payAccountNo.setValue(res.data.result.PayAccountNo);
@@ -201,12 +212,14 @@
 					}
 					// 是否显示合规金
 					if (this.billObj.ShowDeposit) {
-						this.$refs.depositRef.setValue(this.billObj.DepositAmount)
+						console.log(this.billObj.Amount, this.billObj.DepositAmount)
+						if (this.$refs.depositRef) {
+							this.$refs.depositRef.setValue(this.billObj.DepositAmount)
+						}
 						// 实际付款金额 = 申请金额 + 合规金金额
-						this.billObj.Amount = this.billObj.Amount + this.billObj.DepositAmount
-					}
-					if(this.$refs.amount){
-						this.$refs.amount.setValue(this.billObj.Amount);
+						this.countAmount = Amount + this.billObj.DepositAmount
+					} else {
+						this.countAmount = Amount
 					}
 				});
 			},
@@ -224,6 +237,9 @@
 					}
 				}
 				 */
+			},
+			changeAmount() {
+				this.getDefaultPayInfo(this.billObj.AccountType)
 			},
 			changeMoneyType(e) {
 				// 付款方式
@@ -266,6 +282,7 @@
 					// 如果 显示合规金，则必须勾选同意经销商约定书条款
 					if (!this.protocal) {
 						util.dialog({
+							showCancel: false,
 							content: '请勾选同意经销商约定书条款',
 						})
 						return

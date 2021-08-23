@@ -2,7 +2,7 @@
     <view style="padding: 30upx;">
 		<view style="font-size: 18px; font-weight: bold; text-align: center;">分销商约定书</view>
 		<view>甲方：郑州纤畅生物科技有限公司</view>
-		<view>乙方：郑州纤畅生物科技有限公司</view>
+		<view>乙方：代理商</view>
 		<view>1.乙方提交付款单后，依其取得优惠价格，分次提交订单提货，货品售出后不接受退、换货。</view>
 		<view>2.帐户积分可抵扣货款或申请反现，提出反现申请后，按国家所得税规定扣除税金后，24小时以内汇款至代理商资料中指定帐户。</view>
 		<view>3.在本约定书勾选同意后, 若欲终止经销权,按以下方式处理：</view>

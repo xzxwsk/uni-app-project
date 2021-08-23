@@ -34,7 +34,7 @@
 									<view class="td">{{item.AMOUNT}}</view>
 									<view class="td">{{item.RESERVEDAMOUNT}}</view>
 									<view class="td">{{item.ShowBillType}}</view>
-									<view class="td">{{item.BILLCode}}</view>
+									<view class="td">{{item.BillCode}}</view>
 								</view>
 							</view>
 							<view v-if="isScroll" class="uni-tab-bar-loading">

@@ -1,7 +1,7 @@
 let baseUrlGlobal
 const miniProgram = uni.getAccountInfoSync().miniProgram
 console.log('miniProgram: ', miniProgram)
-if (miniProgram.envVersion !== 'release') {
+if (miniProgram.envVersion !== 'release') { // develop
 	baseUrlGlobal = 'http://47.104.226.115/qcdm/'; // 开发 测试帐号：A0000002 密码：1234  15883670960 1234 appId: wxba5d4722564f6a06
 // const baseUrlGlobal = 'http://118.163.201.227/qcdm/'; // 生产环境
 } else {

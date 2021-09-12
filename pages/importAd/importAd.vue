@@ -31,11 +31,11 @@
 			}
 		},
 		created() {
-			// this.st = setTimeout(() => {
-			// 	util.goTab({
-			// 		url: '../tabBar/index'
-			// 	})
-			// }, 6000)
+			this.st = setTimeout(() => {
+				util.goTab({
+					url: '../tabBar/index'
+				})
+			}, 6000)
 			this.getAd()
 		},
 		methods: {

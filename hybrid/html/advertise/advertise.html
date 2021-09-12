@@ -27,10 +27,11 @@
 		</div>
 	</body>
 	<script>
+		const baseGlobalUrl = 'http://www.zzxianchang.cn/qcdm/'
 		document.addEventListener('UniAppJSBridgeReady', function() {
 			const methods = 'SYS.OptionsDAL.GetOptions';
 			const ajaxFun = function(callback) {
-				const baseUrl = 'http://118.163.201.227/qcdm/' + 'json.rpc/webapi';
+				const baseUrl = baseGlobalUrl + 'json.rpc/webapi';
 				const xhr = new plus.net.XMLHttpRequest();
 				xhr.onreadystatechange = function () {
 					switch ( xhr.readyState ) {
@@ -70,6 +71,7 @@
 					}
 				}));
 			}
+			
 			// 显示图片
 			const showImg = function(imgLocal, setLocal) {
 				console.log('localImg: ', imgLocal) // 必须是绝对路径
@@ -245,10 +247,15 @@
 					})
 				}
 			}
+			
 			ajaxFun(function(res) {
-				// showImportImg(res.result.PictureSplashBase64)
-				document.getElementById('img').src = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64
-				document.getElementById('img').style.display = ''
+				showImportImg(baseGlobalUrl + 'files/downloadfile?filename=' + res.result.PictureSplashFileName)
+				// const resData = JSON.parse(JSON.stringify(res.result))
+				// delete resData.PictureSplashBase64
+				// console.log('resData: ', JSON.stringify(resData))
+				// document.getElementById('img').src = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64
+				// document.getElementById('img').src = baseGlobalUrl + 'files/downloadfile?filename=' + res.result.PictureSplashFileName
+				// document.getElementById('img').style.display = ''
 			})
 			
 			document.querySelector('.btn').addEventListener('click', function(e) {

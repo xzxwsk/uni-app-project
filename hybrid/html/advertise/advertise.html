@@ -74,7 +74,7 @@
 			
 			// 显示图片
 			const showImg = function(imgLocal, setLocal) {
-				console.log('localImg: ', imgLocal) // 必须是绝对路径
+				console.log('show localImg: ', imgLocal) // 必须是绝对路径
 				document.getElementById('img').setAttribute('src', imgLocal);
 				document.getElementById('img').style.display = '';
 				if (setLocal) {
@@ -168,7 +168,6 @@
 					const localImg = localStorage.getItem('importpageimg')
 					console.log('当前文件：', localImg)
 					if (localImg) {
-						showImg(localImg)
 						// createView(localImg)
 						const newPath = localImg.indexOf('111') !== -1 ? '_doc/222.gif' : '_doc/111.gif'
 						plus.io.resolveLocalFileSystemURL(newPath, function(entry) {
@@ -247,20 +246,26 @@
 					})
 				}
 			}
-			
+			const oldImg = localStorage.getItem('importpageimg')
+			if (oldImg) {
+				showImg(oldImg)
+			}
 			ajaxFun(function(res) {
-				showImportImg(baseGlobalUrl + 'files/downloadfile?filename=' + res.result.PictureSplashFileName)
-				// const resData = JSON.parse(JSON.stringify(res.result))
-				// delete resData.PictureSplashBase64
-				// console.log('resData: ', JSON.stringify(resData))
-				// document.getElementById('img').src = 'data:image/jpeg;base64,' + res.result.PictureSplashBase64
-				// document.getElementById('img').src = baseGlobalUrl + 'files/downloadfile?filename=' + res.result.PictureSplashFileName
-				// document.getElementById('img').style.display = ''
+				const { PictureSplashFileName: pictureSplashFileName, PictureSplashLastModifyTime: pictureSplashLastModifyTime } = res.result
+				// 如果取出来的图片，修改时间没有变化，则不再重新下载(刷新时不出来，是因为每次调试生成的目录id都不同，相同id再次刷新时就可以了)
+				const oldTime = localStorage.getItem('pictureSplashLastModifyTime')
+				console.log('oldTime: ', oldTime, 'pictureSplashLastModifyTime: ', pictureSplashLastModifyTime, pictureSplashLastModifyTime === oldTime);
+				// if (pictureSplashLastModifyTime === oldTime) {
+				// 	return
+				// }
+				localStorage.setItem('pictureSplashLastModifyTime', pictureSplashLastModifyTime)
+				// 重新下载新的覆盖旧的
+				showImportImg(baseGlobalUrl + 'files/downloadfile?filename=' + res.result.PictureSplashFileName, res.result)
 			})
 			
 			document.querySelector('.btn').addEventListener('click', function(e) {
 				console.log(e.isTrusted)
-				closeView()
+				// closeView()
 				plus.webview.currentWebview().close();
 				uni.getEnv(function(res) {
 					console.log('当前环境：' + JSON.stringify(res));

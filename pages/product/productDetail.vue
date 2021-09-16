@@ -9,7 +9,7 @@
 					<swiper class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
 						<swiper-item v-for="(item, index) in imgLs" :key="index">
 							<view class="swiper-item">
-								<image style="width: 100%; height: 100%;" mode="aspectFit" :src="item" @error="imageError"></image>
+								<image style="width: 100%; height: 100%;" mode="aspectFit" :src="item" @error="imageError" @click="onPreviewImage(imgLs, index)"></image>
 							</view>
 						</swiper-item>                        
 					</swiper>
@@ -49,7 +49,7 @@
 					<view class="title">--商品详情--</view>
 					<view>{{detail.Description}}</view>
 					<view v-for="(imgItem, imgIndex) in showImgArr" :key="imgIndex">
-						<image style="width: 100%;" mode="widthFix" :src="imgItem" @error="imageError"></image>
+						<image style="width: 100%;" mode="widthFix" :src="imgItem" @error="imageError" @click="onPreviewImage(showImgArr, imgIndex)"></image>
 					</view>
 					<uni-load-more :status="status" v-if="status !== 'noMore'" />
 				</view>
@@ -348,6 +348,13 @@
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
+			},
+			onPreviewImage(tempFilePaths, index) {
+				uni.previewImage({
+					indicator: 'number',
+					urls: tempFilePaths,
+					current: index
+				})
 			}
 		}
 	}

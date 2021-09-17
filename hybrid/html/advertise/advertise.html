@@ -74,7 +74,7 @@
 			
 			// 显示图片
 			const showImg = function(imgLocal, setLocal) {
-				console.log('show localImg: ', imgLocal) // 必须是绝对路径
+				// console.log('show localImg: ', imgLocal) // 必须是绝对路径
 				document.getElementById('img').setAttribute('src', imgLocal);
 				document.getElementById('img').style.display = '';
 				if (setLocal) {
@@ -163,36 +163,45 @@
 					}
 				})
 			}
-			const findFileiOS = function(callback) {
-				plus.io.requestFileSystem(downPatht, function(fs) {
-					const localImg = localStorage.getItem('importpageimg')
-					console.log('当前文件：', localImg)
-					if (localImg) {
-						// createView(localImg)
-						const newPath = localImg.indexOf('111') !== -1 ? '_doc/222.gif' : '_doc/111.gif'
-						plus.io.resolveLocalFileSystemURL(newPath, function(entry) {
-							// 找到文件后，删除掉
-							entry.remove(function() {
-								console.log('删除成功：' + entry.fullPath)
-								callback && callback(entry.fullPath)
+			const findFileiOS = function(pictureSplashFileName) {
+				return new Promise((resolve, reject) => {
+					const arr = pictureSplashFileName.split('.')
+					const fileName = arr.slice(0, arr.length-1).join('')
+					const fileExt = arr[arr.length - 1]
+					plus.io.requestFileSystem(downPatht, function(fs) {
+						const localImg = localStorage.getItem('importpageimg')
+						console.log('当前文件：', localImg)
+						if (localImg) {
+							// createView(localImg)
+							const newPath = '${fileName}${localImg.indexOf('_02') === -1 ? '_02' : ''}${fileExt}'
+							plus.io.resolveLocalFileSystemURL(newPath, function(entry) {
+								// 找到文件后，删除掉
+								entry.remove(function() {
+									console.log('删除成功：' + entry.fullPath)
+									resolve(entry.fullPath)
+								}, function(err) {
+									console.log('删除失败错误信息：', JSON.stringify(err))
+								})
 							}, function(err) {
-								console.log('删除失败错误信息：', JSON.stringify(err))
+								console.log('未找到: ' + newPath + '，直接下载：', JSON.stringify(err))
+								resolve(newPath)
 							})
-						}, function(err) {
-							console.log('未找到: ' + newPath + '，直接下载：', JSON.stringify(err))
-							callback && callback(newPath)
-						})
-					} else {
-						callback && callback('_doc/111.gif')
-					}
+						} else {
+							resolve(`_doc/${pictureSplashFileName}`)
+						}
+					})
 				})
 			}
-			const showImportImg = function(picUrl) {
+			const showImportImg = function(picUrl, result) {
+				const { PictureSplashFileName: pictureSplashFileName } = res.result
+				const arr = pictureSplashFileName.split('.')
+				const fileName = arr.slice(0, arr.length-1).join('')
+				const fileExt = arr[arr.length - 1]
 				// https://pic.fhtp88.com/upload/art/07/14/04/wgvnto2i2gt.jpg
 				// const picUrl = 'https://n.sinaimg.cn/tech/transform/366/w216h150/20210203/70ad-kirmait4625391.gif'
 				if (plus.os.name !== 'iOS') {
 					findFile(function(fullPath) {
-						fullPath = fullPath.indexOf('111') !== -1 ? '_downloads/111.gif' : '_downloads/222.gif'
+						fullPath = `_downloads/${fileName}${fullPath.indexOf('_02') === -1 ? '_02' : ''}${fileExt}`
 						let option = {
 							filename: fullPath
 						}
@@ -201,7 +210,7 @@
 							if(status == 200) {
 								console.log("Download success: ", d.filename, d.totalSize/1024);
 								// 下载完成后用下载路径替换，必须是_downloads路径
-								plus.io.resolveLocalFileSystemURL(d.filename.indexOf('111') !== -1 ? '_downloads/111.gif' : '_downloads/222.gif', function(entry) {
+								plus.io.resolveLocalFileSystemURL(`_downloads/${fileName}${d.filename.indexOf('_02') === -1 ? '_02' : ''}${fileExt}`, function(entry) {
 									console.log('找到新下载文件: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
 									// 显示图片用 /storage路径
 									showImg(entry.fullPath, entry.fullPath)
@@ -220,7 +229,7 @@
 						dtask.start();
 					})
 				} else {
-					findFileiOS(function(fullPath) {
+					findFileiOS(pictureSplashFileName).then(fullPath => {
 						const option = {
 							filename: fullPath
 						}
@@ -240,13 +249,17 @@
 								})
 							} else {
 								console.log("Download failed: " + status); 
-							}  
+							}
 						})
 						dtask.start();
 					})
 				}
 			}
+			// localStorage.clear()
+			// return
 			const oldImg = localStorage.getItem('importpageimg')
+			console.log('oldImg: ', oldImg);
+			// 如果已有本地缓存图片，则直接显示
 			if (oldImg) {
 				showImg(oldImg)
 			}
@@ -255,9 +268,10 @@
 				// 如果取出来的图片，修改时间没有变化，则不再重新下载(刷新时不出来，是因为每次调试生成的目录id都不同，相同id再次刷新时就可以了)
 				const oldTime = localStorage.getItem('pictureSplashLastModifyTime')
 				console.log('oldTime: ', oldTime, 'pictureSplashLastModifyTime: ', pictureSplashLastModifyTime, pictureSplashLastModifyTime === oldTime);
-				// if (pictureSplashLastModifyTime === oldTime) {
-				// 	return
-				// }
+				// 如果时间未更新，则不用再下载缓存新图片
+				if (pictureSplashLastModifyTime === oldTime) {
+					return
+				}
 				localStorage.setItem('pictureSplashLastModifyTime', pictureSplashLastModifyTime)
 				// 重新下载新的覆盖旧的
 				showImportImg(baseGlobalUrl + 'files/downloadfile?filename=' + res.result.PictureSplashFileName, res.result)

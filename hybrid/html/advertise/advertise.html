@@ -45,7 +45,7 @@
 							console.log( "xhr请求已发送" );
 						break;
 						case 3:
-							console.log( "xhr请求已响应");
+							// console.log( "xhr请求已响应");
 							break;
 						case 4:
 							if ( xhr.status == 200 ) {
@@ -138,42 +138,49 @@
 			}
 			const downPatht = plus.io.PRIVATE_DOC;
 			// 如果找到下载文件，则删除后再下载
-			const findFile = function(callback) {
-				plus.io.requestFileSystem(downPatht, function(fs) {
-					// 当前用的
-					const localImg = localStorage.getItem('importpageimg')
-					if (localImg) {
-						showImg(localImg)
-						// 必须是_downloads路径
-						const newPath = localImg.indexOf('111') !== -1 ? '_downloads/222.gif' : '_downloads/111.gif'
-						plus.io.resolveLocalFileSystemURL(newPath, function(entry) {
-							// 找到文件后，删除掉
-							entry.remove(function() {
-								console.log('删除成功：', entry.fullPath)
-								callback && callback(entry.fullPath)
+			const findFile = function(pictureSplashFileName) {
+				return new Promise((resolve, reject) => {
+					const arr = pictureSplashFileName.split('.')
+					const fileExt = arr.pop()
+					const fileName = arr.join('')
+					plus.io.requestFileSystem(downPatht, function(fs) {
+						// 当前用的
+						const localImg = localStorage.getItem('importpageimg')
+						if (localImg) {
+							showImg(localImg)
+							// 必须是_downloads路径
+							const newPath = `_downloads/${fileName}${localImg.indexOf('_02') === -1 ? '_02' : ''}.${fileExt}`
+							plus.io.resolveLocalFileSystemURL(newPath, function(entry) {
+								// 找到文件后，删除掉
+								entry.remove(function() {
+									console.log('删除成功：', entry.fullPath)
+									resolve(entry.fullPath)
+								}, function(err) {
+									console.log('删除失败错误信息：', err)
+								})
 							}, function(err) {
-								console.log('删除失败错误信息：', err)
+								console.log('未找到' + newPath + '，直接下载：', JSON.stringify(err))
+								resolve(newPath)
 							})
-						}, function(err) {
-							console.log('未找到' + newPath + '，直接下载：', JSON.stringify(err))
-							callback && callback(newPath)
-						})
-					} else {
-						callback && callback('_downloads/111.gif')
-					}
+						} else {
+							resolve(`_downloads/${pictureSplashFileName}`)
+						}
+					})
 				})
 			}
 			const findFileiOS = function(pictureSplashFileName) {
 				return new Promise((resolve, reject) => {
 					const arr = pictureSplashFileName.split('.')
-					const fileName = arr.slice(0, arr.length-1).join('')
-					const fileExt = arr[arr.length - 1]
+					const fileExt = arr.pop()
+					const fileName = arr.join('')
 					plus.io.requestFileSystem(downPatht, function(fs) {
 						const localImg = localStorage.getItem('importpageimg')
 						console.log('当前文件：', localImg)
 						if (localImg) {
 							// createView(localImg)
-							const newPath = '${fileName}${localImg.indexOf('_02') === -1 ? '_02' : ''}${fileExt}'
+							// 如果当前使用的文件是01，则找到02，并删掉，再下载到02缓存起来
+							const newPath = `_doc/${fileName}${localImg.indexOf('_02') === -1 ? '_02' : ''}.${fileExt}`
+							console.log('newPath: ', newPath);
 							plus.io.resolveLocalFileSystemURL(newPath, function(entry) {
 								// 找到文件后，删除掉
 								entry.remove(function() {
@@ -193,15 +200,17 @@
 				})
 			}
 			const showImportImg = function(picUrl, result) {
-				const { PictureSplashFileName: pictureSplashFileName } = res.result
+				const { PictureSplashFileName: pictureSplashFileName } = result
 				const arr = pictureSplashFileName.split('.')
-				const fileName = arr.slice(0, arr.length-1).join('')
-				const fileExt = arr[arr.length - 1]
-				// https://pic.fhtp88.com/upload/art/07/14/04/wgvnto2i2gt.jpg
+				const fileExt = arr.pop()
+				const fileName = arr.join('')
+				console.log(`${fileName} -- ${fileExt}`)
 				// const picUrl = 'https://n.sinaimg.cn/tech/transform/366/w216h150/20210203/70ad-kirmait4625391.gif'
 				if (plus.os.name !== 'iOS') {
-					findFile(function(fullPath) {
-						fullPath = `_downloads/${fileName}${fullPath.indexOf('_02') === -1 ? '_02' : ''}${fileExt}`
+					findFile(pictureSplashFileName).then(fullPath => {
+						// 使用删除的文件名，加_downloads路径下载
+						const downPathArr = fullPath.split('/')
+						fullPath = `_downloads/${downPathArr.pop()}`
 						let option = {
 							filename: fullPath
 						}
@@ -210,7 +219,7 @@
 							if(status == 200) {
 								console.log("Download success: ", d.filename, d.totalSize/1024);
 								// 下载完成后用下载路径替换，必须是_downloads路径
-								plus.io.resolveLocalFileSystemURL(`_downloads/${fileName}${d.filename.indexOf('_02') === -1 ? '_02' : ''}${fileExt}`, function(entry) {
+								plus.io.resolveLocalFileSystemURL(fullPath, function(entry) {
 									console.log('找到新下载文件: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
 									// 显示图片用 /storage路径
 									showImg(entry.fullPath, entry.fullPath)
@@ -255,7 +264,7 @@
 					})
 				}
 			}
-			// localStorage.clear()
+			// localStorage.removeItem('pictureSplashLastModifyTime')
 			// return
 			const oldImg = localStorage.getItem('importpageimg')
 			console.log('oldImg: ', oldImg);

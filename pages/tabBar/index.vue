@@ -259,18 +259,57 @@
 			},
 			getAdLs() {
 				// 获取广告图
+				this.imgLs = []
+				const adImg = util.getStorageSync('indextopad')
+				const adImgTime = util.getStorageSync('indextopadtime')
+				if (adImg) {
+					this.imgLs.push(adImg)
+				}
 				util.ajax({
 					method: 'SYS.OptionsDAL.GetOptions',
 					tags: {
 						usertoken: this.openid
 					}
 				}).then(res => {
-					// this.imgLs = [];
-					// let img = res.data.result.PictureTopBase64;
+					const { result } = res.data
+					// let img = result.PictureTopBase64;
 					// if (img) {
 					// 	this.imgLs.push('data:image/jpeg;base64,' + img);
 					// }
-					this.imgLs.push(util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.PictureTopFileName)
+					console.log('getAd: ', adImgTime, result.PictureTopLastModifyTime)
+					// 判断是否更新，如果没有更新，则不用下载
+					if (adImgTime === result.PictureTopLastModifyTime) {
+						return
+					}
+					// 更新时间
+					util.setStorageSync({
+						key: 'indextopadtime',
+						data: result.PictureTopLastModifyTime
+					})
+					const imgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + result.PictureTopFileName
+					// 下载图片，获得临时文件
+					uni.downloadFile({
+					    url: imgUrl,
+					    success: res => {
+					        if (res.statusCode === 200) {
+					            console.log('下载成功', res.tempFilePath)
+								// 保存
+								uni.saveFile({
+								    tempFilePath: res.tempFilePath,
+								    success: saveRes => {
+								        const { savedFilePath } = saveRes
+										this.imgLs = []
+										// 更新显示这个刚下载的
+										this.imgLs.push(savedFilePath)
+										util.setStorageSync({
+											key: 'indextopad',
+											data: savedFilePath
+										})
+									}
+								})
+							}
+						}
+					})
 				})
 			},
 			goLogin() {

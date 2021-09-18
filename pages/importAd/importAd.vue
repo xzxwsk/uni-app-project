@@ -41,6 +41,7 @@
 		methods: {
 			async getAd() {
 				const adImg = util.getStorageSync('importad')
+				const adImgTime = util.getStorageSync('importadtime')
 				if (adImg) {
 					this.img = adImg
 				}
@@ -48,10 +49,18 @@
 					method: 'SYS.OptionsDAL.GetOptions',
 					params: {}
 				}).catch(() => {})
-				console.log('getAd: ', res)
-				if (res.data.result.PictureSplashFileName) {
-					const imgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.PictureSplashFileName
-					// this.img = util.getBaseUrl() + 'files/downloadfile?filename=' + res.data.result.PictureSplashFileName
+				const { result } = res.data
+				// 判断是否更新，如果没有更新，则不用下载
+				if (adImgTime === result.PictureSplashLastModifyTime) {
+					return
+				}
+				// 更新时间
+				util.setStorageSync({
+					key: 'importadtime',
+					data: result.PictureSplashLastModifyTime
+				})
+				if (result.PictureSplashFileName) {
+					const imgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + result.PictureSplashFileName
 					// 下载图片，获得临时文件
 					uni.downloadFile({
 					    url: imgUrl,
@@ -62,12 +71,14 @@
 								uni.saveFile({
 								    tempFilePath: res.tempFilePath,
 								    success: saveRes => {
-								        const savedFilePath = saveRes.savedFilePath
+								        const { savedFilePath } = saveRes
 										console.log('savedFilePath: ', savedFilePath)
 										// this.img = saveRes.savedFilePath
+										// 更新显示这个刚下载的
+										this.img = savedFilePath
 										util.setStorageSync({
 											key: 'importad',
-											data: saveRes.savedFilePath
+											data: savedFilePath
 										})
 								    }
 								})

@@ -322,7 +322,7 @@
 								if (pages.length >= 2) {
 									const prevPage = pages[pages.length-2]
 									if (prevPage) {
-										prevPage.init()
+										prevPage.$vm.init()
 										uni.navigateBack();
 									}
 								}

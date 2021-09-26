@@ -73,17 +73,17 @@
 		}
 	}
 	.active {
-		color: #4297ED !important;
+		color: #e64340 !important;
 	}
 	.none {
 		color: #666666;
 	}
 	.icon-selected{
-		color: #0095F2!important;
+		color: #e64340!important;
 		font-size: 40rpx!important;
 	}
 	.icons{
-		color: #0095F2!important;
+		color: #e64340!important;
 		font-size: 40rpx!important;
 	}
 	.inline-item {
@@ -110,7 +110,10 @@
 		width: 100%;
 	
 		.sureBtn {
-			background-color: #0095F2;
+			background-color: #e64340;
 			color: #fff;
+			&[disabled]{
+				opacity: .6;
+			}
 		}
 	}

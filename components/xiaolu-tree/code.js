@@ -100,6 +100,10 @@
 			}
 		},
 		methods: {
+			setTree(arr) {
+				this.tree = arr
+				this.allData = arr
+			},
 			//多选
 			async checkboxChange(item, index, bx, qx) {
 				var that = this;
@@ -198,27 +202,35 @@
 				that.$emit('sendValue', that.newCheckList)
 			},
 			//到下一级
-			 toChildren(item) {
+			toChildren(item) {
+				console.log('item: ', item);
 				if(item.user) return
 				var that = this;
 				this.tochild = true;
-				let children = that.props.children;
-				if (!item.user && item[children].length > 0) {
-					that.tree = item[children];
-					if (that.tree_stack[0].id == item.id) {
-					} else {
-						that.tree_stack.push(item);
+				this.$emit('getChild', item, result => {
+					console.log('result: ', result);
+					let children = that.props.children;
+					if (!item.user && item[children].length > 0) {
+						that.tree = item[children];
+						if (that.tree_stack[0].id == item.id) {
+						} else {
+							that.tree_stack.push(item);
+						}
 					}
-				}
-				this.$nextTick(() => {
-					this.scrollLeft += 200;
+					this.$nextTick(() => {
+						this.scrollLeft += 200;
+					})
+					if(this.props.checkStrictly) this.checkAllChoose();
+					this.$forceUpdate()
 				})
-				if(this.props.checkStrictly) this.checkAllChoose();
-				this.$forceUpdate()
 			},
 			//搜索
 			confirmSearch(val) {
 				this.searchResult = []
+				// this.$emit('search', val, result => {
+				// 	this.tree = result
+				// 	this.newCheckList = []
+				// })
 				this.search(this.allData, val)
 				this.isre = true
 				this.tree_stack.splice(1, 6666)

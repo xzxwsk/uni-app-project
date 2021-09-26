@@ -23,9 +23,11 @@
 							</text>
 						</view>
 					</view>
+					<view v-if="tree.length < 1" style="height: 100%; text-align: center;">暂无信息</view>
 				</scroll-view>
 			</view>
 		</view>
+		
 		<view>
 			<view class="container-list">
 				<view class="common" v-for="(item, index) in tree" @click="toChildren(item)" :key="index">
@@ -47,7 +49,7 @@
 			</view>
 		</view>
 		<view class="btn box_sizing">
-			<button class="sureBtn" type="primary" @click="backConfirm">下载</button>
+			<button class="sureBtn" type="primary" @click="backConfirm" :disabled="newCheckList.length === 0">下载</button>
 		</view>
 	</view>
 </template>

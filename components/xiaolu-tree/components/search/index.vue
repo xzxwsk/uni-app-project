@@ -44,6 +44,7 @@
 			.filterImg {
 				width: 32rpx;
 				height: 32rpx;
+				line-height: 40rpx;
 				margin-right: 20rpx;
 				margin-bottom: 5rpx;
 			}

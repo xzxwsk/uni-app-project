@@ -1,10 +1,10 @@
 <template>
 	<view>
-		<xiaolu-tree  v-slot:default="{item}" :searchIf="true" :checkList="checkList" :positionArr="positionArr" v-if="tree.length>0" :props="prop" @sendValue="confirm" :isCheck="true" :trees="tree">
+		<xiaolu-tree ref="treeRef" v-slot:default="{item}" :searchIf="true" :checkList="checkList" :positionArr="positionArr" v-if="tree.length>0" :props="prop" @sendValue="confirm" :isCheck="true" :trees="tree" @getChild="onGetChild" @search="onSearch">
 			<!-- 内容插槽 -->
 			<view>
 				<view class="content-item">
-					<view class="word">{{item.name}}</view>
+					<view class="word">{{item.Name}}</view>
 				</view>
 			</view>
 			<!--end -->
@@ -13,8 +13,9 @@
 </template>
 
 <script>
+	import { ajax, showLoading, hideLoading } from '@/common/util'
 	import XiaoluTree from '@/components/xiaolu-tree/tree.vue'
-	import dataList from '@/common/treeData.js'
+	// import dataList from '@/common/treeData.js'
 	export default {
 		components: {
 			XiaoluTree
@@ -23,9 +24,9 @@
 			return {
 				checkList: [],
 				positionArr: [],
-				tree: dataList,
+				tree: [],
 				prop: {
-					label: 'name',
+					label: 'Name',
 					children: 'children',
 					multiple: true,
 					checkStrictly: false,
@@ -33,9 +34,79 @@
 				}
 			}
 		},
+		onLoad() {
+			showLoading()
+			ajax({
+				method: 'Businese.KnowledgeBaseDAL.GetRootDirecotory',
+			}).then(res => {
+				hideLoading()
+				const { data } = res
+				console.log('res.data: ', data)
+				if (data.result) {
+					data.result.children = []
+					this.tree = [data.result]
+					// this.$refs.treeRef.setTree([data.result])
+				}
+				// console.log(this.$refs.treeRef);
+			})
+		},
 		methods: {
-			confirm(e) {
-				console.log('confirm: ', e);
+			onGetChild(item, callback) {
+				ajax({
+					method: 'Businese.KnowledgeBaseDAL.GetSubItems',
+					params: {
+						RecordId: item.RecordId
+					},
+				}).then(res => {
+					hideLoading()
+					const { data } = res
+					if (data.result) {
+						callback(data.result)
+					}
+				}).catch(() => {
+					hideLoading()
+				})
+			},
+			onSearch(Keyword, callback) {
+				showLoading({
+					title: '正在查找'
+				})
+				ajax({
+					method: 'Businese.KnowledgeBaseDAL.QueryFiles',
+					params: {
+						Keyword
+					},
+				}).then(res => {
+					hideLoading()
+					const { data } = res
+					console.log('res.data: ', data)
+					if (data.result) {
+						callback(data.result)
+					}
+				}).catch(() => {
+					hideLoading()
+				})
+			},
+			confirm(e, str) {
+				console.log('confirm: ', e, str);
+				if (str === 'back') {
+					console.log('下载');
+				}
+				// showLoading({
+				// 	title: '正在下载中...'
+				// })
+				// // 获取路径
+				// const item = e[0]
+				// ajax({
+				// 	method: 'Businese.KnowledgeBaseDAL.GetPath',
+				// 	params: {
+				// 		RecordId: item.RecordId
+				// 	},
+				// }).then(res => {
+				// 	hideLoading()
+				// }).catch(() => {
+				// 	hideLoading()
+				// })
 			}
 		}
 	}

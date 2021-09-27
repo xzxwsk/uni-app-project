@@ -47,11 +47,13 @@
 					const { result } = res.data
 					console.log('res.data.result: ', result)
 					if (result) {
-						this.tree = [{
-							...result,
-							user: result.Type === 1,
-							id: result.RecordId
-						}]
+						this.onGetChild(result, data => {
+							this.tree = data.map(item =>({
+								...item,
+								user: item.Type === 1,
+								id: item.RecordId
+							}))
+						})
 					}
 				})
 			},
@@ -90,10 +92,14 @@
 					},
 				}).then(res => {
 					hideLoading()
-					const { data } = res
-					console.log('res.data: ', data)
-					if (data.result) {
-						callback(data.result)
+					const { result } = res.data
+					console.log('res.data: ', result)
+					if (result) {
+						result.forEach(resultItem => {
+							resultItem.user = resultItem.Type === 1,
+							resultItem.id = resultItem.RecordId
+						})
+						callback(result)
 					}
 				}).catch(() => {
 					hideLoading()
@@ -160,7 +166,12 @@
 											reject(err)
 										}
 									})
+								} else {
+									reject(res)
 								}
+							},
+							fail(err) {
+								reject(err)
 							}
 						})
 					})

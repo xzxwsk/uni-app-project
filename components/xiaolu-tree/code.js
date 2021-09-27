@@ -237,21 +237,26 @@
 			//搜索
 			confirmSearch(val) {
 				this.searchResult = []
-				// this.$emit('search', val, result => {
-				// 	this.tree = result
-				// 	this.newCheckList = []
-				// })
-				this.search(this.allData, val)
-				this.isre = true
-				this.tree_stack.splice(1, 6666)
-				uni.showLoading({
-					title: '正在查找'
-				})
-				setTimeout(() => {
-					this.tree = this.searchResult
+				if (val === '') {
+					this.backTree(this.tree_stack[0], -1)
+					return
+				}
+				this.$emit('search', val, result => {
+					this.isre = true
+					this.tree = result
 					this.newCheckList = []
-					uni.hideLoading()
-				}, 300)
+				})
+				// this.search(this.allData, val)
+				// this.isre = true
+				// this.tree_stack.splice(1, 6666)
+				// uni.showLoading({
+				// 	title: '正在查找'
+				// })
+				// setTimeout(() => {
+				// 	this.tree = this.searchResult
+				// 	this.newCheckList = []
+				// 	uni.hideLoading()
+				// }, 300)
 			},
 			search(data, keyword) {
 				var that = this

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-	import { ajax, showLoading, hideLoading } from '@/common/util'
+	import { ajax, showLoading, hideLoading, getBaseUrl } from '@/common/util'
 	import XiaoluTree from '@/components/xiaolu-tree/tree.vue'
 	// import dataList from '@/common/treeData.js'
 	export default {
@@ -35,23 +35,28 @@
 			}
 		},
 		onLoad() {
-			showLoading()
-			ajax({
-				method: 'Businese.KnowledgeBaseDAL.GetRootDirecotory',
-			}).then(res => {
-				hideLoading()
-				const { data } = res
-				console.log('res.data: ', data)
-				if (data.result) {
-					data.result.children = []
-					this.tree = [data.result]
-					// this.$refs.treeRef.setTree([data.result])
-				}
-				// console.log(this.$refs.treeRef);
-			})
+			this.getRootData()
 		},
 		methods: {
+			getRootData() {
+				showLoading()
+				ajax({
+					method: 'Businese.KnowledgeBaseDAL.GetRootDirecotory',
+				}).then(res => {
+					hideLoading()
+					const { result } = res.data
+					console.log('res.data.result: ', result)
+					if (result) {
+						this.tree = [{
+							...result,
+							user: result.Type === 1,
+							id: result.RecordId
+						}]
+					}
+				})
+			},
 			onGetChild(item, callback) {
+				showLoading()
 				ajax({
 					method: 'Businese.KnowledgeBaseDAL.GetSubItems',
 					params: {
@@ -59,9 +64,16 @@
 					},
 				}).then(res => {
 					hideLoading()
-					const { data } = res
-					if (data.result) {
-						callback(data.result)
+					const { result } = res.data
+					if (result) {
+						result.forEach(resultItem => {
+							resultItem.user = resultItem.Type === 1,
+							resultItem.id = resultItem.RecordId
+						})
+						item.children = result
+						callback(result)
+					} else {
+						callback([])
 					}
 				}).catch(() => {
 					hideLoading()
@@ -90,8 +102,26 @@
 			confirm(e, str) {
 				console.log('confirm: ', e, str);
 				if (str === 'back') {
-					console.log('下载');
+					e = e.filter(item => item.ServerFileName)
+					const imgArr = e.map(item => getBaseUrl() + 'files/downloadfile?filename=' + item.ServerFileName)
+					let hasNoImg = imgArr.find(item => {
+						const ext = item.split('.').pop().toUpperCase()
+						// 有一个不是图片
+						return ext !== 'JPG' && ext !== 'JPEG' && ext !== 'PNG' && ext !== 'GIF' && ext !== 'BMP'
+					})
+					console.log('hasNoImg: ', hasNoImg);
+					// 如果存在非图片，则下载
+					if (hasNoImg) {
+						this.downLoadImg(imgArr)
+					} else if (imgArr.length > 0){
+						// 否则预览
+						uni.previewImage({
+							indicator: 'number',
+							urls: imgArr
+						})
+					}
 				}
+				
 				// showLoading({
 				// 	title: '正在下载中...'
 				// })
@@ -107,6 +137,29 @@
 				// }).catch(() => {
 				// 	hideLoading()
 				// })
+			},
+			downLoadImg(arr) {
+				const promiseAll = []
+				arr.forEach(item => {
+					const promiseObj = new Promise((resolve, reject) => {
+						uni.saveFile({
+							tempFilePath: item,
+							success: saveRes => {
+								const { savedFilePath } = saveRes
+								resolve(savedFilePath)
+							},
+							fail(err) {
+								reject(err)
+							}
+						})
+					})
+					promiseAll.push(promiseObj)
+				})
+				Promise.all(promiseAll).then(res => {
+					console.log('promiseAll: ', res);
+				}).catch(err => {
+					console.log('err: ', err)
+				})
 			}
 		}
 	}

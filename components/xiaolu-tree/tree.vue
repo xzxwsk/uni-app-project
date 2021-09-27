@@ -16,7 +16,7 @@
 						<view class="inline-item" @click="backTree(item,index)" v-if="index!=0">
 							<i v-if="index!=0" class="iconfont icon-z043 iconclass"/>
 							<text v-if="index==tree_stack.length-1" class="none inline-item">
-								{{item[props.label]}}
+								{{item[props.label].length > 8 ? item[props.label].substr(0, 8) + '...' : item[props.label]}}
 							</text>
 							<text v-else class="active">
 								{{item[props.label]}}
@@ -43,7 +43,7 @@
 						</view>
 						<view v-if="item.user" @click.stop="checkboxChange(item,index,item.bx,item.qx)"><slot v-bind:item="item"></slot></view>
 						<slot v-else v-bind:item="item"></slot>
-						<view class="right"><i v-if="!item.user&&item.children.length>0" class="iconfont icon-z043"></i></view>
+						<view class="right"><i v-if="!item.user" class="iconfont icon-z043"></i></view>
 					</label>
 				</view>
 			</view>

@@ -100,10 +100,6 @@
 			}
 		},
 		methods: {
-			setTree(arr) {
-				this.tree = arr
-				this.allData = arr
-			},
 			//多选
 			async checkboxChange(item, index, bx, qx) {
 				var that = this;
@@ -203,26 +199,34 @@
 			},
 			//到下一级
 			toChildren(item) {
-				console.log('item: ', item);
-				if(item.user) return
 				var that = this;
+				const children = that.props.children;
+				if(item.user) return
 				this.tochild = true;
+				if (item[children]) {
+					this.setChildShow(item, item[children])
+					return
+				}
 				this.$emit('getChild', item, result => {
-					console.log('result: ', result);
-					let children = that.props.children;
-					if (!item.user && item[children].length > 0) {
-						that.tree = item[children];
-						if (that.tree_stack[0].id == item.id) {
-						} else {
-							that.tree_stack.push(item);
-						}
-					}
-					this.$nextTick(() => {
-						this.scrollLeft += 200;
-					})
-					if(this.props.checkStrictly) this.checkAllChoose();
-					this.$forceUpdate()
+					this.setChildShow(item, result)
 				})
+			},
+			// 设置子级内容
+			setChildShow(item, children) {
+				const that = this
+				console.log(item, children)
+				if (!item.user) {
+					that.tree = children;
+					if (that.tree_stack[0].id === item.id) {
+					} else {
+						that.tree_stack.push(item);
+					}
+				}
+				this.$nextTick(() => {
+					this.scrollLeft += 200;
+				})
+				if(this.props.checkStrictly) this.checkAllChoose();
+				this.$forceUpdate()
 			},
 			//搜索
 			confirmSearch(val) {
@@ -263,7 +267,6 @@
 						e.qx = o;
 						e.bx = o;
 						let num2 = this.computAllNumber(e.children);
-						// console.log(this.newNum,this.oldNum)
 						if(this.newNum!=0&&this.oldNum!=0){
 							if(this.newNum==this.oldNum) {
 								e.qx = t;e.bx = o;

@@ -139,17 +139,28 @@
 				// })
 			},
 			downLoadImg(arr) {
+				showLoading({
+					title: '下载中...'
+				})
 				const promiseAll = []
 				arr.forEach(item => {
 					const promiseObj = new Promise((resolve, reject) => {
-						uni.saveFile({
-							tempFilePath: item,
-							success: saveRes => {
-								const { savedFilePath } = saveRes
-								resolve(savedFilePath)
-							},
-							fail(err) {
-								reject(err)
+						// 下载图片，获得临时文件
+						uni.downloadFile({
+						    url: item,
+						    success: res => {
+						        if (res.statusCode === 200) {
+									uni.saveFile({
+										tempFilePath: res.tempFilePath,
+										success: saveRes => {
+											const { savedFilePath } = saveRes
+											resolve(savedFilePath)
+										},
+										fail(err) {
+											reject(err)
+										}
+									})
+								}
 							}
 						})
 					})
@@ -159,6 +170,8 @@
 					console.log('promiseAll: ', res);
 				}).catch(err => {
 					console.log('err: ', err)
+				}).finally(() => {
+					hideLoading()
 				})
 			}
 		}

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-	import { ajax, showLoading, hideLoading, getBaseUrl } from '@/common/util'
+	import { ajax, showLoading, hideLoading, getBaseUrl, showToast } from '@/common/util'
 	import XiaoluTree from '@/components/xiaolu-tree/tree.vue'
 	// import dataList from '@/common/treeData.js'
 	export default {
@@ -47,11 +47,13 @@
 					const { result } = res.data
 					console.log('res.data.result: ', result)
 					if (result) {
-						this.tree = [{
-							...result,
-							user: result.Type === 1,
-							id: result.RecordId
-						}]
+						this.onGetChild(result, data => {
+							this.tree = data.map(item =>({
+								...item,
+								user: item.Type === 1,
+								id: item.RecordId
+							}))
+						})
 					}
 				})
 			},
@@ -90,10 +92,14 @@
 					},
 				}).then(res => {
 					hideLoading()
-					const { data } = res
-					console.log('res.data: ', data)
-					if (data.result) {
-						callback(data.result)
+					const { result } = res.data
+					console.log('res.data: ', result)
+					if (result) {
+						result.forEach(resultItem => {
+							resultItem.user = resultItem.Type === 1,
+							resultItem.id = resultItem.RecordId
+						})
+						callback(result)
 					}
 				}).catch(() => {
 					hideLoading()
@@ -160,7 +166,12 @@
 											reject(err)
 										}
 									})
+								} else {
+									reject(res)
 								}
+							},
+							fail(err) {
+								reject(err)
 							}
 						})
 					})
@@ -168,6 +179,9 @@
 				})
 				Promise.all(promiseAll).then(res => {
 					console.log('promiseAll: ', res);
+					showToast({
+						title: '下载完成'
+					})
 				}).catch(err => {
 					console.log('err: ', err)
 				}).finally(() => {

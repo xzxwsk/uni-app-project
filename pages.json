@@ -558,6 +558,12 @@
 					"bounce": "vertical"
 				}
 			}
+		}, {
+            "path" : "pages/zhishiku/zhishiku",
+            "style" : {
+                "navigationBarTitleText": "知识库",
+                "enablePullDownRefresh": false
+            }
 		}
     ],
 	"globalStyle": {

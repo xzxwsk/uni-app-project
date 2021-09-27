@@ -61,6 +61,12 @@
 				</view>
 				下属帐户余额
 			</view>
+			<view class="btn" @click="onZhishiku">
+				<view>
+					<view class="uni-icon uni-icon-image"></view>
+				</view>
+				知识库
+			</view>
 		</view>
 		<view class="uni-list">
 			<view
@@ -341,6 +347,12 @@
 				// 下属资料
 				util.goUrl({
 					url: '/pages/user/mySubordinateInfo'
+				})
+			},
+			onZhishiku() {
+				// 知识库
+				util.goUrl({
+					url: '/pages/zhishiku/zhishiku'
 				})
 			}
 		}

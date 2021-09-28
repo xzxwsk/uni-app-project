@@ -4,6 +4,8 @@
 			<image v-if="img"
 				style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;"
 				:src="img"
+				@load="onImgLoad"
+				@error="onImgErr"
 				mode="aspectFit"
 			></image>
 		</view>
@@ -27,7 +29,8 @@
 		data() {
 			return {
 				st: null,
-				img: ''
+				img: '',
+				imgErr: false
 			}
 		},
 		created() {
@@ -51,9 +54,9 @@
 				}).catch(() => {})
 				const { result } = res.data
 				// 判断是否更新，如果没有更新，则不用下载
-				if (adImgTime === result.PictureSplashLastModifyTime) {
-					return
-				}
+				// if (adImgTime === result.PictureSplashLastModifyTime) {
+				// 	return
+				// }
 				// 更新时间
 				util.setStorageSync({
 					key: 'importadtime',
@@ -73,9 +76,10 @@
 								    success: saveRes => {
 								        const { savedFilePath } = saveRes
 										console.log('savedFilePath: ', savedFilePath)
-										// this.img = saveRes.savedFilePath
 										// 更新显示这个刚下载的
-										this.img = savedFilePath
+										if (this.imgErr) {
+											this.img = savedFilePath
+										}
 										util.setStorageSync({
 											key: 'importad',
 											data: savedFilePath
@@ -93,6 +97,13 @@
 				util.goTab({
 					url: '../tabBar/index'
 				})
+			},
+			onImgLoad() {
+				console.log('引导图片加载成功');
+				this.imgErr = false
+			},
+			onImgErr() {
+				this.imgErr = true
 			}
 		}
 	}

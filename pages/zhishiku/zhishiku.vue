@@ -2,10 +2,8 @@
 	<view>
 		<xiaolu-tree ref="treeRef" v-slot:default="{item}" :searchIf="true" :checkList="checkList" :positionArr="positionArr" v-if="tree.length>0" :props="prop" @sendValue="confirm" :isCheck="true" :trees="tree" @getChild="onGetChild" @search="onSearch">
 			<!-- 内容插槽 -->
-			<view>
-				<view class="content-item">
-					<view class="word">{{item.Name}}</view>
-				</view>
+			<view class="content-item">
+				<view class="word">{{item.Name}}</view>
 			</view>
 			<!--end -->
 		</xiaolu-tree>
@@ -144,10 +142,12 @@
 				// 	hideLoading()
 				// })
 			},
-			downLoadImg(arr) {
+			async downLoadImg(arr) {
 				showLoading({
 					title: '下载中...'
 				})
+				// 下载前先清除缓存文件
+				await this.removeFileList()
 				const promiseAll = []
 				arr.forEach(item => {
 					const promiseObj = new Promise((resolve, reject) => {
@@ -158,6 +158,7 @@
 						        if (res.statusCode === 200) {
 									uni.saveFile({
 										tempFilePath: res.tempFilePath,
+										// filePath: '_downloads',
 										success: saveRes => {
 											const { savedFilePath } = saveRes
 											resolve(savedFilePath)
@@ -177,15 +178,77 @@
 					})
 					promiseAll.push(promiseObj)
 				})
+				// 下载
 				Promise.all(promiseAll).then(res => {
-					console.log('promiseAll: ', res);
-					showToast({
-						title: '下载完成'
+					console.log('下载完成: ', res);
+					uni.getSavedFileList({
+					    success: res => {
+					        console.log('getSavedFileList: ', res.fileList)
+							// 备份文件到
+							// this.copyFileList(res.fileList)
+							// 打开单个文档
+							uni.openDocument({
+								filePath: res.fileList[0].filePath,
+								success: function (res) {
+								    console.log('打开文档成功')
+								}
+							})
+						}
 					})
+					
 				}).catch(err => {
 					console.log('err: ', err)
 				}).finally(() => {
 					hideLoading()
+				})
+			},
+			// 清除缓存
+			removeFileList(fileList) {
+				return new Promise((resolve, reject) => {
+					uni.getSavedFileList({
+						success: res => {
+							const promiseAll = []
+							res.fileList.forEach(item => {
+								const promiseObj = new Promise((resolveSub, rejectSub) => {
+									uni.removeSavedFile({
+										filePath: item.filePath,
+										success() {
+											resolveSub()
+										},
+										fail() {
+											rejectSub()
+										}
+									})
+								})
+								promiseAll.push(promiseObj)
+							})
+							Promise.all(promiseAll).then(() => {
+								resolve()
+							}).catch(() => {
+								reject()
+							})
+						}
+					})
+				})
+			},
+			copyFileList(fileList) {
+				const fileSysMana = uni.getFileSystemManager()
+				const copyFn = filePath => {
+					const fileName = filePath.split('/').pop()
+					console.log('copyFileList fileName: ', wx.env.USER_DATA_PATH, fileName)
+					fileSysMana.copyFile({
+						srcPath: filePath,
+						destPath: `${wx.env.USER_DATA_PATH}/${fileName}`,
+						success(res) {
+							console.log('copyFile: ', res);
+						}
+					})
+				}
+				fileList.forEach(item => {
+					copyFn(item.filePath)
+				})
+				showToast({
+					title: '下载完成'
 				})
 			}
 		}

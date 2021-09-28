@@ -35,11 +35,11 @@
 						<view class="checkbox" v-if="isCheck&&props.multiple&&item.user" @click.stop="checkboxChange(item,index,item.bx,item.qx)">
 							<span v-if="(newCheckList.findIndex(e=>{return item.id==e.id}))>-1&&!item.qx">
 								<i v-if="item.bx&&props.multiple" class="iconfont icon-banxuanzhongshousuo1-shi icons"/>
-								<i v-else class="iconfont icon-xuanzhong txt icon-selected"/>
+								<i v-else class="iconfont icon-xuanzhong1 txt icon-selected"/>
 							</span>
 							<i v-else-if="props.multiple&&item.qx" class="iconfont icon-xuanzhong txt icon-selected"/>
 							<i v-else-if="item.bx&&props.multiple" class="iconfont icon-banxuanzhongshousuo1-shi icons"/>
-							<i style="color: #b8b8b8;" v-else class="iconfont icon-weixuanzhong txt"/>
+							<i style="color: #b8b8b8;" v-else class="iconfont icon-weixuanzhong1 txt"/>
 						</view>
 						<view v-if="item.user" @click.stop="checkboxChange(item,index,item.bx,item.qx)"><slot v-bind:item="item"></slot></view>
 						<slot v-else v-bind:item="item"></slot>
@@ -49,7 +49,7 @@
 			</view>
 		</view>
 		<view class="btn box_sizing">
-			<button class="sureBtn" type="primary" @click="backConfirm" :disabled="downloadDisabled">下载</button>
+			<button class="sureBtn" type="primary" @click="backConfirm" :disabled="downloadDisabled">打开</button>
 		</view>
 	</view>
 </template>

@@ -135,7 +135,7 @@
 						return
 					}
 					// if(item.user&&this.props.checkStrictly) this.getNodeRoute(this.allData,item.id);
-					that.newCheckList.push({...item});
+					that.newCheckList = [{...item}]
 				}
 				console.log('newCheckList: ', that.newCheckList.length, this.downloadDisabled);
 				that.$emit('sendValue', that.newCheckList)

@@ -12,7 +12,7 @@
 						</swiper-item>
                         <swiper-item v-for="(item, index) in imgLs" :key="index">
                             <view class="swiper-item">
-								<image style="width: 100%; height: 100%;" mode="aspectFit" :src="item" @click="goDetail(index)" @error="imageError"></image>
+								<image style="width: 100%; height: 100%;" mode="aspectFit" :src="item" @click="goDetail(index)" @load="onBannerImgLoad" @error="onBannerImgError"></image>
 							</view>
                         </swiper-item>                        
                     </swiper>
@@ -66,6 +66,7 @@
 				autoplay: true,
 				interval: 50000,
 				duration: 500,
+				imgErr: false,
 				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				imgLs: [],
 				productList: [],
@@ -254,6 +255,13 @@
 					}
 				})
 			},
+			onBannerImgLoad() {
+				console.log('banner图片加载成功');
+				this.imgErr = false
+			},
+			onBannerImgError() {
+				this.imgErr = true
+			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
@@ -278,9 +286,9 @@
 					// }
 					console.log('getAd: ', adImgTime, result.PictureTopLastModifyTime)
 					// 判断是否更新，如果没有更新，则不用下载
-					if (adImgTime === result.PictureTopLastModifyTime) {
-						return
-					}
+					// if (adImgTime === result.PictureTopLastModifyTime) {
+					// 	return
+					// }
 					// 更新时间
 					util.setStorageSync({
 						key: 'indextopadtime',
@@ -298,9 +306,10 @@
 								    tempFilePath: res.tempFilePath,
 								    success: saveRes => {
 								        const { savedFilePath } = saveRes
-										this.imgLs = []
 										// 更新显示这个刚下载的
-										this.imgLs.push(savedFilePath)
+										if (this.imgErr) {
+											this.imgLs = [savedFilePath]
+										}
 										util.setStorageSync({
 											key: 'indextopad',
 											data: savedFilePath

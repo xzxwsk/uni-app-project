@@ -13,7 +13,7 @@
 </template>
 
 <script>
-	import { ajax, showLoading, hideLoading, getBaseUrl } from '@/common/util'
+	import { ajax, showLoading, hideLoading, getBaseUrl, showToast } from '@/common/util'
 	import XiaoluTree from '@/components/xiaolu-tree/tree.vue'
 	// import dataList from '@/common/treeData.js'
 	export default {
@@ -109,9 +109,12 @@
 				console.log('confirm: ', e, str);
 				if (str === 'back') {
 					e = e.filter(item => item.ServerFileName)
-					const imgArr = e.map(item => getBaseUrl() + 'files/downloadfile?filename=' + item.ServerFileName)
+					const imgArr = e.map(item => ({
+						filePath: getBaseUrl() + 'files/downloadfile?filename=' + item.ServerFileName,
+						fileName: item.Name
+					}))
 					let hasNoImg = imgArr.find(item => {
-						const ext = item.split('.').pop().toUpperCase()
+						const ext = item.fileName.split('.').pop().toUpperCase()
 						// 有一个不是图片
 						return ext !== 'JPG' && ext !== 'JPEG' && ext !== 'PNG' && ext !== 'GIF' && ext !== 'BMP'
 					})
@@ -152,33 +155,63 @@
 				arr.forEach(item => {
 					const promiseObj = new Promise((resolve, reject) => {
 						// 下载图片，获得临时文件
-						uni.downloadFile({
-						    url: item,
-						    success: res => {
-						        if (res.statusCode === 200) {
-									uni.saveFile({
-										tempFilePath: res.tempFilePath,
-										success: saveRes => {
-											const { savedFilePath } = saveRes
-											resolve(savedFilePath)
-										},
-										fail(err) {
-											reject(err)
-										}
-									})
-								} else {
-									reject(res)
-								}
-							},
-							fail(err) {
-								reject(err)
+						// uni.downloadFile({
+						//     url: item,
+						//     success: res => {
+						//         if (res.statusCode === 200) {
+						// 			uni.saveFile({
+						// 				tempFilePath: res.tempFilePath,
+						// 				success: saveRes => {
+						// 					const { savedFilePath } = saveRes
+						// 					resolve(savedFilePath)
+						// 				},
+						// 				fail(err) {
+						// 					reject(err)
+						// 				}
+						// 			})
+						// 		} else {
+						// 			reject(res)
+						// 		}
+						// 	},
+						// 	fail(err) {
+						// 		reject(err)
+						// 	}
+						// })
+						const dtask = plus.downloader.createDownload(item.filePath, {
+							filename: `_downloads/${item.fileName}`
+						}, function (d, status) {
+							if(status == 200) {
+								console.log("Download success: ", d.filename, d.totalSize/1024);
+								plus.io.resolveLocalFileSystemURL(d.filename, function(entry) {
+									console.log('storage路径: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
+									resolve(entry.fullPath)
+								}, function(err) {
+									console.log('未找到文件: ', JSON.stringify(err))
+									reject(err)
+								})
+							} else {
+								reject()
 							}
 						})
+						dtask.start();
 					})
 					promiseAll.push(promiseObj)
 				})
+					
 				Promise.all(promiseAll).then(res => {
 					console.log('promiseAll: ', res);
+					// const resolveFile = item => {
+					// 	// 找到文件
+					// 	plus.io.resolveLocalFileSystemURL(item, function(entry) {
+							
+					// 	})
+					// }
+					// res.forEach(item => {
+					// 	resolveFile(item)
+					// })
+					showToast({
+						title: '下载成功'
+					})
 				}).catch(err => {
 					console.log('err: ', err)
 				}).finally(() => {

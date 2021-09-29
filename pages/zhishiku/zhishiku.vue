@@ -43,7 +43,6 @@
 				ajax({
 					method: 'Businese.KnowledgeBaseDAL.GetRootDirecotory',
 				}).then(res => {
-					hideLoading()
 					const { result } = res.data
 					console.log('res.data.result: ', result)
 					if (result) {
@@ -55,10 +54,11 @@
 							}))
 						})
 					}
+				}).catch(() => {
+					hideLoading()
 				})
 			},
 			onGetChild(item, callback) {
-				showLoading()
 				ajax({
 					method: 'Businese.KnowledgeBaseDAL.GetSubItems',
 					params: {
@@ -178,13 +178,40 @@
 						// 	}
 						// })
 						const dtask = plus.downloader.createDownload(item.filePath, {
-							filename: `_downloads/${item.fileName}`
+							filename: `${plus.os.name!== 'iOS' ? '_downloads' : '_doc'}/${item.fileName}` // 保存文件路径仅支持以"_downloads/"、"_doc/"、"_documents/"开头的字符串。 文件路径以文件后缀名结尾
 						}, function (d, status) {
 							if(status == 200) {
-								console.log("Download success: ", d.filename, d.totalSize/1024);
+								// console.log("Download success: ", d.filename, d.totalSize/1024);
+								// 下载完成后解析路径，获取目录或文件操作对象
 								plus.io.resolveLocalFileSystemURL(d.filename, function(entry) {
-									console.log('storage路径: ', entry.fullPath, entry.toLocalURL(), entry.toURL())
-									resolve(entry.fullPath)
+									if (plus.os.name !== 'iOS') {
+										// const environment = plus.android.importClass("android.os.Environment")
+										// const sdRoot = environment.getExternalStorageDirectory()
+										// console.log('sdRoot: ', sdRoot)
+										plus.io.resolveLocalFileSystemURL('/storage/emulated/0/', entryc => {
+							                // 在根目录创建一个名为'MintoTalk'的目录（没有就创建，有就打开）
+							                entryc.getDirectory('Download', {create: true}, distDir => {
+												const name = d.filename.split('/').pop()
+												let flag = false
+												entry.moveTo(distDir, name, function(entryMove) {
+													flag = true
+													resolve(entryMove.fullPath)
+												}, function(err) {
+													flag = true
+													resolve(err)
+												})
+												// 如果未响应，则定时返回
+												setTimeout(() => {
+													if (!flag) {
+														resolve(true)
+													}
+												}, 1000)
+											})
+										})
+									} else {
+										// 可以下载下来，但在沙盒内，不能在文档中找到
+										resolve(entry.fullPath)
+									}
 								}, function(err) {
 									console.log('未找到文件: ', JSON.stringify(err))
 									reject(err)

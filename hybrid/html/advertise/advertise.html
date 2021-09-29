@@ -278,9 +278,9 @@
 				const oldTime = localStorage.getItem('pictureSplashLastModifyTime')
 				console.log('oldTime: ', oldTime, 'pictureSplashLastModifyTime: ', pictureSplashLastModifyTime, pictureSplashLastModifyTime === oldTime);
 				// 如果时间未更新，则不用再下载缓存新图片
-				if (pictureSplashLastModifyTime === oldTime) {
-					return
-				}
+				// if (pictureSplashLastModifyTime === oldTime) {
+				// 	return
+				// }
 				localStorage.setItem('pictureSplashLastModifyTime', pictureSplashLastModifyTime)
 				// 重新下载新的覆盖旧的
 				showImportImg(baseGlobalUrl + 'files/downloadfile?filename=' + res.result.PictureSplashFileName, res.result)

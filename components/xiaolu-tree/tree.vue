@@ -49,7 +49,7 @@
 			</view>
 		</view>
 		<view class="btn box_sizing">
-			<button class="sureBtn" type="primary" @click="backConfirm" :disabled="downloadDisabled">下载</button>
+			<button class="sureBtn" type="primary" @click="backConfirm" :disabled="downloadDisabled">{{btnText}}</button>
 		</view>
 	</view>
 </template>

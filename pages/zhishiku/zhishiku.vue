@@ -149,7 +149,7 @@
 			},
 			downLoadImg(arr) {
 				showLoading({
-					title: '下载中...'
+					title: plus.os.name!== 'iOS' ? '下载中...' : '正在打开...'
 				})
 				const promiseAll = []
 				arr.forEach(item => {
@@ -209,7 +209,7 @@
 											})
 										})
 									} else {
-										// 可以下载下来，但在沙盒内，不能在文档中找到
+										// 可以下载下来，但在沙盒内，不能在文档中找到，使用和小程序一致的打开方式
 										resolve(entry.fullPath)
 									}
 								}, function(err) {
@@ -236,9 +236,26 @@
 					// res.forEach(item => {
 					// 	resolveFile(item)
 					// })
-					showToast({
-						title: '下载成功'
-					})
+					if (plus.os.name!== 'iOS') {
+						showToast({
+							title: '下载成功'
+						})
+					} else {
+						// 找出最后一个非图片
+						let lastItem = res.pop()
+						let fileExt = lastItem.split('.').pop().toUpperCase()
+						while(fileExt === 'JPG' || fileExt === 'JPEG' || fileExt === 'PNG' || fileExt === 'GIF' || fileExt === 'BMP') {
+							lastItem = res.pop()
+							fileExt = lastItem.split('.').pop().toUpperCase()
+						}
+						// 打开单个文档
+						uni.openDocument({
+							filePath: lastItem,
+							success: function (res) {
+								console.log('打开文档成功')
+							}
+						})
+					}
 				}).catch(err => {
 					console.log('err: ', err)
 				}).finally(() => {

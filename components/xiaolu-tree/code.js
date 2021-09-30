@@ -69,7 +69,8 @@
 				tochild: false,
 				newCheckList: this.checkList,
 				scrollLeft: 999,
-				nodePathArray: []
+				nodePathArray: [],
+				btnText: ''
 			}
 		},
 		/*
@@ -86,6 +87,11 @@
 			search
 		},
 		mounted() {
+			if (plus.os.name !== 'iOS') {
+				this.btnText = '下载'
+			} else {
+				this.btnText = '打开'
+			}
 			if(this.props.multiple&&this.props.checkStrictly){
 				if(this.newCheckList.length!=0){
 					 this.checkAllChoose();

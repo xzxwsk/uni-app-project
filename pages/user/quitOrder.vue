@@ -42,6 +42,13 @@
 				</view>
 			</view>
 		</view>
+		<view style="height: 50px;">
+			<view class="create_pay_order">
+				<view class="result">
+					<button class="btn" type="warn" @click="onAdd">新增</button>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -203,6 +210,11 @@
 			goDetail(id) {
 				// 查看订单详情
 				console.log(id);
+			},
+			onAdd() {
+				util.goUrl({
+					url: './createQuitOrder'
+				})
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)

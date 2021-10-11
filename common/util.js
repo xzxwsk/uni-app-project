@@ -1,9 +1,10 @@
 let baseUrlGlobal
 const miniProgram = uni.getAccountInfoSync().miniProgram
 console.log('miniProgram: ', miniProgram)
+// 因为要处理appid问题，此处不能动态设置，否则appid不匹配
 // if (miniProgram.envVersion !== 'release') { // develop
 // 	baseUrlGlobal = 'http://47.104.226.115/qcdm/'; // 开发 测试帐号：A0000002 密码：1234  15883670960 1234 appId: wxba5d4722564f6a06
-// const baseUrlGlobal = 'http://118.163.201.227/qcdm/'; // 生产环境
+// 	// const baseUrlGlobal = 'http://118.163.201.227/qcdm/'; // 旧的生产环境，已不再使用
 // } else {
 	baseUrlGlobal = 'https://www.zzxianchang.cn/qcdm/'; // 小程序 测试帐号：A0000002 密码：000000 appId: wxaf376d36626cae3a 
 // }

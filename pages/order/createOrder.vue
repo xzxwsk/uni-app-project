@@ -445,7 +445,9 @@
 						title: '订单创建成功',
 						success() {
 							setTimeout(() => {
-								uni.navigateBack();
+								util.redirectUrl({
+									url: './myOrder'
+								})
 							}, 1000);
 						}
 					});

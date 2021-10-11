@@ -33,8 +33,10 @@
 						<input-box ref="input2" type="password" :verification="['isNull','isChineseEnlishAndNumber']" :verificationTip="['密码不能为空','密码只能输入中文、数字和字母']" :inputValue="password" v-model="password" placeholder="请输入密码"></input-box>
 					</view>
 					<view class="input-row">
-						<text class="title">验证码：</text>
-						<input-box class="voli_code_ipt" ref="input3" type="number" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
+						<text class="title voli_code_title">验证码：</text>
+						<view style="flex: 1;">
+							<input-box class="voli_code_ipt" ref="input3" type="number" :verification="['isNull']" :verificationTip="['验证码不能为空']" rightText="看不清？" rightClass="right_txt" @rightClick="resetVoliCode" maxLength="4" v-model="voliCode" placeholder="请输入验证码"></input-box>
+						</view>
 					</view>
 					<view class="input-row" style="height: 60px;">
 						<text class="title"></text>
@@ -136,7 +138,9 @@
 		mounted() {
 			this.interfaceAddr = util.getBaseUrl();
 			this.initSetAccount();
-			// this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
+			if (this.$refs.interfaceAddrIpt) {
+				this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
+			}
 			
 			// let sessionId = util.getStorageSync('session_id');
 			// if (sessionId) {
@@ -288,6 +292,13 @@
 				// #ifdef APP-PLUS
 				// plus.nativeUI.showWaiting('加载中……');
 				// #endif
+				console.log('interfaceAddr: ', this.interfaceAddr);
+				if (this.interfaceAddr === '') {
+					util.showToast({
+						title: '请先配置接口服务地址'
+					})
+					return
+				}
 				util.showLoading();
 				util.setBaseUrl(this.interfaceAddr);
 				this.initAddr = true;
@@ -501,7 +512,9 @@
 				let account = util.getStorageSync('userName');
 				if(account) {
 					this.account = account;
-					this.$refs.input1.setValue(account);
+					if (this.$refs.input1) {
+						this.$refs.input1.setValue(account);
+					}
 				}
 			},
 			saveAccount(account) {

@@ -120,7 +120,7 @@
         "setting" : {
             "urlCheck" : false,
             "es6" : false,
-            "minified" : false
+            "minified" : true
         },
         "usingComponents" : false,
         "permission" : {}

@@ -98,7 +98,8 @@
 				voliCodeSrc: '',
 				positionTop: 0,
 				code: '', // 微信code
-				isEnabledUnbind: false
+				isEnabledUnbind: false,
+				isMounted: false
 			}
 		},
 		onShow() {
@@ -107,23 +108,29 @@
 			uni.hideHomeButton()
 			this.getCode()
 			// #endif
+			
+			if (this.isMounted) {
+				this.getSessionId();
+				this.getSystemInfo();
+			}
 		},
 		onLoad() {
-			util.setStorageSync({
-				key: 'session_id',
-				data: ''
-			});
-			this.getSessionId();
-			this.getSystemInfo();
 			// #ifdef APP-PLUS
 			// plus.nativeUI.showWaiting('加载中……');
 			// #endif
+			
+			util.setStorageSync({
+				key: 'session_id',
+				data: ''
+			})
 		},
 		onReady() {
 			// #ifdef APP-PLUS
 			// plus.nativeUI.closeWaiting();
 			// #endif
+			
 			// this.initPosition();
+			
 			// #ifdef H5
 			document.onkeydown = e => {  
 			    //webview不需要兼容ie  
@@ -135,7 +142,12 @@
 		},
 		mounted() {
 			this.interfaceAddr = util.getBaseUrl();
+			// 初始化帐号
 			this.initSetAccount();
+			
+			this.getSessionId();
+			this.getSystemInfo();
+			this.isMounted = true; // 避免与onShow重复执行
 			// this.$refs.interfaceAddrIpt.setValue(this.interfaceAddr);
 			
 			// let sessionId = util.getStorageSync('session_id');
@@ -253,7 +265,7 @@
 				this.resetVoliCode();
 			},
 			resetVoliCode() {
-				// console.log('验证码');
+				console.log('获取验证码');
 				// console.log('sessionId: ', this.sessionId);
 				// util.ajax({
 				// 	method: 'SYS.UserDAL.GetVerifyCodeBase64',
@@ -308,6 +320,9 @@
 						})
 						this.voliCodeSrc = 'data:image/jpeg;base64,' + res.data.result;
 					},
+					fail(err) {
+						console.log('验证码err: ', err);
+					}
 				})
 			},
 			setInterfaceAddr() {
@@ -414,7 +429,7 @@
 					this.toMain(resUserInfo.data.result.DealerName);
 				}
 			},
-			async bindLogin() {
+			bindLogin() {
 				let me = this;
 				if(!this.$refs.input1) {
 					return;
@@ -426,7 +441,7 @@
 				}
 				if(this.$refs.input1.getValue() && this.$refs.input2.getValue() && this.$refs.input3.getValue()){
 					util.showLoading();
-					await uni.request({
+					uni.request({
 						url: this.interfaceAddr + 'json.rpc/webapi',
 						data: JSON.stringify({
 							jsonrpc: '2.0',
@@ -477,34 +492,34 @@
 						console.log('登录返回： ', res);
 						const { data } = res.pop()
 						if (data.error) {
+							util.hideLoading();
 							util.showToast({
 								title: data.error.message,
 							})
 							throw new Error(data.error.message)
+						} else {
+							util.setStorageSync({
+								key: 'session_id',
+								data: data.result
+							});
+							// 登录成功保留帐号下次使用
+							this.saveAccount(dataObj.account);
+							this.setOpenid(data.result);
+							console.log('openid: ', this.openid);
+							return util.ajax({
+								method: 'SYS.UserDAL.GetDealerByToken',
+								tags: {
+									usertoken: this.openid
+								}
+							})
 						}
-						util.setStorageSync({
-							key: 'session_id',
-							data: data.result
-						});
-						// 登录成功保留帐号下次使用
-						this.saveAccount(dataObj.account);
-						this.setOpenid(data.result);
-					}).then(() => {
-						console.log('openid: ', this.openid);
-						util.ajax({
-							method: 'SYS.UserDAL.GetDealerByToken',
-							tags: {
-								usertoken: me.openid
-							}
-						}).then(res => {
-							util.hideLoading();
-							console.log('分销商信息：', res.data);
-							res.data.result = util.jsonReplace(res.data.result, 'null', '""');
-							me.setUserInfo(res.data.result);
-							me.toMain(res.data.result.DealerName);
-						});
-					}).catch(err => {
+					}).then(res => {
 						util.hideLoading();
+						console.log('分销商信息：', res.data);
+						res.data.result = util.jsonReplace(res.data.result, 'null', '""');
+						me.setUserInfo(res.data.result);
+						me.toMain(res.data.result.DealerName);
+					}).catch(err => {
 						console.log('err: ', err);
 					})
 					// util.goTab({

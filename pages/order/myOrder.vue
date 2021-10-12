@@ -200,6 +200,14 @@
 				this.init();
 			}
 		},
+		onBackPress(e) {
+		    console.log("监听返回按钮事件: ", e);
+		    util.goTab({
+		  	    url: '../tabBar/order'
+		    })
+		    // 此处一定姚要return为true，否则页面不会返回到指定路径
+		    return true;
+		},
 		methods: {
 			init() {
 				let day = util.formatDate(new Date(), 'yyyy-MM');

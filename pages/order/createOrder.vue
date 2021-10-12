@@ -445,7 +445,7 @@
 						title: '订单创建成功',
 						success() {
 							setTimeout(() => {
-								util.redirectUrl({
+								util.goUrl({
 									url: './myOrder'
 								})
 							}, 1000);

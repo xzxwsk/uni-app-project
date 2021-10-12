@@ -256,12 +256,17 @@
 				// }
 			},
 			async getSessionId() {
+				util.showLoading({
+					title: '正在获取验证码...'
+				})
 				await util.ajax({
 					method: 'SYS.UserDAL.GetSessionId'
 				}).then(res => {
 					// console.log('GetSessionId: ', res);
 					this.setSessionId(res.data.result);
-				});
+				}).catch(() => {
+					util.hideLoading()
+				})
 				this.resetVoliCode();
 			},
 			resetVoliCode() {
@@ -322,6 +327,9 @@
 					},
 					fail(err) {
 						console.log('验证码err: ', err);
+					},
+					complete() {
+						util.hideLoading()
 					}
 				})
 			},

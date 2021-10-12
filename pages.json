@@ -82,6 +82,7 @@
 		}, {
 			"path": "pages/order/myOrder",
 			"style": {
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "我的订单",
 				"app-plus": {
 					"bounce": "none"

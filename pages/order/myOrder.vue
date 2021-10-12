@@ -1,5 +1,7 @@
 <template>
 	<view class="uni-tab-bar order">
+		<!-- <view :style="{height: systemInfo.statusBarHeight}"></view> -->
+		<nav-bar title="我的订单" leftIcon="arrowleft" statusBar :leftIconSize="26" @click-left="onReturn" backgroundColor="#f8f8f8" :border="false"></nav-bar>
 		<scroll-view id="tab-bar" class="uni-swiper-tab" scroll-x :scroll-left="scrollLeft">
 			<view class="tab_head">
 				<view v-for="(tab,index) in tabBars" :key="tab.id" class="swiper-tab-list" :class="tabIndex==index ? 'active' : ''"
@@ -120,6 +122,7 @@
 </template>
 
 <script>
+	import NavBar from '@/components/uni-nav-bar/uni-nav-bar';
 	// http://ext.dcloud.net.cn/plugin?id=449
 	import inputBox from '@/components/input-box/input-box';
 	// https://ext.dcloud.net.cn/plugin?id=220
@@ -130,11 +133,12 @@
 	const list = [];
 	export default {
 		components: {
-			inputBox, customDatePicker, uniPopup
+			NavBar, inputBox, customDatePicker, uniPopup
 		},
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
+				systemInfo: '',
 				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				isLoaded: false,
@@ -188,6 +192,9 @@
 					this.isLoaded = true;
 				}, 1000);
 			}
+			
+			this.systemInfo = uni.getSystemInfoSync()
+			console.log('systemInfo: ', this.systemInfo);
 			// this.dataArr = this.randomfn();
 			// this.displayDataArr = util.deepCopy(this.dataArr);
 			// setTimeout(()=> {
@@ -199,6 +206,12 @@
 			if (this.isLoaded) {
 				this.init();
 			}
+		},
+		onBackPress(e) {
+		    console.log("监听返回按钮事件: ", e);
+		    this.onReturn()
+		    // 此处一定姚要return为true，否则页面不会返回到指定路径
+		    return true;
 		},
 		methods: {
 			init() {
@@ -327,7 +340,7 @@
 					let result = await this.getElSize(this.tabBars[i].id);
 					width += result.width;
 				}
-				let winWidth = uni.getSystemInfoSync().windowWidth,
+				let winWidth = this.systemInfo.windowWidth,
 					nowElement = await this.getElSize(this.tabBars[index].id),
 					nowWidth = nowElement.width;
 				if (width + nowWidth - tabBarScrollLeft > winWidth) {
@@ -352,6 +365,11 @@
 					this.scrollLeft = tabBarScrollLeft;
 					this.tabIndex = tabIndex;
 				}
+			},
+			onReturn() {
+				util.goTab({
+				    url: '../tabBar/order'
+				})
 			},
 			bindClose(id) {
 				let me = this;

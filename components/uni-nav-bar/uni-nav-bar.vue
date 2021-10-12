@@ -3,9 +3,9 @@
 		<view :class="{'uni-navbar--fixed': fixed,'uni-navbar--shadow':border,'uni-navbar--border':border}" :style="{'background-color':backgroundColor}" class="uni-navbar__content">
 			<uni-status-bar v-if="statusBar" />
 			<view :style="{color:color}" class="uni-navbar__header uni-navbar__content_view">
-				<view class="uni-navbar__header-btns uni-navbar__content_view" @tap="onClickLeft">
+				<view class="uni-navbar__header-btns uni-navbar__content_view" @tap="onClickLeft" style="width: 54rpx;">
 					<view v-if="leftIcon.length" class="uni-navbar__content_view">
-						<uni-icon :type="leftIcon" :color="color" size="24" />
+						<uni-icon :type="leftIcon" :color="color" :size="leftIconSize" />
 					</view>
 					<view v-if="leftText.length" :class="{'uni-navbar-btn-icon-left':!leftIcon.length}" class="uni-navbar-btn-text uni-navbar__content_view">{{ leftText }}</view>
 					<slot name="left" />
@@ -59,6 +59,10 @@
 				type: String,
 				default: ''
 			},
+			leftIconSize: {
+				type: Number,
+				default: 24
+			},
 			rightIcon: {
 				type: String,
 				default: ''
@@ -111,7 +115,7 @@
 	}
 
 	.uni-navbar__content .uni-navbar__content_view {
-		line-height: 44px
+		display: flex; align-items: center; line-height: 44px
 	}
 
 	.uni-navbar__header {
@@ -145,7 +149,7 @@
 	}
 
 	.uni-navbar__header-container-inner {
-		font-size: 30upx;
+		font-size: 32upx;
 		text-align: center;
 		padding-right: 60upx
 	}

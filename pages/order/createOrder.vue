@@ -260,7 +260,8 @@
 					await util.ajax({
 						method: 'Businese.OrderDAL.CreateDefaultByProductId',
 						params: {
-							ProductIds: [id]
+							ProductId: id,
+							Qty: num
 						},
 						tags: {
 							usertoken: this.openid

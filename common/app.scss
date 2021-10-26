@@ -509,3 +509,12 @@ uni-toast{z-index: 100000;}
 	.add_btn{margin: 10px 5%;}
 }
 .qrimg{display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center;}
+
+.zhishiku{position: relative; z-index: 3; text-align: center;
+	.image-view{display: flex; position: relative; justify-content: center; align-items: center; border: 1px #ccc solid; background-color: #fff;
+		.uni-icon{font-size: 120rpx;}
+		.uni-icon-download{position: absolute; right: 5px; bottom: 5px; z-index: 3; font-size: 60rpx;}
+		.folder{width: 100rpx; height: 100rpx;}
+	}
+	.uni-product-title{overflow: visible; -webkit-line-clamp: initial;}
+}

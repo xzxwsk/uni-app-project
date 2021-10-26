@@ -144,7 +144,7 @@
 			// 下载
 			onDownload(product) {
 				console.log('onDownload: ', product)
-				this.downLoadImg([getBaseUrl() + 'files/downloadfile?filename=' + product.ServerFileName])
+				this.downLoadImg([product])
 			},
 			onSearch(Keyword, callback) {
 				showLoading({
@@ -242,8 +242,8 @@
 						// 		reject(err)
 						// 	}
 						// })
-						const dtask = plus.downloader.createDownload(item.filePath, {
-							filename: `${plus.os.name!== 'iOS' ? '_downloads' : '_doc'}/${item.fileName}` // 保存文件路径仅支持以"_downloads/"、"_doc/"、"_documents/"开头的字符串。 文件路径以文件后缀名结尾
+						const dtask = plus.downloader.createDownload(getBaseUrl() + 'files/downloadfile?filename=' + item.ServerFileName, {
+							filename: `${plus.os.name!== 'iOS' ? '_downloads' : '_doc'}/${item.Name}` // 保存文件路径仅支持以"_downloads/"、"_doc/"、"_documents/"开头的字符串。 文件路径以文件后缀名结尾
 						}, function (d, status) {
 							if(status == 200) {
 								// console.log("Download success: ", d.filename, d.totalSize/1024);

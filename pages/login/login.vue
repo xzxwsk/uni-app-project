@@ -54,6 +54,9 @@
 				<view class="btn-row">
 					<button type="default" @click="bindReg">快速注册</button>
 				</view>
+				<view class="btn-row">
+					<button type="default" @click="bindForget">找回密码</button>
+				</view>
 				<view class="btn-row" v-if="isEnabledUnbind">
 					<button type="default" @tap="onUnbind">解绑</button>
 				</view>
@@ -497,6 +500,11 @@
 							url: `../user/createQuickReg?AboveDealerId=${AboveDealerId}`
 						})
 				    }
+				})
+			},
+			bindForget() {
+				util.goUrl({
+					url: `./forget_psw`
 				})
 			},
 			async onUnbind() {

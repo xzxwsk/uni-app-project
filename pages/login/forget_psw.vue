@@ -58,12 +58,12 @@
         },
 		mounted() {
 			this.interfaceAddr = util.getBaseUrl();
-			let timeout = Number(util.getStorageSync('timeout'))
-			console.log('timeout: ', timeout);
-			if (timeout > 0) {
-				this.timeout = timeout
-				this.setTime()
-			}
+			// let timeout = Number(util.getStorageSync('timeout'))
+			// console.log('timeout: ', timeout);
+			// if (timeout > 0) {
+			// 	this.timeout = timeout
+			// 	this.setTime()
+			// }
 		},
         methods: {
 			...mapMutations(['login']),

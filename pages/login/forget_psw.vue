@@ -1,29 +1,31 @@
 <template>
-    <view class="content">
-        <view class="input-group">
-			<view class="input-row border">
-			    <text class="title">用户名：</text>
-			    <input-box type="text" clearable ref="phone" key="phone" v-model="phone" :inputValue="phone" placeholder="请输入经销商编号/身份证号/手机号"></input-box>
-			</view>
-            <view class="input-row">
-                <text class="title">手机验证码：</text>
-                <div style="flex: 1;">
-					<input-box type="text" ref="code" v-model="code" :inputValue="code" placeholder="请输入验证码" style="padding-left: 0;"></input-box>
+    <view class="login_page">
+		<view class="content">
+			<view class="input-group">
+				<view class="input-row border">
+					<text class="title">用户名：</text>
+					<input-box type="text" class="input-box" clearable ref="phone" key="phone" v-model="phone" :inputValue="phone" placeholder="经销商编号/身份证号/手机号"></input-box>
+				</view>
+				<view class="input-row">
+					<text class="title" style="width: 100px;">手机验证码：</text>
+					<div style="flex: 1;">
+						<input-box type="text" ref="code" v-model="code" :inputValue="code" placeholder="验证码" style="padding-left: 0;"></input-box>
+						<!-- 接收默认填充 -->
+						<input-box type="text" style="padding: 0; width: 0; height: 0; overflow: hidden;"></input-box>
+					</div>
+					<button type="warn" class="primary" @click="getCode" :disabled="timeout > 0" style="height: 40px; line-height: 40px;">{{timeout > 0 ? `${timeout}秒后再获取` : '获取验证码'}}</button>
+				</view>
+				<view class="input-row border">
+					<text class="title">密码：</text>
 					<!-- 接收默认填充 -->
-					<input-box type="text" style="padding: 0; width: 0; height: 0; overflow: hidden;"></input-box>
-                </div>
-				<button type="warn" class="primary" @click="getCode" :disabled="timeout > 0" style="height: 40px; line-height: 40px;">{{timeout > 0 ? `${timeout}秒后再获取` : '获取验证码'}}</button>
-            </view>
-            <view class="input-row border">
-                <text class="title">密码：</text>
-				<!-- 接收默认填充 -->
-				<input-box type="password" style="padding: 0; width: 0; height: 0; overflow: hidden;"></input-box>
-                <input-box type="password" displayable ref="password" key="password" v-model="password" :inputValue="password" placeholder="请输入密码"></input-box>
-            </view>
-        </view>
-        <view class="btn-row">
-            <button type="warn" class="primary" @click="modiPsw">保存</button>
-        </view>
+					<input-box type="password" style="padding: 0; width: 0; height: 0; overflow: hidden;"></input-box>
+					<input-box type="password" displayable ref="password" key="password" v-model="password" :inputValue="password" placeholder="请输入密码"></input-box>
+				</view>
+			</view>
+			<view class="btn-row">
+				<button type="warn" class="primary" @click="modiPsw">保存</button>
+			</view>
+		</view>
     </view>
 </template>
 

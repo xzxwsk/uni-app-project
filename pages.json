@@ -359,9 +359,9 @@
 				}
 			}
 		}, {
-			"path": "pages/login/reg",
+			"path": "pages/login/forget_psw",
 			"style": {
-				"navigationBarTitleText": "注册",
+				"navigationBarTitleText": "修改密码",
 				"app-plus": {
 					"bounce": "vertical"
 				}

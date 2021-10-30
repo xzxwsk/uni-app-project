@@ -60,6 +60,9 @@
 					<text class="split">|</text>
 					<navigator url="./pwd">忘记密码</navigator>
 				</view> -->
+				<view class="btn-row">
+					<button type="default" @click="bindForget">找回密码</button>
+				</view>
 				<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
 					<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
 						<image :src="provider.image" @tap="oauth(provider.value)"></image>
@@ -574,6 +577,11 @@
 							url: `../user/createQuickReg?AboveDealerId=${AboveDealerId}`
 						})
 				    }
+				})
+			},
+			bindForget() {
+				util.goUrl({
+					url: `./forget_psw`
 				})
 			},
 			async onUnbind() {

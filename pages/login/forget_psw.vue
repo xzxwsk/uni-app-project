@@ -8,11 +8,11 @@
             <view class="input-row">
                 <text class="title">手机验证码：</text>
                 <div style="flex: 1;">
-					<input-box type="text" v-model="code" :inputValue="code" placeholder="请输入验证码" style="padding-left: 0;"></input-box>
+					<input-box type="text" ref="code" v-model="code" :inputValue="code" placeholder="请输入验证码" style="padding-left: 0;"></input-box>
 					<!-- 接收默认填充 -->
 					<input-box type="text" style="padding: 0; width: 0; height: 0; overflow: hidden;"></input-box>
                 </div>
-				<button type="warn" class="primary" @tap="getCode" style="height: 40px; line-height: 40px;">获取验证码</button>
+				<button type="warn" class="primary" @click="getCode" :disabled="timeout > 0" style="height: 40px; line-height: 40px;">{{timeout > 0 ? `${timeout}秒后再获取` : '获取验证码'}}</button>
             </view>
             <view class="input-row border">
                 <text class="title">密码：</text>
@@ -22,7 +22,7 @@
             </view>
         </view>
         <view class="btn-row">
-            <button type="warn" class="primary" @tap="register">保存</button>
+            <button type="warn" class="primary" @click="modiPsw">保存</button>
         </view>
     </view>
 </template>
@@ -41,72 +41,100 @@
         },
         data() {
             return {
-                account: '',
 				phone: '',
 				code: '',
-				code1: '',
                 password: '',
+				timeout: 0
             }
         },
+		mounted() {
+			let timeout = Number(util.getStorageSync('timeout'))
+			console.log('timeout: ', timeout);
+			if (timeout > 0) {
+				this.timeout = timeout
+				this.setTime()
+			}
+		},
         methods: {
 			...mapMutations(['login']),
 			async getCode() {
 				this.phone = this.$refs.phone.getValue()
 				console.log('phone: ', this.$refs, this.phone);
 				if (this.phone === '') {
-					uni.showToast({
-					    icon: 'none',
+					util.showToast({
 					    title: '请输入经销商编号/身份证号/手机号'
 					});
 					return;
 				}
 				let res = await util.ajax({
 					method: 'SYS.DealerDAL.SendVerifyCode',
-					prompt: {
+					params: {
 						UserName: this.phone
 					}
 				})
+				const { data } = res
+				if (!data.error) {
+					// 发送成功
+					util.showToast({
+					    title: '验证码已发送成功'
+					});
+					this.timeout = 60
+					// 开始倒计时
+					this.setTime()
+				}
 				console.log('res: ', res);
 			},
-            register() {
-                /**
-                 * 客户端对账号信息进行一些必要的校验。
-                 * 实际开发中，根据业务需要进行处理，这里仅做示例。
-                 */
-                if (this.account.length < 5) {
-                    uni.showToast({
-                        icon: 'none',
-                        title: '账号最短为 5 个字符'
-                    });
-                    return;
-                }
-                if (this.password.length < 6) {
-                    uni.showToast({
-                        icon: 'none',
-                        title: '密码最短为 6 个字符'
-                    });
-                    return;
-                }
-
-                const data = {
-                    account: this.account,
-                    password: this.password
-                }
-                service.addUser(data);
-				console.log('service: ', service);
-                uni.showToast({
-                    title: '注册成功',
-					duration: 2000,
-					success: () => {
-						console.log('success');
-						this.login(data.account);
-						setTimeout(function() {
-							uni.navigateBack({
-							    delta: 1
-							});
-						}, 1000);
+			setTime() {
+				let si = setInterval(() => {
+					if (this.timeout === 0) {
+						clearInterval(si)
+						si = null
+						return
 					}
-                });                
+					this.timeout--
+					util.setStorageSync({key: 'timeout', data: this.timeout})
+				}, 1000)
+			},
+            async modiPsw() {
+				console.log(this.$refs, this.$refs.phone);
+                this.phone = this.$refs.phone.getValue()
+				this.code = this.$refs.code.getValue()
+				this.password = this.$refs.password.getValue()
+                if (this.code === '') {
+                    util.showToast({
+                        title: '验证码不能为空'
+                    });
+                    return;
+                }
+                if (this.password === '') {
+                    util.showToast({
+                        title: '密码不能为空'
+                    })
+                    return;
+                }
+				
+				let res = await util.ajax({
+					method: 'SYS.DealerDAL.ChangePasswordBySms',
+					params: {
+						UserName: this.phone,
+						NewPassword: this.password,
+						VerifyCode: this.code
+					}
+				})
+				const { data } = res
+				if (!data.error) {
+					uni.showToast({
+						title: '修改成功',
+						duration: 2000,
+						success: () => {
+							setTimeout(function() {
+								uni.navigateBack({
+									delta: 1
+								});
+							}, 1000)
+						}
+					})
+				}
             }
         }
     }

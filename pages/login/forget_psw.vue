@@ -21,6 +21,10 @@
 					<input-box type="password" style="padding: 0; width: 0; height: 0; overflow: hidden;"></input-box>
 					<input-box type="password" displayable ref="password" key="password" v-model="password" :inputValue="password" placeholder="请输入密码"></input-box>
 				</view>
+				<view class="input-row border">
+					<text class="title">确认密码：</text>
+					<input-box type="password" displayable ref="password2" key="password2" v-model="password2" :inputValue="password2" placeholder="请输入密码"></input-box>
+				</view>
 			</view>
 			<view class="btn-row">
 				<button type="warn" class="primary" @click="modiPsw">保存</button>
@@ -46,6 +50,7 @@
 				phone: '',
 				code: '',
                 password: '',
+                password2: '',
 				timeout: 0
             }
         },
@@ -102,6 +107,14 @@
                 this.phone = this.$refs.phone.getValue()
 				this.code = this.$refs.code.getValue()
 				this.password = this.$refs.password.getValue()
+				this.password2 = this.$refs.password2.getValue()
+				if (this.password !== this.password2) {
+					util.showToast({
+					    title: '两次输入密码不一致，请重新输入'
+					});
+					return;
+				}
+
                 if (this.code === '') {
                     util.showToast({
                         title: '验证码不能为空'

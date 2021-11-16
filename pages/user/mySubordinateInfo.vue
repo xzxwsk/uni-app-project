@@ -42,7 +42,7 @@
 									<view style="flex: none; width: 10px;"></view>
 									<view class="td">{{item.SubDealerNo}}</view>
 									<view class="td" style="width: 120upx;">{{item.SubDealerName}}</view>
-									<view class="td">{{ ['货款', '合规金', '代交合规金'][item.AccountType] }}</view>
+									<view class="td">{{ ['货款', '合规金', '积分'][item.AccountType] }}</view>
 									<view class="td" style="width: 120upx;">{{item.Amount}}</view>
 									<view class="td"><text class="a">查看明细</text></view>
 								</view>

@@ -179,7 +179,7 @@
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
 							dataItem.stateStr = ['已取消', '未收款', '', '已收款'][dataItem.State + 1];
 							dataItem.payTypeStr = ['现金', '银行转账', '支付宝', '微信'][dataItem.PayType];
-							dataItem.accountTypeStr = ['货款', '合规金', '代交合规金'][dataItem.AccountType];
+							dataItem.accountTypeStr = ['货款', '合规金', '积分'][dataItem.AccountType];
 						});
 						this.dataArr[index].data = res.data.result.data;
 						this.displayDataArr[index].data = res.data.result.data;

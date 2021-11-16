@@ -20,7 +20,7 @@
 									<view><text class="gray">金额:</text><text class="price">￥{{subItem.Amount}}</text> &nbsp; &nbsp; <text class="gray mgl10">退款方式:</text><text>{{subItem.PayTypeStr}}</text></view>
 									<view><text class="gray">退款分销商编号:</text>{{subItem.DealerCode}}</view>
 									<view><text class="gray">退款分销商姓名:</text>{{subItem.DealerName}}</view>
-									<view><text class="gray">退款类型:</text>{{['货款','合规金','代交合规金'][subItem.AccountType]}}</view>
+									<view><text class="gray">退款类型:</text>{{['货款','合规金','积分'][subItem.AccountType]}}</view>
 									<view><text class="gray">付款账户:</text>{{subItem.PayAccountNo}}</view>
 									<block v-if="subItem.PayType === 1">
 										<view><text class="gray">付款银行:</text>{{subItem.PayBank}}</view>

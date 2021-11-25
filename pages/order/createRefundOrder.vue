@@ -32,7 +32,7 @@
 				<input-box ref="applyAmountRef" type="number" v-model="billObj.ApplyAmount" placeholder="元"></input-box>
 			</view>
 			<view class="input-row">
-				<text class="title">全部余额：</text>
+				<text class="title">可用积分：</text>
 				<div style="flex: 1; display: flex; padding: 0 10px 0 0;">
 					<span style="flex: 1; padding: 0 0 0 10px;">{{billObj.PayDealerId ? idLs[selId].AmountCanUse : 0}}</span>
 					<button class="btn" type="warn" @click="onAll" style="width: 200rpx; height: 30px; line-height: 30px; font-size: 16px;" :disabled="allBtnDisabled">全部提现</button>

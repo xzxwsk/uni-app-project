@@ -170,7 +170,6 @@
 				this.billObj.PayDealerCode = this.idLs[value].DealerNo
 				this.billObj.PayDealerName = this.idLs[value].DealerName 
 				this.$refs.payDealerName.setValue(this.idLs[value].DealerName)
-				this.billObj.ApplyAmount = this.idLs[value].AmountCanUse 
 				this.selectKxxzType = '2'
 			},
 			// 全部提现

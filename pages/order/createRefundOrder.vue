@@ -28,15 +28,15 @@
 				</radio-group>
 			</view>
 			<view class="input-row">
+				<text class="title">申请金额：</text>
+				<input-box ref="applyAmountRef" type="number" v-model="billObj.ApplyAmount" placeholder="元"></input-box>
+			</view>
+			<view class="input-row">
 				<text class="title">全部余额：</text>
 				<div style="flex: 1; display: flex; padding: 0 10px 0 0;">
 					<span style="flex: 1; padding: 0 0 0 10px;">{{billObj.PayDealerId ? idLs[selId].AmountCanUse : 0}}</span>
 					<button class="btn" type="warn" @click="onAll" style="width: 200rpx; height: 30px; line-height: 30px; font-size: 16px;" :disabled="!this.billObj.PayDealerId">全部提现</button>
 				</div>
-			</view>
-			<view class="input-row">
-				<text class="title">申请金额：</text>
-				<input-box ref="applyAmountRef" type="number" v-model="billObj.ApplyAmount" placeholder="元"></input-box>
 			</view>
 		</view>
 		<view class="result">
@@ -232,6 +232,12 @@
 				if (!this.billObj.PayDealerId) {
 					util.showToast({
 						title: '请先选择会员编号'
+					})
+					return
+				}
+				if (!this.billObj.ApplyAmount === '') {
+					util.showToast({
+						title: '请输入申请金额'
 					})
 					return
 				}

@@ -3,7 +3,12 @@
 		<view class="input-group">
 			<view class="input-row">
 				<text class="title"><text class="price">*</text>会员编号：</text>
-				<input-box v-model="billObj.PayDealerCode" placeholder="请输入付款会员编号" @input="getNameOfCode"></input-box>
+				<picker style="flex: 1;" @change="bindPickerChange" range-key="str" :range="idLs">
+					<view class="uni-list-cell-navigate uni-navigate-bottom"
+						:style="{color: selId !== '' ? '' : '#999'}"
+					>{{selId !== '' ? idLs[selId].DealerNo : '请选择会员编号'}}</view>
+				</picker>
+				<!-- <input-box v-model="billObj.PayDealerCode" placeholder="请输入付款会员编号" @input="getNameOfCode"></input-box> -->
 			</view>
 			<view class="input-row">
 				<text class="title">会员姓名：</text>
@@ -14,16 +19,24 @@
 				<!-- <text class="txt">{{billObj.accountTypeStr}}</text> -->
 				<radio-group class="pay_type" name="payType" 
 					style="justify-content: flex-start;"
-				><label class="label" 
-					v-for="(item, index) in kxxzTypeArr"
-					:key="index"
-					@click="changeKxxzType"
-				><radio :value="item.value" color="#f23030" :checked="selectKxxzType === item.value"  />{{item.txt}}</label>
+				>
+					<label class="label" 
+						v-for="(item, index) in kxxzTypeArr"
+						:key="index"
+						@click="changeKxxzType"
+					><radio :value="item.value" color="#f23030" :checked="selectKxxzType === item.value"  />{{item.txt}}</label>
 				</radio-group>
 			</view>
 			<view class="input-row">
+				<text class="title">全部余额：</text>
+				<div style="flex: 1; display: flex; padding: 0 10px 0 0;">
+					<span style="flex: 1; padding: 0 0 0 10px;">{{billObj.PayDealerId ? idLs[selId].AmountCanUse : 0}}</span>
+					<button class="btn" type="warn" @click="onAll" style="width: 200rpx; height: 30px; line-height: 30px; font-size: 16px;" :disabled="!this.billObj.PayDealerId">全部提现</button>
+				</div>
+			</view>
+			<view class="input-row">
 				<text class="title">申请金额：</text>
-				<input-box type="number" v-model="billObj.ApplyAmount" placeholder="元"></input-box>
+				<input-box ref="applyAmountRef" type="number" v-model="billObj.ApplyAmount" placeholder="元"></input-box>
 			</view>
 		</view>
 		<view class="result">
@@ -50,6 +63,8 @@
 					// {txt: '货款', value: '0'},
 					{txt: '积分', value: '2'}
 				],
+				idLs: [], // 经销商可选列表
+				selId: '', // 选中项
 				billObj: {
 					"RecordId": ""  /*单据Id*/,
 				    "BillCode": ""  /*单据编号*/,
@@ -96,6 +111,8 @@
 			} else {
 				this.initDefault();
 			}
+			// 获取经销商编号列表
+			this.getIdLs()
 		},
 		methods: {
 			init(id) {
@@ -129,6 +146,39 @@
 					this.billObj.billDateStr = util.formatDate(this.billObj.BillDate, 'yyyy-MM-dd');
 					this.billObj.accountTypeStr = ['货款', '合规金', '积分'][this.billObj.AccountType];
 				});
+			},
+			// 获取经销商编号列表
+			getIdLs() {
+				util.ajax({
+					method: 'Businese.QueryAppDAL.QueryMyAccountBonus',
+				}).then(res => {
+					const { result } = res.data
+					console.log('getIdLs: ', result)
+					result.forEach(item => {
+						item.str = item.DealerNo + '  ' + item.DealerName
+					})
+					this.idLs = result
+				})
+			},
+			// 选中经销商
+			bindPickerChange(e) {
+				console.log('bindPickerChange: ', e)
+				const { value } = e.detail
+				this.selId = value
+				// 带出名称，金额
+				this.billObj.PayDealerId = this.idLs[value].DealerId 
+				this.billObj.PayDealerCode = this.idLs[value].DealerNo
+				this.billObj.PayDealerName = this.idLs[value].DealerName 
+				this.$refs.payDealerName.setValue(this.idLs[value].DealerName)
+				this.billObj.ApplyAmount = this.idLs[value].AmountCanUse 
+				this.selectKxxzType = '2'
+			},
+			// 全部提现
+			onAll() {
+				if (this.selId !== '') {
+					this.billObj.ApplyAmount = this.idLs[this.selId].AmountCanUse 
+					this.$refs.applyAmountRef.setValue(this.idLs[this.selId].AmountCanUse)
+				}
 			},
 			getNameOfCode(e) {
 				// 通过分销商编号获取姓名
@@ -178,6 +228,13 @@
 			},
 			saveOrder() {
 				let me = this;
+				console.log('PayDealerId： ', this.billObj.PayDealerId);
+				if (!this.billObj.PayDealerId) {
+					util.showToast({
+						title: '请先选择会员编号'
+					})
+					return
+				}
 				this.billObj.ApplyAmount = Number(this.billObj.ApplyAmount)
 				if (isNaN(this.billObj.ApplyAmount)) {
 					this.billObj.ApplyAmount = 0
@@ -217,3 +274,8 @@
 		}
 	}
 </script>
+<style scoped>
+/deep/ .uni-list-cell-navigate.uni-navigate-bottom:after{
+	font-size: 25px;
+}
+</style>

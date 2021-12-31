@@ -130,13 +130,24 @@ uni-toast{z-index: 100000;}
 .index{
 	height: 1500px;
 }
-.index_page{padding: 40px 0 50px;
-	.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; width: 330upx;
-		.remark{color: #999;}
-		.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}
+.index_page{display: flex; flex-direction: column; padding: 40px 0 50px;
+	.cur_class{padding: 0 20upx 0 0; font-size: 16px; text-align: right;}
+	.page-body{flex: 1; display: flex;
+		.nav-left{width: 180upx; background: #fff;}
+		.nav-right{flex: 1;}
 	}
-	.uni-product{
-		.image-view{border: 1px #ccc solid;}
+	.nav-left-item{padding: 0 0 0 10px; line-height: 40px; font-size: 16px;
+		&.active{font-weight: bold; color: #fff; background: rgb(242, 48, 48);}
+	}
+	.uni-product-list{flex-wrap: wrap;
+		.uni-product{padding: 5px 0 10px 2%; width: 48%;
+			.image-view{margin: 0 20upx; width: 250upx; height: 250upx; border: 1px #ccc solid;}
+			.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; margin: 0 20upx; width: auto;
+				.remark{color: #999;}
+				.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}
+			}
+			.uni-product-price{margin: 0 20upx;}
+		}
 	}
 	.no-data{margin: 200upx 0 0;}
 }

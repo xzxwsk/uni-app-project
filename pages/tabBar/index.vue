@@ -19,31 +19,49 @@
                 </view>
             </view>
         </view>
-		<view class="uni-product-list" v-if="productList.length > 0">
-			<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail(index)">
-				<view class="image-view">
-					<image v-if="renderImage" style="width: 100%; height: 100%;" mode="aspectFit" class="uni-product-image" :src="product.image"></image>
+		<view class="page-body">
+			<scroll-view class="nav-left" scroll-y :style="`height: calc(${height}px - 460upx)`">
+				<view class="nav-left-item" @click="categoryClickMain(item, index)" :key="item.RecordId" :class="index==categoryActive?'active':''"
+					v-for="(item,index) in categoryList">
+					{{item.Name}}
 				</view>
-				<view class="uni-product-title">
-					<view>
-						<view>{{product.title}}</view>
-						<text class="remark">{{product.remark}}</text>
+			</scroll-view>
+			
+			<view class="nav-right">
+				<view class="cur_class">{{categoryList[categoryActive].Name.includes('系列') ? categoryList[categoryActive].Name : categoryList[categoryActive].Name + '系列'}}</view>
+				<scroll-view scroll-y :scroll-top="scrollTop" @scrolltolower="onScrollBottom" @scroll="scroll" :style="`height: calc(${height}px - 520upx)`" scroll-with-animation>
+					<view class="uni-product-list" v-if="productList.length > 0">
+						<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail(index)">
+							<view class="image-view">
+								<image v-if="renderImage" style="width: 100%; height: 100%;" mode="aspectFit" class="uni-product-image" :src="product.image"></image>
+							</view>
+							<view class="uni-product-title">
+								<view>
+									<view>{{product.title}}</view>
+									<text class="remark">{{product.remark}}</text>
+								</view>
+								<view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view>
+							</view>
+							<view class="uni-product-price">
+								<text class="uni-product-price-favour" v-if="hasLogin">￥{{product.Price}}</text>
+								<text class="uni-product-price-original">￥{{product.FactPrice}}</text>
+								<!-- <text class="uni-product-tip">{{product.tip}}</text> -->
+							</view>
+						</view>
+						<view style="display: flex; justify-content: center; width: 100%;">
+							<uni-load-more :status="loadMoreStatus"></uni-load-more>
+						</view>
 					</view>
-					<view class="uni-icon uni-icon-plus-filled" @click.stop="addCart(index)"></view>
-				</view>
-				<view class="uni-product-price">
-					<text class="uni-product-price-favour" v-if="hasLogin">￥{{product.Price}}</text>
-					<text class="uni-product-price-original">￥{{product.FactPrice}}</text>
-					<!-- <text class="uni-product-tip">{{product.tip}}</text> -->
-				</view>
+					<view class="no-data" v-else>
+						<view class="no-img">
+							<image style="width: 100%; height: 100%;" mode="aspectFit" :src="imgSrc" @error="imageError"></image>
+						</view>
+						<view class="txt"><text>亲，还没有宝贝哦~</text></view>
+					</view>
+				</scroll-view>
 			</view>
 		</view>
-		<view class="no-data" v-else>
-			<view class="no-img">
-				<image style="width: 100%; height: 100%;" mode="aspectFit" :src="imgSrc" @error="imageError"></image>
-			</view>
-			<view class="txt"><text>亲，还没有宝贝哦~</text></view>
-		</view>
+		
 		<share-menu ref="shareMenu"></share-menu>
 	</view>
 </template>
@@ -59,6 +77,12 @@
 		computed: mapState(['hasLogin', 'openid', 'changeNum']),
 		data() {
 			return {
+				categoryList: [],
+				height: 0,
+				categoryActive: 0,
+				scrollTop: 0,
+				scrollHeight: 0,
+				
 				sysInfo: '',
 				indicatorDots: false,
 				indicatorColor: '#fff',
@@ -71,6 +95,8 @@
 				productList: [],
 				recordsTotal: 0,
 				pageIndex: 1,
+				PageSize: 10,
+				loadMoreStatus: 'more',
 				renderImage: false
 			}
 		},
@@ -85,7 +111,7 @@
 			};
 		},
 		onLoad() {
-			console.log(this.hasLogin, this.changeNum)
+			this.height = uni.getSystemInfoSync().windowHeight;
 			if (!this.hasLogin) {
 				this.getUserInfo()
 			}
@@ -102,21 +128,22 @@
 		onShow() {
 			console.log('onShow');
 			this.pageIndex = 1;
-			this.loadData('refresh');
+			// this.loadData('refresh');
+			this.getCategory();
 		},
 		onPullDownRefresh() {
 			// 下拉刷新
-			this.pageIndex = 1;
-		    this.loadData('refresh');
+			// this.pageIndex = 1;
+			// this.loadData('refresh');
 		    // 实际开发中通常是网络请求，加载完数据后就停止。这里仅做演示，加延迟为了体现出效果。
-		    setTimeout(() => {
-		        uni.stopPullDownRefresh();
-		    }, 2000);
+		    // setTimeout(() => {
+		    //     uni.stopPullDownRefresh();
+		    // }, 2000);
 		},
 		onReachBottom() {
 			// 上拉加载更多
-			this.pageIndex++;
-		    this.loadData();
+			// this.pageIndex++;
+		 //    this.loadData();
 		},
 		onNavigationBarSearchInputChanged(e) {
 			// 输入框改变
@@ -143,6 +170,36 @@
 		},
 		methods: {
 			...mapMutations(['setChangeNum', 'setUserInfo', 'setWxUserInfo', 'login', 'setOpenid']),
+			scroll(e) {
+				this.scrollHeight = e.detail.scrollHeight;
+			},
+			onScrollBottom() {
+				console.log('滚动到底部了');
+				// 加载更多
+				if (this.loadMoreStatus === 'more') {
+					this.pageIndex++;
+					this.loadData();
+				}
+			},
+			categoryClickMain(categroy, index) {
+				this.pageIndex = 1;
+				this.categoryActive = index;
+				this.scrollTop = -this.scrollHeight * index;
+				this.loadData('refresh');
+			},
+			async getCategory() {
+				// 获取分类列表
+				let { data } = await util.ajax({
+					method: 'Basic.ProductTypeDAL.QueryList',
+					params: {
+						filter: {}
+					},
+				})
+				console.log('分类列表: ', data.result);
+				this.categoryList = data.result.data
+				// 获取第一个分类的产品
+				this.loadData('refresh');
+			},
 			async getUserInfo() {
 				if (!this.openid) {
 					let wxUserInfo = util.getStorageSync('wx_user_info')
@@ -360,6 +417,7 @@
 				this.loadData('refresh', key);
 			},
 			async loadData(action = 'add', key = '') {
+				this.loadMoreStatus = 'loading'
 				util.showLoading();
 				// 获取产品列表
 				await util.ajax({
@@ -367,8 +425,9 @@
 					params: {
 						filter: {
 							KeyWord: key,
-							TypeName: '',
-							PageIndex: this.pageIndex
+							TypeName: this.categoryList[this.categoryActive].Name,
+							PageIndex: this.pageIndex,
+							PageSize: this.PageSize
 						}
 					},
 					tags: {
@@ -391,6 +450,12 @@
 						this.productList = [];
 					}
 					this.productList = this.productList.concat(ls);
+					console.log('recordsTotal: ', this.recordsTotal, 'PageSize: ', this.PageSize, 'pageIndex: ', this.pageIndex);
+					if (this.pageIndex < Math.ceil(this.recordsTotal/this.PageSize)) {
+						this.loadMoreStatus = 'more'
+					} else {
+						this.loadMoreStatus = 'noMore'
+					}
 				});
 			    /* const data = [
 			        {

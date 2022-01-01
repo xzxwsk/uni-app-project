@@ -20,7 +20,7 @@
             </view>
         </view>
 		<view class="page-body">
-			<scroll-view class="nav-left" scroll-y :style="`height: calc(${height}px - 460upx)`">
+			<scroll-view class="nav-left" scroll-y :style="leftHeight">
 				<view class="nav-left-item" @click="categoryClickMain(item, index)" :key="item.RecordId" :class="index==categoryActive?'active':''"
 					v-for="(item,index) in categoryList">
 					{{item.Name}}
@@ -28,8 +28,8 @@
 			</scroll-view>
 			
 			<view class="nav-right">
-				<view class="cur_class">{{categoryList[categoryActive].Name.includes('系列') ? categoryList[categoryActive].Name : categoryList[categoryActive].Name + '系列'}}</view>
-				<scroll-view scroll-y :scroll-top="scrollTop" @scrolltolower="onScrollBottom" @scroll="scroll" :style="`height: calc(${height}px - 520upx)`" scroll-with-animation>
+				<view class="cur_class">{{xilieName}}</view>
+				<scroll-view scroll-y :scroll-top="scrollTop" @scrolltolower="onScrollBottom" @scroll="scroll" :style="rightHeight" scroll-with-animation>
 					<view class="uni-product-list" v-if="productList.length > 0">
 						<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail(index)">
 							<view class="image-view">
@@ -74,7 +74,23 @@
 		components: {
 			shareMenu
 		},
-		computed: mapState(['hasLogin', 'openid', 'changeNum']),
+		computed: {
+			...mapState(['hasLogin', 'openid', 'changeNum']),
+			xilieName() {
+				console.log(this.categoryList[this.categoryActive]);
+				if (this.categoryList[this.categoryActive]) {
+					return this.categoryList[this.categoryActive].Name.includes('系列') ? this.categoryList[this.categoryActive].Name : this.categoryList[this.categoryActive].Name + '系列'
+				} else {
+					return ''
+				}
+			},
+			leftHeight() {
+				return `height: calc(${this.height}px - 460rpx)`
+			},
+			rightHeight() {
+				return `height: calc(${this.height}px - 520rpx)`
+			}
+		},
 		data() {
 			return {
 				categoryList: [],

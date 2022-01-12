@@ -2,7 +2,7 @@
 	<view class="uni-tab-bar order">
 		<scroll-view id="tab-bar" class="uni-swiper-tab" scroll-x :scroll-left="scrollLeft">
 			<view class="tab_head">
-				<view v-for="(tab,index) in tabBars" :key="tab.id" class="swiper-tab-list" :class="tabIndex==index ? 'active' : ''"
+				<view v-for="(tab,index) in tabBars" :key="tab.id" class="swiper-tab-list" :class="{active: tabIndex==index}"
 				 :id="tab.id" :data-current="index" @click="tapTab">{{tab.name}}</view>
 			 </view>
 		</scroll-view>
@@ -39,7 +39,7 @@
 							<view class="txt"><text>亲，还没有相关订单哦~</text></view>
 						</view>
 					</block>
-					<scroll-view v-else class="box" scroll-y :scroll-top="scrollTop" @scrolltolower="loadMore">
+					<scroll-view v-else class="box" scroll-y :scroll-top="scrollTop" @scrolltolower="loadMore" @scroll="onScroll">
 						<view>
 							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(item.RecordId)">
 								<view class="ls_item_top">
@@ -138,6 +138,9 @@
 				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
 				scrollTop: 0,
+				old: {
+					scrollTop: 0
+				},
 				isLoaded: false,
 				loading: true,
 				scrollLeft: 0,
@@ -223,7 +226,7 @@
 						endDateValue: day,
 						data: [],
 						isScroll: true,
-						loadingText: '加载更多...',
+						loadingText: '上拉加载更多...',
 						renderImage: false,
 					});
 				});
@@ -231,9 +234,10 @@
 				this.getData(this.stateArr[0]);
 			},
 			getData(state, loadMore) {
-				// util.showLoading();
+				util.showLoading();
 				this.loading = true
 				const index = this.tabIndex;
+				this.displayDataArr[index].loadingText = '正在加载中...';
 				if(this.$refs['startDate' + index]) {
 					this.displayDataArr[index].startDateValue = this.$refs['startDate' + index][0].getValue();
 				}
@@ -251,9 +255,13 @@
 					monthDays = util.getMonthDays(year, month);
 				}
 				if (!loadMore) {
-					this.pageIndex[this.tabIndex] = 1
+					this.pageIndex[index] = 1
+					this.scrollTop = this.old.scrollTop
+					this.$nextTick(() => {
+						this.scrollTop = 0
+					});
 				} else {
-					this.pageIndex[this.tabIndex]++
+					this.pageIndex[index]++
 				}
 				util.ajax({
 					method: 'Businese.OrderDAL.QueryMyList',
@@ -264,7 +272,7 @@
 							BillNoLike: '',
 							ProductLike: this.displayDataArr[index].searchKey,
 							State: state,
-							PageIndex: this.pageIndex[this.tabIndex],
+							PageIndex: this.pageIndex[index],
 							PageSize: this.pageSize
 						}
 					},
@@ -273,7 +281,6 @@
 					}
 				})
 				.then(res => {
-					// util.hideLoading();
 					if (res.data.hasOwnProperty('result')) {
 						const { data, recordsTotal } = res.data.result
 						data.forEach(dataItem => {
@@ -289,19 +296,17 @@
 							this.displayDataArr[index].data.push(...data);
 						}
 						// 返回的数据后面还有分页，则显示more
+						this.displayDataArr[index].isScroll = recordsTotal > this.pageSize
 						if (recordsTotal > this.pageIndex[index] * this.pageSize) {
-							// this.dataArr[index].isScroll = true
-							// this.displayDataArr[index].isScroll = true
-							this.displayDataArr[index].loadingText = '加载更多...';
+							this.displayDataArr[index].loadingText = '上拉加载更多...';
 						} else {
-							// this.dataArr[index].isScroll = false
-							// this.displayDataArr[index].isScroll = false
 							this.displayDataArr[index].loadingText = '没有更多了';
 						}
 					}
 				})
 				.finally(() => {
 					this.loading = false
+					util.hideLoading();
 				})
 			},
 			goDetail(id) {
@@ -312,8 +317,6 @@
 			},
 			query() {
 				const index = this.tabIndex
-				if (this.displayDataArr[index].loadingText === '没有更多了') return
-				
 				this.getData(this.stateArr[index]);
 			},
 			loadMore(e) {
@@ -356,12 +359,14 @@
 					}).exec();
 				})
 			},
+			onScroll(e) {
+				this.old.scrollTop = e.detail.scrollTop
+			},
 			async changeTab(e) {
 				let index = e.target.current;
-				if (index !== 0 && !index) {
-					return;
-				}
                 this.tabIndex = index;
+				if (index !== 0 && !index) return;
+				if (this.displayDataArr[index].loadingText === '没有更多了') return
 				let tabBar = await this.getElSize("tab-bar"),
 					tabBarScrollLeft = tabBar.scrollLeft;
 				let width = 0;
@@ -609,7 +614,7 @@
 						dateValue: '',
 						data: [],
 						isScroll: false,
-						loadingText: '加载更多...',
+						loadingText: '上拉加载更多...',
 						renderImage: false
 					};
 					if (i < 1) {

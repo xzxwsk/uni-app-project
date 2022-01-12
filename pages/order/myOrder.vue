@@ -1,10 +1,9 @@
 <template>
 	<view class="uni-tab-bar order">
-		<!-- <view :style="{height: systemInfo.statusBarHeight}"></view> -->
 		<nav-bar title="我的订单" leftIcon="arrowleft" statusBar :leftIconSize="26" @click-left="onReturn" backgroundColor="#f8f8f8" :border="false"></nav-bar>
 		<scroll-view id="tab-bar" class="uni-swiper-tab" scroll-x :scroll-left="scrollLeft">
 			<view class="tab_head">
-				<view v-for="(tab,index) in tabBars" :key="tab.id" class="swiper-tab-list" :class="tabIndex==index ? 'active' : ''"
+				<view v-for="(tab,index) in tabBars" :key="tab.id" class="swiper-tab-list" :class="{active: tabIndex==index}"
 				 :id="tab.id" :data-current="index" @click="tapTab">{{tab.name}}</view>
 			 </view>
 		</scroll-view>
@@ -41,7 +40,7 @@
 							<view class="txt"><text>亲，还没有相关订单哦~</text></view>
 						</view>
 					</block>
-					<scroll-view v-else class="box" scroll-y @scrolltolower="loadMore">
+					<scroll-view v-else class="box" scroll-y :scroll-top="scrollTop" @scrolltolower="loadMore" @scroll="onScroll">
 						<view>
 							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(item.RecordId)">
 								<view class="ls_item_top">
@@ -138,12 +137,18 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				systemInfo: '',
 				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
+				scrollTop: 0,
+				old: {
+					scrollTop: 0
+				},
 				isLoaded: false,
+				loading: true,
 				scrollLeft: 0,
 				tabIndex: 0,
+				pageIndex: [],
+				pageSize: 5,
 				dataArr: [],
 				displayDataArr: [],
 				tabBars: [{
@@ -192,9 +197,6 @@
 					this.isLoaded = true;
 				}, 1000);
 			}
-			
-			this.systemInfo = uni.getSystemInfoSync()
-			console.log('systemInfo: ', this.systemInfo);
 			// this.dataArr = this.randomfn();
 			// this.displayDataArr = util.deepCopy(this.dataArr);
 			// setTimeout(()=> {
@@ -209,7 +211,7 @@
 		},
 		onBackPress(e) {
 		    console.log("监听返回按钮事件: ", e);
-		    this.onReturn()
+			this.onReturn()
 		    // 此处一定姚要return为true，否则页面不会返回到指定路径
 		    return true;
 		},
@@ -223,17 +225,19 @@
 						startDateValue: day,
 						endDateValue: day,
 						data: [],
-						isScroll: false,
-						loadingText: '加载更多...',
+						isScroll: true,
+						loadingText: '上拉加载更多...',
 						renderImage: false,
 					});
 				});
 				this.displayDataArr = util.deepCopy(this.dataArr);
 				this.getData(this.stateArr[0]);
 			},
-			getData(state) {
+			getData(state, loadMore) {
 				util.showLoading();
-				let index = this.tabIndex;
+				this.loading = true
+				const index = this.tabIndex;
+				this.displayDataArr[index].loadingText = '正在加载中...';
 				if(this.$refs['startDate' + index]) {
 					this.displayDataArr[index].startDateValue = this.$refs['startDate' + index][0].getValue();
 				}
@@ -250,6 +254,15 @@
 					month = Number(endDateArr[1]);
 					monthDays = util.getMonthDays(year, month);
 				}
+				if (!loadMore) {
+					this.pageIndex[index] = 1
+					this.scrollTop = this.old.scrollTop
+					this.$nextTick(() => {
+						this.scrollTop = 0
+					});
+				} else {
+					this.pageIndex[index]++
+				}
 				util.ajax({
 					method: 'Businese.OrderDAL.QueryMyList',
 					params: {
@@ -259,8 +272,8 @@
 							BillNoLike: '',
 							ProductLike: this.displayDataArr[index].searchKey,
 							State: state,
-							PageIndex: 1,
-							PageSize: 20
+							PageIndex: this.pageIndex[index],
+							PageSize: this.pageSize
 						}
 					},
 					tags: {
@@ -268,17 +281,33 @@
 					}
 				})
 				.then(res => {
-					util.hideLoading();
 					if (res.data.hasOwnProperty('result')) {
-						res.data.result.data.forEach(dataItem => {
+						const { data, recordsTotal } = res.data.result
+						data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
 							dataItem.receiveConfirmTimeStr = util.formatDate(dataItem.ReceiveConfirmTime, 'yyyy-MM-dd');
 							dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认', '退款确认'][dataItem.State+1];
 						});
-						this.dataArr[index].data = res.data.result.data;
-						this.displayDataArr[index].data = res.data.result.data;
+						if (!loadMore) {
+							this.dataArr[index].data = data;
+							this.displayDataArr[index].data = JSON.parse(JSON.stringify(data));
+						} else {
+							this.dataArr[index].data.push(...data);
+							this.displayDataArr[index].data.push(...data);
+						}
+						// 返回的数据后面还有分页，则显示more
+						this.displayDataArr[index].isScroll = recordsTotal > this.pageSize
+						if (recordsTotal > this.pageIndex[index] * this.pageSize) {
+							this.displayDataArr[index].loadingText = '上拉加载更多...';
+						} else {
+							this.displayDataArr[index].loadingText = '没有更多了';
+						}
 					}
-				});
+				})
+				.finally(() => {
+					this.loading = false
+					util.hideLoading();
+				})
 			},
 			goDetail(id) {
 				// 查看订单详情
@@ -287,10 +316,14 @@
 				});
 			},
 			query() {
-				this.getData(this.stateArr[this.tabIndex]);
+				const index = this.tabIndex
+				this.getData(this.stateArr[index]);
 			},
 			loadMore(e) {
-				// this.displayDataArr[this.tabIndex].isScroll = true;
+				const index = this.tabIndex
+				if (this.loading || this.displayDataArr[index].loadingText === '没有更多了') return
+				
+				this.getData(this.stateArr[index], true);
 			},
 			bindStartDateChange(value) {
 				this.displayDataArr.forEach(item => {
@@ -326,12 +359,14 @@
 					}).exec();
 				})
 			},
+			onScroll(e) {
+				this.old.scrollTop = e.detail.scrollTop
+			},
 			async changeTab(e) {
 				let index = e.target.current;
-				if (index !== 0 && !index) {
-					return;
-				}
                 this.tabIndex = index;
+				if (index !== 0 && !index) return;
+				if (this.displayDataArr[index].loadingText === '没有更多了') return
 				let tabBar = await this.getElSize("tab-bar"),
 					tabBarScrollLeft = tabBar.scrollLeft;
 				let width = 0;
@@ -340,7 +375,7 @@
 					let result = await this.getElSize(this.tabBars[i].id);
 					width += result.width;
 				}
-				let winWidth = this.systemInfo.windowWidth,
+				let winWidth = uni.getSystemInfoSync().windowWidth,
 					nowElement = await this.getElSize(this.tabBars[index].id),
 					nowWidth = nowElement.width;
 				if (width + nowWidth - tabBarScrollLeft > winWidth) {
@@ -353,10 +388,6 @@
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = Number(e.target.dataset.current);
-				// if (!this.displayDataArr[tabIndex].isLoading) {
-				// 	this.addData(tabIndex)
-				// }
-				console.log(this.tabIndex, tabIndex);
 				if (this.tabIndex === tabIndex) {
 					return false;
 				} else {
@@ -588,7 +619,7 @@
 						dateValue: '',
 						data: [],
 						isScroll: false,
-						loadingText: '加载更多...',
+						loadingText: '上拉加载更多...',
 						renderImage: false
 					};
 					if (i < 1) {

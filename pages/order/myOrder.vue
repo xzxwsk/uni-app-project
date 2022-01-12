@@ -39,7 +39,7 @@
 							<view class="txt"><text>亲，还没有相关订单哦~</text></view>
 						</view>
 					</block>
-					<scroll-view v-else class="box" scroll-y @scrolltolower="loadMore">
+					<scroll-view v-else class="box" scroll-y :scroll-top="scrollTop" @scrolltolower="loadMore">
 						<view>
 							<view class="ls_item" v-for="(item, index) in itemLs.data" :key="index" @click="goDetail(item.RecordId)">
 								<view class="ls_item_top">
@@ -137,9 +137,13 @@
 			return {
 				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
 				mode: 'widthFix',
+				scrollTop: 0,
 				isLoaded: false,
+				loading: true,
 				scrollLeft: 0,
 				tabIndex: 0,
+				pageIndex: [],
+				pageSize: 5,
 				dataArr: [],
 				displayDataArr: [],
 				tabBars: [{
@@ -218,7 +222,7 @@
 						startDateValue: day,
 						endDateValue: day,
 						data: [],
-						isScroll: false,
+						isScroll: true,
 						loadingText: '加载更多...',
 						renderImage: false,
 					});
@@ -226,9 +230,10 @@
 				this.displayDataArr = util.deepCopy(this.dataArr);
 				this.getData(this.stateArr[0]);
 			},
-			getData(state) {
-				util.showLoading();
-				let index = this.tabIndex;
+			getData(state, loadMore) {
+				// util.showLoading();
+				this.loading = true
+				const index = this.tabIndex;
 				if(this.$refs['startDate' + index]) {
 					this.displayDataArr[index].startDateValue = this.$refs['startDate' + index][0].getValue();
 				}
@@ -245,6 +250,11 @@
 					month = Number(endDateArr[1]);
 					monthDays = util.getMonthDays(year, month);
 				}
+				if (!loadMore) {
+					this.pageIndex[this.tabIndex] = 1
+				} else {
+					this.pageIndex[this.tabIndex]++
+				}
 				util.ajax({
 					method: 'Businese.OrderDAL.QueryMyList',
 					params: {
@@ -254,8 +264,8 @@
 							BillNoLike: '',
 							ProductLike: this.displayDataArr[index].searchKey,
 							State: state,
-							PageIndex: 1,
-							PageSize: 20
+							PageIndex: this.pageIndex[this.tabIndex],
+							PageSize: this.pageSize
 						}
 					},
 					tags: {
@@ -263,17 +273,36 @@
 					}
 				})
 				.then(res => {
-					util.hideLoading();
+					// util.hideLoading();
 					if (res.data.hasOwnProperty('result')) {
-						res.data.result.data.forEach(dataItem => {
+						const { data, recordsTotal } = res.data.result
+						data.forEach(dataItem => {
 							dataItem.billDateStr = util.formatDate(dataItem.BillDate, 'yyyy-MM-dd');
 							dataItem.receiveConfirmTimeStr = util.formatDate(dataItem.ReceiveConfirmTime, 'yyyy-MM-dd');
 							dataItem.stateStr = ['已关闭', '未发货', '已发货', '已收货确认', '', '退货中', '退货确认', '退款确认'][dataItem.State+1];
 						});
-						this.dataArr[index].data = res.data.result.data;
-						this.displayDataArr[index].data = res.data.result.data;
+						if (!loadMore) {
+							this.dataArr[index].data = data;
+							this.displayDataArr[index].data = JSON.parse(JSON.stringify(data));
+						} else {
+							this.dataArr[index].data.push(...data);
+							this.displayDataArr[index].data.push(...data);
+						}
+						// 返回的数据后面还有分页，则显示more
+						if (recordsTotal > this.pageIndex[index] * this.pageSize) {
+							// this.dataArr[index].isScroll = true
+							// this.displayDataArr[index].isScroll = true
+							this.displayDataArr[index].loadingText = '加载更多...';
+						} else {
+							// this.dataArr[index].isScroll = false
+							// this.displayDataArr[index].isScroll = false
+							this.displayDataArr[index].loadingText = '没有更多了';
+						}
 					}
-				});
+				})
+				.finally(() => {
+					this.loading = false
+				})
 			},
 			goDetail(id) {
 				// 查看订单详情
@@ -282,10 +311,16 @@
 				});
 			},
 			query() {
-				this.getData(this.stateArr[this.tabIndex]);
+				const index = this.tabIndex
+				if (this.displayDataArr[index].loadingText === '没有更多了') return
+				
+				this.getData(this.stateArr[index]);
 			},
 			loadMore(e) {
-				// this.displayDataArr[this.tabIndex].isScroll = true;
+				const index = this.tabIndex
+				if (this.loading || this.displayDataArr[index].loadingText === '没有更多了') return
+				
+				this.getData(this.stateArr[index], true);
 			},
 			bindStartDateChange(value) {
 				this.displayDataArr.forEach(item => {
@@ -348,10 +383,6 @@
 			},
 			async tapTab(e) { //点击tab-bar
 				let tabIndex = Number(e.target.dataset.current);
-				// if (!this.displayDataArr[tabIndex].isLoading) {
-				// 	this.addData(tabIndex)
-				// }
-				console.log(this.tabIndex, tabIndex);
 				if (this.tabIndex === tabIndex) {
 					return false;
 				} else {

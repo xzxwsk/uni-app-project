@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view @click="onClick">
 		<view :class="{
         leftBottom: leftBottom,
         rightBottom: rightBottom,
@@ -12,7 +12,7 @@
           bottom: vertical === 'bottom' && direction === 'vertical',
           right: horizontal === 'right' && direction === 'horizontal'
         }" :style="{ 'background-color': styles.buttonColor }" class="fab-circle" @click="_onClick">
-				<text :class="{ active: isShow }" class="uni-icon uni-icon-plusempty" />
+				<text :class="{ active: isShow, 'uni-icon-back': isShow, 'uni-icon-arrowright': !isShow }" class="uni-icon" :style="{ color: styles.color }" />
 			</view>
 			<view :class="{
           left: horizontal === 'left',
@@ -82,10 +82,10 @@
 		},
 		computed: {
 			contentWidth(e) {
-				return uni.upx2px((this.content.length + 1) * 110 + 20) + 'px'
+				return uni.upx2px((this.content.length + 1) * 80) + 'px'
 			},
 			contentWidthMin() {
-				return uni.upx2px(110) + 'px'
+				return uni.upx2px(80) + 'px'
 			},
 			// 动态计算宽度
 			boxWidth() {
@@ -138,6 +138,9 @@
 			this.styles = Object.assign({}, this.styles, this.pattern)
 		},
 		methods: {
+			onClick () {
+				this.$emit('click')
+			},
 			_onClick() {
 				this.isShow = !this.isShow
 			},
@@ -184,7 +187,7 @@
 
 	.uni-icon {
 		font-family: uniicons;
-		font-size: 24px;
+		font-size: 30px;
 		font-weight: normal;
 		font-style: normal;
 		line-height: 1;
@@ -227,8 +230,8 @@
 	}
 
 	.fab-box.fab.leftBottom {
-		left: 30upx;
-		bottom: 60upx;
+		left: 20upx;
+		bottom: 120upx;
 	}
 
 	.fab-box.fab.leftTop {
@@ -257,8 +260,8 @@
 		justify-content: center;
 		align-items: center;
 		position: absolute;
-		width: 110upx;
-		height: 110upx;
+		width: 80upx;
+		height: 80upx;
 		background: #3c3e49;
 		/* background: #5989b9; */
 		border-radius: 50%;

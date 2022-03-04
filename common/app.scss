@@ -137,7 +137,9 @@ uni-toast{z-index: 100000;}
 	}
 	.uni-product-list{flex-wrap: wrap;
 		.uni-product{padding: 5px 0 10px 2%; width: 48%;
-			.image-view{margin: 0 20upx; width: 250upx; height: 250upx; border: 1px #ccc solid;}
+			.image-view{margin: 0 20upx 5px; width: 250upx; height: 250upx; border: 1px #ccc solid;
+				&.width{width: calc(100% - 50rpx);}
+			}
 			.uni-product-title{display: flex; flex-direction: row; justify-content: space-between; margin: 0 20upx; width: auto;
 				.remark{color: #999;}
 				.uni-icon{margin: 0 0 0 10upx; color: #ff7e00;}

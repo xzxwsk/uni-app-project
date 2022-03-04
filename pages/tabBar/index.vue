@@ -20,7 +20,10 @@
             </view>
         </view>
 		<view class="page-body">
-			<scroll-view class="nav-left" scroll-y :style="leftHeight">
+			<uni-fab :show="true" @click="onToggleLeft"
+				:pattern="{buttonColor: '#ff7e00', color: '#fff'}"
+			></uni-fab>
+			<scroll-view class="nav-left" scroll-y :style="leftHeight" v-if="showMenu">
 				<view class="nav-left-item" @click="categoryClickMain(item, index)" :key="item.RecordId" :class="index==categoryActive?'active':''"
 					v-for="(item,index) in categoryList">
 					{{item.Name}}
@@ -32,7 +35,7 @@
 				<scroll-view scroll-y :scroll-top="scrollTop" @scrolltolower="onScrollBottom" @scroll="scroll" :style="rightHeight" scroll-with-animation>
 					<view class="uni-product-list" v-if="productList.length > 0">
 						<view class="uni-product" v-for="(product,index) in productList" :key="index" @click="goDetail(index)">
-							<view class="image-view">
+							<view class="image-view" :class="{width: !showMenu}">
 								<image v-if="renderImage" style="width: 100%; height: 100%;" mode="aspectFit" class="uni-product-image" :src="product.image"></image>
 							</view>
 							<view class="uni-product-title">
@@ -97,7 +100,7 @@
 				categoryActive: 0,
 				scrollTop: 0,
 				scrollHeight: 0,
-				
+				showMenu: true,
 				sysInfo: '',
 				indicatorDots: false,
 				indicatorColor: '#fff',
@@ -197,6 +200,10 @@
 					this.pageIndex++;
 					this.loadData();
 				}
+			},
+			onToggleLeft () {
+				console.log('onToggleLeft');
+				this.showMenu = !this.showMenu
 			},
 			categoryClickMain(categroy, index) {
 				this.pageIndex = 1;

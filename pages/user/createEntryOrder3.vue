@@ -52,8 +52,13 @@
 					<text class="title">备注：</text>
 					<input-box ref="remark" v-model="billObj.Remark" placeholder="备注信息"></input-box>
 				</view>
-				<view class="input-row protocal_row_radio">
+				<view class="input-row protocal_row_radio" style="align-items: flex-end;">
 					<label @click="bindProtocal"><radio class="protocal" value="0" color="#f23030" :checked="protocal" />同意许可条款</label>
+				</view>
+				<view class="input-row protocal_row">
+					<label class="a protocal_a" style="margin: 0 0 0 250rpx;" @click="goToServiceProtocal">《用户服务协议》</label>
+					和
+					<label class="a protocal_a" style="margin: 0;" @click="goToPravicy">《隐私政策》</label>
 				</view>
 				<view class="input-row protocal_row">
 					<label class="a protocal_a" @click="bindToProtocal">销售守则</label>
@@ -117,6 +122,16 @@
 			bindDateChange(value) {
 				console.log('bindDateChange: ', value);
 				this.dateValue = value;
+			},
+			goToServiceProtocal () {
+				util.goUrl({
+					url: './protocalServiceProtocal'
+				})
+			},
+			goToPravicy () {
+				util.goUrl({
+					url: './protocalPravicy'
+				})
 			},
 			bindProtocal() {
 				// 许可条款

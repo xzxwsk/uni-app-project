@@ -375,6 +375,22 @@
 				}
 			}
 		}, {
+			"path": "pages/user/protocalServiceProtocal",
+			"style": {
+				"navigationBarTitleText": "《用户服务协议》",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/protocalPravicy",
+			"style": {
+				"navigationBarTitleText": "《隐私政策》",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
 			"path": "pages/user/protocal",
 			"style": {
 				"navigationBarTitleText": "销售守则",

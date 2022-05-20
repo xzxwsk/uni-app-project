@@ -72,7 +72,7 @@
 							<view class="no-img">
 								<image style="width: 100%;" mode="widthFix" :src="imgSrc" @error="imageError"></image>
 							</view>
-							<view class="txt"><text>亲，还没有相关下属奖金哦~</text></view>
+							<view class="txt"><text>亲，还没有相关下属资料哦~</text></view>
 						</view>
 					</view>
 					<block v-else>
@@ -80,11 +80,8 @@
 							<view class="box">
 								<t-table border="0">
 									<t-tr font-size="14" color="#000" align="left">
-										<t-th align="left"><text class="first_col">年月</text></t-th>
 										<t-th align="left">编号</t-th>
 										<t-th align="left">姓名</t-th>
-										<t-th align="left">奖金类别</t-th>
-										<t-th align="left">奖金</t-th>
 										<!-- <t-th align="left">操作</t-th> -->
 									</t-tr>
 									<!-- <t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList2" :key="item.id">
@@ -99,9 +96,6 @@
 								<view style="display: flex; font-size: 28upx;" v-for="(item,index) in tableList2" :key="item.id">
 									<view style="flex: 1; word-break:break-all; word-wrap: break-word;"><text class="first_col">{{item.Year + '-' + item.Month}}</text></view>
 									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerNo}}</view>
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerName}}</view>
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{ ['直推', '团队'][item.BonusType] }}</view>
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.Bonus}}</view>
 								</view>
 							</view>
 							<view v-if="isScroll2" class="uni-tab-bar-loading">
@@ -165,7 +159,7 @@
 					name: '下属账户余额',
 					id: 'accountBalance'
 				}, {
-					name: '下属奖金查询',
+					name: '下属资料查询',
 					id: 'bonusQuery'
 				}],
 				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',

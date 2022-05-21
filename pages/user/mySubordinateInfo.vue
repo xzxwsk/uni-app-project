@@ -82,7 +82,7 @@
 									<t-tr font-size="14" color="#000" align="left">
 										<t-th align="left">编号</t-th>
 										<t-th align="left">姓名</t-th>
-										<!-- <t-th align="left">操作</t-th> -->
+										<t-th align="left">操作</t-th>
 									</t-tr>
 									<!-- <t-tr font-size="12" color="#5d6f61" align="right" v-for="item in tableList2" :key="item.id">
 										<t-td align="left"><text class="first_col">{{item.Year + '-' + item.Month}}</text></t-td>
@@ -94,8 +94,9 @@
 									</t-tr> -->
 								</t-table>
 								<view style="display: flex; font-size: 28upx;" v-for="(item,index) in tableList2" :key="item.id">
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;"><text class="first_col">{{item.Year + '-' + item.Month}}</text></view>
-									<view style="flex: 1; word-break:break-all; word-wrap: break-word;">{{item.SubDealerNo}}</view>
+									<view style="flex: 1; word-break:break-all; word-wrap: break-word;"><text class="first_col">{{item.SubDealerNo}}</text></view>
+									<view style="flex: 1; margin: 0 0 0 10upx; word-break:break-all; word-wrap: break-word;">{{item.SubDealerName}}</view>
+									<view style="flex: 1; margin: 0 0 0 10upx; display: flex;"><text class="a" style="display: block;" @click="goOrderDetail" :data-id="item.SubDealerId">收支明细</text> <text class="a" style="display: block; margin: 0 0 0 10upx;" @click="goSubordinateLs" :data-id="item.SubDealerId">下属查询</text></view>
 								</view>
 							</view>
 							<view v-if="isScroll2" class="uni-tab-bar-loading">
@@ -197,6 +198,7 @@
 					this.tableList = data;
 				});
 			},
+			// 初始会通过 bindDateChange 事件执行
 			getList2() {
 				let dateValue = this.dateValue.split('-');
 				util.showLoading();
@@ -302,6 +304,20 @@
 					url: './mySubordinateDetail?id=' + subdealerid + '&type=' + accounttype
 				})
 			},
+			goOrderDetail(e) {
+				const {subdealerid} = e.currentTarget.dataset
+				console.log('subdealerid: ', subdealerid);
+				util.goUrl({
+					url: './mySubordinateOrderDetail?id=' + subdealerid
+				})
+			},
+			goSubordinateLs(e) {
+				const {subdealerid} = e.currentTarget.dataset
+				console.log('subdealerid: ', subdealerid);
+				util.goUrl({
+					url: './mySubordinateLs?id=' + subdealerid
+				})
+			}
 		}
 	}
 </script>

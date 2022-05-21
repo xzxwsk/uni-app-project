@@ -530,7 +530,7 @@
 		}, {
 			"path": "pages/user/mySubordinateInfo",
 			"style": {
-				"navigationBarTitleText": "下属账户余额",
+				"navigationBarTitleText": "我的下属资料",
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -539,6 +539,22 @@
 			"path": "pages/user/mySubordinateDetail",
 			"style": {
 				"navigationBarTitleText": "我的下属余额明细",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/mySubordinateOrderDetail",
+			"style": {
+				"navigationBarTitleText": "我的下属订单明细",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/mySubordinateLs",
+			"style": {
+				"navigationBarTitleText": "我的下属查询",
 				"app-plus": {
 					"bounce": "none"
 				}

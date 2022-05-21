@@ -59,7 +59,7 @@
 				<view>
 					<view class="uni-icon uni-icon-upload"></view>
 				</view>
-				下属帐户余额
+				我的下属资料
 			</view>
 			<view class="btn" @click="onZhishiku">
 				<view>

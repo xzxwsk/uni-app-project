@@ -38,7 +38,7 @@
 		computed: mapState(['openid']),
 		data() {
 			return {
-				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/images/no_data_d.png',
 				mode: 'widthFix',
 				isLoaded: false,
 				addrLs: [],

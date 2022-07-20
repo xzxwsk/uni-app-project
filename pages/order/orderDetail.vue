@@ -293,7 +293,7 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				bg: util.getImgUrl() + '/static/images/cargo.png',
+				bg: util.getImgUrl() + '/images/cargo.png',
 				orderType: '',
 				isReturn: false, // 是否可以退货
 				trackingNo: '', // 发货单号

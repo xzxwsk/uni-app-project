@@ -99,7 +99,7 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/images/no_data_d.png',
 				mode: 'widthFix',
 				scrollLeft: 0,
 				tabIndex: 0,

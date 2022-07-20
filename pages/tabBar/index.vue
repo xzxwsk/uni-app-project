@@ -109,7 +109,7 @@
 				interval: 50000,
 				duration: 500,
 				imgErr: false,
-				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/images/no_data_d.png',
 				imgLs: [],
 				productList: [],
 				recordsTotal: 0,

@@ -413,7 +413,7 @@ uni-toast{z-index: 100000;}
 	}
 }
 .user{display: flex; flex-direction: column; height: 100%;
-	.top{position: relative;
+	.top{position: relative; min-height: 100px;
 		.login_box{position: absolute; left: 0; top: 0; z-index: 2; width: 100%; height: 100%;
 			.login_con{display: flex; flex-direction: row; justify-content: center; align-items: center; height: 100%;
 				.head_img{margin: 0 0 0 50upx; width: 125upx; height: 125upx; overflow: hidden; border: 5upx solid #ce4165; border-radius: 100%;}

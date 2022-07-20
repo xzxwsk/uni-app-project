@@ -58,7 +58,7 @@
 			return {
 				onLoadFlag: false,
 				titleBtn: '删除',
-				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/images/no_data_d.png',
 				mode: 'widthFix',
 				allSelect: false,
 				countPrice: 0,

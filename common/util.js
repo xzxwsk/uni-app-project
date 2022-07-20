@@ -9,7 +9,7 @@ console.log('miniProgram: ', miniProgram)
 	baseUrlGlobal = 'https://www.zzxianchang.cn/qcdm/'; // 小程序 测试帐号：A0000002 密码：000000 appId: wxaf376d36626cae3a 
 // }
 const updateUrl = 'http://www.zzxianchang.cn/appdownload/updatedata.json'; // 更新地址
-const imgUrl = 'http://rxfs.renxiaochina.com/qianchangyewu'; // 图片地址
+const imgUrl = 'http://www.zzxianchang.cn'; // 图片地址
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 let baseUrl = '';
 

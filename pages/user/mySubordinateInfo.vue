@@ -163,7 +163,7 @@
 					name: '下属资料查询',
 					id: 'bonusQuery'
 				}],
-				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/images/no_data_d.png',
 				tableList: [],
 				tableList2: [],
 				isScroll: false,

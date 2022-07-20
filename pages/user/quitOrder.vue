@@ -64,7 +64,7 @@
 		computed: mapState(['openid', 'userInfo']),
 		data() {
 			return {
-				imgSrc: util.getImgUrl() + '/static/images/no_data_d.png',
+				imgSrc: util.getImgUrl() + '/images/no_data_d.png',
 				dataArr: [{
 					"RecordId": ""  /*单据Id*/,
 					"BillCode": ""  /*单据编号*/,

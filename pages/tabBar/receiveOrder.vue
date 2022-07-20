@@ -37,9 +37,9 @@
 		computed: mapState(['hasLogin']),
 		data() {
 			return {
-				imgSrcHead: util.getImgUrl() + '/static/images/avatar_member.gif',
+				imgSrcHead: util.getImgUrl() + '/images/avatar_member.gif',
 				modeHead: 'widthFix',
-				imgSrc: util.getImgUrl() + '/static/images/member_bg.png',
+				imgSrc: util.getImgUrl() + '/images/member_bg.png',
 				mode: 'widthFix',
 				pages: [
 					{

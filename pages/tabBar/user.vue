@@ -67,6 +67,12 @@
 				</view>
 				知识库
 			</view>
+			<view class="btn" @click="onQrcode">
+				<view>
+					<view class="uni-icon uni-icon-weixin"></view>
+				</view>
+				我的二维码
+			</view>
 		</view>
 		<view class="uni-list">
 			<view
@@ -353,6 +359,12 @@
 				// 知识库
 				util.goUrl({
 					url: '/pages/zhishiku/zhishiku'
+				})
+			},
+			onQrcode() {
+				// 我的二维码
+				util.goUrl({
+					url: '/pages/about/qrcode'
 				})
 			}
 		}

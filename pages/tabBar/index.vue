@@ -79,7 +79,6 @@
 		computed: {
 			...mapState(['hasLogin', 'openid', 'changeNum']),
 			xilieName() {
-				console.log(this.categoryList[this.categoryActive]);
 				if (this.categoryList[this.categoryActive]) {
 					return this.categoryList[this.categoryActive].Name.includes('系列') ? this.categoryList[this.categoryActive].Name : this.categoryList[this.categoryActive].Name + '系列'
 				} else {
@@ -345,6 +344,22 @@
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
 			},
+			// 删除多余缓存图片
+			deleMoreFile() {
+				const fSysManager = uni.getFileSystemManager()
+				fSysManager.getSavedFileList({
+					success ({ fileList }) {
+						fileList.sort((a, b) => b.createTime - a.createTime)
+						fileList.slice(2).forEach(fileObj => {
+							(function(filePath) {
+								fSysManager.removeSavedFile({
+									filePath
+								})
+							})(fileObj.filePath)
+						})
+					}
+				})
+			},
 			getAdLs() {
 				// 获取广告图
 				this.imgLs = []
@@ -375,6 +390,8 @@
 						data: result.PictureTopLastModifyTime
 					})
 					const imgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + result.PictureTopFileName
+					// 删除多余缓存图片
+					this.deleMoreFile()
 					// 下载图片，获得临时文件
 					uni.downloadFile({
 					    url: imgUrl,

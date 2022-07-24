@@ -181,6 +181,17 @@
 			// 	});
 			// }, false);
 			// #endif
+			
+			uni.authorize({
+				scope: 'scope.writePhotosAlbum',
+				success() {
+					console.log('授权相册成功')
+				},
+				fail() {
+					console.log('授权相册失败')
+					uni.openSetting()
+				}
+			})
 		}
 	}
 </script>

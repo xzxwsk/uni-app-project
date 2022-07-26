@@ -350,13 +350,40 @@
 				fSysManager.getSavedFileList({
 					success ({ fileList }) {
 						fileList.sort((a, b) => b.createTime - a.createTime)
-						fileList.slice(2).forEach(fileObj => {
+						fileList.slice(3).forEach(fileObj => {
 							(function(filePath) {
 								fSysManager.removeSavedFile({
 									filePath
 								})
 							})(fileObj.filePath)
 						})
+					}
+				})
+			},
+			donwloadSaveFile(key, imgUrl) {
+				uni.downloadFile({
+				    url: imgUrl,
+				    success: res => {
+				        if (res.statusCode === 200) {
+				            console.log('下载成功', res.tempFilePath)
+							// 保存
+							uni.saveFile({
+							    tempFilePath: res.tempFilePath,
+							    success: saveRes => {
+							        const { savedFilePath } = saveRes
+									// 更新显示这个刚下载的
+									if (key === 'indextopad') {
+										if (this.imgErr) {
+											this.imgLs = [savedFilePath]
+										}
+									}
+									util.setStorageSync({
+										key,
+										data: savedFilePath
+									})
+								}
+							})
+						}
 					}
 				})
 			},
@@ -379,7 +406,7 @@
 					// if (img) {
 					// 	this.imgLs.push('data:image/jpeg;base64,' + img);
 					// }
-					console.log('getAd: ', adImgTime, result.PictureTopLastModifyTime)
+					console.log('getAd: ', adImgTime, 'PictureTopLastModifyTime: ', result.PictureTopLastModifyTime, 'PictureCardLastModifyTime: ', result.PictureCardLastModifyTime)
 					// 判断是否更新，如果没有更新，则不用下载
 					// if (adImgTime === result.PictureTopLastModifyTime) {
 					// 	return
@@ -389,33 +416,18 @@
 						key: 'indextopadtime',
 						data: result.PictureTopLastModifyTime
 					})
+					util.setStorageSync({
+						key: 'qrcodeadtime',
+						data: result.PictureCardLastModifyTime
+					})
 					const imgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + result.PictureTopFileName
 					// 删除多余缓存图片
 					this.deleMoreFile()
 					// 下载图片，获得临时文件
-					uni.downloadFile({
-					    url: imgUrl,
-					    success: res => {
-					        if (res.statusCode === 200) {
-					            console.log('下载成功', res.tempFilePath)
-								// 保存
-								uni.saveFile({
-								    tempFilePath: res.tempFilePath,
-								    success: saveRes => {
-								        const { savedFilePath } = saveRes
-										// 更新显示这个刚下载的
-										if (this.imgErr) {
-											this.imgLs = [savedFilePath]
-										}
-										util.setStorageSync({
-											key: 'indextopad',
-											data: savedFilePath
-										})
-									}
-								})
-							}
-						}
-					})
+					this.donwloadSaveFile('indextopad', imgUrl)
+					const qrcodeImgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + result.PictureCardFileName
+					// 下载图片，获得临时文件
+					this.donwloadSaveFile('qrcodead', qrcodeImgUrl)
 				})
 			},
 			goLogin() {

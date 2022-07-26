@@ -63,7 +63,7 @@
 			// 	// console.log(data.result)
 			// 	this.src = data.result
 			// })
-			this.src = util.getStorageSync('importad')
+			this.src = util.getStorageSync('qrcodead')
 			this.getQrcode()
 		},
 		onShareAppMessage (res) {

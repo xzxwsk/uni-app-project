@@ -520,17 +520,18 @@ uni-toast{z-index: 100000;}
 	.con{flex: 1;}
 	.add_btn{margin: 10px 5%;}
 }
-.qrimg{display: flex; flex-direction: column; position: relative; margin: 0 auto; width: 680rpx; height: 100vh;
-	.qr_info{display: flex; justify-content: space-between; padding: 10px 0;
-		.qr_user_info{display:flex;flex-direction:column;justify-content: space-between;}
+.qrimg{display: flex; flex-direction: column; position: relative; width: 100%; height: 100vh;
+	.qr_info{display: flex; justify-content: space-between;
+		.qr_user_info{font-size: 40rpx; font-weight: bold;}
 	}
-	.btn-row{display: flex; justify-content: space-between; margin: 0 0 15px; padding-bottom: env(safe-area-inset-bottom);
+	.box{position: absolute; left: 60rpx; right: 30rpx; bottom: 35px; z-index: 2; padding-bottom: env(safe-area-inset-bottom);}
+	.btn-row{position: absolute; left: 30rpx; right:30rpx; top: 30rpx; z-index: 2; display: flex; justify-content: space-between; margin: 0 0 15px;
 		.btn{margin: 0; padding: 0 7px;
 			&:nth-child(2){margin: 0 10rpx;}
 		}
 	}
 	.mask{position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 2; background-color: rgba(0, 0, 0, .7);}
-	.share_prompt{position: absolute; top: 0; right: 100rpx; z-index: 3; dispaly: flex; flex-direction: column; justify-content: flex-end; width: 300rpx; text-align: right; font-size: 36rpx; color: #fff;}
+	.share_prompt{position: absolute; top: 0; right: 120rpx; z-index: 3; dispaly: flex; flex-direction: column; justify-content: flex-end; width: 300rpx; text-align: right; font-size: 36rpx; color: #fff;}
 }
 .zhishiku{position: relative; z-index: 3; text-align: center;
 	.image-view{display: flex; position: relative; justify-content: center; align-items: center; border: 1px #ccc solid; background-color: #fff;

@@ -1,24 +1,20 @@
 <template>
 	<view class="qrimg">
 		<view style="flex: 1;">
-			<image style="width: 680rpx; height: 100%;: #eeeeee;" mode="aspectFill" :src="src"
+			<image style="width: 100%; height: 100%;" mode="scaleToFill" :src="src"
 		    @error="imageError"></image>
 		</view>
-		<view class="qr_info">
-			<view class="qr_user_info">
-				<view>
-					<view>{{userInfo.DealerName}}</view>
-					<view>{{userInfo.Mobile}}</view>
-				</view>
-				<view>广告词</view>
-			</view>
-			<tki-qrcode ref="qrcode" :size="200" :val="qrcodeStr" onval loadMake @result="qrR" />
-		</view>
-	
 		<view class="btn-row">
 			<button type="warn" @tap="bindSave" class="btn">下载二维码</button>
 			<button type="primary" open-type="share" class="btn">分享给朋友</button>
 			<button type="primary" @tap="bindShareMessage" class="btn">分享到朋友圈</button>
+		</view>
+		<view class="qr_info box">
+			<view class="qr_user_info">
+				<view>{{userInfo.DealerName}}</view>
+				<view>{{userInfo.Mobile}}</view>
+			</view>
+			<tki-qrcode ref="qrcode" :size="160" :val="qrcodeStr" onval loadMake @result="qrR" />
 		</view>
 		
 		<view v-if="showPop" @click="showPop = false">

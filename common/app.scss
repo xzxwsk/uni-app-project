@@ -524,7 +524,7 @@ uni-toast{z-index: 100000;}
 	.qr_info{display: flex; justify-content: space-between;
 		.qr_user_info{font-size: 40rpx; font-weight: bold;}
 	}
-	.box{position: absolute; left: 60rpx; right: 30rpx; bottom: 35px; z-index: 2; padding-bottom: env(safe-area-inset-bottom);}
+	.box{position: absolute; left: 60rpx; right: 30rpx; bottom: 0; z-index: 2; padding-bottom: env(safe-area-inset-bottom);}
 	.btn-row{position: absolute; left: 30rpx; right:30rpx; top: 30rpx; z-index: 2; display: flex; justify-content: space-between; margin: 0 0 15px;
 		.btn{margin: 0; padding: 0 7px;
 			&:nth-child(2){margin: 0 10rpx;}

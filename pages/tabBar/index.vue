@@ -421,11 +421,16 @@
 						data: result.PictureCardLastModifyTime
 					})
 					const imgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + result.PictureTopFileName
+					this.imgLs = [imgUrl]
 					// 删除多余缓存图片
 					this.deleMoreFile()
 					// 下载图片，获得临时文件
 					this.donwloadSaveFile('indextopad', imgUrl)
 					const qrcodeImgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + result.PictureCardFileName
+					util.setStorageSync({
+						key: 'qrcodeadurl',
+						data: qrcodeImgUrl
+					})
 					// 下载图片，获得临时文件
 					this.donwloadSaveFile('qrcodead', qrcodeImgUrl)
 				})

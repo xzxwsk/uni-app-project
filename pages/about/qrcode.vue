@@ -1,8 +1,9 @@
 <template>
 	<view class="qrimg">
 		<view style="flex: 1;">
-			<image style="width: 100%; height: 100%;" mode="scaleToFill" :src="src"
-		    @error="imageError"></image>
+			<!-- <image style="width: 100%; height: 100%;" mode="scaleToFill" :src="src"
+		    @error="imageError"></image> -->
+			<canvas canvas-id="canvas_id" :style="{canvasStyle}" @error="onCanvasError"></canvas>
 		</view>
 		<view class="btn-row" v-if="showBtn">
 			<button type="warn" @tap="bindSave" class="btn">下载二维码</button>
@@ -11,10 +12,12 @@
 		</view>
 		<view class="qr_info box">
 			<view class="qr_user_info">
-				<view>{{userInfo.DealerName}}</view>
-				<view>{{userInfo.Mobile}}</view>
+				<!-- <view>{{userInfo.DealerName}}</view>
+				<view>{{userInfo.Mobile}}</view> -->
 			</view>
-			<tki-qrcode ref="qrcode" :size="160" :val="qrcodeStr" onval loadMake @result="qrR" />
+			<view style="visibility: hidden;">
+				<tki-qrcode ref="qrcode" :size="160" :val="qrcodeStr" onval loadMake @result="qrR" />
+			</view>
 		</view>
 		
 		<view v-if="showPop" @click="showPop = false">
@@ -39,6 +42,7 @@
 		computed: mapState(['userInfo']),
 		data() {
 			return {
+				systemInfo: null,
 				qrcodeStr: '',
 				qrcodeDatabase: '',
 				src: '',
@@ -46,7 +50,9 @@
 				arrowIcon: '/static/images/right_top_arrow.png',
 				showPop: false,
 				DealerId: '',
-				showBtn: true
+				showBtn: true,
+				canvasStyle: '',
+				ctx: null
 			}
 		},
 		onLoad(options) {
@@ -68,6 +74,7 @@
 			
 			// 正常进入
 			this.src = util.getStorageSync('qrcodead')
+			this.draw();
 			this.getQrcode()
 		},
 		onShareAppMessage (res) {
@@ -92,21 +99,72 @@
 					method: 'SYS.UserDAL.GetDealerByToken'
 				}).then(res => {
 					const { result } = res.data
-					console.log('GetDealerByToken: ', res, result)
 					this.qrcodeStr = `https://www.zzxianchang.cn/qcdm/${result.DealerId}`
 					this.DealerId = result.DealerId
 				})
 			},
 			qrR(e) {
 				this.qrcodeDatabase = e;
+				const { windowWidth: width, windowHeight: height } = this.systemInfo
+				const imgX = width - 110
+				const imgY = height - 110
+				this.drawImg(this.ctx, {width, height})
+				this.ctx.save()
+				this.ctx.drawImage(e, imgX, imgY)
+				this.ctx.draw()
 			},
 			bindSave(e) {
-				this.draw()
 				// this.$refs.qrcode._saveCode();
 				// return;
-				// const base64 = this.src;
+				uni.canvasToTempFilePath({
+				    canvasId: 'canvas_id',
+				    success: res => {
+						console.log(res.tempFilePath)
+						this.saveCanvas(res.tempFilePath)
+				    }
+				})
+			},
+			draw () {
+				const systemInfo = wx.getSystemInfoSync()
+				console.log('systemInfo: ', systemInfo)
+				this.systemInfo = systemInfo
+				const { windowWidth: width, windowHeight: height } = systemInfo
+				this.canvasStyle = `display: block; width: ${width}px; height: ${height}px;`
+				this.$nextTick(() => {
+					const ctx = uni.createCanvasContext('canvas_id', this)
+					this.ctx = ctx
+					this.drawImg(ctx, {width, height})
+					
+					ctx.draw()
+				})
+			},
+			drawImg (ctx, {width, height}) {
+				const imgUrl = util.getStorageSync('qrcodead')
+				const txtX = 30
+				
+				ctx.drawImage(imgUrl, 0, 0, width, height)
+				
+				ctx.setFontSize(20)
+				ctx.fillText(this.userInfo.DealerName, txtX, height - 100)
+				ctx.fillText(this.userInfo.Mobile, txtX, height - 70)
+			},
+			saveCanvas (tempFilePath) {
+				// 小程序
+				uni.saveImageToPhotosAlbum({
+					filePath: tempFilePath,
+					success () {
+						uni.showToast({
+							title: '图片保存成功',
+							icon: 'none'
+						})
+					},
+					fail () {
+						console.log();
+					}
+				});
+				// app
 				// const bitmap = new plus.nativeObj.Bitmap("test");
-				// bitmap.loadBase64Data(base64, function() {
+				// bitmap.loadBase64Data(tempFilePath, function() {
 				// 	const url = "_downloads/" + "myqrcode.png";  // url为时间戳命名方式
 				// 	bitmap.save(url, {
 				// 		overwrite: true,  // 是否覆盖
@@ -128,7 +186,7 @@
 				// 			icon: 'none'
 				// 		})
 				// 		bitmap.clear()
-				// 	});
+				// 	})
 				// }, (e) => {
 				// 	uni.showToast({
 				// 		title: '图片保存失败',
@@ -137,25 +195,14 @@
 				// 	bitmap.clear()
 				// })
 			},
-			draw () {
-				const systemInfo = wx.getSystemInfoSync()
-				console.log('systemInfo: ', systemInfo)
-				const { width, height } = systemInfo.safeArea
-				const offscreenCanvas = uni.createOffscreenCanvas({
-					type: '2d',
-					width,
-					height
-				})
-				console.log('offscreenCanvas: ', offscreenCanvas)
-				const getContext = offscreenCanvas.getContext('2d')
-				getContext.drawImage(this.qrcodeDatabase, 0, 0, width, height);
-				
-			},
 			bindShareMessage() {
 				this.showPop = true
 			},
 			imageError(e) {
 				console.log('image发生error事件，携带值为' + e.detail.errMsg)
+			},
+			onCanvasError(e) {
+				console.log('canvas error: ', e)
 			}
 		}
 	}

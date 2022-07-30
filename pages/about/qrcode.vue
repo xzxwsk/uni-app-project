@@ -5,11 +5,11 @@
 		    @error="imageError"></image> -->
 			<canvas canvas-id="canvas_id" :style="{canvasStyle}" @error="onCanvasError"></canvas>
 		</view>
-		<view class="btn-row" v-if="showBtn">
+		<cover-view class="btn-row" v-if="showBtn">
 			<button type="warn" @tap="bindSave" class="btn">下载二维码</button>
 			<button type="primary" open-type="share" class="btn">分享给朋友</button>
 			<button type="primary" @tap="bindShareMessage" class="btn">分享到朋友圈</button>
-		</view>
+		</cover-view>
 		<view class="qr_info box">
 			<view class="qr_user_info">
 				<!-- <view>{{userInfo.DealerName}}</view>
@@ -56,7 +56,7 @@
 			}
 		},
 		onLoad(options) {
-			// 分享进入时
+			// 分享时进入
 			if (options && options.AboveDealerId) {
 				console.log('AboveDealerId: ', options.AboveDealerId)
 				this.src = options.qrcodead
@@ -81,9 +81,15 @@
 			if (res.from === 'button') {// 来自页面内分享按钮
 			    console.log(res)
 			}
+			// this.showBtn = false
+			// setTimeout(() => {
+			// 	this.showBtn = true
+			// }, 100)
+			const imageUrl = this.src
 			return {
 			    title: '纤畅业务系统',
-			    path: '/pages/user/createQuickReg?AboveDealerId=' + this.DealerId
+			    path: '/pages/user/createQuickReg?AboveDealerId=' + this.DealerId,
+				imageUrl
 			}
 		},
 		onShareTimeline () {
@@ -106,11 +112,11 @@
 			qrR(e) {
 				this.qrcodeDatabase = e;
 				const { windowWidth: width, windowHeight: height } = this.systemInfo
-				const imgX = width - 110
-				const imgY = height - 110
+				const imgX = width - 130
+				const imgY = height - 130
 				this.drawImg(this.ctx, {width, height})
 				this.ctx.save()
-				this.ctx.drawImage(e, imgX, imgY)
+				this.ctx.drawImage(e, imgX, imgY, 110, 110)
 				this.ctx.draw()
 			},
 			bindSave(e) {
@@ -145,8 +151,8 @@
 				ctx.drawImage(imgUrl, 0, 0, width, height)
 				
 				ctx.setFontSize(20)
-				ctx.fillText(this.userInfo.DealerName, txtX, height - 100)
-				ctx.fillText(this.userInfo.Mobile, txtX, height - 70)
+				ctx.fillText(this.userInfo.DealerName, txtX, height - 120)
+				ctx.fillText(this.userInfo.Mobile, txtX, height - 90)
 			},
 			saveCanvas (tempFilePath) {
 				// 小程序

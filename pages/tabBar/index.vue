@@ -8,11 +8,11 @@
                 <view class="page-section-spacing">
                     <swiper style="height: 450upx;" class="swiper" :indicator-dots="indicatorDots" :indicator-active-color="indicatorActiveColor" :indicator-color="indicatorColor" :autoplay="autoplay" :interval="interval" :duration="duration">
 						<swiper-item class="no-img" v-if="imgLs.length < 1">
-							<image style="width: 100%; height: 100%;" mode="aspectFit" :src="imgSrc" @error="imageError"></image>
+							<image style="width: 100%; height: 100%;" mode="aspectFill" :src="imgSrc" @error="imageError"></image>
 						</swiper-item>
                         <swiper-item v-for="(item, index) in imgLs" :key="index">
                             <view class="swiper-item">
-								<image style="width: 100%; height: 100%;" mode="aspectFit" :src="item" @click="goDetail(index)" @load="onBannerImgLoad" @error="onBannerImgError"></image>
+								<image style="width: 100%; height: 100%;" mode="aspectFill" :src="item" @click="goDetail(index)" @load="onBannerImgLoad" @error="onBannerImgError"></image>
 							</view>
                         </swiper-item>                        
                     </swiper>
@@ -421,7 +421,9 @@
 						data: result.PictureCardLastModifyTime
 					})
 					const imgUrl = util.getBaseUrl() + 'files/downloadfile?filename=' + result.PictureTopFileName
-					this.imgLs = [imgUrl]
+					if (!adImg || result.PictureTopLastModifyTime !== adImgTime) {
+						this.imgLs = [imgUrl]
+					}
 					// 删除多余缓存图片
 					this.deleMoreFile()
 					// 下载图片，获得临时文件

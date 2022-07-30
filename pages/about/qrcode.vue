@@ -4,7 +4,7 @@
 			<image style="width: 100%; height: 100%;" mode="scaleToFill" :src="src"
 		    @error="imageError"></image>
 		</view>
-		<view class="btn-row">
+		<view class="btn-row" v-if="showBtn">
 			<button type="warn" @tap="bindSave" class="btn">下载二维码</button>
 			<button type="primary" open-type="share" class="btn">分享给朋友</button>
 			<button type="primary" @tap="bindShareMessage" class="btn">分享到朋友圈</button>
@@ -45,20 +45,28 @@
 				// arrowIcon: util.getImgUrl() + '/images/right_top_arrow.png',
 				arrowIcon: '/static/images/right_top_arrow.png',
 				showPop: false,
-				DealerId: ''
+				DealerId: '',
+				showBtn: true
 			}
 		},
-		onLoad() {
-			// util.ajax({
-			// 	method: 'SYS.DealerDAL.GetQRCode',
-			// 	params: {},
-			// 	tags: {
-			// 		usertoken: this.openid
-			// 	}
-			// }).then(({ data }) => {
-			// 	// console.log(data.result)
-			// 	this.src = data.result
-			// })
+		onLoad(options) {
+			// 分享进入时
+			if (options && options.AboveDealerId) {
+				console.log('AboveDealerId: ', options.AboveDealerId)
+				this.src = options.qrcodead
+				this.qrcodeStr = `https://www.zzxianchang.cn/qcdm/${options.AboveDealerId}`
+				this.showBtn = false
+				this.setUserInfo({
+					DealerName: options.DealerName,
+					Mobile: options.Mobile
+				})
+				util.goUrl({
+					url: '../user/createQuickReg?AboveDealerId=' + options.AboveDealerId
+				})
+				return
+			}
+			
+			// 正常进入
 			this.src = util.getStorageSync('qrcodead')
 			this.getQrcode()
 		},
@@ -74,10 +82,11 @@
 		onShareTimeline () {
 			return {
 				title: '纤畅业务系统',
-				query: 'AboveDealerId=' + this.DealerId
+				query: `AboveDealerId=${this.DealerId}&qrcodead=${this.src}&DealerName=${this.userInfo.DealerName}&Mobile=${this.userInfo.Mobile}`
 			}
 		},
 		methods: {
+			...mapMutations(['setUserInfo']),
 			async getQrcode() {
 				await util.ajax({
 					method: 'SYS.UserDAL.GetDealerByToken'
@@ -87,77 +96,62 @@
 					this.qrcodeStr = `https://www.zzxianchang.cn/qcdm/${result.DealerId}`
 					this.DealerId = result.DealerId
 				})
-				// this.qrcodeStr = '../user/createEntryOrder?AboveDealerId=' + this.userInfo.DealerId
-				console.log(this.qrcodeStr)
 			},
 			qrR(e) {
 				this.qrcodeDatabase = e;
 			},
 			bindSave(e) {
-				this.$refs.qrcode._saveCode();
-				return;
-				const base64 = this.src;
-				const bitmap = new plus.nativeObj.Bitmap("test");
-				bitmap.loadBase64Data(base64, function() {
-					const url = "_downloads/" + "myqrcode.png";  // url为时间戳命名方式
-					bitmap.save(url, {
-						overwrite: true,  // 是否覆盖
-						quality: 100  // 图片清晰度
-					}, (i) => {
-						uni.saveImageToPhotosAlbum({
-							filePath: url,
-							success: function() {
-								uni.showToast({
-									title: '图片保存成功',
-									icon: 'none'
-								})
-								bitmap.clear()
-							}
-						});
-					}, (e) => {
-						uni.showToast({
-							title: '图片保存失败',
-							icon: 'none'
-						})
-						bitmap.clear()
-					});
-				}, (e) => {
-					uni.showToast({
-						title: '图片保存失败',
-						icon: 'none'
-					})
-					bitmap.clear()
-				});
+				this.draw()
+				// this.$refs.qrcode._saveCode();
+				// return;
+				// const base64 = this.src;
+				// const bitmap = new plus.nativeObj.Bitmap("test");
+				// bitmap.loadBase64Data(base64, function() {
+				// 	const url = "_downloads/" + "myqrcode.png";  // url为时间戳命名方式
+				// 	bitmap.save(url, {
+				// 		overwrite: true,  // 是否覆盖
+				// 		quality: 100  // 图片清晰度
+				// 	}, (i) => {
+				// 		uni.saveImageToPhotosAlbum({
+				// 			filePath: url,
+				// 			success: function() {
+				// 				uni.showToast({
+				// 					title: '图片保存成功',
+				// 					icon: 'none'
+				// 				})
+				// 				bitmap.clear()
+				// 			}
+				// 		});
+				// 	}, (e) => {
+				// 		uni.showToast({
+				// 			title: '图片保存失败',
+				// 			icon: 'none'
+				// 		})
+				// 		bitmap.clear()
+				// 	});
+				// }, (e) => {
+				// 	uni.showToast({
+				// 		title: '图片保存失败',
+				// 		icon: 'none'
+				// 	})
+				// 	bitmap.clear()
+				// })
 			},
-			bindShareFriend() {
-				uni.share({
-					provider: "weixin",
-					scene: "WXSceneSession",
-					type: 0,
-					href: "http://uniapp.dcloud.io/",
-					title: "uni-app分享",
-					summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
-					imageUrl: "https://bjetxgzv.cdn.bspapp.com/VKCEYUGU-uni-app-doc/d8590190-4f28-11eb-b680-7980c8a877b8.png",
-					success: function (res) {
-						console.log("success:" + JSON.stringify(res));
-					},
-					fail: function (err) {
-						console.log("fail:" + JSON.stringify(err));
-					}
-				});
+			draw () {
+				const systemInfo = wx.getSystemInfoSync()
+				console.log('systemInfo: ', systemInfo)
+				const { width, height } = systemInfo.safeArea
+				const offscreenCanvas = uni.createOffscreenCanvas({
+					type: '2d',
+					width,
+					height
+				})
+				console.log('offscreenCanvas: ', offscreenCanvas)
+				const getContext = offscreenCanvas.getContext('2d')
+				getContext.drawImage(this.qrcodeDatabase, 0, 0, width, height);
+				
 			},
 			bindShareMessage() {
-				// uni.showShareMenu({
-				// 	title: "uni-app分享",
-				// 	content: '内容',
-				// 	path: '/pages/about/qrcode',
-				// 	success () {
-				// 		console.log('success');
-				// 	},
-				// 	fail (err) {
-				// 		console.log('err: ', err);
-				// 	}
-				// })
 				this.showPop = true
 			},
 			imageError(e) {

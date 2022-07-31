@@ -1,30 +1,33 @@
 <template>
 	<view class="qrimg">
-		<view style="flex: 1;">
+		<view style="flex: 1;" v-if="showBtn">
 			<!-- <image style="width: 100%; height: 100%;" mode="scaleToFill" :src="src"
 		    @error="imageError"></image> -->
-			<canvas canvas-id="canvas_id" :style="{canvasStyle}" @error="onCanvasError"></canvas>
+			<canvas canvas-id="canvas_id" :style="{canvasStyle}" @error="onCanvasError">
+				<cover-view class="pop_view" v-if="showPop" @click="showPop = false">
+					<view class="mask"></view>
+					<cover-view  class="share_prompt">
+						<cover-image :src="arrowIcon" mode="widthFix" style="display: inline-block; width: 200rpx;"></cover-image>
+						<cover-view>
+							<text class="txt">请点击右上角按钮，点击“分享到朋友圈”</text>
+						</cover-view>
+					</cover-view >
+				</cover-view>
+			</canvas>
 		</view>
-		<cover-view class="btn-row" v-if="showBtn">
+		<cover-view class="btn-row" v-if="showBtn && !showPop">
 			<button type="warn" @tap="bindSave" class="btn">下载二维码</button>
 			<button type="primary" open-type="share" class="btn">分享给朋友</button>
 			<button type="primary" @tap="bindShareMessage" class="btn">分享到朋友圈</button>
 		</cover-view>
-		<view class="qr_info box">
-			<view class="qr_user_info">
-				<!-- <view>{{userInfo.DealerName}}</view>
-				<view>{{userInfo.Mobile}}</view> -->
-			</view>
-			<view style="visibility: hidden;">
-				<tki-qrcode ref="qrcode" :size="160" :val="qrcodeStr" onval loadMake @result="qrR" />
-			</view>
-		</view>
 		
-		<view v-if="showPop" @click="showPop = false">
-			<view class="mask"></view>
-			<view class="share_prompt">
-				<image :src="arrowIcon" mode="widthFix" style="width: 200rpx;"></image>
-				<view><text>请点击右上角按钮，点击“分享到朋友圈”</text></view>
+		<view class="qr_info box" :style="{visibility: !showBtn ? 'visible' : 'hidden';}">
+			<view class="qr_user_info">
+				<view>{{userInfo.DealerName}}</view>
+				<view>{{userInfo.Mobile}}</view>
+			</view>
+			<view>
+				<tki-qrcode ref="qrcode" :size="160" :val="qrcodeStr" onval loadMake @result="qrR" />
 			</view>
 		</view>
 	</view>
@@ -42,13 +45,12 @@
 		computed: mapState(['userInfo']),
 		data() {
 			return {
-				systemInfo: null,
 				qrcodeStr: '',
 				qrcodeDatabase: '',
 				src: '',
 				// arrowIcon: util.getImgUrl() + '/images/right_top_arrow.png',
 				arrowIcon: '/static/images/right_top_arrow.png',
-				showPop: false,
+				showPop: true,
 				DealerId: '',
 				showBtn: true,
 				canvasStyle: '',
@@ -81,10 +83,6 @@
 			if (res.from === 'button') {// 来自页面内分享按钮
 			    console.log(res)
 			}
-			// this.showBtn = false
-			// setTimeout(() => {
-			// 	this.showBtn = true
-			// }, 100)
 			const imageUrl = this.src
 			return {
 			    title: '纤畅业务系统',
@@ -111,7 +109,8 @@
 			},
 			qrR(e) {
 				this.qrcodeDatabase = e;
-				const { windowWidth: width, windowHeight: height } = this.systemInfo
+				const systemInfo = uni.getSystemInfoSync()
+				const { windowWidth: width, windowHeight: height } = systemInfo
 				const imgX = width - 130
 				const imgY = height - 130
 				this.drawImg(this.ctx, {width, height})
@@ -131,9 +130,7 @@
 				})
 			},
 			draw () {
-				const systemInfo = wx.getSystemInfoSync()
-				console.log('systemInfo: ', systemInfo)
-				this.systemInfo = systemInfo
+				const systemInfo = uni.getSystemInfoSync()
 				const { windowWidth: width, windowHeight: height } = systemInfo
 				this.canvasStyle = `display: block; width: ${width}px; height: ${height}px;`
 				this.$nextTick(() => {

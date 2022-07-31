@@ -349,6 +349,7 @@
 				const fSysManager = uni.getFileSystemManager()
 				fSysManager.getSavedFileList({
 					success ({ fileList }) {
+						console.log('fileList: ', fileList)
 						fileList.sort((a, b) => b.createTime - a.createTime)
 						fileList.slice(3).forEach(fileObj => {
 							(function(filePath) {

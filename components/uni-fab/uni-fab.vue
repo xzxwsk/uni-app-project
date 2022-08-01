@@ -182,7 +182,7 @@
 		font-family: uniicons;
 		font-weight: normal;
 		font-style: normal;
-		src: url('https://img-cdn-qiniu.dcloud.net.cn/fonts/uni.ttf') format('truetype');
+		src: url('./uni.ttf') format('truetype');
 	}
 
 	.uni-icon {

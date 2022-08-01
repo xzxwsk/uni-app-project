@@ -521,16 +521,15 @@ uni-toast{z-index: 100000;}
 	.add_btn{margin: 10px 5%;}
 }
 .qrimg{display: flex; flex-direction: column; position: relative; width: 100%; height: 100vh;
-	.qr_info{display: flex; justify-content: space-between;
-		.qr_user_info{font-size: 40rpx; font-weight: bold;}
-	}
-	.box{position: absolute; left: 60rpx; right: 30rpx; bottom: 0; z-index: 2; padding-bottom: env(safe-area-inset-bottom);}
 	.btn-row{position: absolute; left: 30rpx; right:30rpx; top: 30rpx; z-index: 2; display: flex; justify-content: space-between; margin: 0 0 15px;
 		.btn{margin: 0; padding: 0 7px;
 			&:nth-child(2){margin: 0 10rpx;}
 		}
 	}
-	.pop_view{
+	.qr_info{position: absolute; left: 50rpx; right: 35rpx; bottom: 18px; z-index: 2; display: flex; justify-content: space-between; padding-bottom: env(safe-area-inset-bottom);
+		.qr_user_info{display: flex; flex-direction: column; line-height: 1.2; font-size: 38rpx;}
+	}
+	.pop_view{position: absolute; left: 0; right:0; top: 0; bottom: 0; z-index: 3; 
 		.mask{position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 4; background-color: rgba(0, 0, 0, .7);}
 		.share_prompt{position: absolute; top: 0; right: 120rpx; z-index: 5; dispaly: flex; flex-direction: column; justify-content: flex-end; width: 400rpx; text-align: right; color: #fff;
 			.txt{white-space: pre-wrap; font-size: 36rpx;}

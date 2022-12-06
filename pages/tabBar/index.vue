@@ -12,7 +12,7 @@
 						</swiper-item>
                         <swiper-item v-for="(item, index) in imgLs" :key="index">
                             <view class="swiper-item">
-								<image style="width: 100%; height: 100%;" mode="aspectFill" :src="item" @click="goDetail(index)" @load="onBannerImgLoad" @error="onBannerImgError"></image>
+								<image style="width: 100%; height: 100%;" mode="aspectFill" :src="item" @click="goTopAdDetail" @load="onBannerImgLoad" @error="onBannerImgError"></image>
 							</view>
                         </swiper-item>                        
                     </swiper>
@@ -451,6 +451,17 @@
 						}
 					}
 				});
+			},
+			goTopAdDetail() {
+				util.ajax({
+					method: 'Basic.ProductDAL.GetTopLinkedProductId',
+				}).then(res => {
+					const { result } = res.data
+					console.log('goTopAdDetail: ', result);
+					util.goUrl({
+						url: '../product/productDetail?id=' + result
+					})
+				})
 			},
 			goDetail(index) {
 				if (this.productList[index].id) {

@@ -17,7 +17,7 @@
 		<cover-view class="btn-row" v-if="showBtn && !showPop">
 			<button type="warn" @tap="bindSave" class="btn">下载二维码</button>
 			<button type="primary" open-type="share" class="btn">分享给朋友</button>
-			<button type="primary" @tap="bindShareMessage" class="btn">分享到朋友圈</button>
+			<!-- <button type="primary" @tap="bindShareMessage" class="btn">分享到朋友圈</button> -->
 		</cover-view>
 		<!-- 弹窗 -->
 		<cover-view class="pop_view" v-if="showPop" @click="hidePop">
